@@ -29,24 +29,24 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * @author Philippe Beaudoin
  */
 public class SpriteList {
-  final ArrayList<Sprite> sprites = new ArrayList<Sprite>();
+  final ArrayList<TileSprite> sprites = new ArrayList<TileSprite>();
 
   /**
    * Adds a sprite that will be rendered.
    *
    * @param sprite The Sprite to add.
    */
-  public void add(Sprite sprite) {
+  public void add(TileSprite sprite) {
     sprites.add(sprite);
   }
 
   /**
-   * Sets the position of a tile so that it fits at the correct location on the board.
+   * Sets the position of a tile sprite so that it fits at the correct location on the board.
    * @param sprite
    * @param loc Both coordinates should be integer valued.
    */
-  public void snapTile(Sprite sprite, Vector2d loc) {
-    sprite.setPos(0.125 + loc.getX() * 0.0342, 0.16 + loc.getY() * 0.0515);
+  public void snapTileSprite(TileSprite sprite, Vector2d loc) {
+    sprite.setPos(0.125 + loc.getX() * 0.0342, 0.18 + loc.getY() * 0.0592);
     sprite.setAngle(Board.rotationAngleForLocation(loc.getColumn(), loc.getLine()));
   }
 
@@ -56,7 +56,7 @@ public class SpriteList {
    * @param context The canvas context into which to render.
    */
   public void render(Context2d context) {
-    for (Sprite sprite : sprites) {
+    for (TileSprite sprite : sprites) {
       sprite.render(context);
     }
   }

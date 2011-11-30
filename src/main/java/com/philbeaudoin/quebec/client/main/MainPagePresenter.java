@@ -31,28 +31,27 @@ import com.philbeaudoin.quebec.shared.NameTokens;
  *
  * @author Philippe Beaudoin
  */
-public class MainPagePresenter
-extends Presenter<MainPagePresenter.MyView, MainPagePresenter.MyProxy> {
+public class MainPagePresenter extends
+    Presenter<MainPagePresenter.MyView, MainPagePresenter.MyProxy> {
 
   public static final Object TYPE_RevealNewsContent = new Object();
 
   /**
    * The presenter's view.
    */
-  public interface MyView extends View { }
+  public interface MyView extends View {
+  }
 
   /**
    * The presenter's proxy.
    */
   @ProxyStandard
   @NameToken(NameTokens.mainPage)
-  public interface MyProxy extends ProxyPlace<MainPagePresenter> { }
+  public interface MyProxy extends ProxyPlace<MainPagePresenter> {
+  }
 
   @Inject
-  public MainPagePresenter(
-      final EventBus eventBus,
-      final MyView view,
-      final MyProxy proxy) {
+  public MainPagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy) {
     super(eventBus, view, proxy);
   }
 

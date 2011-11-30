@@ -23,34 +23,36 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.inject.Inject;
 import com.philbeaudoin.quebec.client.utils.LoggerFactory;
+import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.utils.MutableVector2d;
 
 /**
- * This class knows how to render a single sprite into a canvas.
+ * This class knows how to render a single tile sprite into a canvas.
  *
  * @author Philippe Beaudoin
  */
-public class Sprite {
+public class TileSprite {
   private final Logger logger;
   private final SpriteResources spriteResources;
 
   private SpriteResources.Info info;
   private MutableVector2d pos = new MutableVector2d();
   private double sizeFactor = 1;
-  private double angle = 0;
+  private double angle;
 
   @Inject
-  Sprite(SpriteResources spriteImages) {
-    logger = LoggerFactory.get(Sprite.class);
+  TileSprite(SpriteResources spriteImages) {
+    logger = LoggerFactory.get(TileSprite.class);
     this.spriteResources = spriteImages;
   }
 
   /**
    * Sets the type of sprite.
-   * @param type The desired type.
+   * @param influenceType The influence type of tile sprite desired.
+   * @param century The century of tile sprite desired (0, 1, 2 or 3).
    */
-  public void setType(SpriteResources.Type type) {
-    info = spriteResources.get(type);
+  public void setTile(InfluenceType influenceType, int century) {
+    info = spriteResources.getTile(influenceType, century);
   }
 
   /**

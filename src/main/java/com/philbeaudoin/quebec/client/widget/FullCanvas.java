@@ -24,7 +24,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RequiresResize;
 
 /**
- * This panel is only used to control other images.
+ * A canvas that always resizes to take as much room as possible within its parent while respecting
+ * a specified aspect ratio.
  *
  * @author Philippe Beaudoin
  */
@@ -34,7 +35,9 @@ public class FullCanvas extends Composite implements RequiresResize {
   private final Canvas canvas;
 
   /**
-   * Protected constructor. Use {@link #createIfSupported()} to create a Canvas.
+   * A canvas that always resizes to take as much room as possible within its parent while
+   * respecting a specified aspect ratio.
+   * @param targetAspectRatio The desired aspect ratio of the canvas.
    */
   @UiConstructor
   public FullCanvas(double targetAspectRatio) {

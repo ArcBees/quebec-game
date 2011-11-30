@@ -16,87 +16,38 @@
 
 package com.philbeaudoin.quebec.shared;
 
-import com.philbeaudoin.quebec.shared.utils.MutableVector2d;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
-
 /**
  * Encodes the state of the game board.
  *
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public class Board {
 
-  // Keeps the location of the action for each tile location;
-  private static final Vector2d[] indexToActionLoc = new Vector2d[9 * 8];
-
-  private static int locToIndex(int c, int l) {
-    return l * 9 + c;
-  }
-
-  private static void initIfNeeded() {
-    // We know that location 2, 1 should be valid, use it as a sentinel.
-    if (indexToActionLoc[11] == null) {
-      indexToActionLoc[locToIndex(2,1)] = new Vector2d(3,0);
-      indexToActionLoc[locToIndex(4,1)] = new Vector2d(3,0);
-      indexToActionLoc[locToIndex(6,1)] = new Vector2d(7,0);
-      indexToActionLoc[locToIndex(8,1)] = new Vector2d(7,0);
-      indexToActionLoc[locToIndex(3,2)] = new Vector2d(1,2);
-      indexToActionLoc[locToIndex(5,2)] = new Vector2d(6,3);
-      indexToActionLoc[locToIndex(7,2)] = new Vector2d(9,2);
-      indexToActionLoc[locToIndex(0,3)] = new Vector2d(1,2);
-      indexToActionLoc[locToIndex(2,3)] = new Vector2d(1,2);
-      indexToActionLoc[locToIndex(4,3)] = new Vector2d(3,4);
-      indexToActionLoc[locToIndex(8,3)] = new Vector2d(6,3);
-      indexToActionLoc[locToIndex(1,4)] = new Vector2d(3,4);
-      indexToActionLoc[locToIndex(5,4)] = new Vector2d(6,3);
-      indexToActionLoc[locToIndex(7,4)] = new Vector2d(8,5);
-      indexToActionLoc[locToIndex(0,5)] = new Vector2d(1,6);
-      indexToActionLoc[locToIndex(2,5)] = new Vector2d(1,6);
-      indexToActionLoc[locToIndex(4,5)] = new Vector2d(3,4);
-      indexToActionLoc[locToIndex(6,5)] = new Vector2d(5,6);
-      indexToActionLoc[locToIndex(3,6)] = new Vector2d(5,6);
-      indexToActionLoc[locToIndex(7,6)] = new Vector2d(8,5);
-      indexToActionLoc[locToIndex(6,7)] = new Vector2d(5,6);
-      indexToActionLoc[locToIndex(8,7)] = new Vector2d(10,7);
-    }
-  }
+  // Keeps the location of the action associated to each tile location.
+  private static final BoardActionInfo[] boardActions = new BoardActionInfo[16];
+  private static final BoardActionInfo[] locToAction = new BoardActionInfo[18 * 8];
 
   /**
    * Checks if the given location is valid for holding a tile.
-   * @param c The location column.
-   * @param l The location line.
+   * @param column The location column.
+   * @param line The location line.
    * @return {@code true} if the location is valid, {@code false} otherwise.
    */
-  public static boolean isLocationValid(int c, int l) {
+  public static boolean isLocationValid(int column, int line) {
     initIfNeeded();
-    // It's symmetrical, fold over the right side.
-    if (c > 8) {
-      return (indexToActionLoc[locToIndex(17 - c, 7 - l)] != null);
-    } else {
-      return (indexToActionLoc[locToIndex(c, l)] != null);
-    }
+    return locToAction[locToIndex(column, line)] != null;
   }
 
   /**
-   * Returns the location of the action given the location of a tile.
-   * @param c The location column.
-   * @param l The location line.
-   * @return An integer vector containing the location of the action, or {@code null} if the passed
-   *     location is not valid for a tile.
+   * Returns information on the action associated with the tile at a given location.
+   * @param column The tile location column.
+   * @param line The tile location line.
+   * @return Information on the action, or {@code null} if the passed location is not valid for a
+   *     tile.
    */
-  public static Vector2d actionLocationForTileLocation(int c, int l) {
-    // It's symmetrical, fold over the right side.
-    boolean flip = c > 8;
-    MutableVector2d result;
-    if (flip) {
-      result = new MutableVector2d(indexToActionLoc[locToIndex(17 - c, 7 - l)]);
-    } else {
-      result = new MutableVector2d(indexToActionLoc[locToIndex(c, l)]);
-    }
-    if (flip) {
-      result.set(17 - result.getX(), 7 - result.getY());
-    }
-    return result;
+  public static BoardActionInfo actionInfoForTileLocation(int column, int line) {
+    initIfNeeded();
+    return locToAction[locToIndex(column, line)];
   }
 
   private static final double PI_OVER_3 = 1.04719755;
@@ -105,20 +56,75 @@ public class Board {
 
   /**
    * Returns the rotation angle of the tile placed at a given location.
-   * @param c The location column.
-   * @param l The location line.
+   * @param column The tile location column.
+   * @param line The tile location line.
    * @return The rotation angle at that location in radians, 0 if it's an invalid location.
    */
-  public static double rotationAngleForLocation(int c, int l) {
-    Vector2d actionLocation = actionLocationForTileLocation(c, l);
-    double actionC = actionLocation.getX();
-    double actionL = actionLocation.getY();
+  public static double rotationAngleForLocation(int column, int line) {
+    BoardActionInfo actionInfo = actionInfoForTileLocation(column, line);
+    if (actionInfo == null) {
+      return 0;
+    }
+    double actionColumn = actionInfo.getLocation().getX();
+    double actionLine = actionInfo.getLocation().getY();
 
-    if (actionC < c) {
-      return PI_3_OVER_2 + (l - actionL) * PI_OVER_3;
+    if (actionColumn < column) {
+      return PI_3_OVER_2 + (line - actionLine) * PI_OVER_3;
     } else {
-      return PI_OVER_2 + (actionL - l) * PI_OVER_3;
+      return PI_OVER_2 + (actionLine - line) * PI_OVER_3;
     }
   }
 
+  private static int locToIndex(int column, int line) {
+    return line * 18 + column;
+  }
+
+  private static void initIfNeeded() {
+    if (boardActions[0] == null) {
+      boardActions[0] = new BoardActionInfo(3, 0, InfluenceType.CULTURAL, 1);
+      boardActions[1] = new BoardActionInfo(7, 0, InfluenceType.ECONOMIC, 3);
+      boardActions[2] = new BoardActionInfo(1, 2, InfluenceType.POLITIC, 3);
+      boardActions[3] = new BoardActionInfo(6, 3, InfluenceType.RELIGIOUS, 2);
+      boardActions[4] = new BoardActionInfo(9, 2, InfluenceType.POLITIC, 2);
+      boardActions[5] = new BoardActionInfo(3, 4, InfluenceType.ECONOMIC, 2);
+      boardActions[6] = new BoardActionInfo(5, 6, InfluenceType.POLITIC, 2);
+      boardActions[7] = new BoardActionInfo(1, 6, InfluenceType.RELIGIOUS, 1);
+      boardActions[8] = new BoardActionInfo(16, 1, InfluenceType.ECONOMIC, 1);
+      boardActions[9] = new BoardActionInfo(12, 1, InfluenceType.CULTURAL, 2);
+      boardActions[10] = new BoardActionInfo(14, 3, InfluenceType.RELIGIOUS, 2);
+      boardActions[11] = new BoardActionInfo(8, 5, InfluenceType.CULTURAL, 2);
+      boardActions[12] = new BoardActionInfo(11, 4, InfluenceType.ECONOMIC, 2);
+      boardActions[13] = new BoardActionInfo(16, 5, InfluenceType.CULTURAL, 3);
+      boardActions[14] = new BoardActionInfo(10, 7, InfluenceType.RELIGIOUS, 3);
+      boardActions[15] = new BoardActionInfo(14, 7, InfluenceType.POLITIC, 1);
+
+      addSymmetricalActions(2, 1, 0);
+      addSymmetricalActions(4, 1, 0);
+      addSymmetricalActions(6, 1, 1);
+      addSymmetricalActions(8, 1, 1);
+      addSymmetricalActions(3, 2, 2);
+      addSymmetricalActions(5, 2, 3);
+      addSymmetricalActions(7, 2, 4);
+      addSymmetricalActions(0, 3, 2);
+      addSymmetricalActions(2, 3, 2);
+      addSymmetricalActions(4, 3, 5);
+      addSymmetricalActions(8, 3, 3);
+      addSymmetricalActions(1, 4, 5);
+      addSymmetricalActions(5, 4, 3);
+      addSymmetricalActions(7, 4, 11);
+      addSymmetricalActions(0, 5, 7);
+      addSymmetricalActions(2, 5, 7);
+      addSymmetricalActions(4, 5, 5);
+      addSymmetricalActions(6, 5, 6);
+      addSymmetricalActions(3, 6, 6);
+      addSymmetricalActions(7, 6, 11);
+      addSymmetricalActions(6, 7, 6);
+      addSymmetricalActions(8, 7, 14);
+    }
+  }
+
+  private static void addSymmetricalActions(int column, int line, int actionIndex) {
+    locToAction[locToIndex(column, line)] = boardActions[actionIndex];
+    locToAction[locToIndex(17 - column, 7 - line)] = boardActions[15 - actionIndex];
+  }
 }

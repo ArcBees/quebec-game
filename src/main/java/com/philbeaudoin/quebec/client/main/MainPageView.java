@@ -28,12 +28,14 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
-import com.philbeaudoin.quebec.client.sprites.Sprite;
 import com.philbeaudoin.quebec.client.sprites.SpriteList;
 import com.philbeaudoin.quebec.client.sprites.SpriteResources;
-import com.philbeaudoin.quebec.client.sprites.SpriteResources.Type;
+import com.philbeaudoin.quebec.client.sprites.TileSprite;
 import com.philbeaudoin.quebec.client.widget.FullCanvas;
 import com.philbeaudoin.quebec.shared.Board;
+import com.philbeaudoin.quebec.shared.BoardActionInfo;
+import com.philbeaudoin.quebec.shared.Tile;
+import com.philbeaudoin.quebec.shared.TileDeck;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -56,24 +58,25 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   @UiField
   FullCanvas fullCanvas;
 
-
   @Inject
-  public MainPageView(SpriteResources spriteResources,
-      SpriteList spriteList,
-      Provider<Sprite> spriteProvider) {
+  public MainPageView(SpriteResources spriteResources, SpriteList spriteList,
+      Provider<TileSprite> spriteProvider) {
     widget = binder.createAndBindUi(this);
     canvas = fullCanvas.asCanvas();
     context = canvas.getContext2d();
     board = spriteResources.get(SpriteResources.Type.board).getElement();
     this.spriteList = spriteList;
 
-    for (int c = 0; c < 18; ++c) {
-      for (int l = 0; l < 8; ++l) {
-        if (Board.isLocationValid(c, l)) {
-          Sprite tile = spriteProvider.get();
-          tile.setType(Type.tileRedOne);
-          spriteList.add(tile);
-          spriteList.snapTile(tile, new Vector2d(c,l));
+    TileDeck tileDeck = new TileDeck();
+    for (int column = 0; column < 18; ++column) {
+      for (int line = 0; line < 8; ++line) {
+        BoardActionInfo actionInfo = Board.actionInfoForTileLocation(column, line);
+        if (actionInfo != null) {
+          TileSprite tileSprite = spriteProvider.get();
+          Tile tile = tileDeck.draw(actionInfo.getInfluenceType());
+          tileSprite.setTile(tile.getInfluenceType(), tile.getCentury());
+          spriteList.add(tileSprite);
+          spriteList.snapTileSprite(tileSprite, new Vector2d(column,line));
         }
       }
     }

@@ -28,6 +28,7 @@ import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.ui.Image;
 import com.google.inject.Inject;
 import com.philbeaudoin.quebec.client.resources.Resources;
+import com.philbeaudoin.quebec.shared.InfluenceType;
 
 /**
  * This class makes it possible to obtain the image element for any type of sprite. Images are
@@ -39,11 +40,10 @@ import com.philbeaudoin.quebec.client.resources.Resources;
 public class SpriteResources {
 
   /**
-   * The various sprites.
+   * Static sprite types.
    */
-  public enum Type {
-    board,
-    tileRedOne
+  public static enum Type {
+    board
   }
 
   /**
@@ -51,7 +51,7 @@ public class SpriteResources {
    * the information is requested.
    * @author Philippe Beaudoin
    */
-  public class Info {
+  public static class Info {
     private final SafeUri safeUri;
     private final double sizeFactor;
     private ImageElement element;
@@ -78,33 +78,74 @@ public class SpriteResources {
       return element;
     }
   }
-  
+
   private final ArrayList<Info> imageInfos = new ArrayList<Info>(Type.values().length);
+  private final Info[][] tileInfos = new Info[4][4];
 
   @Inject
   SpriteResources(Resources resources) {
     Collection<Info> nullList = Collections.nCopies(Type.values().length, null);
     imageInfos.addAll(nullList);
-    safeUri(Type.board, resources.board(), 1);
-    safeUri(Type.tileRedOne, resources.tileRedOne(), 0.00023);
-  }
+    setInfoForType(Type.board, resources.board(), 1);
 
-  private void safeUri(Type type, DataResource dataResource, double resizeFactor) {
-    imageInfos.set(type.ordinal(), new Info(dataResource.getSafeUri(), resizeFactor));
+    setInfoForTile(InfluenceType.RELIGIOUS, 0, resources.tileReligiousOne());
+    setInfoForTile(InfluenceType.RELIGIOUS, 1, resources.tileReligiousTwo());
+    setInfoForTile(InfluenceType.RELIGIOUS, 2, resources.tileReligiousThree());
+    setInfoForTile(InfluenceType.RELIGIOUS, 3, resources.tileReligiousFour());
+    setInfoForTile(InfluenceType.POLITIC, 0, resources.tilePoliticOne());
+    setInfoForTile(InfluenceType.POLITIC, 1, resources.tilePoliticTwo());
+    setInfoForTile(InfluenceType.POLITIC, 2, resources.tilePoliticThree());
+    setInfoForTile(InfluenceType.POLITIC, 3, resources.tilePoliticFour());
+    setInfoForTile(InfluenceType.ECONOMIC, 0, resources.tileEconomicOne());
+    setInfoForTile(InfluenceType.ECONOMIC, 1, resources.tileEconomicTwo());
+    setInfoForTile(InfluenceType.ECONOMIC, 2, resources.tileEconomicThree());
+    setInfoForTile(InfluenceType.ECONOMIC, 3, resources.tileEconomicFour());
+    setInfoForTile(InfluenceType.CULTURAL, 0, resources.tileCulturalOne());
+    setInfoForTile(InfluenceType.CULTURAL, 1, resources.tileCulturalTwo());
+    setInfoForTile(InfluenceType.CULTURAL, 2, resources.tileCulturalThree());
+    setInfoForTile(InfluenceType.CULTURAL, 3, resources.tileCulturalFour());
   }
 
   /**
-   * Obtain the {@link ImageElement} for the given type of sprite. The ImageElement is lazily
-   * instantiated once.
+   * Obtain information, including the {@link ImageElement}, for the given type of static sprite.
+   * The ImageElement is lazily instantiated once.
    * @param type The type of sprite desired.
-   * @return The ImageElement of that sprite.
+   * @return The information of that sprite.
    */
   public Info get(Type type) {
     Info imageInfo = imageInfos.get(type.ordinal());
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+  /**
+   * Obtain information, including the {@link ImageElement}, for the given type of tile sprite,
+   * shown facing the "unbuilt" side.
+   * @param influenceType The influence type of tile sprite desired.
+   * @param century The century of tile sprite desired (0, 1, 2 or 3).
+   * @return The information of that sprite.
+   */
+  public Info getTile(InfluenceType influenceType, int century) {
+    Info imageInfo = tileInfos[influenceType.ordinal()][century];
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+
+  /**
+   * Lazily instantiate the image element of an image info, if needed.
+   * @param imageInfo The image info into which to instantiate the image element.
+   */
+  private void lazilyInstantiateImageElement(Info imageInfo) {
     if (imageInfo.element == null) {
       Image image = new Image(imageInfo.safeUri);
       imageInfo.element = (ImageElement) image.getElement().cast();
     }
-    return imageInfo;
+  }
+
+  private void setInfoForType(Type type, DataResource dataResource, double resizeFactor) {
+    imageInfos.set(type.ordinal(), new Info(dataResource.getSafeUri(), resizeFactor));
+  }
+
+  private void setInfoForTile(InfluenceType influenceType, int century, DataResource dataResource) {
+    tileInfos[influenceType.ordinal()][century] = new Info(dataResource.getSafeUri(), 0.00023);
   }
 }
