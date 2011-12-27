@@ -19,8 +19,6 @@ package com.philbeaudoin.quebec.client.sprites;
 import java.util.ArrayList;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.philbeaudoin.quebec.shared.Board;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * This class tracks a list of sprites. It contains method to automatically snap tiles to the grid.
@@ -41,13 +39,14 @@ public class SpriteList {
   }
 
   /**
-   * Sets the position of a tile sprite so that it fits at the correct location on the board.
-   * @param sprite
-   * @param loc Both coordinates should be integer valued.
+   * Ensures that the specified sprite is rendered last so it appears on top of all other sprites.
+   * Will only work if the provided {@code sprite} is in the list, otherwise it has no effect.
+   * @param sprite The sprite to render in front of all others.
    */
-  public void snapTileSprite(TileSprite sprite, Vector2d loc) {
-    sprite.setPos(0.125 + loc.getX() * 0.0342, 0.18 + loc.getY() * 0.0592);
-    sprite.setAngle(Board.rotationAngleForLocation(loc.getColumn(), loc.getLine()));
+  public void sendToFront(TileSprite sprite) {
+    if (sprites.remove(sprite)) {
+      sprites.add(sprite);
+    }
   }
 
   /**

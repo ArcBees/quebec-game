@@ -50,7 +50,7 @@
 
         <!-- Dependencies versions -->
         <aopalliance.version>1.0</aopalliance.version>
-        <gae.version>1.5.4</gae.version>
+        <gae.version>1.6.1</gae.version>
         <gin.version>1.5.0</gin.version>
         <guice.version>3.0</guice.version>
         <gwt.version>2.4.0</gwt.version>

@@ -16,12 +16,12 @@
 
 package com.philbeaudoin.quebec.client.main;
 
-import javax.inject.Provider;
-
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
@@ -32,11 +32,6 @@ import com.philbeaudoin.quebec.client.sprites.SpriteList;
 import com.philbeaudoin.quebec.client.sprites.SpriteResources;
 import com.philbeaudoin.quebec.client.sprites.TileSprite;
 import com.philbeaudoin.quebec.client.widget.FullCanvas;
-import com.philbeaudoin.quebec.shared.Board;
-import com.philbeaudoin.quebec.shared.BoardActionInfo;
-import com.philbeaudoin.quebec.shared.Tile;
-import com.philbeaudoin.quebec.shared.TileDeck;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * @author Philippe Beaudoin
@@ -58,28 +53,16 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   @UiField
   FullCanvas fullCanvas;
 
+  private MainPagePresenter presenter;
+
   @Inject
-  public MainPageView(SpriteResources spriteResources, SpriteList spriteList,
-      Provider<TileSprite> spriteProvider) {
+  public MainPageView(SpriteResources spriteResources, SpriteList spriteList) {
     widget = binder.createAndBindUi(this);
     canvas = fullCanvas.asCanvas();
     context = canvas.getContext2d();
     board = spriteResources.get(SpriteResources.Type.board).getElement();
     this.spriteList = spriteList;
 
-    TileDeck tileDeck = new TileDeck();
-    for (int column = 0; column < 18; ++column) {
-      for (int line = 0; line < 8; ++line) {
-        BoardActionInfo actionInfo = Board.actionInfoForTileLocation(column, line);
-        if (actionInfo != null) {
-          TileSprite tileSprite = spriteProvider.get();
-          Tile tile = tileDeck.draw(actionInfo.getInfluenceType());
-          tileSprite.setTile(tile.getInfluenceType(), tile.getCentury());
-          spriteList.add(tileSprite);
-          spriteList.snapTileSprite(tileSprite, new Vector2d(column,line));
-        }
-      }
-    }
     // setup timer
     final Timer timer = new Timer() {
       @Override
@@ -88,11 +71,36 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
       }
     };
     timer.scheduleRepeating(refreshRate);
+
+    fullCanvas.addMouseMoveHandler(new MouseMoveHandler() {
+      @Override
+      public void onMouseMove(MouseMoveEvent event) {
+        // Assumes the canvas is always wider than tall.
+        double x = event.getRelativeX(fullCanvas.getElement()) / (double) canvas.getOffsetWidth();
+        double y = event.getRelativeY(fullCanvas.getElement()) / (double) canvas.getOffsetWidth();
+        presenter.mouseMove(x, y);
+      }
+    });
   }
 
   @Override
   public Widget asWidget() {
     return widget;
+  }
+
+  @Override
+  public void setPresenter(MainPagePresenter presenter) {
+    this.presenter = presenter;
+  }
+
+  @Override
+  public void addTileSprite(TileSprite tileSprite) {
+    spriteList.add(tileSprite);
+  }
+
+  @Override
+  public void sendToFront(TileSprite highlightedSprite) {
+    spriteList.sendToFront(highlightedSprite);
   }
 
   void doUpdate() {

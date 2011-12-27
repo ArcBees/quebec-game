@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.shared;
 
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
+
 /**
  * Encodes the state of the game board.
  *
@@ -73,6 +75,36 @@ public class Board {
     } else {
       return PI_OVER_2 + (actionLine - line) * PI_OVER_3;
     }
+  }
+
+  /**
+   * Returns the tile location for a normalized position.
+   * @param x The X normalized position.
+   * @param y The Y normalized position.
+   * @return The nearest tile location (column, line) for the given position.
+   */
+  public static Vector2d locationForPosition(double x, double y) {
+    double locXDouble = (x - 0.125) / 0.0342;
+    long locX = Math.round(locXDouble);
+    long locY = Math.round((y - 0.18) / 0.0592);
+    if ((locX + locY) % 2 == 0) {
+      if (locXDouble < locX) {
+        locX--;
+      } else {
+        locX++;
+      }
+    }
+    return new Vector2d(locX, locY);
+  }
+
+  /**
+   * Returns the central normalized position for a given tile location.
+   * @param column The tile column.
+   * @param line The tile line.
+   * @return The central normalized position.
+   */
+  public static Vector2d positionForLocation(int column, int line) {
+    return new Vector2d(0.125 + column * 0.0342, 0.18 + line * 0.0592);
   }
 
   private static int locToIndex(int column, int line) {

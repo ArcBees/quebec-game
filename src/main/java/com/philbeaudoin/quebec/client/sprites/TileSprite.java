@@ -47,12 +47,24 @@ public class TileSprite {
   }
 
   /**
-   * Sets the type of sprite.
+   * Sets the type of sprite for an unbuilt tile.
    * @param influenceType The influence type of tile sprite desired.
    * @param century The century of tile sprite desired (0, 1, 2 or 3).
    */
   public void setTile(InfluenceType influenceType, int century) {
     info = spriteResources.getTile(influenceType, century);
+  }
+
+  /**
+   * Sets the type of sprite for a building tile.
+   * @param influenceType The influence type of tile sprite desired.
+   * @param century The century of tile sprite desired (0, 1, 2 or 3).
+   * @param index The index of the building tile (0 to 3, the valid range depends on influenceType
+   *     and century).
+   * @param buil
+   */
+  public void setBuildingTile(InfluenceType influenceType, int century, int index) {
+    info = spriteResources.getBuildingTile(influenceType, century, index);
   }
 
   /**

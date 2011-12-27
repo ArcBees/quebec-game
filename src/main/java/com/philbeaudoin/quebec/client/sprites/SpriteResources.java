@@ -80,7 +80,7 @@ public class SpriteResources {
   }
 
   private final ArrayList<Info> imageInfos = new ArrayList<Info>(Type.values().length);
-  private final Info[][] tileInfos = new Info[4][4];
+  private final Info[][][] tileInfos = new Info[4][4][5];
 
   @Inject
   SpriteResources(Resources resources) {
@@ -88,22 +88,43 @@ public class SpriteResources {
     imageInfos.addAll(nullList);
     setInfoForType(Type.board, resources.board(), 1);
 
-    setInfoForTile(InfluenceType.RELIGIOUS, 0, resources.tileReligiousOne());
-    setInfoForTile(InfluenceType.RELIGIOUS, 1, resources.tileReligiousTwo());
-    setInfoForTile(InfluenceType.RELIGIOUS, 2, resources.tileReligiousThree());
-    setInfoForTile(InfluenceType.RELIGIOUS, 3, resources.tileReligiousFour());
-    setInfoForTile(InfluenceType.POLITIC, 0, resources.tilePoliticOne());
-    setInfoForTile(InfluenceType.POLITIC, 1, resources.tilePoliticTwo());
-    setInfoForTile(InfluenceType.POLITIC, 2, resources.tilePoliticThree());
-    setInfoForTile(InfluenceType.POLITIC, 3, resources.tilePoliticFour());
-    setInfoForTile(InfluenceType.ECONOMIC, 0, resources.tileEconomicOne());
-    setInfoForTile(InfluenceType.ECONOMIC, 1, resources.tileEconomicTwo());
-    setInfoForTile(InfluenceType.ECONOMIC, 2, resources.tileEconomicThree());
-    setInfoForTile(InfluenceType.ECONOMIC, 3, resources.tileEconomicFour());
-    setInfoForTile(InfluenceType.CULTURAL, 0, resources.tileCulturalOne());
-    setInfoForTile(InfluenceType.CULTURAL, 1, resources.tileCulturalTwo());
-    setInfoForTile(InfluenceType.CULTURAL, 2, resources.tileCulturalThree());
-    setInfoForTile(InfluenceType.CULTURAL, 3, resources.tileCulturalFour());
+    setInfoForTile(InfluenceType.RELIGIOUS, 0, resources.tileReligiousOne(),
+        resources.tileReligiousOne1(), resources.tileReligiousOne2(), resources.tileReligiousOne3(),
+        resources.tileReligiousOne4());
+    setInfoForTile(InfluenceType.RELIGIOUS, 1, resources.tileReligiousTwo(),
+        resources.tileReligiousTwo1(), resources.tileReligiousTwo2());
+    setInfoForTile(InfluenceType.RELIGIOUS, 2, resources.tileReligiousThree(),
+        resources.tileReligiousThree1(), resources.tileReligiousThree2(),
+        resources.tileReligiousThree3());
+    setInfoForTile(InfluenceType.RELIGIOUS, 3, resources.tileReligiousFour(),
+        resources.tileReligiousFour1(), resources.tileReligiousFour2());
+    setInfoForTile(InfluenceType.POLITIC, 0, resources.tilePoliticOne(),
+        resources.tilePoliticOne1(), resources.tilePoliticOne2());
+    setInfoForTile(InfluenceType.POLITIC, 1, resources.tilePoliticTwo(),
+        resources.tilePoliticTwo1(), resources.tilePoliticTwo2(), resources.tilePoliticTwo3(),
+        resources.tilePoliticTwo4());
+    setInfoForTile(InfluenceType.POLITIC, 2, resources.tilePoliticThree(),
+        resources.tilePoliticThree1(), resources.tilePoliticThree2());
+    setInfoForTile(InfluenceType.POLITIC, 3, resources.tilePoliticFour(),
+        resources.tilePoliticFour1(), resources.tilePoliticFour2(), resources.tilePoliticFour3());
+    setInfoForTile(InfluenceType.ECONOMIC, 0, resources.tileEconomicOne(),
+        resources.tileEconomicOne1(), resources.tileEconomicOne2(), resources.tileEconomicOne3());
+    setInfoForTile(InfluenceType.ECONOMIC, 1, resources.tileEconomicTwo(),
+        resources.tileEconomicTwo1(), resources.tileEconomicTwo2());
+    setInfoForTile(InfluenceType.ECONOMIC, 2, resources.tileEconomicThree(),
+        resources.tileEconomicThree1(), resources.tileEconomicThree2(),
+        resources.tileEconomicThree3(), resources.tileEconomicThree4());
+    setInfoForTile(InfluenceType.ECONOMIC, 3, resources.tileEconomicFour(),
+        resources.tileEconomicFour1(), resources.tileEconomicFour2());
+    setInfoForTile(InfluenceType.CULTURAL, 0, resources.tileCulturalOne(),
+        resources.tileCulturalOne1(), resources.tileCulturalOne2());
+    setInfoForTile(InfluenceType.CULTURAL, 1, resources.tileCulturalTwo(),
+        resources.tileCulturalTwo1(), resources.tileCulturalTwo2(), resources.tileCulturalTwo3());
+    setInfoForTile(InfluenceType.CULTURAL, 2, resources.tileCulturalThree(),
+        resources.tileCulturalThree1(), resources.tileCulturalThree2());
+    setInfoForTile(InfluenceType.CULTURAL, 3, resources.tileCulturalFour(),
+        resources.tileCulturalFour1(), resources.tileCulturalFour2(), resources.tileCulturalFour3(),
+        resources.tileCulturalFour4());
   }
 
   /**
@@ -117,6 +138,7 @@ public class SpriteResources {
     lazilyInstantiateImageElement(imageInfo);
     return imageInfo;
   }
+
   /**
    * Obtain information, including the {@link ImageElement}, for the given type of tile sprite,
    * shown facing the "unbuilt" side.
@@ -125,7 +147,22 @@ public class SpriteResources {
    * @return The information of that sprite.
    */
   public Info getTile(InfluenceType influenceType, int century) {
-    Info imageInfo = tileInfos[influenceType.ordinal()][century];
+    Info imageInfo = tileInfos[influenceType.ordinal()][century][0];
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+
+  /**
+   * Obtain information, including the {@link ImageElement}, for the given type of tile sprite,
+   * shown facing the "unbuilt" side.
+   * @param influenceType The influence type of tile sprite desired.
+   * @param century The century of tile sprite desired (0, 1, 2 or 3).
+   * @param index The index of the building tile (0 to 3, the valid range depends on influenceType
+   *     and century).
+   * @return The information of that sprite.
+   */
+  public Info getBuildingTile(InfluenceType influenceType, int century, int index) {
+    Info imageInfo = tileInfos[influenceType.ordinal()][century][index + 1];
     lazilyInstantiateImageElement(imageInfo);
     return imageInfo;
   }
@@ -145,7 +182,14 @@ public class SpriteResources {
     imageInfos.set(type.ordinal(), new Info(dataResource.getSafeUri(), resizeFactor));
   }
 
-  private void setInfoForTile(InfluenceType influenceType, int century, DataResource dataResource) {
-    tileInfos[influenceType.ordinal()][century] = new Info(dataResource.getSafeUri(), 0.00023);
+  private void setInfoForTile(InfluenceType influenceType, int century, DataResource dataResource,
+      DataResource... buildingDataResources) {
+    tileInfos[influenceType.ordinal()][century][0] = new Info(dataResource.getSafeUri(), 0.00023);
+    int index = 1;
+    for (DataResource buildingDataResource : buildingDataResources) {
+      tileInfos[influenceType.ordinal()][century][index] = new Info(
+          buildingDataResource.getSafeUri(), 0.00023);
+      index++;
+    }
   }
 }
