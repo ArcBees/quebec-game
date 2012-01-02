@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.inject.Inject;
 import com.philbeaudoin.quebec.client.resources.Resources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.PlayerColor;
 
 /**
  * This class makes it possible to obtain the image element for any type of sprite. Images are
@@ -81,12 +82,13 @@ public class SpriteResources {
 
   private final ArrayList<Info> imageInfos = new ArrayList<Info>(Type.values().length);
   private final Info[][][] tileInfos = new Info[4][4][5];
+  private final Info[] cubeInfos = new Info[5];
 
   @Inject
   SpriteResources(Resources resources) {
     Collection<Info> nullList = Collections.nCopies(Type.values().length, null);
     imageInfos.addAll(nullList);
-    setInfoForType(Type.board, resources.board(), 1);
+    setInfoForType(Type.board, resources.board(), 0.00030656);
 
     setInfoForTile(InfluenceType.RELIGIOUS, 0, resources.tileReligiousOne(),
         resources.tileReligiousOne1(), resources.tileReligiousOne2(), resources.tileReligiousOne3(),
@@ -125,6 +127,12 @@ public class SpriteResources {
     setInfoForTile(InfluenceType.CULTURAL, 3, resources.tileCulturalFour(),
         resources.tileCulturalFour1(), resources.tileCulturalFour2(), resources.tileCulturalFour3(),
         resources.tileCulturalFour4());
+
+    setInfoForCube(PlayerColor.BLACK, resources.cubeBlack());
+    setInfoForCube(PlayerColor.WHITE, resources.cubeWhite());
+    setInfoForCube(PlayerColor.ORANGE, resources.cubeOrange());
+    setInfoForCube(PlayerColor.GREEN, resources.cubeGreen());
+    setInfoForCube(PlayerColor.PINK, resources.cubePink());
   }
 
   /**
@@ -154,7 +162,7 @@ public class SpriteResources {
 
   /**
    * Obtain information, including the {@link ImageElement}, for the given type of tile sprite,
-   * shown facing the "unbuilt" side.
+   * shown facing the "built" side.
    * @param influenceType The influence type of tile sprite desired.
    * @param century The century of tile sprite desired (0, 1, 2 or 3).
    * @param index The index of the building tile (0 to 3, the valid range depends on influenceType
@@ -163,6 +171,20 @@ public class SpriteResources {
    */
   public Info getBuildingTile(InfluenceType influenceType, int century, int index) {
     Info imageInfo = tileInfos[influenceType.ordinal()][century][index + 1];
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+
+  /**
+   * Obtain information, including the {@link ImageElement}, for the given type of cube.
+   * @param playerColor The color of the player for which to get cubes. Will not work with
+   *     {@code PlayerColor.NONE}.
+   * @return The information on that sprite.
+   */
+  public Info getCube(PlayerColor playerColor) {
+    int colorIndex = playerColor.ordinal();
+    assert colorIndex > 0;
+    Info imageInfo = cubeInfos[colorIndex - 1];
     lazilyInstantiateImageElement(imageInfo);
     return imageInfo;
   }
@@ -184,12 +206,16 @@ public class SpriteResources {
 
   private void setInfoForTile(InfluenceType influenceType, int century, DataResource dataResource,
       DataResource... buildingDataResources) {
-    tileInfos[influenceType.ordinal()][century][0] = new Info(dataResource.getSafeUri(), 0.00023);
+    tileInfos[influenceType.ordinal()][century][0] = new Info(dataResource.getSafeUri(), 0.000303);
     int index = 1;
     for (DataResource buildingDataResource : buildingDataResources) {
       tileInfos[influenceType.ordinal()][century][index] = new Info(
-          buildingDataResource.getSafeUri(), 0.00023);
+          buildingDataResource.getSafeUri(), 0.000303);
       index++;
     }
+  }
+
+  private void setInfoForCube(PlayerColor playerColor, DataResource dataResource) {
+    cubeInfos[playerColor.ordinal() - 1] = new Info(dataResource.getSafeUri(), 0.000315);
   }
 }

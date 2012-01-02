@@ -17,7 +17,7 @@
         <g:center>
             <g:LayoutPanel ui:field="center">
               <g:layer>
-                  <c:FullCanvas ui:field="fullCanvas" targetAspectRatio='1.31820969' />
+                  <c:FullCanvas ui:field="fullCanvas" targetAspectRatio='1.7' />
               </g:layer>
             </g:LayoutPanel>
         </g:center>

@@ -29,6 +29,8 @@ public class Board {
   private static final BoardActionInfo[] boardActions = new BoardActionInfo[16];
   private static final BoardActionInfo[] locToAction = new BoardActionInfo[18 * 8];
 
+  public static final double ASPECT_RATIO = 1.318209;
+
   /**
    * Checks if the given location is valid for holding a tile.
    * @param column The location column.
@@ -84,9 +86,9 @@ public class Board {
    * @return The nearest tile location (column, line) for the given position.
    */
   public static Vector2d locationForPosition(double x, double y) {
-    double locXDouble = (x - 0.125) / 0.0342;
+    double locXDouble = (x + 0.494) / 0.0451;
     long locX = Math.round(locXDouble);
-    long locY = Math.round((y - 0.18) / 0.0592);
+    long locY = Math.round((y + 0.263) / 0.0780);
     if ((locX + locY) % 2 == 0) {
       if (locXDouble < locX) {
         locX--;
@@ -104,7 +106,7 @@ public class Board {
    * @return The central normalized position.
    */
   public static Vector2d positionForLocation(int column, int line) {
-    return new Vector2d(0.125 + column * 0.0342, 0.18 + line * 0.0592);
+    return new Vector2d(-0.494 + column * 0.0451, -0.263 + line * 0.0780);
   }
 
   private static int locToIndex(int column, int line) {

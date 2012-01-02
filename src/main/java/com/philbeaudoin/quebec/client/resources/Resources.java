@@ -148,6 +148,16 @@ public interface Resources extends ClientBundle {
   DataResource tilePoliticOne1();
   @Source("red_1_2.png")
   DataResource tilePoliticOne2();
+  @Source("cube_black.png")
+  DataResource cubeBlack();
+  @Source("cube_white.png")
+  DataResource cubeWhite();
+  @Source("cube_orange.png")
+  DataResource cubeOrange();
+  @Source("cube_green.png")
+  DataResource cubeGreen();
+  @Source("cube_pink.png")
+  DataResource cubePink();
   @Source("quebec.css")
   Style style();
 

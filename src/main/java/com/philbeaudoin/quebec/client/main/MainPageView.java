@@ -19,7 +19,6 @@ package com.philbeaudoin.quebec.client.main;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -28,12 +27,16 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
-import com.philbeaudoin.quebec.client.sprites.SpriteList;
+import com.philbeaudoin.quebec.client.sprites.RenderableList;
 import com.philbeaudoin.quebec.client.sprites.SpriteResources;
-import com.philbeaudoin.quebec.client.sprites.TileSprite;
 import com.philbeaudoin.quebec.client.widget.FullCanvas;
 
 /**
+ * Main view, containing the board and the player information bars. The canvas is automatically
+ * scaled to fill the entire window. It is mapped to a virtual coordinate space with range:
+ *   (0, 1.7) x (0, 1)
+ * This horizontal range is determined by the aspect ratio specified in MainPageView.ui.xml.
+ *
  * @author Philippe Beaudoin
  */
 public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
@@ -47,8 +50,6 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   private final Widget widget;
   private final Canvas canvas;
   private final Context2d context;
-  private final ImageElement board;
-  private final SpriteList spriteList;
 
   @UiField
   FullCanvas fullCanvas;
@@ -56,12 +57,10 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   private MainPagePresenter presenter;
 
   @Inject
-  public MainPageView(SpriteResources spriteResources, SpriteList spriteList) {
+  public MainPageView(SpriteResources spriteResources, RenderableList renderableList) {
     widget = binder.createAndBindUi(this);
     canvas = fullCanvas.asCanvas();
     context = canvas.getContext2d();
-    board = spriteResources.get(SpriteResources.Type.board).getElement();
-    this.spriteList = spriteList;
 
     // setup timer
     final Timer timer = new Timer() {
@@ -75,9 +74,9 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
     fullCanvas.addMouseMoveHandler(new MouseMoveHandler() {
       @Override
       public void onMouseMove(MouseMoveEvent event) {
-        // Assumes the canvas is always wider than tall.
-        double x = event.getRelativeX(fullCanvas.getElement()) / (double) canvas.getOffsetWidth();
-        double y = event.getRelativeY(fullCanvas.getElement()) / (double) canvas.getOffsetWidth();
+        double height = canvas.getOffsetHeight();
+        double x = event.getRelativeX(fullCanvas.getElement()) / height;
+        double y = event.getRelativeY(fullCanvas.getElement()) / height;
         presenter.mouseMove(x, y);
       }
     });
@@ -93,26 +92,19 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
     this.presenter = presenter;
   }
 
-  @Override
-  public void addTileSprite(TileSprite tileSprite) {
-    spriteList.add(tileSprite);
-  }
-
-  @Override
-  public void sendToFront(TileSprite highlightedSprite) {
-    spriteList.sendToFront(highlightedSprite);
-  }
-
   void doUpdate() {
-    int width = canvas.getOffsetWidth();
-    int height = canvas.getOffsetHeight();
-    context.save();
-    try {
-      context.drawImage(board, 0, 0, width, height);
-      context.scale(width, width); // Assumes the canvas is always wider than tall.
-      spriteList.render(context);
-    } finally {
-      context.restore();
+    if (presenter != null) {
+      int height = canvas.getOffsetHeight();
+      context.save();
+      try {
+        context.scale(height, height);
+//        context.fillRect(0, 0, LEFT_COLUMN_WIDTH, 1.0);
+//        context.translate(LEFT_COLUMN_WIDTH, 0);
+//        context.drawImage(board, 0, 0, Board.ASPECT_RATIO, 1.0);
+        presenter.render(context);
+      } finally {
+        context.restore();
+      }
     }
   }
 }
