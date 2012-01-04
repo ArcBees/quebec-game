@@ -27,7 +27,6 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
-import com.philbeaudoin.quebec.client.sprites.RenderableList;
 import com.philbeaudoin.quebec.client.sprites.SpriteResources;
 import com.philbeaudoin.quebec.client.widget.FullCanvas;
 
@@ -57,7 +56,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   private MainPagePresenter presenter;
 
   @Inject
-  public MainPageView(SpriteResources spriteResources, RenderableList renderableList) {
+  public MainPageView(SpriteResources spriteResources) {
     widget = binder.createAndBindUi(this);
     canvas = fullCanvas.asCanvas();
     context = canvas.getContext2d();
@@ -98,6 +97,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
       context.save();
       try {
         context.scale(height, height);
+        context.setLineWidth(0.001);
         presenter.render(context);
       } finally {
         context.restore();

@@ -25,8 +25,9 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import com.philbeaudoin.quebec.client.sprites.Arrow;
 import com.philbeaudoin.quebec.client.sprites.PlayerZone;
-import com.philbeaudoin.quebec.client.sprites.RenderableList;
+import com.philbeaudoin.quebec.client.sprites.SceneNodeList;
 import com.philbeaudoin.quebec.client.sprites.Sprite;
 import com.philbeaudoin.quebec.client.sprites.SpriteResources;
 import com.philbeaudoin.quebec.client.utils.CubeGrid;
@@ -68,11 +69,11 @@ public class MainPagePresenter extends
   public interface MyProxy extends ProxyPlace<MainPagePresenter> {
   }
 
-  private final RenderableList root = new RenderableList();
-  private final RenderableList boardRenderables = new RenderableList(
+  private final SceneNodeList root = new SceneNodeList();
+  private final SceneNodeList boardNodes = new SceneNodeList(
       new Transformation(new Vector2d(LEFT_COLUMN_WIDTH + 0.5 * Board.ASPECT_RATIO, 0.5)));
-  private final RenderableList tileGrid[][] = new RenderableList[18][8];
-  private RenderableList highlightedTile;
+  private final SceneNodeList tileGrid[][] = new SceneNodeList[18][8];
+  private SceneNodeList highlightedTile;
 
   @Inject
   public MainPagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
@@ -101,11 +102,11 @@ public class MainPagePresenter extends
     playerZone.generateCubes(spriteResources);
     root.add(playerZone);
 
-    root.add(boardRenderables);
+    root.add(boardNodes);
     Sprite boardSprite = new Sprite(spriteResources.get(SpriteResources.Type.board));
-    boardRenderables.add(boardSprite);
+    boardNodes.add(boardSprite);
 
-    RenderableList scoreRenderable = new RenderableList(
+    SceneNodeList scoreNode = new SceneNodeList(
         new Transformation(getScorePosition(18)));
     PawnStack pawnStack = new PawnStack(5);
     for (PlayerColor playerColor : PlayerColor.values()) {
@@ -114,19 +115,19 @@ public class MainPagePresenter extends
       }
       Sprite pawnSprite = new Sprite(spriteResources.getPawn(playerColor),
           new Transformation(pawnStack.getPosition(playerColor.ordinal() - 1)));
-      scoreRenderable.add(pawnSprite);
+      scoreNode.add(pawnSprite);
     }
-    boardRenderables.add(scoreRenderable);
+    boardNodes.add(scoreNode);
 
     for (InfluenceType influenceType : InfluenceType.values()) {
       double x = 0.068 * influenceType.ordinal() + 0.09;
       Sprite card = new Sprite(spriteResources.getLeader(influenceType),
           new Transformation(new Vector2d(x, -0.3)));
-      boardRenderables.add(card);
+      boardNodes.add(card);
     }
-/*
+
     CubeGrid zoneGrid = new CubeGrid(25, 5, 0.03);
-    for(InfluenceType influenceType : InfluenceType.values()) {
+    for (InfluenceType influenceType : InfluenceType.values()) {
       Vector2d translation;
       if (influenceType == InfluenceType.CITADEL) {
         translation = new Vector2d(0.45, -0.05);
@@ -135,7 +136,7 @@ public class MainPagePresenter extends
         translation = new Vector2d(0.51 * ((index % 2 == 0) ? 1 : -1),
                                    0.35 * ((index / 2 == 0) ? 1 : -1));
       }
-      RenderableList influenceRenderables = new RenderableList(
+      SceneNodeList influenceNodes = new SceneNodeList(
           new Transformation(translation));
       for (PlayerColor playerColor : PlayerColor.values()) {
         if (playerColor == PlayerColor.NONE) {
@@ -144,12 +145,12 @@ public class MainPagePresenter extends
         for (int i = 0; i < 25; ++i) {
           Sprite cube = new Sprite(spriteResources.getCube(playerColor),
               new Transformation(zoneGrid.getPosition(i, playerColor.ordinal() - 1)));
-          influenceRenderables.add(cube);
+          influenceNodes.add(cube);
         }
       }
-      boardRenderables.add(influenceRenderables);
+      boardNodes.add(influenceNodes);
     }
-*/
+
     CubeGrid cubeGrid = new CubeGrid(3, 1);
 
     TileDeck tileDeck = new TileDeck();
@@ -159,13 +160,13 @@ public class MainPagePresenter extends
         if (actionInfo != null) {
           TileInfo tile = tileDeck.draw(actionInfo.getInfluenceType());
           Transformation tileTransformation = getTileTransformation(column, line, 1.0);
-          RenderableList tileRenderables = new RenderableList(tileTransformation);
+          SceneNodeList tileNodes = new SceneNodeList(tileTransformation);
           Sprite tileSprite = new Sprite(spriteResources.getTile(tile.getInfluenceType(),
               tile.getCentury()));
-          tileRenderables.add(tileSprite);
-          RenderableList cubes = new RenderableList(
+          tileNodes.add(tileSprite);
+          SceneNodeList cubes = new SceneNodeList(
               new Transformation(new Vector2d(-0.0225, 0), 1.0, -tileTransformation.getRotation()));
-          tileRenderables.add(cubes);
+          tileNodes.add(cubes);
           Sprite cubeSprite = new Sprite(spriteResources.getCube(PlayerColor.WHITE),
               new Transformation(cubeGrid.getPosition(0, 0)));
           cubes.add(cubeSprite);
@@ -175,17 +176,20 @@ public class MainPagePresenter extends
           cubeSprite = new Sprite(spriteResources.getCube(PlayerColor.WHITE),
               new Transformation(cubeGrid.getPosition(2, 0)));
           cubes.add(cubeSprite);
-          RenderableList pawn = new RenderableList(
+          SceneNodeList pawn = new SceneNodeList(
               new Transformation(new Vector2d(0, -0.0225), 1.0, -tileTransformation.getRotation()));
-          tileRenderables.add(pawn);
+          tileNodes.add(pawn);
           Sprite pawnSprite = new Sprite(spriteResources.getPawn(PlayerColor.BLACK),
               new Transformation(new Vector2d(0, -0.01)));
           pawn.add(pawnSprite);
-          boardRenderables.add(tileRenderables);
-          tileGrid[column][line] = tileRenderables;
+          boardNodes.add(tileNodes);
+          tileGrid[column][line] = tileNodes;
         }
       }
     }
+
+    Arrow arrow = new Arrow(new Vector2d(0.7, 0.1), new Vector2d(0.699, 0.5));
+    root.add(arrow);
   }
 
   @Override
@@ -230,7 +234,7 @@ public class MainPagePresenter extends
         new MutableTransformation(highlightedTile.getTransformation());
     transformation.setScaling(scaling);
     highlightedTile.setTransformation(transformation);
-    boardRenderables.sendToFront(highlightedTile);
+    boardNodes.sendToFront(highlightedTile);
   }
 
   public void render(Context2d context) {

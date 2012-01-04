@@ -21,27 +21,25 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.philbeaudoin.quebec.client.utils.CubeGrid;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * A renderable that contains all the elements representing the state of a given player.
+ * A scene node that contains all the elements representing the state of a given player.
  *
  * @author beaudoin
  */
-public class PlayerZone implements Renderable {
+public class PlayerZone extends SceneNodeImpl {
   private static final String COLOR[][] = {
       {"#666", "#999"},
       {"#E0E0E0", "#F8F8F8"},
-      {"#DDD", "#EEE"},
-      {"#DDD", "#EEE"},
-      {"#DDD", "#EEE"}
+      {"#ffce87", "#ffe4bc"},
+      {"#48e11f", "#e1f19f"},
+      {"#d7c0e4", "#e1d6ee"}
   };
 
-  private final RenderableList renderables = new RenderableList();
+  private final SceneNodeList sceneNodes = new SceneNodeList();
   private final CubeGrid cubeGrid = new CubeGrid(9, 3);
-  private final MutableTransformation transformation;
   private final PlayerColor playerColor;
   private final String playerName;
   private final double sizeX;
@@ -49,8 +47,8 @@ public class PlayerZone implements Renderable {
 
   public PlayerZone(PlayerColor playerColor, String playerName, double sizeX, double sizeY,
       Transformation transformation) {
+    super(transformation);
     assert playerColor != PlayerColor.NONE;
-    this.transformation = new MutableTransformation(transformation);
     this.playerColor = playerColor;
     this.playerName = playerName;
     this.sizeX = sizeX;
@@ -58,12 +56,12 @@ public class PlayerZone implements Renderable {
   }
 
   public void generateCubes(SpriteResources spriteResources) {
-    RenderableList inactive = new RenderableList(
+    SceneNodeList inactive = new SceneNodeList(
         new Transformation(new Vector2d(sizeX * 0.16, sizeY * 0.6)));
-    renderables.add(inactive);
-    RenderableList active = new RenderableList(
+    sceneNodes.add(inactive);
+    SceneNodeList active = new SceneNodeList(
         new Transformation(new Vector2d(sizeX * 0.4, sizeY * 0.6)));
-    renderables.add(active);
+    sceneNodes.add(active);
     for (int i = 0; i < 9; ++i) {
       for (int j = 0; j < 3; ++j) {
         Sprite cube = new Sprite(spriteResources.getCube(playerColor),
@@ -77,30 +75,14 @@ public class PlayerZone implements Renderable {
 
     Sprite card = new Sprite(spriteResources.getLeader(InfluenceType.CITADEL),
         new Transformation(new Vector2d(sizeX * 0.8, sizeY * 0.5)));
-    renderables.add(card);
-  }
-
-  /**
-   * Sets the transformation of the player zone.
-   * @param transformation The desired transformation.
-   */
-  public void setTransformation(Transformation transformation) {
-    this.transformation.set(transformation);
-  }
-
-  /**
-   * Returns the transformation affecting the sprite.
-   * @return The transformation.
-   */
-  public Transformation getTransformation() {
-    return transformation;
+    sceneNodes.add(card);
   }
 
   @Override
   public void render(Context2d context) {
     context.save();
     try {
-      transformation.applies(context);
+      getTransformation().applies(context);
       CanvasGradient gradient = context.createLinearGradient(0, 0, 0, sizeY);
       int index = playerColor.ordinal() - 1;
       gradient.addColorStop(0, COLOR[index][0]);
@@ -112,7 +94,6 @@ public class PlayerZone implements Renderable {
       gradient.addColorStop(0, COLOR[index][1]);
       gradient.addColorStop(1, COLOR[index][0]);
       context.setFillStyle(gradient);
-      context.setLineWidth(0.001);
       context.fillRect(x0, y0, x1 - x0, y1 - y0);
       context.strokeRect(x0, y0, x1 - x0, y1 - y0);
 
@@ -125,10 +106,9 @@ public class PlayerZone implements Renderable {
       } finally {
         context.restore();
       }
-      renderables.render(context);
+      sceneNodes.render(context);
     } finally {
       context.restore();
     }
   }
-
 }

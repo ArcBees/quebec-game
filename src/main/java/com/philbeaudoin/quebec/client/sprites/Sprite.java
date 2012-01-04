@@ -22,45 +22,27 @@ import java.util.logging.Logger;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 import com.philbeaudoin.quebec.client.utils.LoggerFactory;
-import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 
 /**
  * A sprite that can be transformed and rendered into an HTML5 2d canvas.
  * @author beaudoin
  */
-public class Sprite implements Renderable {
+public class Sprite extends SceneNodeImpl {
   final Logger logger;
 
-  protected final SpriteResources.Info info;
-  private final MutableTransformation transformation;
+  private final SpriteResources.Info info;
 
   public Sprite(SpriteResources.Info info) {
+    super();
     logger = LoggerFactory.get(Sprite.class);
     this.info = info;
-    transformation = new MutableTransformation();
   }
 
   public Sprite(SpriteResources.Info info, Transformation transformation) {
+    super(transformation);
     logger = LoggerFactory.get(Sprite.class);
     this.info = info;
-    this.transformation = new MutableTransformation(transformation);
-  }
-
-  /**
-   * Sets the transformation of the sprite.
-   * @param transformation The desired transformation.
-   */
-  public void setTransformation(Transformation transformation) {
-    this.transformation.set(transformation);
-  }
-
-  /**
-   * Returns the transformation affecting the sprite.
-   * @return The transformation.
-   */
-  public Transformation getTransformation() {
-    return transformation;
   }
 
   @Override
@@ -70,7 +52,7 @@ public class Sprite implements Renderable {
     }
     context.save();
     try {
-      transformation.applies(context, info.getSizeFactor());
+      getTransformation().applies(context, info.getSizeFactor());
       ImageElement imageElement = info.getElement();
       context.drawImage(imageElement, -imageElement.getWidth() / 2, -imageElement.getHeight() / 2);
     } finally {

@@ -95,4 +95,22 @@ public class Transformation {
     context.scale(totalScaling, totalScaling);
     context.rotate(rotation);
   }
+
+  /**
+   * Multiplies this transformation by {@code other}, yielding a final transformation that consists
+   * of first applying {@code other} then {@code this}.
+   * @param other The transformation to multiply with.
+   * @return The result of the multiplication.
+   */
+  public Transformation times(Transformation other) {
+    double totalRotation = rotation + other.rotation;
+    double totalScaling = scaling * other.scaling;
+    double cos = Math.cos(rotation);
+    double sin = Math.sin(rotation);
+    double ox = other.translation.getX();
+    double oy = other.translation.getY();
+    Vector2d totalTranslation = new Vector2d(translation.getX() + (cos * ox - sin * oy) * scaling,
+        translation.getY() + (sin * ox + cos * oy) * scaling);
+    return new Transformation(totalTranslation, totalScaling, totalRotation);
+  }
 }
