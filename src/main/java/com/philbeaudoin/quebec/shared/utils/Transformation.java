@@ -30,7 +30,7 @@ public class Transformation {
 
   public Transformation() {
     this.translation = new MutableVector2d();
-    this.scaling = 1;
+    this.scaling = 1.0;
     this.rotation = 0;
   }
 
@@ -38,6 +38,12 @@ public class Transformation {
     this.translation = new MutableVector2d(transformation.translation);
     this.scaling = transformation.scaling;
     this.rotation = transformation.rotation;
+  }
+
+  public Transformation(Vector2d translation) {
+    this.translation = new MutableVector2d(translation);
+    this.scaling = 1.0;
+    this.rotation = 0;
   }
 
   public Transformation(Vector2d translation, double sizeFactor, double angle) {

@@ -25,7 +25,8 @@ public enum InfluenceType {
   RELIGIOUS,
   POLITIC,
   ECONOMIC,
-  CULTURAL;
+  CULTURAL,
+  CITADEL;
 
   /**
    * Retrieves the number of tiles of a given influence type for a given century.

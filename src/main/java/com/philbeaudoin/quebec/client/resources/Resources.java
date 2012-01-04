@@ -158,6 +158,27 @@ public interface Resources extends ClientBundle {
   DataResource cubeGreen();
   @Source("cube_pink.png")
   DataResource cubePink();
+  @Source("pawn_black.png")
+  DataResource pawnBlack();
+  @Source("pawn_white.png")
+  DataResource pawnWhite();
+  @Source("pawn_orange.png")
+  DataResource pawnOrange();
+  @Source("pawn_green.png")
+  DataResource pawnGreen();
+  @Source("pawn_pink.png")
+  DataResource pawnPink();
+  @Source("leader_religious.png")
+  DataResource leaderReligious();
+  @Source("leader_politic.png")
+  DataResource leaderPolitic();
+  @Source("leader_economic.png")
+  DataResource leaderEconomic();
+  @Source("leader_cultural.png")
+  DataResource leaderCultural();
+  @Source("leader_citadel.png")
+  DataResource leaderCitadel();
+
   @Source("quebec.css")
   Style style();
 

@@ -98,9 +98,6 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
       context.save();
       try {
         context.scale(height, height);
-//        context.fillRect(0, 0, LEFT_COLUMN_WIDTH, 1.0);
-//        context.translate(LEFT_COLUMN_WIDTH, 0);
-//        context.drawImage(board, 0, 0, Board.ASPECT_RATIO, 1.0);
         presenter.render(context);
       } finally {
         context.restore();

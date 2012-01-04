@@ -29,7 +29,7 @@ import com.philbeaudoin.quebec.shared.utils.Transformation;
  * @author Philippe Beaudoin
  */
 public class RenderableList implements Renderable {
-  final ArrayList<Renderable> renderables = new ArrayList<Renderable>();
+  private final ArrayList<Renderable> renderables = new ArrayList<Renderable>();
   private final MutableTransformation transformation;
 
   public RenderableList() {
@@ -41,7 +41,7 @@ public class RenderableList implements Renderable {
   }
 
   /**
-   * Sets the transformation of the sprite.
+   * Sets the transformation of the renderable list.
    * @param transformation The desired transformation.
    */
   public void setTransformation(Transformation transformation) {
@@ -49,7 +49,7 @@ public class RenderableList implements Renderable {
   }
 
   /**
-   * Returns the transformation affecting the sprite.
+   * Returns the transformation affecting the rederable list.
    * @return The transformation.
    */
   public Transformation getTransformation() {

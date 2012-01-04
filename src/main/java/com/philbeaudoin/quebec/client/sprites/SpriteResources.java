@@ -83,6 +83,8 @@ public class SpriteResources {
   private final ArrayList<Info> imageInfos = new ArrayList<Info>(Type.values().length);
   private final Info[][][] tileInfos = new Info[4][4][5];
   private final Info[] cubeInfos = new Info[5];
+  private final Info[] pawnInfos = new Info[5];
+  private final Info[] leaderInfos = new Info[5];
 
   @Inject
   SpriteResources(Resources resources) {
@@ -133,6 +135,18 @@ public class SpriteResources {
     setInfoForCube(PlayerColor.ORANGE, resources.cubeOrange());
     setInfoForCube(PlayerColor.GREEN, resources.cubeGreen());
     setInfoForCube(PlayerColor.PINK, resources.cubePink());
+
+    setInfoForPawn(PlayerColor.BLACK, resources.pawnBlack());
+    setInfoForPawn(PlayerColor.WHITE, resources.pawnWhite());
+    setInfoForPawn(PlayerColor.ORANGE, resources.pawnOrange());
+    setInfoForPawn(PlayerColor.GREEN, resources.pawnGreen());
+    setInfoForPawn(PlayerColor.PINK, resources.pawnPink());
+
+    setInfoForLeader(InfluenceType.RELIGIOUS, resources.leaderReligious());
+    setInfoForLeader(InfluenceType.POLITIC, resources.leaderPolitic());
+    setInfoForLeader(InfluenceType.ECONOMIC, resources.leaderEconomic());
+    setInfoForLeader(InfluenceType.CULTURAL, resources.leaderCultural());
+    setInfoForLeader(InfluenceType.CITADEL, resources.leaderCitadel());
   }
 
   /**
@@ -190,6 +204,31 @@ public class SpriteResources {
   }
 
   /**
+   * Obtain information, including the {@link ImageElement}, for the given type of pawn.
+   * @param playerColor The color of the player for which to get cubes. Will not work with
+   *     {@code PlayerColor.NONE}.
+   * @return The information on that sprite.
+   */
+  public Info getPawn(PlayerColor playerColor) {
+    int colorIndex = playerColor.ordinal();
+    assert colorIndex > 0;
+    Info imageInfo = pawnInfos[colorIndex - 1];
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+
+  /**
+   * Obtain information, including the {@link ImageElement}, for the given type of leader card.
+   * @param leaderType The type of the leader for which to get the card.
+   * @return The information on that sprite.
+   */
+  public Info getLeader(InfluenceType leaderType) {
+    Info imageInfo = leaderInfos[leaderType.ordinal()];
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+
+  /**
    * Lazily instantiate the image element of an image info, if needed.
    * @param imageInfo The image info into which to instantiate the image element.
    */
@@ -217,5 +256,13 @@ public class SpriteResources {
 
   private void setInfoForCube(PlayerColor playerColor, DataResource dataResource) {
     cubeInfos[playerColor.ordinal() - 1] = new Info(dataResource.getSafeUri(), 0.000315);
+  }
+
+  private void setInfoForPawn(PlayerColor playerColor, DataResource dataResource) {
+    pawnInfos[playerColor.ordinal() - 1] = new Info(dataResource.getSafeUri(), 0.000355);
+  }
+
+  private void setInfoForLeader(InfluenceType leaderType, DataResource dataResource) {
+    leaderInfos[leaderType.ordinal()] = new Info(dataResource.getSafeUri(), 0.000265);
   }
 }
