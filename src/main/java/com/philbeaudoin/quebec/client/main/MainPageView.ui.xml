@@ -1,0 +1,26 @@
+<!-- Copyright 2010 Philippe Beaudoin Licensed under the Apache License, 
+    Version 2.0 (the "License"); you may not use this file except in compliance 
+    with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+    Unless required by applicable law or agreed to in writing, software distributed 
+    under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+    OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+    the specific language governing permissions and limitations under the License. -->
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+    xmlns:g='urn:import:com.google.gwt.user.client.ui'
+    xmlns:c='urn:import:com.philbeaudoin.quebec.client.widget'>
+
+    <g:DockLayoutPanel unit="PX">
+        <g:north size="30">
+            <g:Label>This is the main page. Welcome!</g:Label>
+        </g:north>
+        <g:center>
+            <g:LayoutPanel ui:field="center">
+              <g:layer>
+                  <c:FullCanvas ui:field="fullCanvas" targetAspectRatio='1.7' />
+              </g:layer>
+            </g:LayoutPanel>
+        </g:center>
+    </g:DockLayoutPanel>
+
+</ui:UiBinder>
