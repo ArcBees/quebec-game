@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  *
  * @author Philippe Beaudoin
  */
-public class BoardActionInfo {
+public class BoardAction {
   private final Vector2d location;
   private final InfluenceType influenceType;
   private final int cubesPerSpot;
@@ -37,7 +37,7 @@ public class BoardActionInfo {
    * @param cubesPerSpot The number of cubes for each spot on a building associated with this
    *     action.
    */
-  public BoardActionInfo(int column, int line, InfluenceType influenceType,
+  public BoardAction(int column, int line, InfluenceType influenceType,
       int cubesPerSpot) {
     this.location = new Vector2d(column, line);
     this.influenceType = influenceType;

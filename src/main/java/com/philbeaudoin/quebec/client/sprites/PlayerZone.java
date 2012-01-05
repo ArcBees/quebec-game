@@ -19,8 +19,9 @@ package com.philbeaudoin.quebec.client.sprites;
 import com.google.gwt.canvas.dom.client.CanvasGradient;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.philbeaudoin.quebec.client.utils.CubeGrid;
-import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.client.utils.PawnStack;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.PlayerState;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -40,51 +41,88 @@ public class PlayerZone extends SceneNodeImpl {
 
   private final SceneNodeList sceneNodes = new SceneNodeList();
   private final CubeGrid cubeGrid = new CubeGrid(9, 3);
-  private final PlayerColor playerColor;
-  private final String playerName;
+  private final PlayerState playerState;
   private final double sizeX;
   private final double sizeY;
+  private final SceneNodeList passive;
+  private final SceneNodeList active;
+  private final SceneNodeList pawns;
 
-  public PlayerZone(PlayerColor playerColor, String playerName, double sizeX, double sizeY,
-      Transformation transformation) {
+  public PlayerZone(PlayerState playerState, double sizeX,
+      double sizeY, Transformation transformation) {
     super(transformation);
-    assert playerColor != PlayerColor.NONE;
-    this.playerColor = playerColor;
-    this.playerName = playerName;
+    this.playerState = playerState;
     this.sizeX = sizeX;
     this.sizeY = sizeY;
-  }
-
-  public void generateCubes(SpriteResources spriteResources) {
-    SceneNodeList inactive = new SceneNodeList(
+    passive = new SceneNodeList(
         new Transformation(new Vector2d(sizeX * 0.16, sizeY * 0.6)));
-    sceneNodes.add(inactive);
-    SceneNodeList active = new SceneNodeList(
+    sceneNodes.add(passive);
+    active = new SceneNodeList(
         new Transformation(new Vector2d(sizeX * 0.4, sizeY * 0.6)));
     sceneNodes.add(active);
-    for (int i = 0; i < 9; ++i) {
-      for (int j = 0; j < 3; ++j) {
-        Sprite cube = new Sprite(spriteResources.getCube(playerColor),
-            new Transformation(cubeGrid.getPosition(i, j)));
-        inactive.add(cube);
-        cube = new Sprite(spriteResources.getCube(playerColor),
-            new Transformation(cubeGrid.getPosition(i, j)));
-        active.add(cube);
+    pawns = new SceneNodeList(
+        new Transformation(new Vector2d(sizeX * 0.64, sizeY * 0.6)));
+    sceneNodes.add(pawns);
+  }
+
+  public void generateContent(SpriteResources spriteResources) {
+    PlayerColor color = playerState.getPlayer().getColor();
+    for (int i = 0; i < playerState.getNbActiveCubes(); ++i) {
+      int column = i % 9;
+      int line = i / 9;
+      Sprite cube = new Sprite(spriteResources.getCube(color),
+          new Transformation(cubeGrid.getPosition(column, line)));
+      active.add(cube);
+    }
+
+    for (int i = 0; i < playerState.getNbPassiveCubes(); ++i) {
+      int column = i % 9;
+      int line = i / 9;
+      Sprite cube = new Sprite(spriteResources.getCube(color),
+          new Transformation(cubeGrid.getPosition(column, line)));
+      passive.add(cube);
+    }
+
+    int nbPawns = 0;
+    if (playerState.isHoldingArchitect()) {
+      nbPawns++;
+    }
+    if (playerState.isHoldingNeutralArchitect()) {
+      nbPawns++;
+    }
+    if (nbPawns > 0) {
+      PawnStack pawnStack = new PawnStack(nbPawns);
+      int index = 0;
+      if (playerState.isHoldingArchitect()) {
+        Sprite pawn = new Sprite(spriteResources.getPawn(color),
+            new Transformation(pawnStack.getPosition(index)));
+        pawns.add(pawn);
+        index++;
+      }
+      if (playerState.isHoldingNeutralArchitect()) {
+        Sprite pawn = new Sprite(spriteResources.getPawn(PlayerColor.NEUTRAL),
+            new Transformation(pawnStack.getPosition(index)));
+        pawns.add(pawn);
+        index++;
       }
     }
 
-    Sprite card = new Sprite(spriteResources.getLeader(InfluenceType.CITADEL),
-        new Transformation(new Vector2d(sizeX * 0.8, sizeY * 0.5)));
-    sceneNodes.add(card);
+    if (playerState.getLeaderCard() != null) {
+      Sprite card = new Sprite(spriteResources.getLeader(
+          playerState.getLeaderCard().getInfluenceType()),
+          new Transformation(new Vector2d(sizeX * 0.8, sizeY * 0.5)));
+      sceneNodes.add(card);
+    }
   }
 
   @Override
   public void render(Context2d context) {
+    PlayerColor color = playerState.getPlayer().getColor();
     context.save();
     try {
       getTransformation().applies(context);
       CanvasGradient gradient = context.createLinearGradient(0, 0, 0, sizeY);
-      int index = playerColor.ordinal() - 1;
+      int index = color.ordinal() - 1;
       gradient.addColorStop(0, COLOR[index][0]);
       gradient.addColorStop(1, COLOR[index][1]);
       context.setFillStyle(gradient);
@@ -102,7 +140,7 @@ public class PlayerZone extends SceneNodeImpl {
       try {
         context.scale(0.001, 0.001);
         context.setFont("25px arial");
-        context.fillText(playerName, 12, 30);
+        context.fillText(playerState.getPlayer().getName(), 12, 30);
       } finally {
         context.restore();
       }

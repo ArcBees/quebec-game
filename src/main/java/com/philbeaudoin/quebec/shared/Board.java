@@ -19,15 +19,17 @@ package com.philbeaudoin.quebec.shared;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * Encodes the state of the game board.
+ * Static information about the board the state of the game board. This information never changes
+ * during the game.
+ * TODO(beaudoin): Make all fields non-static and inject a singleton Board.
  *
  * @author Philippe Beaudoin
  */
 public class Board {
 
   // Keeps the location of the action associated to each tile location.
-  private static final BoardActionInfo[] boardActions = new BoardActionInfo[16];
-  private static final BoardActionInfo[] locToAction = new BoardActionInfo[18 * 8];
+  private static final BoardAction[] boardActions = new BoardAction[16];
+  private static final BoardAction[] locToAction = new BoardAction[18 * 8];
 
   public static final double ASPECT_RATIO = 1.318209;
 
@@ -49,7 +51,7 @@ public class Board {
    * @return Information on the action, or {@code null} if the passed location is not valid for a
    *     tile.
    */
-  public static BoardActionInfo actionInfoForTileLocation(int column, int line) {
+  public static BoardAction actionForTileLocation(int column, int line) {
     initIfNeeded();
     return locToAction[locToIndex(column, line)];
   }
@@ -65,12 +67,12 @@ public class Board {
    * @return The rotation angle at that location in radians, 0 if it's an invalid location.
    */
   public static double rotationAngleForLocation(int column, int line) {
-    BoardActionInfo actionInfo = actionInfoForTileLocation(column, line);
-    if (actionInfo == null) {
+    BoardAction boardAction = actionForTileLocation(column, line);
+    if (boardAction == null) {
       return 0;
     }
-    double actionColumn = actionInfo.getLocation().getX();
-    double actionLine = actionInfo.getLocation().getY();
+    double actionColumn = boardAction.getLocation().getX();
+    double actionLine = boardAction.getLocation().getY();
 
     if (actionColumn < column) {
       return PI_3_OVER_2 + (line - actionLine) * PI_OVER_3;
@@ -115,22 +117,22 @@ public class Board {
 
   private static void initIfNeeded() {
     if (boardActions[0] == null) {
-      boardActions[0] = new BoardActionInfo(3, 0, InfluenceType.CULTURAL, 1);
-      boardActions[1] = new BoardActionInfo(7, 0, InfluenceType.ECONOMIC, 3);
-      boardActions[2] = new BoardActionInfo(1, 2, InfluenceType.POLITIC, 3);
-      boardActions[3] = new BoardActionInfo(6, 3, InfluenceType.RELIGIOUS, 2);
-      boardActions[4] = new BoardActionInfo(9, 2, InfluenceType.POLITIC, 2);
-      boardActions[5] = new BoardActionInfo(3, 4, InfluenceType.ECONOMIC, 2);
-      boardActions[6] = new BoardActionInfo(5, 6, InfluenceType.POLITIC, 2);
-      boardActions[7] = new BoardActionInfo(1, 6, InfluenceType.RELIGIOUS, 1);
-      boardActions[8] = new BoardActionInfo(16, 1, InfluenceType.ECONOMIC, 1);
-      boardActions[9] = new BoardActionInfo(12, 1, InfluenceType.CULTURAL, 2);
-      boardActions[10] = new BoardActionInfo(14, 3, InfluenceType.RELIGIOUS, 2);
-      boardActions[11] = new BoardActionInfo(8, 5, InfluenceType.CULTURAL, 2);
-      boardActions[12] = new BoardActionInfo(11, 4, InfluenceType.ECONOMIC, 2);
-      boardActions[13] = new BoardActionInfo(16, 5, InfluenceType.CULTURAL, 3);
-      boardActions[14] = new BoardActionInfo(10, 7, InfluenceType.RELIGIOUS, 3);
-      boardActions[15] = new BoardActionInfo(14, 7, InfluenceType.POLITIC, 1);
+      boardActions[0] = new BoardAction(3, 0, InfluenceType.CULTURAL, 1);
+      boardActions[1] = new BoardAction(7, 0, InfluenceType.ECONOMIC, 3);
+      boardActions[2] = new BoardAction(1, 2, InfluenceType.POLITIC, 3);
+      boardActions[3] = new BoardAction(6, 3, InfluenceType.RELIGIOUS, 2);
+      boardActions[4] = new BoardAction(9, 2, InfluenceType.POLITIC, 2);
+      boardActions[5] = new BoardAction(3, 4, InfluenceType.ECONOMIC, 2);
+      boardActions[6] = new BoardAction(5, 6, InfluenceType.POLITIC, 2);
+      boardActions[7] = new BoardAction(1, 6, InfluenceType.RELIGIOUS, 1);
+      boardActions[8] = new BoardAction(16, 1, InfluenceType.ECONOMIC, 1);
+      boardActions[9] = new BoardAction(12, 1, InfluenceType.CULTURAL, 2);
+      boardActions[10] = new BoardAction(14, 3, InfluenceType.RELIGIOUS, 2);
+      boardActions[11] = new BoardAction(8, 5, InfluenceType.CULTURAL, 2);
+      boardActions[12] = new BoardAction(11, 4, InfluenceType.ECONOMIC, 2);
+      boardActions[13] = new BoardAction(16, 5, InfluenceType.CULTURAL, 3);
+      boardActions[14] = new BoardAction(10, 7, InfluenceType.RELIGIOUS, 3);
+      boardActions[15] = new BoardAction(14, 7, InfluenceType.POLITIC, 1);
 
       addSymmetricalActions(2, 1, 0);
       addSymmetricalActions(4, 1, 0);

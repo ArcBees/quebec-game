@@ -28,7 +28,7 @@ import com.google.gwt.user.client.Random;
  */
 public class TileDeck {
   // One deck for each influence type.
-  private final ArrayList<LinkedList<TileInfo>> decks = new ArrayList<LinkedList<TileInfo>>(4);
+  private final ArrayList<LinkedList<Tile>> decks = new ArrayList<LinkedList<Tile>>(4);
 
   /**
    * Create a tile deck and initialize it with the standard tiles of the game.
@@ -36,13 +36,13 @@ public class TileDeck {
   public TileDeck() {
     for (int influenceTypeIndex = 0; influenceTypeIndex < 4; ++influenceTypeIndex) {
       InfluenceType influenceType = InfluenceType.values()[influenceTypeIndex];
-      LinkedList<TileInfo> deck = new LinkedList<TileInfo>();
+      LinkedList<Tile> deck = new LinkedList<Tile>();
       decks.add(deck);
       for (int century = 0; century < 4; ++century) {
         int nbTiles = InfluenceType.getNbTilesForCentury(influenceType, century);
         for (int i = 0; i < nbTiles; ++i) {
           int randomIndex = Random.nextInt(deck.size());
-          deck.add(randomIndex, new TileInfo(influenceType, century, i));
+          deck.add(randomIndex, new Tile(influenceType, century, i));
         }
       }
     }
@@ -54,8 +54,8 @@ public class TileDeck {
    * @param influenceType The desired influence type to draw.
    * @return A tile, or {@code null} if no more tile of that influence type are available.
    */
-  public TileInfo draw(InfluenceType influenceType) {
-    LinkedList<TileInfo> deck = decks.get(influenceType.ordinal());
+  public Tile draw(InfluenceType influenceType) {
+    LinkedList<Tile> deck = decks.get(influenceType.ordinal());
     if (deck.isEmpty()) {
       return null;
     }
