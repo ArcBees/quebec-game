@@ -17,17 +17,27 @@
 package com.philbeaudoin.quebec.shared;
 
 /**
- * The various possible player colors in the game, including an extra one indicating no player
- * color.
+ * Information about a player. This information never changes during the game. See also
+ * {@link PlayerState}.
  *
  * @author beaudoin
  */
-public enum PlayerColor {
-  NONE,
-  BLACK,
-  WHITE,
-  ORANGE,
-  GREEN,
-  PINK,
-  NEUTRAL
+public class Player {
+
+  public final String name;
+  public final PlayerColor color;
+
+  public Player(PlayerColor color, String name) {
+    assert color != PlayerColor.NONE && color != PlayerColor.NEUTRAL;
+    this.name = name;
+    this.color = color;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public PlayerColor getColor() {
+    return color;
+  }
 }

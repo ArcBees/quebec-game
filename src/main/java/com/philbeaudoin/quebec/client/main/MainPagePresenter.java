@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.client.main;
 
+import java.util.ArrayList;
+
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -33,12 +35,16 @@ import com.philbeaudoin.quebec.client.sprites.SpriteResources;
 import com.philbeaudoin.quebec.client.utils.CubeGrid;
 import com.philbeaudoin.quebec.client.utils.PawnStack;
 import com.philbeaudoin.quebec.shared.Board;
-import com.philbeaudoin.quebec.shared.BoardActionInfo;
+import com.philbeaudoin.quebec.shared.BoardAction;
+import com.philbeaudoin.quebec.shared.GameController;
+import com.philbeaudoin.quebec.shared.GameState;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.NameTokens;
+import com.philbeaudoin.quebec.shared.Player;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.PlayerState;
 import com.philbeaudoin.quebec.shared.TileDeck;
-import com.philbeaudoin.quebec.shared.TileInfo;
+import com.philbeaudoin.quebec.shared.Tile;
 import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -81,26 +87,25 @@ public class MainPagePresenter extends
     super(eventBus, view, proxy);
     view.setPresenter(this);
 
-    PlayerZone playerZone = new PlayerZone(PlayerColor.BLACK, "Filou", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation());
-    playerZone.generateCubes(spriteResources);
-    root.add(playerZone);
-    playerZone = new PlayerZone(PlayerColor.WHITE, "Emps", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation(new Vector2d(0, 0.15)));
-    playerZone.generateCubes(spriteResources);
-    root.add(playerZone);
-    playerZone = new PlayerZone(PlayerColor.ORANGE, "Jérôme", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation(new Vector2d(0, 0.30)));
-    playerZone.generateCubes(spriteResources);
-    root.add(playerZone);
-    playerZone = new PlayerZone(PlayerColor.GREEN, "Claudiane", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation(new Vector2d(0, 0.45)));
-    playerZone.generateCubes(spriteResources);
-    root.add(playerZone);
-    playerZone = new PlayerZone(PlayerColor.PINK, "Bob", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation(new Vector2d(0, 0.60)));
-    playerZone.generateCubes(spriteResources);
-    root.add(playerZone);
+    ArrayList<Player> players = new ArrayList<Player>(5);
+    players.add(new Player(PlayerColor.BLACK, "Filou"));
+    players.add(new Player(PlayerColor.WHITE, "Emps"));
+    players.add(new Player(PlayerColor.ORANGE, "Jerome"));
+    players.add(new Player(PlayerColor.GREEN, "Claudiane"));
+    players.add(new Player(PlayerColor.PINK, "Bob"));
+
+    GameState gameState = new GameState();
+    GameController gameController = new GameController();
+    gameController.initGame(gameState, players);
+
+    double deltaY = 0;
+    for (PlayerState playerState : gameState.getPlayerStates()) {
+      PlayerZone playerZone = new PlayerZone(playerState, LEFT_COLUMN_WIDTH, 0.15,
+          new Transformation(new Vector2d(0, deltaY)));
+      deltaY += 0.15;
+      root.add(playerZone);
+      playerZone.generateContent(spriteResources);
+    }
 
     root.add(boardNodes);
     Sprite boardSprite = new Sprite(spriteResources.get(SpriteResources.Type.board));
@@ -110,7 +115,7 @@ public class MainPagePresenter extends
         new Transformation(getScorePosition(18)));
     PawnStack pawnStack = new PawnStack(5);
     for (PlayerColor playerColor : PlayerColor.values()) {
-      if (playerColor == PlayerColor.NONE) {
+      if (playerColor == PlayerColor.NONE || playerColor == PlayerColor.NEUTRAL) {
         continue;
       }
       Sprite pawnSprite = new Sprite(spriteResources.getPawn(playerColor),
@@ -139,7 +144,7 @@ public class MainPagePresenter extends
       SceneNodeList influenceNodes = new SceneNodeList(
           new Transformation(translation));
       for (PlayerColor playerColor : PlayerColor.values()) {
-        if (playerColor == PlayerColor.NONE) {
+        if (playerColor == PlayerColor.NONE || playerColor == PlayerColor.NEUTRAL) {
           continue;
         }
         for (int i = 0; i < 25; ++i) {
@@ -156,9 +161,9 @@ public class MainPagePresenter extends
     TileDeck tileDeck = new TileDeck();
     for (int column = 0; column < 18; ++column) {
       for (int line = 0; line < 8; ++line) {
-        BoardActionInfo actionInfo = Board.actionInfoForTileLocation(column, line);
-        if (actionInfo != null) {
-          TileInfo tile = tileDeck.draw(actionInfo.getInfluenceType());
+        BoardAction boardAction = Board.actionForTileLocation(column, line);
+        if (boardAction != null) {
+          Tile tile = tileDeck.draw(boardAction.getInfluenceType());
           Transformation tileTransformation = getTileTransformation(column, line, 1.0);
           SceneNodeList tileNodes = new SceneNodeList(tileTransformation);
           Sprite tileSprite = new Sprite(spriteResources.getTile(tile.getInfluenceType(),

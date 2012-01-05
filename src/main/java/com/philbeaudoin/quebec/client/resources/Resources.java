@@ -168,6 +168,8 @@ public interface Resources extends ClientBundle {
   DataResource pawnGreen();
   @Source("pawn_pink.png")
   DataResource pawnPink();
+  @Source("pawn_gold.png")
+  DataResource pawnGold();
   @Source("leader_religious.png")
   DataResource leaderReligious();
   @Source("leader_politic.png")

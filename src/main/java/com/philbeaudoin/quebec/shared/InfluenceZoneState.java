@@ -16,18 +16,27 @@
 
 package com.philbeaudoin.quebec.shared;
 
+import java.util.ArrayList;
+
 /**
- * The various possible player colors in the game, including an extra one indicating no player
- * color.
+ * The cubes contained in an influence zone.
  *
  * @author beaudoin
  */
-public enum PlayerColor {
-  NONE,
-  BLACK,
-  WHITE,
-  ORANGE,
-  GREEN,
-  PINK,
-  NEUTRAL
+public class InfluenceZoneState {
+
+  /**
+   * A number of cubes held by a player
+   * @author beaudoin
+   */
+  public class PlayerCubes {
+    public PlayerColor playerColor;
+    public int cubes;
+  }
+
+  private final ArrayList<PlayerCubes> playerCubes = new ArrayList<PlayerCubes>();
+
+  public ArrayList<PlayerCubes> getPlayerCubes() {
+    return playerCubes;
+  }
 }

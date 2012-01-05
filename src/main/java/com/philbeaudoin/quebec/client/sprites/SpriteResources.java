@@ -83,7 +83,7 @@ public class SpriteResources {
   private final ArrayList<Info> imageInfos = new ArrayList<Info>(Type.values().length);
   private final Info[][][] tileInfos = new Info[4][4][5];
   private final Info[] cubeInfos = new Info[5];
-  private final Info[] pawnInfos = new Info[5];
+  private final Info[] pawnInfos = new Info[6];
   private final Info[] leaderInfos = new Info[5];
 
   @Inject
@@ -141,6 +141,7 @@ public class SpriteResources {
     setInfoForPawn(PlayerColor.ORANGE, resources.pawnOrange());
     setInfoForPawn(PlayerColor.GREEN, resources.pawnGreen());
     setInfoForPawn(PlayerColor.PINK, resources.pawnPink());
+    setInfoForPawn(PlayerColor.NEUTRAL, resources.pawnGold());
 
     setInfoForLeader(InfluenceType.RELIGIOUS, resources.leaderReligious());
     setInfoForLeader(InfluenceType.POLITIC, resources.leaderPolitic());
@@ -211,7 +212,7 @@ public class SpriteResources {
    */
   public Info getPawn(PlayerColor playerColor) {
     int colorIndex = playerColor.ordinal();
-    assert colorIndex > 0;
+    assert colorIndex > 0 && colorIndex <= 6;
     Info imageInfo = pawnInfos[colorIndex - 1];
     lazilyInstantiateImageElement(imageInfo);
     return imageInfo;

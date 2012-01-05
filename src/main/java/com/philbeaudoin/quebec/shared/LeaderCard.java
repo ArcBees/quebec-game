@@ -17,39 +17,21 @@
 package com.philbeaudoin.quebec.shared;
 
 /**
- * Information on a tile that can be placed on the board.
- *
- * @author Philippe Beaudoin
+ * A specific leader card. This information never changes during the game.
+ * @author beaudoin
  */
-public class TileInfo {
+public class LeaderCard {
   private final InfluenceType influenceType;
-  private final int century;
-  private final int buildingIndex;
 
-  TileInfo(InfluenceType influenceType, int century, int buildingIndex) {
+  public LeaderCard(InfluenceType influenceType) {
     this.influenceType = influenceType;
-    this.century = century;
-    this.buildingIndex = buildingIndex;
   }
 
   /**
-   * @return The type of influence (color) of that tile.
+   * Access the influence type of that leader card.
+   * @return The influence type.
    */
   public InfluenceType getInfluenceType() {
     return influenceType;
-  }
-
-  /**
-   * @return The century in which that tile is built.
-   */
-  public int getCentury() {
-    return century;
-  }
-
-  /**
-   * @return The index of the building that is printed on the backside of the tileß.
-   */
-  public int getBuildingIndex() {
-    return buildingIndex;
   }
 }

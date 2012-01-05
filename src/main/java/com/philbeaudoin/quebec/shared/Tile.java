@@ -16,67 +16,41 @@
 
 package com.philbeaudoin.quebec.shared;
 
-import java.util.ArrayList;
-
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
-
 /**
- * Information on a tile in play.
+ * Information on a tile that can be placed on the board. This information never changes during the
+ * game. See also {@link TileState}.
  *
  * @author Philippe Beaudoin
  */
 public class Tile {
+  private final InfluenceType influenceType;
+  private final int century;
+  private final int buildingIndex;
 
-  private final TileInfo tileInfo;
-  private final Vector2d location;
-  /* The color of the cubes at each of the three building spots. */
-  private final ArrayList<PlayerColor> colorInSpot = new ArrayList<PlayerColor>(3);
-
-  private boolean buildingFacing;
-
-  Tile(TileInfo tileInfo, Vector2d location) {
-    this.tileInfo = tileInfo;
-    this.location = location;
-    this.buildingFacing = false;
+  Tile(InfluenceType influenceType, int century, int buildingIndex) {
+    this.influenceType = influenceType;
+    this.century = century;
+    this.buildingIndex = buildingIndex;
   }
 
   /**
-   * @return The information on that tile.
+   * @return The type of influence (color) of that tile.
    */
-  public TileInfo getTileInfo() {
-    return tileInfo;
-  }
-
-  public Vector2d getLocation() {
-    return location;
+  public InfluenceType getInfluenceType() {
+    return influenceType;
   }
 
   /**
-   * @param spot The index of the spot for which to return the player color.
-   * @return The color of the player in the specified building spot or {@code PlayerColor.NONE} if
-   *     the spot is empty.
+   * @return The century in which that tile is built.
    */
-  public PlayerColor colorInSpot(int spot) {
-    assert spot < 3;
-    if (colorInSpot.size() <= spot) {
-      return PlayerColor.NONE;
-    }
-    return colorInSpot.get(spot);
+  public int getCentury() {
+    return century;
   }
 
   /**
-   * @return {@code true} if the tile is showing its building face, {@code false} otherwise.
+   * @return The index of the building that is printed on the backside of the tileß.
    */
-  public boolean isBuildingFacing() {
-    return buildingFacing;
-  }
-
-  /**
-   * @return The number of cube each building spot holds.
-   */
-  public int cubesPerSpot() {
-    BoardActionInfo info =
-        Board.actionInfoForTileLocation(location.getColumn(), location.getLine());
-    return info.getCubesPerSpot();
+  public int getBuildingIndex() {
+    return buildingIndex;
   }
 }
