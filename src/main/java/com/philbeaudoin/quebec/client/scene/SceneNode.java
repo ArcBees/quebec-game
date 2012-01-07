@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.sprites;
+package com.philbeaudoin.quebec.client.scene;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 
 /**
- * An object that can be rendered as part of the scene tree into an HTML5 2d canvas.
- * @author beaudoin
+ * An object that can be drawn as part of the scene tree into an HTML5 2d canvas.
+ * @author Philippe Beaudoin
  */
 public interface SceneNode {
 
   /**
-   * Adds this node as a child of the parent.
+   * Adds this node as a child of the parent. If the parent is {@code null} the node is removed
+   * from its parent and becomes a top level node.
    * @param parent The parent.
    */
   void setParent(SceneNodeList parent);
 
   /**
-   * Access the node's parent in the scene tree.
+   * Access the node's parent in the scene tree. If {@code null}, the node is a top level node.
    * @return The parent.
    */
   SceneNodeList getParent();
 
   /**
-   * Renders the sprite to the canvas.
-   * @param context The canvas context into which to render.
+   * Draws the scene node to the canvas.
+   * @param context The canvas context into which to draw.
    */
-  void render(Context2d context);
+  void draw(Context2d context);
 
   /**
    * Sets the local transformation of the scene node.

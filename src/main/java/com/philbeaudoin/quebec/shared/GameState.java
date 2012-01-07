@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 /**
  * The state of the entire game.
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public class GameState {
 

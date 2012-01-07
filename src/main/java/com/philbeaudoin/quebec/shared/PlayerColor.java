@@ -20,7 +20,7 @@ package com.philbeaudoin.quebec.shared;
  * The various possible player colors in the game, including an extra one indicating no player
  * color.
  *
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public enum PlayerColor {
   NONE,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.sprites;
+package com.philbeaudoin.quebec.client.scene;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,7 +64,7 @@ public class SpriteResources {
 
     /**
      * Access the optimal size factor of the sprite. When resized uniformally according to that
-     * factor, the sprite is rendered to its real size on the board.
+     * factor, the sprite is drawn to its real size on the board.
      * @return The optimal size factor.
      */
     public double getSizeFactor() {

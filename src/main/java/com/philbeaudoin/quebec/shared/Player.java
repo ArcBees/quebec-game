@@ -20,7 +20,7 @@ package com.philbeaudoin.quebec.shared;
  * Information about a player. This information never changes during the game. See also
  * {@link PlayerState}.
  *
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public class Player {
 

@@ -22,7 +22,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * This class makes it possible to determine the position of cubes within a cube grid.
  * The cubes on each line are staggered. The grid is centered given the specified number of columns
  * and lines.
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public class CubeGrid {
   private static final double CUBE_SIZE_X = 0.01;
