@@ -29,6 +29,7 @@ public class TileState {
 
   private final Tile tile;
   private final Vector2d location;
+  private PlayerColor architect = PlayerColor.NONE;
   /* The color of the cubes at each of the three building spots. */
   private final ArrayList<PlayerColor> colorInSpot = new ArrayList<PlayerColor>(3);
 
@@ -53,12 +54,28 @@ public class TileState {
   }
 
   /**
+   * Retrieves the color of the architect sitting on the tile.
+   * @return The player color of the architect, or {@code PlayerColor.NONE} if none.
+   */
+  public PlayerColor getArchitect() {
+    return architect;
+  }
+
+  /**
+   * Sets the color of the architect sitting on the tile.
+   * param architect The player color of the architect, or {@code PlayerColor.NONE} if none.
+   */
+  public void setArchitect(PlayerColor architect) {
+    this.architect = architect;
+  }
+
+  /**
    * Retrieves the color of the cubes in a given spot of the tile.
    * @param spot The index of the spot for which to return the player color.
    * @return The color of the player in the specified building spot or {@code PlayerColor.NONE} if
    *     the spot is empty.
    */
-  public PlayerColor colorInSpot(int spot) {
+  public PlayerColor getColorInSpot(int spot) {
     assert spot < 3;
     return colorInSpot.get(spot);
   }

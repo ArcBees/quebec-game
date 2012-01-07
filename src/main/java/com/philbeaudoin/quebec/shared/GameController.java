@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 /**
  * A controller to manipulate the state of a game.
  *
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public class GameController {
 
@@ -47,6 +47,7 @@ public class GameController {
       playerState.setNbActiveCubes(3);
       playerStates.add(playerState);
     }
+    playerStates.get(0).setCurrentPlayer(true);
 
     List<TileState> tileStates = gameState.getTileStates();
     tileStates.clear();

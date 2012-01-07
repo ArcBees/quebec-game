@@ -21,13 +21,13 @@ import java.util.ArrayList;
 /**
  * The cubes contained in an influence zone.
  *
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public class InfluenceZoneState {
 
   /**
-   * A number of cubes held by a player
-   * @author beaudoin
+   * A number of cubes held by a player.
+   * @author Philippe Beaudoin
    */
   public class PlayerCubes {
     public PlayerColor playerColor;

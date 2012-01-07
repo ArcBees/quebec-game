@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.sprites;
+package com.philbeaudoin.quebec.client.scene;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,8 +25,8 @@ import com.philbeaudoin.quebec.client.utils.LoggerFactory;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 
 /**
- * A sprite that can be transformed and rendered into an HTML5 2d canvas.
- * @author beaudoin
+ * A sprite that can be transformed and drawn into an HTML5 2d canvas.
+ * @author Philippe Beaudoin
  */
 public class Sprite extends SceneNodeImpl {
   final Logger logger;
@@ -46,9 +46,9 @@ public class Sprite extends SceneNodeImpl {
   }
 
   @Override
-  public void render(Context2d context) {
+  public void draw(Context2d context) {
     if (info == null || info.getElement() == null) {
-      logger.log(Level.SEVERE, "Trying to render sprite with null image element.");
+      logger.log(Level.SEVERE, "Trying to draw a sprite with null image element.");
     }
     context.save();
     try {

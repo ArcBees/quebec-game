@@ -20,7 +20,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * This class makes it possible to determine the position of pawns within a staggered stack.
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public class PawnStack {
   private static final double PATTERN_SIZE_X = 0.01;

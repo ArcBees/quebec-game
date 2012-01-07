@@ -21,7 +21,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 /**
  * An immutable 2-dimension transformation.
  *
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public class Transformation {
   protected final MutableVector2d translation;
@@ -78,7 +78,7 @@ public class Transformation {
 
   /**
    * Applies the transformation.
-   * @param context The canvas context into which to render.
+   * @param context The canvas context into which to apply the transformation.
    */
   public void applies(Context2d context) {
     applies(context, 1);
@@ -86,7 +86,7 @@ public class Transformation {
 
   /**
    * Applies the transformation with an extra scaling factor.
-   * @param context The canvas context into which to render.
+   * @param context The canvas context into which to apply the transformation.
    * @param sizeFactor An extra scaling factor to use.
    */
   public void applies(Context2d context, double sizeFactor) {

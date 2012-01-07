@@ -27,26 +27,14 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
-import com.philbeaudoin.quebec.client.sprites.Arrow;
-import com.philbeaudoin.quebec.client.sprites.PlayerZone;
-import com.philbeaudoin.quebec.client.sprites.SceneNodeList;
-import com.philbeaudoin.quebec.client.sprites.Sprite;
-import com.philbeaudoin.quebec.client.sprites.SpriteResources;
-import com.philbeaudoin.quebec.client.utils.CubeGrid;
-import com.philbeaudoin.quebec.client.utils.PawnStack;
-import com.philbeaudoin.quebec.shared.Board;
-import com.philbeaudoin.quebec.shared.BoardAction;
+import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.scene.Arrow;
+import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.GameController;
 import com.philbeaudoin.quebec.shared.GameState;
-import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.Player;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.PlayerState;
-import com.philbeaudoin.quebec.shared.TileDeck;
-import com.philbeaudoin.quebec.shared.Tile;
-import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -58,7 +46,9 @@ public class MainPagePresenter extends
     Presenter<MainPagePresenter.MyView, MainPagePresenter.MyProxy> {
 
   public static final Object TYPE_RevealNewsContent = new Object();
-  public static final double LEFT_COLUMN_WIDTH = 0.38209;
+
+  // TODO: Rely on injection, inject spriteResources in there.
+  private final GameStateRenderer gameStateRenderer = new GameStateRenderer();
 
   /**
    * The presenter's view.
@@ -75,12 +65,7 @@ public class MainPagePresenter extends
   public interface MyProxy extends ProxyPlace<MainPagePresenter> {
   }
 
-  private final SceneNodeList root = new SceneNodeList();
-  private final SceneNodeList boardNodes = new SceneNodeList(
-      new Transformation(new Vector2d(LEFT_COLUMN_WIDTH + 0.5 * Board.ASPECT_RATIO, 0.5)));
-  private final SceneNodeList tileGrid[][] = new SceneNodeList[18][8];
-  private SceneNodeList highlightedTile;
-
+  // TODO Remove dependency on SpriteResources.
   @Inject
   public MainPagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
       final SpriteResources spriteResources) {
@@ -97,104 +82,10 @@ public class MainPagePresenter extends
     GameState gameState = new GameState();
     GameController gameController = new GameController();
     gameController.initGame(gameState, players);
+    gameStateRenderer.render(gameState, spriteResources);
 
-    double deltaY = 0;
-    for (PlayerState playerState : gameState.getPlayerStates()) {
-      PlayerZone playerZone = new PlayerZone(playerState, LEFT_COLUMN_WIDTH, 0.15,
-          new Transformation(new Vector2d(0, deltaY)));
-      deltaY += 0.15;
-      root.add(playerZone);
-      playerZone.generateContent(spriteResources);
-    }
-
-    root.add(boardNodes);
-    Sprite boardSprite = new Sprite(spriteResources.get(SpriteResources.Type.board));
-    boardNodes.add(boardSprite);
-
-    SceneNodeList scoreNode = new SceneNodeList(
-        new Transformation(getScorePosition(18)));
-    PawnStack pawnStack = new PawnStack(5);
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (playerColor == PlayerColor.NONE || playerColor == PlayerColor.NEUTRAL) {
-        continue;
-      }
-      Sprite pawnSprite = new Sprite(spriteResources.getPawn(playerColor),
-          new Transformation(pawnStack.getPosition(playerColor.ordinal() - 1)));
-      scoreNode.add(pawnSprite);
-    }
-    boardNodes.add(scoreNode);
-
-    for (InfluenceType influenceType : InfluenceType.values()) {
-      double x = 0.068 * influenceType.ordinal() + 0.09;
-      Sprite card = new Sprite(spriteResources.getLeader(influenceType),
-          new Transformation(new Vector2d(x, -0.3)));
-      boardNodes.add(card);
-    }
-
-    CubeGrid zoneGrid = new CubeGrid(25, 5, 0.03);
-    for (InfluenceType influenceType : InfluenceType.values()) {
-      Vector2d translation;
-      if (influenceType == InfluenceType.CITADEL) {
-        translation = new Vector2d(0.45, -0.05);
-      } else {
-        int index = influenceType.ordinal();
-        translation = new Vector2d(0.51 * ((index % 2 == 0) ? 1 : -1),
-                                   0.35 * ((index / 2 == 0) ? 1 : -1));
-      }
-      SceneNodeList influenceNodes = new SceneNodeList(
-          new Transformation(translation));
-      for (PlayerColor playerColor : PlayerColor.values()) {
-        if (playerColor == PlayerColor.NONE || playerColor == PlayerColor.NEUTRAL) {
-          continue;
-        }
-        for (int i = 0; i < 25; ++i) {
-          Sprite cube = new Sprite(spriteResources.getCube(playerColor),
-              new Transformation(zoneGrid.getPosition(i, playerColor.ordinal() - 1)));
-          influenceNodes.add(cube);
-        }
-      }
-      boardNodes.add(influenceNodes);
-    }
-
-    CubeGrid cubeGrid = new CubeGrid(3, 1);
-
-    TileDeck tileDeck = new TileDeck();
-    for (int column = 0; column < 18; ++column) {
-      for (int line = 0; line < 8; ++line) {
-        BoardAction boardAction = Board.actionForTileLocation(column, line);
-        if (boardAction != null) {
-          Tile tile = tileDeck.draw(boardAction.getInfluenceType());
-          Transformation tileTransformation = getTileTransformation(column, line, 1.0);
-          SceneNodeList tileNodes = new SceneNodeList(tileTransformation);
-          Sprite tileSprite = new Sprite(spriteResources.getTile(tile.getInfluenceType(),
-              tile.getCentury()));
-          tileNodes.add(tileSprite);
-          SceneNodeList cubes = new SceneNodeList(
-              new Transformation(new Vector2d(-0.0225, 0), 1.0, -tileTransformation.getRotation()));
-          tileNodes.add(cubes);
-          Sprite cubeSprite = new Sprite(spriteResources.getCube(PlayerColor.WHITE),
-              new Transformation(cubeGrid.getPosition(0, 0)));
-          cubes.add(cubeSprite);
-          cubeSprite = new Sprite(spriteResources.getCube(PlayerColor.WHITE),
-              new Transformation(cubeGrid.getPosition(1, 0)));
-          cubes.add(cubeSprite);
-          cubeSprite = new Sprite(spriteResources.getCube(PlayerColor.WHITE),
-              new Transformation(cubeGrid.getPosition(2, 0)));
-          cubes.add(cubeSprite);
-          SceneNodeList pawn = new SceneNodeList(
-              new Transformation(new Vector2d(0, -0.0225), 1.0, -tileTransformation.getRotation()));
-          tileNodes.add(pawn);
-          Sprite pawnSprite = new Sprite(spriteResources.getPawn(PlayerColor.BLACK),
-              new Transformation(new Vector2d(0, -0.01)));
-          pawn.add(pawnSprite);
-          boardNodes.add(tileNodes);
-          tileGrid[column][line] = tileNodes;
-        }
-      }
-    }
-
-    Arrow arrow = new Arrow(new Vector2d(0.7, 0.1), new Vector2d(0.699, 0.5));
-    root.add(arrow);
+    Arrow arrow = new Arrow(new Vector2d(0.7, 0.1), new Vector2d(1.699, 0.2));
+    gameStateRenderer.getRoot().add(arrow);
   }
 
   @Override
@@ -209,6 +100,7 @@ public class MainPagePresenter extends
    * @param y The Y normalized mouse position.
    */
   public void mouseMove(double x, double y) {
+    /*
     if (highlightedTile != null) {
       MutableTransformation transformation =
           new MutableTransformation(highlightedTile.getTransformation());
@@ -240,28 +132,10 @@ public class MainPagePresenter extends
     transformation.setScaling(scaling);
     highlightedTile.setTransformation(transformation);
     boardNodes.sendToFront(highlightedTile);
+    */
   }
 
-  public void render(Context2d context) {
-    root.render(context);
-  }
-
-  private Transformation getTileTransformation(int column, int line, double scaling) {
-    Vector2d translation = Board.positionForLocation(column, line);
-    double rotation = Board.rotationAngleForLocation(column, line);
-    return new Transformation(translation, scaling, rotation);
-  }
-
-  private Vector2d getScorePosition(int score) {
-    int moduloScore = score % 50;
-    double x = 0.614 - (Math.min(28, moduloScore)) * 0.0439;
-    double y = 0.442 - (Math.max(0, moduloScore - 28)) * 0.0416;
-    if ((score / 50) % 2 == 1) {
-      x *= -1.0;
-      y *= -1.0;
-      x -= 0.001;
-      y -= 0.03;
-    }
-    return new Vector2d(x, y);
+  public void draw(Context2d context) {
+    gameStateRenderer.getRoot().draw(context);
   }
 }

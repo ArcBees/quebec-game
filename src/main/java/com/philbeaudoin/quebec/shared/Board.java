@@ -31,8 +31,6 @@ public class Board {
   private static final BoardAction[] boardActions = new BoardAction[16];
   private static final BoardAction[] locToAction = new BoardAction[18 * 8];
 
-  public static final double ASPECT_RATIO = 1.318209;
-
   /**
    * Checks if the given location is valid for holding a tile.
    * @param column The location column.

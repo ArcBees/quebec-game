@@ -26,9 +26,11 @@ public class PlayerState {
   private final Player player;
   private int nbPassiveCubes;
   private int nbActiveCubes;
+  private boolean currentPlayer;
   private boolean holdingArchitect;
   private boolean holdingNeutralArchitect;
   private LeaderCard leaderCard;
+  private int score;
 
   /**
    * Initializes a player state.
@@ -74,6 +76,20 @@ public class PlayerState {
   }
 
   /**
+   * @param currentPlayer True if this is the currently active player.
+   */
+  public void setCurrentPlayer(boolean currentPlayer) {
+    this.currentPlayer = currentPlayer;
+  }
+
+  /**
+   * @return True if this is the currently active player.
+   */
+  public boolean isCurrentPlayer() {
+    return currentPlayer;
+  }
+
+  /**
    * @param holdingArchitect True if the player is holding his architect.
    */
   public void setHoldingArchitect(boolean holdingArchitect) {
@@ -113,5 +129,19 @@ public class PlayerState {
    */
   public LeaderCard getLeaderCard() {
     return leaderCard;
+  }
+
+  /**
+   * @param score The player's score.
+   */
+  public void setScore(int score) {
+    this.score = score;
+  }
+
+  /**
+   * @return The player's score.
+   */
+  public int getScore() {
+    return score;
   }
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.sprites;
+package com.philbeaudoin.quebec.client.scene;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * An arrow that can point from one point to another.
- * @author beaudoin
+ * Scene tree node drawing an arrow pointing from one point to another.
+ * @author Philippe Beaudoin
  */
 public class Arrow extends SceneNodeImpl {
   private static final double CONTROL_POINT_DIST = 0.1;
@@ -40,6 +40,11 @@ public class Arrow extends SceneNodeImpl {
   private final Vector2d p5;
   private final Vector2d p6;
 
+  /**
+   * Creates a scene tree node drawing an arrow pointing from one point to another.
+   * @param from The starting point of the arrow.
+   * @param to The ending point of the arrow.
+   */
   public Arrow(Vector2d from, Vector2d to) {
     super();
     this.from = from;
@@ -76,7 +81,7 @@ public class Arrow extends SceneNodeImpl {
   }
 
   @Override
-  public void render(Context2d context) {
+  public void draw(Context2d context) {
     context.save();
     try {
       getTransformation().applies(context);

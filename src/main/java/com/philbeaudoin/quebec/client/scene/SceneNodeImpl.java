@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.sprites;
+package com.philbeaudoin.quebec.client.scene;
 
 import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
@@ -22,7 +22,7 @@ import com.philbeaudoin.quebec.shared.utils.Transformation;
 /**
  * Base class for any node of the scene tree.
  *
- * @author beaudoin
+ * @author Philippe Beaudoin
  */
 public abstract class SceneNodeImpl implements SceneNode {
 
@@ -53,7 +53,9 @@ public abstract class SceneNodeImpl implements SceneNode {
       this.parent.removeFromList(this);
     }
     this.parent = parent;
-    this.parent.addToList(this);
+    if (this.parent != null) {
+      this.parent.addToList(this);
+    }
   }
 
   @Override
