@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 
 /**
@@ -36,7 +37,7 @@ public class RenderableList implements Renderable {
     transformation = new MutableTransformation();
   }
 
-  public RenderableList(Transformation transformation) {
+  public RenderableList(ConstantTransformation transformation) {
     this.transformation = new MutableTransformation(transformation);
   }
 
@@ -52,7 +53,7 @@ public class RenderableList implements Renderable {
    * Returns the transformation affecting the rederable list.
    * @return The transformation.
    */
-  public Transformation getTransformation() {
+  public ConstantTransformation getTransformation() {
     return transformation;
   }
 
@@ -76,17 +77,13 @@ public class RenderableList implements Renderable {
     }
   }
 
-  /**
-   * Renders all the renderables contained in the list.
-   * @param context The canvas context into which to render.
-   */
   @Override
-  public void render(Context2d context) {
+  public void render(double time, Context2d context) {
     context.save();
     try {
-      transformation.applies(context);
+      transformation.applies(time, context);
       for (Renderable renderable : renderables) {
-        renderable.render(context);
+        renderable.render(time, context);
       }
     } finally {
       context.restore();

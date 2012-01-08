@@ -1,98 +1,43 @@
-/**
- * Copyright 2011 Philippe Beaudoin
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.philbeaudoin.quebec.shared.utils;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-/**
- * An immutable 2-dimension transformation.
- *
- * @author beaudoin
- */
-public class Transformation {
-  protected final MutableVector2d translation;
-  protected double scaling;
-  protected double rotation;
-
-  public Transformation() {
-    this.translation = new MutableVector2d();
-    this.scaling = 1.0;
-    this.rotation = 0;
-  }
-
-  public Transformation(Transformation transformation) {
-    this.translation = new MutableVector2d(transformation.translation);
-    this.scaling = transformation.scaling;
-    this.rotation = transformation.rotation;
-  }
-
-  public Transformation(Vector2d translation) {
-    this.translation = new MutableVector2d(translation);
-    this.scaling = 1.0;
-    this.rotation = 0;
-  }
-
-  public Transformation(Vector2d translation, double sizeFactor, double angle) {
-    this.translation = new MutableVector2d(translation);
-    this.scaling = sizeFactor;
-    this.rotation = angle;
-  }
+public interface Transformation {
 
   /**
    * Returns the translation component of the transformation.
+   * @param time The time at which to get the transformation.
    * @return The translation component.
    */
-  public Vector2d getTranslation() {
-    return translation;
-  }
+  public abstract Vector2d getTranslation(double time);
 
   /**
    * Returns the scaling factor of that transformation.
+   * @param time The time at which to get the transformation.
    * @return The scaling factor.
    */
-  public double getScaling() {
-    return scaling;
-  }
+  public abstract double getScaling(double time);
 
   /**
    * Returns the clockwise rotation angle of that transformation.
+   * @param time The time at which to get the transformation.
    * @return The angle, in radians.
    */
-  public double getRotation() {
-    return rotation;
-  }
+  public abstract double getRotation(double time);
 
   /**
    * Applies the transformation.
+   * @param time The time at which to apply the transformation.
    * @param context The canvas context into which to render.
    */
-  public void applies(Context2d context) {
-    applies(context, 1);
-  }
+  public abstract void applies(double time, Context2d context);
 
   /**
    * Applies the transformation with an extra scaling factor.
+   * @param time The time at which to apply the transformation.
    * @param context The canvas context into which to render.
    * @param sizeFactor An extra scaling factor to use.
    */
-  public void applies(Context2d context, double sizeFactor) {
-    double totalScaling = scaling * sizeFactor;
-    context.translate(translation.getX(), translation.getY());
-    context.scale(totalScaling, totalScaling);
-    context.rotate(rotation);
-  }
+  public abstract void applies(double time, Context2d context, double sizeFactor);
+
 }

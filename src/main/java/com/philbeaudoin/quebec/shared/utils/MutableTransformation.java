@@ -21,7 +21,7 @@ package com.philbeaudoin.quebec.shared.utils;
  *
  * @author Philippe Beaudoin
  */
-public class MutableTransformation extends Transformation {
+public class MutableTransformation extends ConstantTransformation {
 
   public MutableTransformation() {
     super();
@@ -73,8 +73,8 @@ public class MutableTransformation extends Transformation {
    * @param transformation The transformation to copy.
    */
   public void set(Transformation transformation) {
-    setTranslation(transformation.getTranslation());
-    setScaling(transformation.getScaling());
-    setRotation(transformation.getRotation());
+    setTranslation(transformation.getTranslation(0));
+    setScaling(transformation.getScaling(0));
+    setRotation(transformation.getRotation(0));
   }
 }

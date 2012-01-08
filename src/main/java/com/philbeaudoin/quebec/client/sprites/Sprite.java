@@ -33,7 +33,7 @@ public class Sprite implements Renderable {
   final Logger logger;
 
   protected final SpriteResources.Info info;
-  private final MutableTransformation transformation;
+  private final Transformation transformation;
 
   public Sprite(SpriteResources.Info info) {
     logger = LoggerFactory.get(Sprite.class);
@@ -44,15 +44,7 @@ public class Sprite implements Renderable {
   public Sprite(SpriteResources.Info info, Transformation transformation) {
     logger = LoggerFactory.get(Sprite.class);
     this.info = info;
-    this.transformation = new MutableTransformation(transformation);
-  }
-
-  /**
-   * Sets the transformation of the sprite.
-   * @param transformation The desired transformation.
-   */
-  public void setTransformation(Transformation transformation) {
-    this.transformation.set(transformation);
+    this.transformation = transformation;
   }
 
   /**
@@ -64,13 +56,13 @@ public class Sprite implements Renderable {
   }
 
   @Override
-  public void render(Context2d context) {
+  public void render(double time, Context2d context) {
     if (info == null || info.getElement() == null) {
       logger.log(Level.SEVERE, "Trying to render sprite with null image element.");
     }
     context.save();
     try {
-      transformation.applies(context, info.getSizeFactor());
+      transformation.applies(time, context, info.getSizeFactor());
       ImageElement imageElement = info.getElement();
       context.drawImage(imageElement, -imageElement.getWidth() / 2, -imageElement.getHeight() / 2);
     } finally {

@@ -26,6 +26,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import com.philbeaudoin.quebec.client.sprites.PlayerZone;
+import com.philbeaudoin.quebec.client.sprites.Renderable;
 import com.philbeaudoin.quebec.client.sprites.RenderableList;
 import com.philbeaudoin.quebec.client.sprites.Sprite;
 import com.philbeaudoin.quebec.client.sprites.SpriteResources;
@@ -38,7 +39,9 @@ import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.TileDeck;
 import com.philbeaudoin.quebec.shared.TileInfo;
+import com.philbeaudoin.quebec.shared.utils.ArcTransformation;
 import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -70,7 +73,7 @@ public class MainPagePresenter extends
 
   private final RenderableList root = new RenderableList();
   private final RenderableList boardRenderables = new RenderableList(
-      new Transformation(new Vector2d(LEFT_COLUMN_WIDTH + 0.5 * Board.ASPECT_RATIO, 0.5)));
+      new ConstantTransformation(new Vector2d(LEFT_COLUMN_WIDTH + 0.5 * Board.ASPECT_RATIO, 0.5)));
   private final RenderableList tileGrid[][] = new RenderableList[18][8];
   private RenderableList highlightedTile;
 
@@ -81,23 +84,23 @@ public class MainPagePresenter extends
     view.setPresenter(this);
 
     PlayerZone playerZone = new PlayerZone(PlayerColor.BLACK, "Filou", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation());
+        new ConstantTransformation());
     playerZone.generateCubes(spriteResources);
     root.add(playerZone);
     playerZone = new PlayerZone(PlayerColor.WHITE, "Emps", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation(new Vector2d(0, 0.15)));
+        new ConstantTransformation(new Vector2d(0, 0.15)));
     playerZone.generateCubes(spriteResources);
     root.add(playerZone);
     playerZone = new PlayerZone(PlayerColor.ORANGE, "Jérôme", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation(new Vector2d(0, 0.30)));
+        new ConstantTransformation(new Vector2d(0, 0.30)));
     playerZone.generateCubes(spriteResources);
     root.add(playerZone);
     playerZone = new PlayerZone(PlayerColor.GREEN, "Claudiane", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation(new Vector2d(0, 0.45)));
+        new ConstantTransformation(new Vector2d(0, 0.45)));
     playerZone.generateCubes(spriteResources);
     root.add(playerZone);
     playerZone = new PlayerZone(PlayerColor.PINK, "Bob", LEFT_COLUMN_WIDTH, 0.15,
-        new Transformation(new Vector2d(0, 0.60)));
+        new ConstantTransformation(new Vector2d(0, 0.60)));
     playerZone.generateCubes(spriteResources);
     root.add(playerZone);
 
@@ -106,14 +109,14 @@ public class MainPagePresenter extends
     boardRenderables.add(boardSprite);
 
     RenderableList scoreRenderable = new RenderableList(
-        new Transformation(getScorePosition(18)));
+        new ConstantTransformation(getScorePosition(18)));
     PawnStack pawnStack = new PawnStack(5);
     for (PlayerColor playerColor : PlayerColor.values()) {
       if (playerColor == PlayerColor.NONE) {
         continue;
       }
       Sprite pawnSprite = new Sprite(spriteResources.getPawn(playerColor),
-          new Transformation(pawnStack.getPosition(playerColor.ordinal() - 1)));
+          new ConstantTransformation(pawnStack.getPosition(playerColor.ordinal() - 1)));
       scoreRenderable.add(pawnSprite);
     }
     boardRenderables.add(scoreRenderable);
@@ -121,7 +124,7 @@ public class MainPagePresenter extends
     for (InfluenceType influenceType : InfluenceType.values()) {
       double x = 0.068 * influenceType.ordinal() + 0.09;
       Sprite card = new Sprite(spriteResources.getLeader(influenceType),
-          new Transformation(new Vector2d(x, -0.3)));
+          new ConstantTransformation(new Vector2d(x, -0.3)));
       boardRenderables.add(card);
     }
 /*
@@ -158,34 +161,40 @@ public class MainPagePresenter extends
         BoardActionInfo actionInfo = Board.actionInfoForTileLocation(column, line);
         if (actionInfo != null) {
           TileInfo tile = tileDeck.draw(actionInfo.getInfluenceType());
-          Transformation tileTransformation = getTileTransformation(column, line, 1.0);
+          ConstantTransformation tileTransformation = getTileTransformation(column, line, 1.0);
           RenderableList tileRenderables = new RenderableList(tileTransformation);
           Sprite tileSprite = new Sprite(spriteResources.getTile(tile.getInfluenceType(),
               tile.getCentury()));
           tileRenderables.add(tileSprite);
           RenderableList cubes = new RenderableList(
-              new Transformation(new Vector2d(-0.0225, 0), 1.0, -tileTransformation.getRotation()));
+              new ConstantTransformation(new Vector2d(-0.0225, 0), 1.0, -tileTransformation.getRotation()));
           tileRenderables.add(cubes);
           Sprite cubeSprite = new Sprite(spriteResources.getCube(PlayerColor.WHITE),
-              new Transformation(cubeGrid.getPosition(0, 0)));
+              new ConstantTransformation(cubeGrid.getPosition(0, 0)));
           cubes.add(cubeSprite);
           cubeSprite = new Sprite(spriteResources.getCube(PlayerColor.WHITE),
-              new Transformation(cubeGrid.getPosition(1, 0)));
+              new ConstantTransformation(cubeGrid.getPosition(1, 0)));
           cubes.add(cubeSprite);
           cubeSprite = new Sprite(spriteResources.getCube(PlayerColor.WHITE),
-              new Transformation(cubeGrid.getPosition(2, 0)));
+              new ConstantTransformation(cubeGrid.getPosition(2, 0)));
           cubes.add(cubeSprite);
           RenderableList pawn = new RenderableList(
-              new Transformation(new Vector2d(0, -0.0225), 1.0, -tileTransformation.getRotation()));
+              new ConstantTransformation(new Vector2d(0, -0.0225), 1.0, -tileTransformation.getRotation()));
           tileRenderables.add(pawn);
           Sprite pawnSprite = new Sprite(spriteResources.getPawn(PlayerColor.BLACK),
-              new Transformation(new Vector2d(0, -0.01)));
+              new ConstantTransformation(new Vector2d(0, -0.01)));
           pawn.add(pawnSprite);
           boardRenderables.add(tileRenderables);
           tileGrid[column][line] = tileRenderables;
         }
       }
     }
+
+    Transformation anim = new ArcTransformation(new ConstantTransformation(new Vector2d(0.1, 0.4)), 
+        new ConstantTransformation(new Vector2d(1.5, 0.6)), 0, 15.0);
+    Renderable zeThing = new Sprite(spriteResources.getCube(PlayerColor.ORANGE), anim);
+    root.add(zeThing);
+
   }
 
   @Override
@@ -233,14 +242,14 @@ public class MainPagePresenter extends
     boardRenderables.sendToFront(highlightedTile);
   }
 
-  public void render(Context2d context) {
-    root.render(context);
+  public void render(double time, Context2d context) {
+    root.render(time, context);
   }
 
-  private Transformation getTileTransformation(int column, int line, double scaling) {
+  private ConstantTransformation getTileTransformation(int column, int line, double scaling) {
     Vector2d translation = Board.positionForLocation(column, line);
     double rotation = Board.rotationAngleForLocation(column, line);
-    return new Transformation(translation, scaling, rotation);
+    return new ConstantTransformation(translation, scaling, rotation);
   }
 
   private Vector2d getScorePosition(int score) {

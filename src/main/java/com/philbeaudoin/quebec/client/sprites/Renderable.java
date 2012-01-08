@@ -26,8 +26,9 @@ public interface Renderable {
 
   /**
    * Renders the sprite to the canvas.
+   * @param time The time at which to perform the render.
    * @param context The canvas context into which to render.
    */
-  void render(Context2d context);
+  void render(double time, Context2d context);
 
 }

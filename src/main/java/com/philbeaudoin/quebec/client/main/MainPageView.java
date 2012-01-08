@@ -91,14 +91,15 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   public void setPresenter(MainPagePresenter presenter) {
     this.presenter = presenter;
   }
-
+  double time = 0;
   void doUpdate() {
+    time += 1;
     if (presenter != null) {
       int height = canvas.getOffsetHeight();
       context.save();
       try {
         context.scale(height, height);
-        presenter.render(context);
+        presenter.render(time, context);
       } finally {
         context.restore();
       }

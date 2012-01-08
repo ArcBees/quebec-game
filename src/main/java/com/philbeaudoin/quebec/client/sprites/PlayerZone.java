@@ -22,6 +22,7 @@ import com.philbeaudoin.quebec.client.utils.CubeGrid;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -48,7 +49,7 @@ public class PlayerZone implements Renderable {
   private final double sizeY;
 
   public PlayerZone(PlayerColor playerColor, String playerName, double sizeX, double sizeY,
-      Transformation transformation) {
+      ConstantTransformation transformation) {
     assert playerColor != PlayerColor.NONE;
     this.transformation = new MutableTransformation(transformation);
     this.playerColor = playerColor;
@@ -59,24 +60,24 @@ public class PlayerZone implements Renderable {
 
   public void generateCubes(SpriteResources spriteResources) {
     RenderableList inactive = new RenderableList(
-        new Transformation(new Vector2d(sizeX * 0.16, sizeY * 0.6)));
+        new ConstantTransformation(new Vector2d(sizeX * 0.16, sizeY * 0.6)));
     renderables.add(inactive);
     RenderableList active = new RenderableList(
-        new Transformation(new Vector2d(sizeX * 0.4, sizeY * 0.6)));
+        new ConstantTransformation(new Vector2d(sizeX * 0.4, sizeY * 0.6)));
     renderables.add(active);
     for (int i = 0; i < 9; ++i) {
       for (int j = 0; j < 3; ++j) {
         Sprite cube = new Sprite(spriteResources.getCube(playerColor),
-            new Transformation(cubeGrid.getPosition(i, j)));
+            new ConstantTransformation(cubeGrid.getPosition(i, j)));
         inactive.add(cube);
         cube = new Sprite(spriteResources.getCube(playerColor),
-            new Transformation(cubeGrid.getPosition(i, j)));
+            new ConstantTransformation(cubeGrid.getPosition(i, j)));
         active.add(cube);
       }
     }
 
     Sprite card = new Sprite(spriteResources.getLeader(InfluenceType.CITADEL),
-        new Transformation(new Vector2d(sizeX * 0.8, sizeY * 0.5)));
+        new ConstantTransformation(new Vector2d(sizeX * 0.8, sizeY * 0.5)));
     renderables.add(card);
   }
 
@@ -97,10 +98,10 @@ public class PlayerZone implements Renderable {
   }
 
   @Override
-  public void render(Context2d context) {
+  public void render(double time, Context2d context) {
     context.save();
     try {
-      transformation.applies(context);
+      transformation.applies(time, context);
       CanvasGradient gradient = context.createLinearGradient(0, 0, 0, sizeY);
       int index = playerColor.ordinal() - 1;
       gradient.addColorStop(0, COLOR[index][0]);
@@ -125,7 +126,7 @@ public class PlayerZone implements Renderable {
       } finally {
         context.restore();
       }
-      renderables.render(context);
+      renderables.render(time, context);
     } finally {
       context.restore();
     }
