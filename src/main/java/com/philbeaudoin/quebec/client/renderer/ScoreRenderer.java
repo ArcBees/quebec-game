@@ -26,7 +26,7 @@ import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.client.utils.PawnStack;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.PlayerState;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -57,7 +57,7 @@ class ScoreRenderer {
     int score = playerState.getScore() % 100;
     SceneNodeList parent = nodeForScore.get(score);
     if (parent == null) {
-      parent = new SceneNodeList(new Transformation(getScorePosition(score)));
+      parent = new SceneNodeList(new ConstantTransformation(getScorePosition(score)));
       nodeForScore.put(score, parent);
     }
     // Ensures the parent is in the tree.
@@ -77,7 +77,7 @@ class ScoreRenderer {
     PawnStack pawnStack = new PawnStack(pawnsOnScore.size());
     int index = 0;
     for (SceneNode node : pawnsOnScore) {
-      node.setTransformation(new Transformation(pawnStack.getPosition(index)));
+      node.setTransformation(new ConstantTransformation(pawnStack.getPosition(index)));
       index++;
     }
   }

@@ -29,6 +29,7 @@ import com.philbeaudoin.quebec.shared.LeaderCard;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.Tile;
 import com.philbeaudoin.quebec.shared.TileState;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -46,7 +47,7 @@ class BoardRenderer {
 
   BoardRenderer(double leftPosition) {
     boardRoot = new SceneNodeList(
-        new Transformation(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
+        new ConstantTransformation(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
   }
 
   /**
@@ -80,7 +81,7 @@ class BoardRenderer {
       InfluenceType influenceType = leaderCard.getInfluenceType();
       double x = 0.068 * influenceType.ordinal() + 0.09;
       Sprite card = new Sprite(spriteResources.getLeader(influenceType),
-          new Transformation(new Vector2d(x, -0.3)));
+          new ConstantTransformation(new Vector2d(x, -0.3)));
       boardRoot.add(card);
     }
   }
@@ -97,7 +98,7 @@ class BoardRenderer {
         translation = new Vector2d(0.51 * ((index % 2 == 0) ? 1 : -1),
                                    0.35 * ((index / 2 == 0) ? 1 : -1));
       }
-      SceneNodeList cubesInZoneNode = new SceneNodeList(new Transformation(translation));
+      SceneNodeList cubesInZoneNode = new SceneNodeList(new ConstantTransformation(translation));
       boardRoot.add(cubesInZoneNode);
 
       // Add cubes to the main node.
@@ -109,7 +110,7 @@ class BoardRenderer {
             playerCubes.playerColor != PlayerColor.NEUTRAL;
         for (int i = 0; i < playerCubes.cubes; ++i) {
           Sprite cube = new Sprite(spriteResources.getCube(playerCubes.playerColor),
-              new Transformation(zoneGrid.getPosition(i, line)));
+              new ConstantTransformation(zoneGrid.getPosition(i, line)));
           cubesInZoneNode.add(cube);
         }
         line += reverseLineOrder ? -1 : 1;
@@ -135,7 +136,7 @@ class BoardRenderer {
       if (tileState.isBuildingFacing()) {
         renderBuildingTile(tileState, tileNode, spriteResources);
       } else {
-        renderTile(tileState, tileNode, spriteResources, tileTransformation.getRotation());
+        renderTile(tileState, tileNode, spriteResources, tileTransformation.getRotation(0.0));
       }
     }
   }
@@ -153,10 +154,10 @@ class BoardRenderer {
     PlayerColor architectColor = tileState.getArchitect();
     if (architectColor != PlayerColor.NONE) {
       SceneNodeList architectNode = new SceneNodeList(
-          new Transformation(new Vector2d(0, -0.0225), 1.0, -rotation));
+          new ConstantTransformation(new Vector2d(0, -0.0225), 1.0, -rotation));
       tileNode.add(architectNode);
       Sprite architectSprite = new Sprite(spriteResources.getPawn(architectColor),
-          new Transformation(new Vector2d(0, -0.01)));
+          new ConstantTransformation(new Vector2d(0, -0.01)));
       architectNode.add(architectSprite);
     }
 
@@ -169,13 +170,13 @@ class BoardRenderer {
         // Add the node to hold these cubes.
         double x = -0.0225 + spot * 0.0225;
         double y = spot == 1 ? 0.0225 : 0;
-        SceneNodeList cubes = new SceneNodeList(new Transformation(new Vector2d(x, y), 1.0,
+        SceneNodeList cubes = new SceneNodeList(new ConstantTransformation(new Vector2d(x, y), 1.0,
             -rotation));
         tileNode.add(cubes);
         // Add all the cubes to the node.
         for (int cubeIndex = 0; cubeIndex < cubesPerSpot; ++cubeIndex) {
           Sprite cubeSprite = new Sprite(spriteResources.getCube(cubesColor),
-              new Transformation(cubeGrid.getPosition(cubeIndex, 0)));
+              new ConstantTransformation(cubeGrid.getPosition(cubeIndex, 0)));
           cubes.add(cubeSprite);
         }
       }
@@ -196,7 +197,7 @@ class BoardRenderer {
       boolean applyRotation) {
     Vector2d translation = Board.positionForLocation(column, line);
     double rotation = applyRotation ? Board.rotationAngleForLocation(column, line) : 0;
-    return new Transformation(translation, scaling, rotation);
+    return new ConstantTransformation(translation, scaling, rotation);
   }
 
 }

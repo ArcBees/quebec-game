@@ -38,10 +38,10 @@ public class Text extends SceneNodeImpl {
   }
 
   @Override
-  public void draw(Context2d context) {
+  public void draw(double time, Context2d context) {
     context.save();
     try {
-      getTransformation().applies(context);
+      getTransformation().applies(time, context);
       context.scale(0.001, 0.001);
       context.setFont("25px arial");
       context.fillText(text, 0, 0);

@@ -87,6 +87,15 @@ public class ArcTransformation implements Transformation {
     context.rotate(getRotation(time));
   }
 
+  @Override
+  public ConstantTransformation eval(double time) {
+    // TODO Speed up by refactoring to call ease() only once.
+    return new ConstantTransformation(
+        getTranslation(time),
+        getScaling(time),
+        getRotation(time));
+  }
+
   private double ease(double time) {
     double r = (time - t0) / (t1 - t0);
     if (r < 0) {
@@ -102,5 +111,4 @@ public class ArcTransformation implements Transformation {
     }
     return r;
   }
-
 }

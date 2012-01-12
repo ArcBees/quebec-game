@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.client.scene;
 
+import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
 import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 
@@ -26,7 +27,7 @@ import com.philbeaudoin.quebec.shared.utils.Transformation;
  */
 public abstract class SceneNodeImpl implements SceneNode {
 
-  private final MutableTransformation transformation;
+  private Transformation transformation;
   private SceneNodeList parent;
 
   public SceneNodeImpl() {
@@ -34,12 +35,12 @@ public abstract class SceneNodeImpl implements SceneNode {
   }
 
   public SceneNodeImpl(Transformation transformation) {
-    this.transformation = new MutableTransformation(transformation);
+    this.transformation = transformation;
   }
 
   @Override
   public void setTransformation(Transformation transformation) {
-    this.transformation.set(transformation);
+    this.transformation = transformation;
   }
 
   @Override
@@ -64,10 +65,11 @@ public abstract class SceneNodeImpl implements SceneNode {
   }
 
   @Override
-  public Transformation getTotalTransformation() {
+  public ConstantTransformation getTotalTransformation(double time) {
+    ConstantTransformation transformation = getTransformation().eval(time);
     if (parent == null) {
-      return getTransformation();
+      return transformation;
     }
-    return parent.getTotalTransformation().times(getTransformation());
+    return parent.getTotalTransformation(time).times(transformation);
   }
 }
