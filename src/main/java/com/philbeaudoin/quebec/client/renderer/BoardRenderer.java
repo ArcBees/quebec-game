@@ -29,8 +29,8 @@ import com.philbeaudoin.quebec.shared.LeaderCard;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.Tile;
 import com.philbeaudoin.quebec.shared.TileState;
-import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
+import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -47,7 +47,7 @@ class BoardRenderer {
 
   BoardRenderer(double leftPosition) {
     boardRoot = new SceneNodeList(
-        new ConstantTransformation(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
+        new ConstantTransform(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
   }
 
   /**
@@ -81,7 +81,7 @@ class BoardRenderer {
       InfluenceType influenceType = leaderCard.getInfluenceType();
       double x = 0.068 * influenceType.ordinal() + 0.09;
       Sprite card = new Sprite(spriteResources.getLeader(influenceType),
-          new ConstantTransformation(new Vector2d(x, -0.3)));
+          new ConstantTransform(new Vector2d(x, -0.3)));
       boardRoot.add(card);
     }
   }
@@ -98,7 +98,7 @@ class BoardRenderer {
         translation = new Vector2d(0.51 * ((index % 2 == 0) ? 1 : -1),
                                    0.35 * ((index / 2 == 0) ? 1 : -1));
       }
-      SceneNodeList cubesInZoneNode = new SceneNodeList(new ConstantTransformation(translation));
+      SceneNodeList cubesInZoneNode = new SceneNodeList(new ConstantTransform(translation));
       boardRoot.add(cubesInZoneNode);
 
       // Add cubes to the main node.
@@ -110,7 +110,7 @@ class BoardRenderer {
             playerCubes.playerColor != PlayerColor.NEUTRAL;
         for (int i = 0; i < playerCubes.cubes; ++i) {
           Sprite cube = new Sprite(spriteResources.getCube(playerCubes.playerColor),
-              new ConstantTransformation(zoneGrid.getPosition(i, line)));
+              new ConstantTransform(zoneGrid.getPosition(i, line)));
           cubesInZoneNode.add(cube);
         }
         line += reverseLineOrder ? -1 : 1;
@@ -126,9 +126,9 @@ class BoardRenderer {
       // Add the main node for the tile.
       BoardAction boardAction = Board.actionForTileLocation(column, line);
       assert boardAction != null;
-      Transformation tileTransformation = getTileTransformation(column, line, 1.0,
+      Transform tileTransform = getTileTransform(column, line, 1.0,
           !tileState.isBuildingFacing());
-      SceneNodeList tileNode = new SceneNodeList(tileTransformation);
+      SceneNodeList tileNode = new SceneNodeList(tileTransform);
       boardRoot.add(tileNode);
       tileGrid[column][line] = tileNode;
 
@@ -136,7 +136,7 @@ class BoardRenderer {
       if (tileState.isBuildingFacing()) {
         renderBuildingTile(tileState, tileNode, spriteResources);
       } else {
-        renderTile(tileState, tileNode, spriteResources, tileTransformation.getRotation(0.0));
+        renderTile(tileState, tileNode, spriteResources, tileTransform.getRotation(0.0));
       }
     }
   }
@@ -154,10 +154,10 @@ class BoardRenderer {
     PlayerColor architectColor = tileState.getArchitect();
     if (architectColor != PlayerColor.NONE) {
       SceneNodeList architectNode = new SceneNodeList(
-          new ConstantTransformation(new Vector2d(0, -0.0225), 1.0, -rotation));
+          new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -rotation));
       tileNode.add(architectNode);
       Sprite architectSprite = new Sprite(spriteResources.getPawn(architectColor),
-          new ConstantTransformation(new Vector2d(0, -0.01)));
+          new ConstantTransform(new Vector2d(0, -0.01)));
       architectNode.add(architectSprite);
     }
 
@@ -170,13 +170,13 @@ class BoardRenderer {
         // Add the node to hold these cubes.
         double x = -0.0225 + spot * 0.0225;
         double y = spot == 1 ? 0.0225 : 0;
-        SceneNodeList cubes = new SceneNodeList(new ConstantTransformation(new Vector2d(x, y), 1.0,
+        SceneNodeList cubes = new SceneNodeList(new ConstantTransform(new Vector2d(x, y), 1.0,
             -rotation));
         tileNode.add(cubes);
         // Add all the cubes to the node.
         for (int cubeIndex = 0; cubeIndex < cubesPerSpot; ++cubeIndex) {
           Sprite cubeSprite = new Sprite(spriteResources.getCube(cubesColor),
-              new ConstantTransformation(cubeGrid.getPosition(cubeIndex, 0)));
+              new ConstantTransform(cubeGrid.getPosition(cubeIndex, 0)));
           cubes.add(cubeSprite);
         }
       }
@@ -193,11 +193,11 @@ class BoardRenderer {
     // TODO: Render star marker.
   }
 
-  private Transformation getTileTransformation(int column, int line, double scaling,
+  private Transform getTileTransform(int column, int line, double scaling,
       boolean applyRotation) {
     Vector2d translation = Board.positionForLocation(column, line);
     double rotation = applyRotation ? Board.rotationAngleForLocation(column, line) : 0;
-    return new ConstantTransformation(translation, scaling, rotation);
+    return new ConstantTransform(translation, scaling, rotation);
   }
 
 }

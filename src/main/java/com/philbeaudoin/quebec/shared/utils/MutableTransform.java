@@ -17,26 +17,26 @@
 package com.philbeaudoin.quebec.shared.utils;
 
 /**
- * A 2-dimensional transformation that can be modified.
+ * A 2-dimensional transform that can be modified.
  *
  * @author Philippe Beaudoin
  */
-public class MutableTransformation extends ConstantTransformation {
+public class MutableTransform extends ConstantTransform {
 
-  public MutableTransformation() {
+  public MutableTransform() {
     super();
   }
 
-  public MutableTransformation(Transformation transformation) {
-    super(transformation);
+  public MutableTransform(Transform transform) {
+    super(transform);
   }
 
-  public MutableTransformation(Vector2d translation, double sizeFactor, double angle) {
+  public MutableTransform(Vector2d translation, double sizeFactor, double angle) {
     super(translation, sizeFactor, angle);
   }
 
   /**
-   * Sets the translation of the transformation.
+   * Sets the translation of the transform.
    * @param x The desired X translation.
    * @param y The desired Y translation.
    */
@@ -45,7 +45,7 @@ public class MutableTransformation extends ConstantTransformation {
   }
 
   /**
-   * Sets the translation component of the transformation.
+   * Sets the translation component of the transform.
    * @param translation The desired translation.
    */
   public void setTranslation(Vector2d translation) {
@@ -53,7 +53,7 @@ public class MutableTransformation extends ConstantTransformation {
   }
 
   /**
-   * Sets the relative size of the transformation. A size factor of 1 means no scaling is applied.
+   * Sets the relative size of the transform. A size factor of 1 means no scaling is applied.
    * @param scaling The desired scaling factor.
    */
   public void setScaling(double scaling) {
@@ -61,7 +61,7 @@ public class MutableTransformation extends ConstantTransformation {
   }
 
   /**
-   * Sets the rotation angle of the transformation.
+   * Sets the rotation angle of the transform.
    * @param rotation The desired rotation angle, in radians.
    */
   public void setRotation(double rotation) {
@@ -69,12 +69,12 @@ public class MutableTransformation extends ConstantTransformation {
   }
 
   /**
-   * Copies the specified transformation.
-   * @param transformation The transformation to copy.
+   * Copies the specified transform.
+   * @param transform The transform to copy.
    */
-  public void set(Transformation transformation) {
-    setTranslation(transformation.getTranslation(0));
-    setScaling(transformation.getScaling(0));
-    setRotation(transformation.getRotation(0));
+  public void set(Transform transform) {
+    setTranslation(transform.getTranslation(0));
+    setScaling(transform.getScaling(0));
+    setRotation(transform.getRotation(0));
   }
 }

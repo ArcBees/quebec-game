@@ -295,89 +295,6 @@
                 </executions>
             </plugin>
 
-            <!--This plugin's configuration is used to store Eclipse m2e 
-                settings only. It has no influence on the Maven build itself. -->
-            <plugin>
-                <groupId>org.eclipse.m2e</groupId>
-                <artifactId>lifecycle-mapping</artifactId>
-                <configuration>
-                    <lifecycleMappingMetadata>
-                        <pluginExecutions>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                    <groupId>org.datanucleus</groupId>
-                                    <artifactId>maven-datanucleus-plugin</artifactId>
-                                    <versionRange>[1.1.4,)</versionRange>
-                                    <goals>
-                                        <goal>enhance</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <ignore />
-                                </action>
-                            </pluginExecution>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                    <groupId>net.kindleit</groupId>
-                                    <artifactId>maven-gae-plugin</artifactId>
-                                    <versionRange>[0.7.3,)</versionRange>
-                                    <goals>
-                                        <goal>unpack</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <execute />
-                                </action>
-                            </pluginExecution>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                    <groupId>org.bsc.maven</groupId>
-                                    <artifactId>maven-processor-plugin</artifactId>
-                                    <versionRange>[2.0.5,)</versionRange>
-                                    <goals>
-                                        <goal>process</goal>
-                                        <goal>process-test</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <!-- TODO(beaudoin): This should be `execute` 
-                                        but it fails. The workaround is to manually run `mvn install` whenever the 
-                                        code generating files are changed. -->
-                                    <ignore />
-                                </action>
-                            </pluginExecution>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                    <groupId>org.apache.maven.plugins</groupId>
-                                    <artifactId>maven-enforcer-plugin</artifactId>
-                                    <versionRange>[1.0-beta-1,)</versionRange>
-                                    <goals>
-                                        <goal>enforce</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <ignore />
-                                </action>
-                            </pluginExecution>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                    <groupId>org.apache.maven.plugins</groupId>
-                                    <artifactId>maven-compiler-plugin</artifactId>
-                                    <versionRange>[2.0.0,)</versionRange>
-                                    <goals>
-                                        <goal>default-compile</goal>
-                                        <goal>default-testCompile</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <ignore />
-                                </action>
-                            </pluginExecution>
-                        </pluginExecutions>
-                    </lifecycleMappingMetadata>
-                </configuration>
-            </plugin>
-
             <!-- Eclipse configuration -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -529,19 +446,72 @@
                             <pluginExecutions>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
+                                        <groupId>org.datanucleus</groupId>
+                                        <artifactId>maven-datanucleus-plugin</artifactId>
+                                        <versionRange>[1.1.4,)</versionRange>
+                                        <goals>
+                                            <goal>enhance</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
                                         <groupId>net.kindleit</groupId>
-                                        <artifactId>
-                                            maven-gae-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [0.9.1,)
-                                        </versionRange>
+                                        <artifactId>maven-gae-plugin</artifactId>
+                                        <versionRange>[0.7.3,)</versionRange>
                                         <goals>
                                             <goal>unpack</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <execute />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.bsc.maven</groupId>
+                                        <artifactId>maven-processor-plugin</artifactId>
+                                        <versionRange>[2.0.5,)</versionRange>
+                                        <goals>
+                                            <goal>process</goal>
+                                            <goal>process-test</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <!-- TODO(beaudoin): This should be `execute` 
+                                            but it fails. The workaround is to manually run `mvn install` whenever the 
+                                            code generating files are changed. -->
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-enforcer-plugin</artifactId>
+                                        <versionRange>[1.0-beta-1,)</versionRange>
+                                        <goals>
+                                            <goal>enforce</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-compiler-plugin</artifactId>
+                                        <versionRange>[2.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>default-compile</goal>
+                                            <goal>default-testCompile</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>

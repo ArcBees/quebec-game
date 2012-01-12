@@ -19,16 +19,16 @@ package com.philbeaudoin.quebec.shared.utils;
 import com.google.gwt.canvas.dom.client.Context2d;
 
 /**
- * A transformation that animates between two others using an arc and an ease-in/ease-out curve.
+ * A transform that animates between two others using an arc and an ease-in/ease-out curve.
  * @author Philippe Beaudoin
  */
-public class ArcTransformation implements Transformation {
-  private final Transformation start;
-  private final Transformation finish;
+public class ArcTransform implements Transform {
+  private final Transform start;
+  private final Transform finish;
   private final double t0;
   private final double t1;
 
-  public ArcTransformation(Transformation start, Transformation finish, double t0, double t1) {
+  public ArcTransform(Transform start, Transform finish, double t0, double t1) {
     this.start = start;
     this.finish = finish;
     this.t0 = t0;
@@ -88,9 +88,9 @@ public class ArcTransformation implements Transformation {
   }
 
   @Override
-  public ConstantTransformation eval(double time) {
+  public ConstantTransform eval(double time) {
     // TODO Speed up by refactoring to call ease() only once.
-    return new ConstantTransformation(
+    return new ConstantTransform(
         getTranslation(time),
         getScaling(time),
         getRotation(time));
@@ -101,10 +101,10 @@ public class ArcTransformation implements Transformation {
     if (r < 0) {
       r = 0;
     } else if (r < 0.5) {
-      r = (r * r) * 2;
+      r = Math.pow(r, 1.8) * 1.74110113;
     } else if (r < 1) {
       r = 1 - r;
-      r = (r * r) * 2;
+      r = Math.pow(r, 1.8) * 1.74110113;
       r = 1 - r;
     } else {
       r = 1;

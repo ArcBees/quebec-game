@@ -17,7 +17,7 @@
 package com.philbeaudoin.quebec.client.scene;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
+import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * Scene tree node drawing black text.
@@ -30,10 +30,10 @@ public class Text extends SceneNodeImpl {
   /**
    * Creates a scene tree node drawing black text.
    * @param text The text to print.
-   * @param transformation The transformation to apply.
+   * @param transform The transform to apply.
    */
-  public Text(String text, Transformation transformation) {
-    super(transformation);
+  public Text(String text, Transform transform) {
+    super(transform);
     this.text = text;
   }
 
@@ -41,7 +41,7 @@ public class Text extends SceneNodeImpl {
   public void draw(double time, Context2d context) {
     context.save();
     try {
-      getTransformation().applies(time, context);
+      getTransform().applies(time, context);
       context.scale(0.001, 0.001);
       context.setFont("25px arial");
       context.fillText(text, 0, 0);
