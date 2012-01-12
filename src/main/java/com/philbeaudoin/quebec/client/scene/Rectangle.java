@@ -74,10 +74,10 @@ public class Rectangle extends SceneNodeImpl {
   }
 
   @Override
-  public void draw(Context2d context) {
+  public void draw(double time, Context2d context) {
     context.save();
     try {
-      getTransformation().applies(context);
+      getTransformation().applies(time, context);
       CanvasGradient gradient = context.createLinearGradient(x0, y0, x1, y1);
       gradient.addColorStop(0, color0);
       gradient.addColorStop(1, color1);

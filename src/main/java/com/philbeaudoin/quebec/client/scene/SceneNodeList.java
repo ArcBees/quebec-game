@@ -95,12 +95,12 @@ public class SceneNodeList extends SceneNodeImpl {
   }
 
   @Override
-  public void draw(Context2d context) {
+  public void draw(double time, Context2d context) {
     context.save();
     try {
-      getTransformation().applies(context);
+      getTransformation().applies(time, context);
       for (SceneNode sceneNode : sceneNodes) {
-        sceneNode.draw(context);
+        sceneNode.draw(time, context);
       }
     } finally {
       context.restore();

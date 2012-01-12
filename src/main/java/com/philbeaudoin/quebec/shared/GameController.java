@@ -58,6 +58,7 @@ public class GameController {
         if (boardAction != null) {
           Tile tile = tileDeck.draw(boardAction.getInfluenceType());
           TileState tileState = new TileState(tile, new Vector2d(column, line));
+          tileState.setArchitect(PlayerColor.BLACK);
           tileStates.add(tileState);
         }
       }

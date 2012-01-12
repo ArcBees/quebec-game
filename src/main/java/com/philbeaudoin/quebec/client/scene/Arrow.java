@@ -81,10 +81,10 @@ public class Arrow extends SceneNodeImpl {
   }
 
   @Override
-  public void draw(Context2d context) {
+  public void draw(double time, Context2d context) {
     context.save();
     try {
-      getTransformation().applies(context);
+      getTransformation().applies(time, context);
       context.beginPath();
       context.moveTo(from.getX(), from.getY());
       context.bezierCurveTo(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY());

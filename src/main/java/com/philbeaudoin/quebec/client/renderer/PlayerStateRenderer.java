@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.client.utils.CubeGrid;
 import com.philbeaudoin.quebec.client.utils.PawnStack;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.PlayerState;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -63,11 +64,11 @@ class PlayerStateRenderer {
     this.width = width;
     this.height = height;
     passiveCubes = new SceneNodeList(
-        new Transformation(new Vector2d(width * 0.16, height * 0.6)));
+        new ConstantTransformation(new Vector2d(width * 0.16, height * 0.6)));
     activeCubes = new SceneNodeList(
-        new Transformation(new Vector2d(width * 0.4, height * 0.6)));
+        new ConstantTransformation(new Vector2d(width * 0.4, height * 0.6)));
     pawns = new SceneNodeList(
-        new Transformation(new Vector2d(width * 0.61, height * 0.55)));
+        new ConstantTransformation(new Vector2d(width * 0.61, height * 0.55)));
     this.scoreRenderer = scoreRenderer;
   }
 
@@ -92,10 +93,10 @@ class PlayerStateRenderer {
         COLOR[paletteIndex][1], COLOR[paletteIndex][0], "#000", 1);
     playerZone.add(activeZone);
     Text playerName = new Text(playerState.getPlayer().getName(),
-        new Transformation(new Vector2d(0.022 * width, 0.18 * height)));
+        new ConstantTransformation(new Vector2d(0.022 * width, 0.18 * height)));
     playerZone.add(playerName);
     Text playerScore = new Text(Integer.toString(playerState.getScore()),
-        new Transformation(new Vector2d(0.85 * width, 0.18 * height)));
+        new ConstantTransformation(new Vector2d(0.85 * width, 0.18 * height)));
     playerZone.add(playerScore);
 
     playerZone.add(passiveCubes);
@@ -106,7 +107,7 @@ class PlayerStateRenderer {
       int column = i % 9;
       int line = i / 9;
       Sprite cube = new Sprite(spriteResources.getCube(color),
-          new Transformation(cubeGrid.getPosition(column, line)));
+          new ConstantTransformation(cubeGrid.getPosition(column, line)));
       activeCubes.add(cube);
     }
 
@@ -114,7 +115,7 @@ class PlayerStateRenderer {
       int column = i % 9;
       int line = i / 9;
       Sprite cube = new Sprite(spriteResources.getCube(color),
-          new Transformation(cubeGrid.getPosition(column, line)));
+          new ConstantTransformation(cubeGrid.getPosition(column, line)));
       passiveCubes.add(cube);
     }
 
@@ -130,13 +131,13 @@ class PlayerStateRenderer {
       int index = 0;
       if (playerState.isHoldingArchitect()) {
         Sprite pawn = new Sprite(spriteResources.getPawn(color),
-            new Transformation(pawnStack.getPosition(index)));
+            new ConstantTransformation(pawnStack.getPosition(index)));
         pawns.add(pawn);
         index++;
       }
       if (playerState.isHoldingNeutralArchitect()) {
         Sprite pawn = new Sprite(spriteResources.getPawn(PlayerColor.NEUTRAL),
-            new Transformation(pawnStack.getPosition(index)));
+            new ConstantTransformation(pawnStack.getPosition(index)));
         pawns.add(pawn);
         index++;
       }
@@ -145,7 +146,7 @@ class PlayerStateRenderer {
     if (playerState.getLeaderCard() != null) {
       Sprite card = new Sprite(spriteResources.getLeader(
           playerState.getLeaderCard().getInfluenceType()),
-          new Transformation(new Vector2d(width * 0.8, height * 0.58)));
+          new ConstantTransformation(new Vector2d(width * 0.8, height * 0.58)));
       playerZone.add(card);
     }
 

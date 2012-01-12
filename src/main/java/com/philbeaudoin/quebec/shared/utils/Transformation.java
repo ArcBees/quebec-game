@@ -49,11 +49,18 @@ public interface Transformation {
   public abstract void applies(double time, Context2d context);
 
   /**
+   * Returns the constant transformation corresponding to this transformation evaluated at a given
+   * time.
+   * @param time The time at which to evaluate this transformation.
+   * @return The constant transformation at that time.
+   */
+  public abstract ConstantTransformation eval(double time);
+
+  /**
    * Applies the transformation with an extra scaling factor.
    * @param time The time at which to apply the transformation.
    * @param context The canvas context into which to render.
    * @param sizeFactor An extra scaling factor to use.
    */
   public abstract void applies(double time, Context2d context, double sizeFactor);
-
 }

@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.GameState;
 import com.philbeaudoin.quebec.shared.PlayerState;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -82,7 +82,7 @@ public class GameStateRenderer {
       double deltaY = 0;
       for (int i = 0; i < playerStates.size(); ++i) {
         PlayerStateRenderer playerStateRenderer = new PlayerStateRenderer(LEFT_COLUMN_WIDTH, 0.15,
-            new Transformation(new Vector2d(0, deltaY)), scoreRenderer);
+            new ConstantTransformation(new Vector2d(0, deltaY)), scoreRenderer);
         deltaY += 0.15;
         playerStateRenderers.add(playerStateRenderer);
       }

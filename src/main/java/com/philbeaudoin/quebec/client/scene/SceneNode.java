@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.client.scene;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
 import com.philbeaudoin.quebec.shared.utils.Transformation;
 
 /**
@@ -40,9 +41,10 @@ public interface SceneNode {
 
   /**
    * Draws the scene node to the canvas.
+   * @param time The time at which to draw the scene node.
    * @param context The canvas context into which to draw.
    */
-  void draw(Context2d context);
+  void draw(double time, Context2d context);
 
   /**
    * Sets the local transformation of the scene node.
@@ -58,7 +60,8 @@ public interface SceneNode {
 
   /**
    * Returns the total transformation affecting the scene node.
+   * @param time The time at which to evaluate the total transformation.
    * @return The total transformation.
    */
-  Transformation getTotalTransformation();
+  ConstantTransformation getTotalTransformation(double time);
 }
