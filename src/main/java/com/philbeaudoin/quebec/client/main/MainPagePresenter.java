@@ -30,6 +30,7 @@ import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
+import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.GameController;
@@ -37,9 +38,9 @@ import com.philbeaudoin.quebec.shared.GameState;
 import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.Player;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.utils.ArcTransformation;
-import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
+import com.philbeaudoin.quebec.shared.utils.ArcTransform;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
+import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -54,6 +55,8 @@ public class MainPagePresenter extends
 
   // TODO: Rely on injection, inject spriteResources in there.
   private final GameStateRenderer gameStateRenderer = new GameStateRenderer();
+
+  private final SceneNodeList dynamicRoot = new SceneNodeList();
 
   /**
    * The presenter's view.
@@ -92,10 +95,10 @@ public class MainPagePresenter extends
     Arrow arrow = new Arrow(new Vector2d(0.7, 0.1), new Vector2d(1.699, 0.2));
     gameStateRenderer.getRoot().add(arrow);
 
-    Transformation anim = new ArcTransformation(new ConstantTransformation(new Vector2d(0.1, 0.4)), 
-        new ConstantTransformation(new Vector2d(1.5, 0.6)), 0, 15.0);
+    Transform anim = new ArcTransform(new ConstantTransform(new Vector2d(0.1, 0.4)),
+        new ConstantTransform(new Vector2d(1.5, 0.6)), 0, 2.0);
     SceneNode zeThing = new Sprite(spriteResources.getCube(PlayerColor.ORANGE), anim);
-    gameStateRenderer.getRoot().add(zeThing);
+    dynamicRoot.add(zeThing);
   }
 
   @Override
@@ -112,10 +115,10 @@ public class MainPagePresenter extends
   public void mouseMove(double x, double y) {
     /*
     if (highlightedTile != null) {
-      MutableTransformation transformation =
-          new MutableTransformation(highlightedTile.getTransformation());
-      transformation.setScaling(1.0);
-      highlightedTile.setTransformation(transformation);
+      MutableTransform transform =
+          new MutableTransform(highlightedTile.getTransform());
+      transform.setScaling(1.0);
+      highlightedTile.setTransform(transform);
     }
 
     // Make position relative to the board center.
@@ -137,15 +140,19 @@ public class MainPagePresenter extends
     double distY = boardY - center.getY();
     double dist = distX * distX + distY * distY;
     double scaling = Math.max(1.0, 1.5 - dist * 500.0);
-    MutableTransformation transformation =
-        new MutableTransformation(highlightedTile.getTransformation());
-    transformation.setScaling(scaling);
-    highlightedTile.setTransformation(transformation);
+    MutableTransform transform =
+        new MutableTransform(highlightedTile.getTransform());
+    transform.setScaling(scaling);
+    highlightedTile.setTransform(transform);
     boardNodes.sendToFront(highlightedTile);
     */
   }
 
-  public void draw(double time, Context2d context) {
-    gameStateRenderer.getRoot().draw(time, context);
+  public void drawStaticLayer(Context2d context) {
+    gameStateRenderer.getRoot().draw(0, context);
+  }
+
+  public void drawDynamicLayer(double time, Context2d context) {
+    dynamicRoot.draw(time, context);
   }
 }

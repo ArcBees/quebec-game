@@ -26,6 +26,9 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.dom.client.MouseWheelHandler;
+import com.google.gwt.event.logical.shared.HasResizeHandlers;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.Composite;
@@ -37,7 +40,8 @@ import com.google.gwt.user.client.ui.RequiresResize;
  *
  * @author Philippe Beaudoin
  */
-public class FullCanvas extends Composite implements RequiresResize, HasAllMouseHandlers {
+public class FullCanvas extends Composite implements RequiresResize, HasAllMouseHandlers,
+    HasResizeHandlers {
 
   private final double targetAspectRatio;
   private final Canvas canvas;
@@ -93,6 +97,8 @@ public class FullCanvas extends Composite implements RequiresResize, HasAllMouse
     canvas.setPixelSize(width, height);
     canvas.setCoordinateSpaceWidth(width);
     canvas.setCoordinateSpaceHeight(height);
+
+    ResizeEvent.fire(this, width, height);
   }
 
   @Override
@@ -123,5 +129,10 @@ public class FullCanvas extends Composite implements RequiresResize, HasAllMouse
   @Override
   public HandlerRegistration addMouseWheelHandler(MouseWheelHandler handler) {
     return canvas.addMouseWheelHandler(handler);
+  }
+
+  @Override
+  public HandlerRegistration addResizeHandler(ResizeHandler handler) {
+    return addHandler(handler, ResizeEvent.getType());
   }
 }

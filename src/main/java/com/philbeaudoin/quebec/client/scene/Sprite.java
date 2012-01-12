@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 import com.philbeaudoin.quebec.client.utils.LoggerFactory;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
+import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * A sprite that can be transformed and drawn into an HTML5 2d canvas.
@@ -39,8 +39,8 @@ public class Sprite extends SceneNodeImpl {
     this.info = info;
   }
 
-  public Sprite(SpriteResources.Info info, Transformation transformation) {
-    super(transformation);
+  public Sprite(SpriteResources.Info info, Transform transform) {
+    super(transform);
     logger = LoggerFactory.get(Sprite.class);
     this.info = info;
   }
@@ -52,7 +52,7 @@ public class Sprite extends SceneNodeImpl {
     }
     context.save();
     try {
-      getTransformation().applies(time, context, info.getSizeFactor());
+      getTransform().applies(time, context, info.getSizeFactor());
       ImageElement imageElement = info.getElement();
       context.drawImage(imageElement, -imageElement.getWidth() / 2, -imageElement.getHeight() / 2);
     } finally {

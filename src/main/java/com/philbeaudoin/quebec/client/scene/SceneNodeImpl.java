@@ -16,9 +16,9 @@
 
 package com.philbeaudoin.quebec.client.scene;
 
-import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
-import com.philbeaudoin.quebec.shared.utils.MutableTransformation;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
+import com.philbeaudoin.quebec.shared.utils.MutableTransform;
+import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * Base class for any node of the scene tree.
@@ -27,25 +27,25 @@ import com.philbeaudoin.quebec.shared.utils.Transformation;
  */
 public abstract class SceneNodeImpl implements SceneNode {
 
-  private Transformation transformation;
+  private Transform transform;
   private SceneNodeList parent;
 
   public SceneNodeImpl() {
-    this.transformation = new MutableTransformation();
+    this.transform = new MutableTransform();
   }
 
-  public SceneNodeImpl(Transformation transformation) {
-    this.transformation = transformation;
-  }
-
-  @Override
-  public void setTransformation(Transformation transformation) {
-    this.transformation = transformation;
+  public SceneNodeImpl(Transform transform) {
+    this.transform = transform;
   }
 
   @Override
-  public Transformation getTransformation() {
-    return transformation;
+  public void setTransform(Transform transform) {
+    this.transform = transform;
+  }
+
+  @Override
+  public Transform getTransform() {
+    return transform;
   }
 
   @Override
@@ -65,11 +65,11 @@ public abstract class SceneNodeImpl implements SceneNode {
   }
 
   @Override
-  public ConstantTransformation getTotalTransformation(double time) {
-    ConstantTransformation transformation = getTransformation().eval(time);
+  public ConstantTransform getTotalTransform(double time) {
+    ConstantTransform constantTransform = getTransform().eval(time);
     if (parent == null) {
-      return transformation;
+      return constantTransform;
     }
-    return parent.getTotalTransformation(time).times(transformation);
+    return parent.getTotalTransform(time).times(constantTransform);
   }
 }

@@ -16,11 +16,15 @@
 
 package com.philbeaudoin.quebec.client.main;
 
+import java.util.Date;
+
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
@@ -44,11 +48,22 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   protected static final Binder binder = GWT.create(Binder.class);
 
   // Timer refresh rate, in milliseconds.
-  static final int refreshRate = 25;
+  static final int refreshRate = 15;
 
   private final Widget widget;
   private final Canvas canvas;
   private final Context2d context;
+  private final Canvas staticLayerCanvas;
+  private final Context2d staticLayerContext;
+
+  // For animations
+  private double time;
+  private boolean isRefreshing;
+
+  // For performance info.
+  private long lastTimeMs;
+  private long fps;
+  private int cnt;
 
   @UiField
   FullCanvas fullCanvas;
@@ -61,14 +76,42 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
     canvas = fullCanvas.asCanvas();
     context = canvas.getContext2d();
 
-    // setup timer
-    final Timer timer = new Timer() {
+    staticLayerCanvas = Canvas.createIfSupported();
+    staticLayerContext = staticLayerCanvas.getContext2d();
+
+    // Setup refresh timer.
+    final Timer refreshTimer = new Timer() {
+      @Override
+      public void run() {
+        refreshStaticLayer();
+        isRefreshing = false;
+      }
+    };
+
+    fullCanvas.addResizeHandler(new ResizeHandler() {
+      @Override
+      public void onResize(ResizeEvent event) {
+        int width = canvas.getCoordinateSpaceWidth();
+        int height = canvas.getCoordinateSpaceHeight();
+        context.setFillStyle("#ddd");
+        context.setStrokeStyle("#000");
+        context.rect(0, 0, width, height);
+        context.fill();
+        context.stroke();
+        isRefreshing = true;
+        refreshTimer.cancel();
+        refreshTimer.schedule(450);
+      }
+    });
+
+    // Setup animation timer.
+    final Timer animTimer = new Timer() {
       @Override
       public void run() {
         doUpdate();
       }
     };
-    timer.scheduleRepeating(refreshRate);
+    animTimer.scheduleRepeating(refreshRate);
 
     fullCanvas.addMouseMoveHandler(new MouseMoveHandler() {
       @Override
@@ -90,19 +133,64 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   public void setPresenter(MainPagePresenter presenter) {
     this.presenter = presenter;
   }
-  double time = 0;
-  void doUpdate() {
-    time += 1;
+
+  void refreshStaticLayer() {
+    time = 0;
+
+    int width = canvas.getCoordinateSpaceWidth();
+    int height = canvas.getCoordinateSpaceHeight();
+    context.setFillStyle("#fff");
+    context.fillRect(0, 0, width, height);
+
     if (presenter != null) {
-      int height = canvas.getOffsetHeight();
+      staticLayerCanvas.setPixelSize(width, height);
+      staticLayerCanvas.setCoordinateSpaceWidth(width);
+      staticLayerCanvas.setCoordinateSpaceHeight(height);
+
+      staticLayerContext.save();
+      try {
+        staticLayerContext.scale(height, height);
+        staticLayerContext.setLineWidth(0.001);
+        presenter.drawStaticLayer(staticLayerContext);
+      } finally {
+        staticLayerContext.restore();
+      }
+    }
+  }
+
+  void doUpdate() {
+    if (isRefreshing) {
+      return;
+    }
+    cnt++;
+    if (cnt == 60) {
+      cnt = 0;
+      long timeMs = new Date().getTime();
+      if (lastTimeMs > 0) {
+        long msFor60Frames = timeMs - lastTimeMs;
+        if (msFor60Frames > 0) {
+          fps = 60000 / msFor60Frames;
+        }
+      }
+      lastTimeMs = timeMs;
+    }
+    time += refreshRate / 1000.0;
+    if (presenter != null) {
+      int height = canvas.getCoordinateSpaceHeight();
       context.save();
       try {
+        context.drawImage(staticLayerCanvas.getCanvasElement(), 0, 0);
+        context.setFillStyle("#bbb");
+        context.fillRect(0, height - 13, 40, 13);
+        context.setFillStyle("#000");
+        context.fillText("FPS: " + fps, 2, height - 2);
         context.scale(height, height);
         context.setLineWidth(0.001);
-        presenter.draw(time, context);
+        presenter.drawDynamicLayer(time, context);
       } finally {
         context.restore();
       }
     }
   }
+
 }

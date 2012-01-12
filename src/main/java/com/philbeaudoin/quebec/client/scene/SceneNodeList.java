@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
+import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * This class tracks a list of scene nodes. This class should have only logic, no GWT-specific code,
@@ -35,8 +35,8 @@ public class SceneNodeList extends SceneNodeImpl {
     super();
   }
 
-  public SceneNodeList(Transformation transformation) {
-    super(transformation);
+  public SceneNodeList(Transform transform) {
+    super(transform);
   }
 
   /**
@@ -98,7 +98,7 @@ public class SceneNodeList extends SceneNodeImpl {
   public void draw(double time, Context2d context) {
     context.save();
     try {
-      getTransformation().applies(time, context);
+      getTransform().applies(time, context);
       for (SceneNode sceneNode : sceneNodes) {
         sceneNode.draw(time, context);
       }

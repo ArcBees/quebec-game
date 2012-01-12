@@ -17,8 +17,8 @@
 package com.philbeaudoin.quebec.client.scene;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.philbeaudoin.quebec.shared.utils.ConstantTransformation;
-import com.philbeaudoin.quebec.shared.utils.Transformation;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
+import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * An object that can be drawn as part of the scene tree into an HTML5 2d canvas.
@@ -47,21 +47,21 @@ public interface SceneNode {
   void draw(double time, Context2d context);
 
   /**
-   * Sets the local transformation of the scene node.
-   * @param transformation The desired transformation.
+   * Sets the local transform of the scene node.
+   * @param transform The desired transform.
    */
-  void setTransformation(Transformation transformation);
+  void setTransform(Transform transform);
 
   /**
-   * Returns the local transformation affecting the scene node.
-   * @return The transformation.
+   * Returns the local transform affecting the scene node.
+   * @return The transform.
    */
-  Transformation getTransformation();
+  Transform getTransform();
 
   /**
-   * Returns the total transformation affecting the scene node.
-   * @param time The time at which to evaluate the total transformation.
-   * @return The total transformation.
+   * Returns the total transform affecting the scene node.
+   * @param time The time at which to evaluate the total transform.
+   * @return The total transform.
    */
-  ConstantTransformation getTotalTransformation(double time);
+  ConstantTransform getTotalTransform(double time);
 }
