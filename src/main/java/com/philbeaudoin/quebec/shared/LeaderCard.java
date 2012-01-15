@@ -18,7 +18,7 @@ package com.philbeaudoin.quebec.shared;
 
 /**
  * A specific leader card. This information never changes during the game.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class LeaderCard {
   private final InfluenceType influenceType;

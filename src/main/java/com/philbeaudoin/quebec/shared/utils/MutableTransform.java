@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.shared.utils;
 /**
  * A 2-dimensional transform that can be modified.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class MutableTransform extends ConstantTransform {
 

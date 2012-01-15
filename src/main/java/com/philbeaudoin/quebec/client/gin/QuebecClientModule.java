@@ -16,21 +16,26 @@
 
 package com.philbeaudoin.quebec.client.gin;
 
+import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.gwtplatform.dispatch.shared.SecurityCookie;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.philbeaudoin.quebec.client.PlaceManager;
 import com.philbeaudoin.quebec.client.main.MainPagePresenter;
 import com.philbeaudoin.quebec.client.main.MainPageView;
+import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.shared.Constants;
 
 /**
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class QuebecClientModule extends AbstractPresenterModule {
 
   @Override
   protected void configure() {
+    // Install factories for assisted injection.
+    install(new GinFactoryModuleBuilder().build(RendererFactories.class));
+
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);
 
     install(new DefaultModule(PlaceManager.class));

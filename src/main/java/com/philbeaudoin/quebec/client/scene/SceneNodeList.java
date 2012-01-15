@@ -26,7 +26,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
  * This class tracks a list of scene nodes. This class should have only logic, no GWT-specific code,
  * so it's easily testable.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class SceneNodeList extends SceneNodeImpl {
   private final ArrayList<SceneNode> sceneNodes = new ArrayList<SceneNode>();
@@ -122,4 +122,5 @@ public class SceneNodeList extends SceneNodeImpl {
   void removeFromList(SceneNode sceneNode) {
     sceneNodes.remove(sceneNode);
   }
+
 }

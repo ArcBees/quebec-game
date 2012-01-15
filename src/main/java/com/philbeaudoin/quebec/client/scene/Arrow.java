@@ -21,7 +21,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * Scene tree node drawing an arrow pointing from one point to another.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Arrow extends SceneNodeImpl {
   private static final double CONTROL_POINT_DIST = 0.1;

@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.shared.utils;
 /**
  * An immutable 2-dimensional vector.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Vector2d {
   protected double x, y;

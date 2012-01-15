@@ -21,7 +21,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 /**
  * An immutable 2-dimension transform that doesn't depend on time.
  *
- * @author beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ConstantTransform implements Transform {
   protected final MutableVector2d translation;

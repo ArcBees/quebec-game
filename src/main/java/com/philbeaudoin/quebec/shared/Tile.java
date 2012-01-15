@@ -18,9 +18,9 @@ package com.philbeaudoin.quebec.shared;
 
 /**
  * Information on a tile that can be placed on the board. This information never changes during the
- * game. See also {@link TileState}.
+ * game, it should be unmutable. See also {@link TileState}.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Tile {
   private final InfluenceType influenceType;

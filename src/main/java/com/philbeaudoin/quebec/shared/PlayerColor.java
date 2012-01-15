@@ -20,7 +20,7 @@ package com.philbeaudoin.quebec.shared;
  * The various possible player colors in the game, including an extra one indicating no player
  * color.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public enum PlayerColor {
   NONE,
@@ -29,5 +29,13 @@ public enum PlayerColor {
   ORANGE,
   GREEN,
   PINK,
-  NEUTRAL
+  NEUTRAL;
+
+  /**
+   * Checks if the color is one of the 5 normal player colors.
+   * @return True if it is, false if it's {@code NONE} or {@code NEUTRAL}.
+   */
+  public boolean isNormalColor() {
+    return this != NONE && this != NEUTRAL;
+  }
 }

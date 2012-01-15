@@ -26,7 +26,7 @@ import com.gwtplatform.dispatch.shared.SecurityCookie;
 import com.philbeaudoin.quebec.shared.Constants;
 
 /**
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class DispatchServletModule extends ServletModule {
 

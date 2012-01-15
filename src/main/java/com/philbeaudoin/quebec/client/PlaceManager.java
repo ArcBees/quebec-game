@@ -26,7 +26,7 @@ import com.philbeaudoin.quebec.shared.NameTokens;
 /**
  * The place manager for Quebec.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class PlaceManager extends PlaceManagerImpl {
   @Inject
