@@ -21,7 +21,7 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 
 /**
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class MyGuiceServletContextListener extends GuiceServletContextListener {
 

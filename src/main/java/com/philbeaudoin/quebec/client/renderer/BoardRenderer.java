@@ -16,6 +16,13 @@
 
 package com.philbeaudoin.quebec.client.renderer;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import com.google.inject.assistedinject.Assisted;
+import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
@@ -24,7 +31,6 @@ import com.philbeaudoin.quebec.shared.Board;
 import com.philbeaudoin.quebec.shared.BoardAction;
 import com.philbeaudoin.quebec.shared.GameState;
 import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.InfluenceZoneState.PlayerCubes;
 import com.philbeaudoin.quebec.shared.LeaderCard;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.Tile;
@@ -36,36 +42,65 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 /**
  * The renderer for the state of the board. Keeps track of the rendered objects so they can be
  * animated.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-class BoardRenderer {
+public class BoardRenderer {
+
+  private static class CubeStack {
+    List<SceneNode> cubes;
+    PlayerColor playerColor;
+    CubeStack() {
+      cubes = new ArrayList<SceneNode>();
+      playerColor = PlayerColor.NONE;
+    }
+  }
 
   public static final double WIDTH = 1.318209;
+
+  private final SpriteResources spriteResources;
+
+  private final CubeGrid zoneGrid = new CubeGrid(25, 5, 0.03);
 
   private final SceneNodeList boardRoot;
   private final SceneNodeList tileGrid[][] = new SceneNodeList[18][8];
 
-  BoardRenderer(double leftPosition) {
+  private final SceneNodeList[] influenceZoneNode = new SceneNodeList[5];
+  private final CubeStack[][] cubeStacksInZone = new CubeStack[5][5];  // [influenceType][line]
+
+  @Inject
+  BoardRenderer(SpriteResources spriteResources, @Assisted double leftPosition) {
+    this.spriteResources = spriteResources;
     boardRoot = new SceneNodeList(
         new ConstantTransform(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
+    for(int i = 0; i < 5; ++i) {
+      for(int j = 0; j < 5; ++j) {
+        cubeStacksInZone[i][j] = new CubeStack();
+      }
+    }
   }
 
   /**
    * Renders the board state.
    * @param gameState The desired game state.
-   * @param spriteResources The resources.
    * @param root The global root scene node.
    */
-  public void render(GameState gameState, SpriteResources spriteResources, SceneNodeList root) {
+  public void render(GameState gameState, SceneNodeList root) {
     // Clear everything first.
     boardRoot.clear();
     Sprite boardSprite = new Sprite(spriteResources.get(SpriteResources.Type.board));
     boardRoot.add(boardSprite);
     root.add(boardRoot);
 
-    renderCards(gameState, spriteResources);
-    renderInfluenceZones(gameState, spriteResources);
-    renderTiles(gameState, spriteResources);
+    for(int i = 0; i < 5; ++i) {
+      for(int j = 0; j < 5; ++j) {
+        cubeStacksInZone[i][j].cubes.clear();
+        cubeStacksInZone[i][j].playerColor = PlayerColor.NONE;
+      }
+    }
+
+    renderCards(gameState);
+    renderInfluenceZones(gameState);
+    renderTiles(gameState);
   }
 
   /**
@@ -76,7 +111,7 @@ class BoardRenderer {
     return boardRoot;
   }
 
-  private void renderCards(GameState gameState, SpriteResources spriteResources) {
+  private void renderCards(GameState gameState) {
     for (LeaderCard leaderCard : gameState.getAvailableLeaderCards()) {
       InfluenceType influenceType = leaderCard.getInfluenceType();
       double x = 0.068 * influenceType.ordinal() + 0.09;
@@ -86,39 +121,30 @@ class BoardRenderer {
     }
   }
 
-  private void renderInfluenceZones(GameState gameState,  SpriteResources spriteResources) {
-    CubeGrid zoneGrid = new CubeGrid(25, 5, 0.03);
+  private void renderInfluenceZones(GameState gameState) {
     for (InfluenceType influenceType : InfluenceType.values()) {
+      int index = influenceType.ordinal();
       // Add the main node for the influence zone.
       Vector2d translation;
       if (influenceType == InfluenceType.CITADEL) {
         translation = new Vector2d(0.45, -0.05);
       } else {
-        int index = influenceType.ordinal();
         translation = new Vector2d(0.51 * ((index % 2 == 0) ? 1 : -1),
                                    0.35 * ((index / 2 == 0) ? 1 : -1));
       }
-      SceneNodeList cubesInZoneNode = new SceneNodeList(new ConstantTransform(translation));
-      boardRoot.add(cubesInZoneNode);
+      influenceZoneNode[index] = new SceneNodeList(new ConstantTransform(translation));
+      boardRoot.add(influenceZoneNode[index]);
 
-      // Add cubes to the main node.
-      boolean reverseLineOrder = influenceType == InfluenceType.RELIGIOUS ||
-          influenceType == InfluenceType.POLITIC;
-      int line = reverseLineOrder ? 4 : 0;
-      for (PlayerCubes playerCubes : gameState.getPlayerCubesInInfluenceZone(influenceType)) {
-        assert playerCubes.playerColor != PlayerColor.NONE &&
-            playerCubes.playerColor != PlayerColor.NEUTRAL;
-        for (int i = 0; i < playerCubes.cubes; ++i) {
-          Sprite cube = new Sprite(spriteResources.getCube(playerCubes.playerColor),
-              new ConstantTransform(zoneGrid.getPosition(i, line)));
-          cubesInZoneNode.add(cube);
+      for (PlayerColor playerColor : PlayerColor.values()) {
+        if (playerColor.isNormalColor()) {
+          addCubesToInfluenceZone(influenceType, playerColor,
+              gameState.getPlayerCubesInInfluenceZone(influenceType, playerColor));
         }
-        line += reverseLineOrder ? -1 : 1;
       }
     }
   }
 
-  private void renderTiles(GameState gameState, SpriteResources spriteResources) {
+  private void renderTiles(GameState gameState) {
     for (TileState tileState : gameState.getTileStates()) {
       int column = tileState.getLocation().getColumn();
       int line = tileState.getLocation().getLine();
@@ -134,15 +160,14 @@ class BoardRenderer {
 
       // Render the tile itself.
       if (tileState.isBuildingFacing()) {
-        renderBuildingTile(tileState, tileNode, spriteResources);
+        renderBuildingTile(tileState, tileNode);
       } else {
-        renderTile(tileState, tileNode, spriteResources, tileTransform.getRotation(0.0));
+        renderTile(tileState, tileNode, tileTransform.getRotation(0.0));
       }
     }
   }
 
-  private void renderTile(TileState tileState, SceneNodeList tileNode,
-      SpriteResources spriteResources, double rotation) {
+  private void renderTile(TileState tileState, SceneNodeList tileNode, double rotation) {
     Tile tile = tileState.getTile();
     Sprite tileSprite = new Sprite(spriteResources.getTile(tile.getInfluenceType(),
         tile.getCentury()));
@@ -183,8 +208,7 @@ class BoardRenderer {
     }
   }
 
-  private void renderBuildingTile(TileState tileState, SceneNodeList tileNode,
-      SpriteResources spriteResources) {
+  private void renderBuildingTile(TileState tileState, SceneNodeList tileNode) {
     Tile tile = tileState.getTile();
     Sprite tileSprite = new Sprite(spriteResources.getBuildingTile(tile.getInfluenceType(),
         tile.getCentury(), tile.getBuildingIndex()));
@@ -200,4 +224,108 @@ class BoardRenderer {
     return new ConstantTransform(translation, scaling, rotation);
   }
 
+  /**
+   * Remove a given number of cubes of a given player from a given influence zone and return the
+   * transforms of the removed cubes.
+   * @param influenceType The influence type of the zone to remove cubes from.
+   * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
+   * @param nbCubes The number of cubes to remove, must be more than what is contained in the zone.
+   * @return The list of global transforms of the removed cubes.
+   */
+  public List<Transform> removeCubesFromInfluenceZone(InfluenceType influenceType,
+      PlayerColor playerColor, int nbCubes) {
+    assert playerColor.isNormalColor();
+    assert nbCubes >= 0;
+    List<Transform> result = new ArrayList<Transform>(nbCubes);
+    if (nbCubes == 0) {
+      return result;
+    }
+    int index = influenceType.ordinal();
+    int line = findLineForColor(influenceType, playerColor);
+    List<SceneNode> cubes = cubeStacksInZone[index][line].cubes;
+    assert cubes.size() >= nbCubes;
+    int newNbCubes = cubes.size() - nbCubes;
+
+    ConstantTransform parentTransform = influenceZoneNode[index].getTotalTransform(0);
+    for (int i = 0; i < nbCubes; ++i) {
+      SceneNode cube = cubes.remove(newNbCubes);
+      result.add(parentTransform.times(cube.getTransform()));
+      cube.setParent(null);
+    }
+    return result;
+  }
+
+  /**
+   * Add a given number of cubes of a given player to a given influence zone and return the
+   * global transforms of the newly added cubes.
+   * @param influenceType The influence type of the zone to add cubes to.
+   * @param playerColor The color of the player whose cube to add (not NONE or NEUTRAL).
+   * @param nbCubes The number of cubes to add, must be positive or 0.
+   * @return The list of global transforms of the added cubes.
+   */
+  public List<Transform> addCubesToInfluenceZone(InfluenceType influenceType,
+      PlayerColor playerColor, int nbCubes) {
+    assert playerColor.isNormalColor();
+    assert nbCubes >= 0;
+    List<Transform> result = new ArrayList<Transform>(nbCubes);
+    if (nbCubes == 0) {
+      return result;
+    }
+    int index = influenceType.ordinal();
+    int line = findLineForColor(influenceType, playerColor);
+    cubeStacksInZone[index][line].playerColor = playerColor;
+    List<SceneNode> cubes = cubeStacksInZone[index][line].cubes;
+    int newNbCubes = cubes.size() + nbCubes;
+
+    ConstantTransform parentTransform = influenceZoneNode[index].getTotalTransform(0);
+    for (int i = cubes.size(); i < newNbCubes; ++i) {
+      ConstantTransform childTransform = new ConstantTransform(zoneGrid.getPosition(i, line));
+      Sprite cube = new Sprite(spriteResources.getCube(playerColor), childTransform);
+      cubes.add(cube);
+      result.add(parentTransform.times(childTransform));
+      influenceZoneNode[index].add(cube);
+    }
+    return result;
+  }
+
+  /**
+   * Call this method to reset the color associated with each line in each influence zone so that
+   * lines that have no cubes can take any color. Be aware that undoing a move after that can leave
+   * the rendered state slightly different from the original state.
+   */
+  public void resetColorForInfluenceZoneLines() {
+    for (int i = 0; i < 5; ++i) {
+      for (int j = 0; j < 5; ++j) {
+        if (cubeStacksInZone[i][j].cubes.isEmpty()) {
+          cubeStacksInZone[i][j].playerColor = PlayerColor.NONE;
+        }
+      }
+    }
+  }
+
+  /**
+   * Find the line on which to place cubes of the given color in the given influence zone.
+   * @param influenceType The influence zone in which to find a line for a color.
+   * @param playerColor The color of cubes for which to find the line.
+   */
+  private int findLineForColor(InfluenceType influenceType, PlayerColor playerColor) {
+    int index = influenceType.ordinal();
+    boolean reverseLineOrder = influenceType == InfluenceType.RELIGIOUS ||
+        influenceType == InfluenceType.POLITIC;
+    int line = reverseLineOrder ? 4 : 0;
+    int chosenLine = -1;
+    for (int i = 0; i < 5; ++i) {
+      PlayerColor colorOnLine = cubeStacksInZone[index][line].playerColor;
+      if (colorOnLine == playerColor) {
+        chosenLine = line;
+        break;
+      } else if (chosenLine == -1 && colorOnLine == PlayerColor.NONE) {
+        // Keep the first empty line found, but keep looking for this color.
+        chosenLine = line;
+      }
+      line += reverseLineOrder ? -1 : 1;
+    }
+    assert chosenLine != -1;
+    return chosenLine;
+  }
 }

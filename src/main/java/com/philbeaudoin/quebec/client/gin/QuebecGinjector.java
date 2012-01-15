@@ -27,7 +27,7 @@ import com.philbeaudoin.quebec.client.main.MainPagePresenter;
 import com.philbeaudoin.quebec.client.resources.Resources;
 
 /**
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 @GinModules({ DispatchAsyncModule.class, QuebecClientModule.class })
 public interface QuebecGinjector extends Ginjector {

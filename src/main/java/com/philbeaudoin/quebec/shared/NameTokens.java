@@ -27,7 +27,7 @@ package com.philbeaudoin.quebec.shared;
  * {@literal @}{@link com.gwtplatform.mvp.client.annotations.NameToken} annotation, you can only
  * refer to a static variable.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class NameTokens {
 

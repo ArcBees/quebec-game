@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.shared;
 /**
  * The various possible types of influence in the game.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public enum InfluenceType {
   RELIGIOUS,

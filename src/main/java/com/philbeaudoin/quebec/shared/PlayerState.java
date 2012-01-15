@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.shared;
 /**
  * State of a player during the game.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class PlayerState {
 
@@ -38,6 +38,22 @@ public class PlayerState {
    */
   public PlayerState(Player player) {
     this.player = player;
+  }
+
+
+  /**
+   * Copy constructor performing a deep copy of every mutable object contained in this one.
+   * @param other The player state to copy.
+   */
+  public PlayerState(PlayerState other) {
+    this.player = other.player;
+    this.nbPassiveCubes = other.nbPassiveCubes;
+    this.nbActiveCubes = other.nbActiveCubes;
+    this.currentPlayer = other.currentPlayer;
+    this.holdingArchitect = other.holdingArchitect;
+    this.holdingNeutralArchitect = other.holdingNeutralArchitect;
+    this.leaderCard = other.leaderCard;
+    this.score = other.score;
   }
 
   /**

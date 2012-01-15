@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 /**
  * Base class for any node of the scene tree.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public abstract class SceneNodeImpl implements SceneNode {
 

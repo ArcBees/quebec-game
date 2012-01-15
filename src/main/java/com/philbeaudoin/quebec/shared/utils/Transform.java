@@ -20,7 +20,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 
 /**
  * A transform that can be applied at any time.
- * @author beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface Transform {
 

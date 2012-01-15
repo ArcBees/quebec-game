@@ -26,7 +26,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * A sprite that can be transformed and drawn into an HTML5 2d canvas.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Sprite extends SceneNodeImpl {
   final Logger logger;

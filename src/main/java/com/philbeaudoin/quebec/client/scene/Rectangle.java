@@ -22,7 +22,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 /**
  * Scene tree node drawing a rectangle with a vertical color gradient and optionally a contour
  * stroke.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Rectangle extends SceneNodeImpl {
 

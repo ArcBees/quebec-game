@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.client.resources;
 import com.google.gwt.i18n.client.Constants;
 
 /**
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface Translations extends Constants {
   String codeLoadFailure();

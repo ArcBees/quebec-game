@@ -24,7 +24,7 @@ import com.google.gwt.user.client.Random;
 /**
  * A randomized deck from which tile can be drawn.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class TileDeck {
   // One deck for each influence type.

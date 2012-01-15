@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 /**
  * Provides a logger for a specific class.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class LoggerFactory {
   public static Logger get(Class<?> clazz) {

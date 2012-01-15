@@ -38,7 +38,7 @@ import com.google.gwt.user.client.ui.RequiresResize;
  * A canvas that always resizes to take as much room as possible within its parent while respecting
  * a specified aspect ratio.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class FullCanvas extends Composite implements RequiresResize, HasAllMouseHandlers,
     HasResizeHandlers {

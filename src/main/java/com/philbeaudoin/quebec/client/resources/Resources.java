@@ -21,7 +21,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.DataResource;
 
 /**
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface Resources extends ClientBundle {
 
@@ -185,7 +185,7 @@ public interface Resources extends ClientBundle {
   Style style();
 
   /**
-   * @author Philippe Beaudoin
+   * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
    */
   public interface Style extends CssResource {
     String fullSize();

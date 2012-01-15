@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.shared;
 /**
  * Static constants used throughout the client and the server.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Constants {
   public static final String securityCookieName = "QGSC";

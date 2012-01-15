@@ -22,7 +22,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * An object that can be drawn as part of the scene tree into an HTML5 2d canvas.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface SceneNode {
 

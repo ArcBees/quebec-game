@@ -35,7 +35,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
  * This class makes it possible to obtain the image element for any type of sprite. Images are
  * lazily instantiated when first needed.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 @Singleton
 public class SpriteResources {
@@ -50,7 +50,7 @@ public class SpriteResources {
   /**
    * Information on the image for a sprite. The image element is lazily instantiated the first time
    * the information is requested.
-   * @author Philippe Beaudoin
+   * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
    */
   public static class Info {
     private final SafeUri safeUri;

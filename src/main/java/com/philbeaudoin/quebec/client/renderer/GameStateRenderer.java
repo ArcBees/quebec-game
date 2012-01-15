@@ -19,16 +19,20 @@ package com.philbeaudoin.quebec.client.renderer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
-import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.GameState;
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.PlayerState;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
+import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * The renderer of a game state. Keeps track of the rendered objects so they can be animated.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class GameStateRenderer {
 
@@ -36,17 +40,25 @@ public class GameStateRenderer {
 
   private final SceneNodeList root = new SceneNodeList();
 
-  private final ScoreRenderer scoreRenderer = new ScoreRenderer();
-  private final BoardRenderer boardRenderer = new BoardRenderer(LEFT_COLUMN_WIDTH);
+  private final RendererFactories factories;
+  private final ScoreRenderer scoreRenderer;
+  private final BoardRenderer boardRenderer;
   private final ArrayList<PlayerStateRenderer> playerStateRenderers =
       new ArrayList<PlayerStateRenderer>(5);
+
+  @Inject
+  public GameStateRenderer(RendererFactories factories) {
+    this.factories = factories;
+    scoreRenderer = factories.createScoreRenderer();
+    boardRenderer = factories.createBoardRenderer(LEFT_COLUMN_WIDTH);
+  }
 
   /**
    * Renders the game state.
    * @param gameState The desired game state.
    * @param spriteResources The resources.
    */
-  public void render(GameState gameState, SpriteResources spriteResources) {
+  public void render(GameState gameState) {
     List<PlayerState> playerStates = gameState.getPlayerStates();
     initPlayerStateRenderers(playerStates);
 
@@ -54,11 +66,11 @@ public class GameStateRenderer {
     root.clear();
 
     // Render the board first.
-    boardRenderer.render(gameState, spriteResources, root);
+    boardRenderer.render(gameState, root);
 
     int index = 0;
     for (PlayerState playerState : playerStates) {
-      playerStateRenderers.get(index).render(playerState, spriteResources, root,
+      playerStateRenderers.get(index).render(playerState, root,
           boardRenderer.getBoardRoot());
       index++;
     }
@@ -81,12 +93,47 @@ public class GameStateRenderer {
       playerStateRenderers.clear();
       double deltaY = 0;
       for (int i = 0; i < playerStates.size(); ++i) {
-        PlayerStateRenderer playerStateRenderer = new PlayerStateRenderer(LEFT_COLUMN_WIDTH, 0.15,
-            new ConstantTransform(new Vector2d(0, deltaY)), scoreRenderer);
+        PlayerStateRenderer playerStateRenderer = factories.createPlayerStateRenderer(
+            new Vector2d(LEFT_COLUMN_WIDTH, 0.15), new ConstantTransform(new Vector2d(0, deltaY)),
+            scoreRenderer);
         deltaY += 0.15;
         playerStateRenderers.add(playerStateRenderer);
       }
     }
   }
 
+  /**
+   * Remove a given number of cubes of a given player from a given influence zone and return the
+   * global transforms of the removed cubes.
+   * @param influenceType The influence type of the zone to remove cubes from.
+   * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
+   * @param nbCubes The number of cubes to remove, must be more than what is contained in the zone.
+   * @return The list of global transforms of the removed cubes.
+   */
+  public List<Transform> removeCubesFromInfluenceZone(InfluenceType influenceType,
+      PlayerColor playerColor, int nbCubes) {
+    return boardRenderer.removeCubesFromInfluenceZone(influenceType, playerColor, nbCubes);
+  }
+
+  /**
+   * Add a given number of cubes of a given player to a given influence zone and return the
+   * global transforms of the newly added cubes.
+   * @param influenceType The influence type of the zone to add cubes to.
+   * @param playerColor The color of the player whose cube to add (not NONE or NEUTRAL).
+   * @param nbCubes The number of cubes to add, must be positive or 0.
+   * @return The list of global transforms of the added cubes.
+   */
+  public List<Transform> addCubesToInfluenceZone(InfluenceType influenceType,
+      PlayerColor playerColor, int nbCubes) {
+    return boardRenderer.addCubesToInfluenceZone(influenceType, playerColor, nbCubes);
+  }
+
+  /**
+   * Call this method to reset the color associated with each line in each influence zone so that
+   * lines that have no cubes can take any color. Be aware that undoing a move after that can leave
+   * the rendered state slightly different from the original state.
+   */
+  public void resetColorForInfluenceZoneLines() {
+    boardRenderer.resetColorForInfluenceZoneLines();
+  }
 }

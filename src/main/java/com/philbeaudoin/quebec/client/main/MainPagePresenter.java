@@ -27,34 +27,34 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import com.philbeaudoin.quebec.client.renderer.ChangeRenderer;
+import com.philbeaudoin.quebec.client.renderer.ChangeRendererGenerator;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
-import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
-import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
+import com.philbeaudoin.quebec.shared.CubeDestinationInfluenceZone;
 import com.philbeaudoin.quebec.shared.GameController;
 import com.philbeaudoin.quebec.shared.GameState;
+import com.philbeaudoin.quebec.shared.GameStateChangeMoveCubes;
+import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.Player;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.utils.ArcTransform;
-import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
-import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * This is the presenter of the main application page.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class MainPagePresenter extends
     Presenter<MainPagePresenter.MyView, MainPagePresenter.MyProxy> {
 
   public static final Object TYPE_RevealNewsContent = new Object();
 
-  // TODO: Rely on injection, inject spriteResources in there.
-  private final GameStateRenderer gameStateRenderer = new GameStateRenderer();
+  private final GameStateRenderer gameStateRenderer;
 
   private final SceneNodeList dynamicRoot = new SceneNodeList();
 
@@ -76,9 +76,10 @@ public class MainPagePresenter extends
   // TODO Remove dependency on SpriteResources.
   @Inject
   public MainPagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-      final SpriteResources spriteResources) {
+      final SpriteResources spriteResources, RendererFactories rendererFactories) {
     super(eventBus, view, proxy);
     view.setPresenter(this);
+    gameStateRenderer = rendererFactories.createGameStateRenderer();
 
     ArrayList<Player> players = new ArrayList<Player>(5);
     players.add(new Player(PlayerColor.BLACK, "Filou"));
@@ -90,15 +91,23 @@ public class MainPagePresenter extends
     GameState gameState = new GameState();
     GameController gameController = new GameController();
     gameController.initGame(gameState, players);
-    gameStateRenderer.render(gameState, spriteResources);
+    gameState.setPlayerCubesInInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK, 8);
+    gameStateRenderer.render(gameState);
+
+    // Dummy setup for a test.
+    GameStateChangeMoveCubes change = new GameStateChangeMoveCubes(4,
+        new CubeDestinationInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK),
+        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.BLACK));
+    ChangeRendererGenerator generator = rendererFactories.createChangeRendererGenerator();
+    generator.visit(change);
+
+    ChangeRenderer changeRenderer = generator.getChangeRenderer();
+    changeRenderer.generateAnim(gameStateRenderer, dynamicRoot, 0.0);
+    changeRenderer.undoAdditions(gameStateRenderer);
 
     Arrow arrow = new Arrow(new Vector2d(0.7, 0.1), new Vector2d(1.699, 0.2));
     gameStateRenderer.getRoot().add(arrow);
 
-    Transform anim = new ArcTransform(new ConstantTransform(new Vector2d(0.1, 0.4)),
-        new ConstantTransform(new Vector2d(1.5, 0.6)), 0, 2.0);
-    SceneNode zeThing = new Sprite(spriteResources.getCube(PlayerColor.ORANGE), anim);
-    dynamicRoot.add(zeThing);
   }
 
   @Override

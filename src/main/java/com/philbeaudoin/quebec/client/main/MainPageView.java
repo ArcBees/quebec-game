@@ -40,7 +40,7 @@ import com.philbeaudoin.quebec.client.widget.FullCanvas;
  *   (0, 1.7) x (0, 1)
  * This horizontal range is determined by the aspect ratio specified in MainPageView.ui.xml.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
 

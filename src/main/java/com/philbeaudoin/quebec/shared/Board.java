@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * during the game.
  * TODO(beaudoin): Make all fields non-static and inject a singleton Board.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Board {
 

@@ -16,27 +16,52 @@
 
 package com.philbeaudoin.quebec.shared;
 
-import java.util.ArrayList;
 
 /**
  * The cubes contained in an influence zone.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class InfluenceZoneState {
 
+  private final Integer cubesForPlayer[] = new Integer[5];
+
   /**
-   * A number of cubes held by a player.
-   * @author Philippe Beaudoin
+   * Creates an empty influence zone.
    */
-  public class PlayerCubes {
-    public PlayerColor playerColor;
-    public int cubes;
+  public InfluenceZoneState() {
+    for (int i = 0; i < 5; i++) {
+      cubesForPlayer[i] = new Integer(0);
+    }
   }
 
-  private final ArrayList<PlayerCubes> playerCubes = new ArrayList<PlayerCubes>();
+  /**
+   * Copy constructor performing a deep copy of every mutable object contained in this one.
+   * @param other The influence zone state to copy.
+   */
+  public InfluenceZoneState(InfluenceZoneState other) {
+    for (int i = 0; i < 5; i++) {
+      cubesForPlayer[i] = new Integer(other.cubesForPlayer[i]);
+    }
+  }
 
-  public ArrayList<PlayerCubes> getPlayerCubes() {
-    return playerCubes;
+  /**
+   * Gets the number of cubes for this player.
+   * @param playerColor The player color, must not be NONE or NEUTRAL.
+   * @return The number of cubes for this player in this influence zone.
+   */
+  public int getCubesForPlayer(PlayerColor playerColor) {
+    assert playerColor.isNormalColor();
+    return cubesForPlayer[playerColor.ordinal() -  1];
+  }
+
+  /**
+   * Sets the number of cubes for this player.
+   * @param playerColor The player color, must not be NONE or NEUTRAL.
+   * @param nbCubes The number of cubes for this player in this influence zone.
+   */
+  public void setCubesForPlayer(PlayerColor playerColor, int nbCubes) {
+    assert playerColor.isNormalColor();
+    cubesForPlayer[playerColor.ordinal() -  1] = nbCubes;
   }
 }

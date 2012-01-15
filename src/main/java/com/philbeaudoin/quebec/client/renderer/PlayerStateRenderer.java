@@ -16,6 +16,9 @@
 
 package com.philbeaudoin.quebec.client.renderer;
 
+import javax.inject.Inject;
+
+import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.scene.Rectangle;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
@@ -31,9 +34,9 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * The renderer of a player state. Keeps track of the rendered objects so they can be animated.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-class PlayerStateRenderer {
+public class PlayerStateRenderer {
   private static final String COLOR[][] = {
       {"#666", "#999"},
       {"#E0E0E0", "#F8F8F8"},
@@ -42,6 +45,7 @@ class PlayerStateRenderer {
       {"#d7c0e4", "#e1d6ee"}
   };
 
+  private final SpriteResources spriteResources;
   private final SceneNodeList playerZone;
   private final CubeGrid cubeGrid = new CubeGrid(9, 3);
   private final double width;
@@ -58,11 +62,15 @@ class PlayerStateRenderer {
    * @param height The height of the player zone.
    * @param transform
    */
-  PlayerStateRenderer(double width, double height, Transform transform,
-      ScoreRenderer scoreRenderer) {
+  @Inject
+  PlayerStateRenderer(
+      SpriteResources spriteResources,
+      @Assisted Vector2d size, @Assisted Transform transform,
+      @Assisted ScoreRenderer scoreRenderer) {
+    this.spriteResources = spriteResources;
     playerZone = new SceneNodeList(transform);
-    this.width = width;
-    this.height = height;
+    this.width = size.getX();
+    this.height = size.getY();
     passiveCubes = new SceneNodeList(
         new ConstantTransform(new Vector2d(width * 0.16, height * 0.6)));
     activeCubes = new SceneNodeList(
@@ -75,11 +83,10 @@ class PlayerStateRenderer {
   /**
    * Renders the player state.
    * @param playerState The desired player state.
-   * @param spriteResources The resources.
    * @param root The global root scene node.
    * @param boardRoot The root scene node of the board.
    */
-  public void render(PlayerState playerState, SpriteResources spriteResources, SceneNodeList root,
+  public void render(PlayerState playerState, SceneNodeList root,
       SceneNodeList boardRoot) {
     PlayerColor color = playerState.getPlayer().getColor();
     int paletteIndex = color.ordinal() - 1;
@@ -152,6 +159,6 @@ class PlayerStateRenderer {
 
     root.add(playerZone);
 
-    scoreRenderer.renderPlayer(playerState, spriteResources, boardRoot);
+    scoreRenderer.renderPlayer(playerState, boardRoot);
   }
 }

@@ -21,7 +21,7 @@ import com.gwtplatform.dispatch.server.guice.HandlerModule;
 /**
  * Module which binds the handlers and configurations.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ServerModule extends HandlerModule {
 

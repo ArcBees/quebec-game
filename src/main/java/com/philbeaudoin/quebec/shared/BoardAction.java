@@ -21,7 +21,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 /**
  * Information for one of the board actions available in the game.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class BoardAction {
   private final Vector2d location;

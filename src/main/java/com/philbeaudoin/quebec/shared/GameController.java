@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 /**
  * A controller to manipulate the state of a game.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class GameController {
 
@@ -58,7 +58,7 @@ public class GameController {
         if (boardAction != null) {
           Tile tile = tileDeck.draw(boardAction.getInfluenceType());
           TileState tileState = new TileState(tile, new Vector2d(column, line));
-          tileState.setArchitect(PlayerColor.BLACK);
+          tileState.setArchitect(PlayerColor.NONE);
           tileStates.add(tileState);
         }
       }
@@ -72,7 +72,11 @@ public class GameController {
     }
 
     for (InfluenceType influenceType : InfluenceType.values()) {
-      gameState.getPlayerCubesInInfluenceZone(influenceType).clear();
+      for (PlayerColor playerColor : PlayerColor.values()) {
+        if (playerColor.isNormalColor()) {
+          gameState.setPlayerCubesInInfluenceZone(influenceType, playerColor, 0);
+        }
+      }
     }
   }
 }

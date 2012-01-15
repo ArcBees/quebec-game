@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 /**
  * State of a tile in play.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class TileState {
 
@@ -40,6 +40,19 @@ public class TileState {
     this.location = location;
     this.buildingFacing = false;
     clearCubes();
+  }
+
+  /**
+   * Copy constructor performing a deep copy of every mutable object contained in this one.
+   * @param other The tile state to copy.
+   */
+  public TileState(TileState other) {
+    this.tile = other.tile;
+    this.location = other.location;
+    this.architect = other.architect;
+    for (PlayerColor color : other.colorInSpot) {
+      colorInSpot.add(color);
+    }
   }
 
   /**
@@ -87,7 +100,7 @@ public class TileState {
    *     {@code PlayerColor.NONE} if the spot is empty.
    */
   public void setColorInSpot(int spot, PlayerColor playerColor) {
-    assert playerColor != PlayerColor.NONE && playerColor != PlayerColor.NEUTRAL;
+    assert playerColor.isNormalColor();
     assert spot < 3;
     colorInSpot.set(spot, playerColor);
   }

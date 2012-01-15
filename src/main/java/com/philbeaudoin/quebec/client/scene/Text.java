@@ -21,7 +21,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * Scene tree node drawing black text.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Text extends SceneNodeImpl {
 

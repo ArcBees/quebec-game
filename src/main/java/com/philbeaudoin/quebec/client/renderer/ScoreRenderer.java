@@ -19,6 +19,8 @@ package com.philbeaudoin.quebec.client.renderer;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
@@ -31,22 +33,28 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * The renderer of a player state. Keeps track of the rendered objects so they can be animated.
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-class ScoreRenderer {
+public class ScoreRenderer {
+
+  private final SpriteResources spriteResources;
 
   private final HashMap<Integer, SceneNodeList> nodeForScore =
       new HashMap<Integer, SceneNodeList>();
 
   private final SceneNode pawns[] = new SceneNode[5];
 
+  @Inject
+  public ScoreRenderer(SpriteResources spriteResources) {
+    this.spriteResources = spriteResources;
+  }
+
   /**
    * Renders the pawn of the given player according to its state.
    * @param playerState The state of the player to initialize.
    * @param boardRoot The root scene node of the board.
    */
-  void renderPlayer(PlayerState playerState, SpriteResources spriteResources,
-      SceneNodeList boardRoot) {
+  void renderPlayer(PlayerState playerState, SceneNodeList boardRoot) {
     PlayerColor color = playerState.getPlayer().getColor();
     int colorIndex = color.ordinal() - 1;
     assert colorIndex >= 0 && colorIndex < 5;

@@ -20,7 +20,7 @@ package com.philbeaudoin.quebec.shared;
  * Information about a player. This information never changes during the game. See also
  * {@link PlayerState}.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Player {
 
@@ -28,7 +28,7 @@ public class Player {
   public final PlayerColor color;
 
   public Player(PlayerColor color, String name) {
-    assert color != PlayerColor.NONE && color != PlayerColor.NEUTRAL;
+    assert color.isNormalColor();
     this.name = name;
     this.color = color;
   }

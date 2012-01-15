@@ -25,7 +25,7 @@ import com.philbeaudoin.quebec.client.gin.QuebecGinjector;
 /**
  * Entry point of the application.
  *
- * @author Philippe Beaudoin
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Quebec implements EntryPoint {
   public final QuebecGinjector ginjector = GWT.create(QuebecGinjector.class);
