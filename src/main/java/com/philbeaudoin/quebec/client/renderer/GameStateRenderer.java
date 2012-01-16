@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.philbeaudoin.quebec.client.scene.Rectangle;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.GameState;
 import com.philbeaudoin.quebec.shared.InfluenceType;
@@ -39,6 +40,9 @@ public class GameStateRenderer {
   public static final double LEFT_COLUMN_WIDTH = 0.38209;
 
   private final SceneNodeList root = new SceneNodeList();
+  private final SceneNodeList backgroundRoot = new SceneNodeList();
+  private final SceneNodeList glassScreenRoot = new SceneNodeList();
+  private final SceneNodeList foregroundRoot = new SceneNodeList();
 
   private final RendererFactories factories;
   private final ScoreRenderer scoreRenderer;
@@ -51,6 +55,9 @@ public class GameStateRenderer {
     this.factories = factories;
     scoreRenderer = factories.createScoreRenderer();
     boardRenderer = factories.createBoardRenderer(LEFT_COLUMN_WIDTH);
+    root.add(backgroundRoot);
+    root.add(glassScreenRoot);
+    root.add(foregroundRoot);
   }
 
   /**
@@ -62,27 +69,36 @@ public class GameStateRenderer {
     List<PlayerState> playerStates = gameState.getPlayerStates();
     initPlayerStateRenderers(playerStates);
 
-    // Clear everything under the root node.
-    root.clear();
+    // Clear everything save for the root.
+    backgroundRoot.clear();
+    glassScreenRoot.clear();
+    foregroundRoot.clear();
 
     // Render the board first.
-    boardRenderer.render(gameState, root);
+    boardRenderer.render(gameState, backgroundRoot, foregroundRoot);
 
     int index = 0;
     for (PlayerState playerState : playerStates) {
-      playerStateRenderers.get(index).render(playerState, root,
-          boardRenderer.getBoardRoot());
+      playerStateRenderers.get(index).render(playerState, backgroundRoot,
+          boardRenderer.getBackgroundBoardRoot());
       index++;
+    }
+
+    // If there is anything in the foreground, show the glass screen
+    if (!foregroundRoot.getChildren().isEmpty()) {
+      glassScreenRoot.add(new Rectangle(0, 0, 10, 10,
+          "rgba(0, 0, 0, 0.5)", "rgba(0, 0, 0, 0.5)", null, 0));
     }
   }
 
   /**
-   * Access the root created by this renderer.
+   * Access the root of the objects.
    * @return The rendered global root.
    */
   public SceneNodeList getRoot() {
     return root;
   }
+
 
   /**
    * Creates the player state renderers if needed.

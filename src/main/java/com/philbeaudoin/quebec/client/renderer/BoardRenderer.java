@@ -61,7 +61,8 @@ public class BoardRenderer {
 
   private final CubeGrid zoneGrid = new CubeGrid(25, 5, 0.03);
 
-  private final SceneNodeList boardRoot;
+  private final SceneNodeList backgroundBoardRoot;
+  private final SceneNodeList foregroundBoardRoot;
   private final SceneNodeList tileGrid[][] = new SceneNodeList[18][8];
 
   private final SceneNodeList[] influenceZoneNode = new SceneNodeList[5];
@@ -70,7 +71,9 @@ public class BoardRenderer {
   @Inject
   BoardRenderer(SpriteResources spriteResources, @Assisted double leftPosition) {
     this.spriteResources = spriteResources;
-    boardRoot = new SceneNodeList(
+    backgroundBoardRoot = new SceneNodeList(
+        new ConstantTransform(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
+    foregroundBoardRoot = new SceneNodeList(
         new ConstantTransform(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
     for(int i = 0; i < 5; ++i) {
       for(int j = 0; j < 5; ++j) {
@@ -82,14 +85,18 @@ public class BoardRenderer {
   /**
    * Renders the board state.
    * @param gameState The desired game state.
-   * @param root The global root scene node.
+   * @param backgroundRoot The root of the objects behind the glass screen.
+   * @param foregroundRoot The root of the objects in front of the glass screen.
    */
-  public void render(GameState gameState, SceneNodeList root) {
+  public void render(GameState gameState, SceneNodeList backgroundRoot,
+      SceneNodeList foregroundRoot) {
     // Clear everything first.
-    boardRoot.clear();
+    backgroundBoardRoot.clear();
     Sprite boardSprite = new Sprite(spriteResources.get(SpriteResources.Type.board));
-    boardRoot.add(boardSprite);
-    root.add(boardRoot);
+    backgroundBoardRoot.add(boardSprite);
+    backgroundRoot.add(backgroundBoardRoot);
+    foregroundBoardRoot.clear();
+    foregroundRoot.add(foregroundBoardRoot);
 
     for(int i = 0; i < 5; ++i) {
       for(int j = 0; j < 5; ++j) {
@@ -104,11 +111,11 @@ public class BoardRenderer {
   }
 
   /**
-   * Access the board root created by this renderer.
+   * Access the board root rendered behind the glass screen created by this renderer.
    * @return The rendered board root.
    */
-  public SceneNodeList getBoardRoot() {
-    return boardRoot;
+  public SceneNodeList getBackgroundBoardRoot() {
+    return backgroundBoardRoot;
   }
 
   private void renderCards(GameState gameState) {
@@ -117,7 +124,8 @@ public class BoardRenderer {
       double x = 0.068 * influenceType.ordinal() + 0.09;
       Sprite card = new Sprite(spriteResources.getLeader(influenceType),
           new ConstantTransform(new Vector2d(x, -0.3)));
-      boardRoot.add(card);
+      // TODO: Determine foreground/background.
+      foregroundBoardRoot.add(card);
     }
   }
 
@@ -133,7 +141,7 @@ public class BoardRenderer {
                                    0.35 * ((index / 2 == 0) ? 1 : -1));
       }
       influenceZoneNode[index] = new SceneNodeList(new ConstantTransform(translation));
-      boardRoot.add(influenceZoneNode[index]);
+      backgroundBoardRoot.add(influenceZoneNode[index]);
 
       for (PlayerColor playerColor : PlayerColor.values()) {
         if (playerColor.isNormalColor()) {
@@ -155,7 +163,7 @@ public class BoardRenderer {
       Transform tileTransform = getTileTransform(column, line, 1.0,
           !tileState.isBuildingFacing());
       SceneNodeList tileNode = new SceneNodeList(tileTransform);
-      boardRoot.add(tileNode);
+      backgroundBoardRoot.add(tileNode);
       tileGrid[column][line] = tileNode;
 
       // Render the tile itself.
