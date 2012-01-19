@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.shared.GameState;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.PlayerState;
+import com.philbeaudoin.quebec.shared.Tile;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -189,5 +190,37 @@ public class GameStateRenderer {
       }
     }
     return null;
+  }
+
+  /**
+   * Remove a given number of cubes from a given spot on a given tile and return the global
+   * transforms of the removed cubes. The number of cubes removed must be exactly the number that
+   * can be contained on that spot, the color must match the color of the player on the spot. Tiles
+   * are compared by pointer so they must come from the same pool.
+   *
+   * @param tile The tile to remove cubes from.
+   * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
+   * @param spot The index of the spot to remove cubes from.
+   * @param nbCubes The number of cubes to remove.
+   * @return The list of global transforms of the added cubes.
+   */
+  public List<Transform> removeCubesFromTile(Tile tile, PlayerColor playerColor, int spot,
+      int nbCubes) {
+    return boardRenderer.removeCubesFromTile(tile, playerColor, spot, nbCubes);
+  }
+
+  /**
+   * Add a given number of cubes to a given spot on a given tile and return the global transforms of
+   * the added cubes. The number of cubes added must be exactly the number that can be contained on
+   * that spot. Tiles are compared by pointer so they must come from the same pool.
+   *
+   * @param tile The tile to remove cubes from.
+   * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
+   * @param spot The index of the spot to remove cubes from.
+   * @param nbCubes The number of cubes to remove.
+   * @return The list of global transforms of the removed cubes.
+   */
+  public List<Transform> addCubesToTile(Tile tile, PlayerColor playerColor, int spot, int nbCubes) {
+    return boardRenderer.addCubesToTile(tile, playerColor, spot, nbCubes);
   }
 }

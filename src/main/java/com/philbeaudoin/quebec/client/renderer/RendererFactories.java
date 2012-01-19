@@ -19,6 +19,7 @@ package com.philbeaudoin.quebec.client.renderer;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.shared.CubeDestinationInfluenceZone;
 import com.philbeaudoin.quebec.shared.CubeDestinationPlayer;
+import com.philbeaudoin.quebec.shared.CubeDestinationTile;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -38,8 +39,9 @@ public interface RendererFactories {
   ChangeRendererMoveCubes createChangeRendererMoveCubes(int nbCubes,
       @Assisted("from") SceneCubeDestination from, @Assisted("to") SceneCubeDestination to);
   SceneCubeDestinationGenerator createSceneGraphCubeDestinationGenerator();
-  SceneCubeDestinationInfluenceZone createSceneDestinationInfluenceZone(
+  SceneCubeDestinationInfluenceZone createSceneCubeDestinationInfluenceZone(
       CubeDestinationInfluenceZone cubeDestinationInfluenceZone);
-  SceneCubeDestinationPlayer createSceneDestinationPlayer(
+  SceneCubeDestinationPlayer createSceneCubeDestinationPlayer(
       CubeDestinationPlayer cubeDestinationPlayer);
+  SceneCubeDestinationTile createSceneCubeDestinationTile(CubeDestinationTile cubeDestinationTile);
 }
