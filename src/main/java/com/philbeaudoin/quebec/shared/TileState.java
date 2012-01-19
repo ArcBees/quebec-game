@@ -125,7 +125,7 @@ public class TileState {
   /**
    * @return The number of cube each building spot holds.
    */
-  public int cubesPerSpot() {
+  public int getCubesPerSpot() {
     BoardAction boardAction =
         Board.actionForTileLocation(location.getColumn(), location.getLine());
     return boardAction.getCubesPerSpot();

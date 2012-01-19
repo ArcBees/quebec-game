@@ -31,4 +31,9 @@ public interface CubeDestinationVisitor {
    * @param host The visited class.
    */
   void visit(CubeDestinationPlayer host);
+  /**
+   * Visits a {@link CubeDestinationTile}.
+   * @param host The visited class.
+   */
+  void visit(CubeDestinationTile host);
 }

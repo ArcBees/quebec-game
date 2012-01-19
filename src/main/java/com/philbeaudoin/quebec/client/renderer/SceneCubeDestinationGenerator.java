@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import com.philbeaudoin.quebec.shared.CubeDestinationInfluenceZone;
 import com.philbeaudoin.quebec.shared.CubeDestinationPlayer;
+import com.philbeaudoin.quebec.shared.CubeDestinationTile;
 import com.philbeaudoin.quebec.shared.CubeDestinationVisitor;
 
 /**
@@ -48,11 +49,16 @@ public class SceneCubeDestinationGenerator implements CubeDestinationVisitor {
 
   @Override
   public void visit(CubeDestinationInfluenceZone host) {
-    sceneCubeDestination = rendererFactory.createSceneDestinationInfluenceZone(host);
+    sceneCubeDestination = rendererFactory.createSceneCubeDestinationInfluenceZone(host);
   }
 
   @Override
   public void visit(CubeDestinationPlayer host) {
-    sceneCubeDestination = rendererFactory.createSceneDestinationPlayer(host);
+    sceneCubeDestination = rendererFactory.createSceneCubeDestinationPlayer(host);
+  }
+
+  @Override
+  public void visit(CubeDestinationTile host) {
+    sceneCubeDestination = rendererFactory.createSceneCubeDestinationTile(host);
   }
 }

@@ -18,7 +18,7 @@ package com.philbeaudoin.quebec.shared;
 
 /**
  * A cube destination corresponding to the personal reserve of a given player, either active or
- * passive..
+ * passive.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class CubeDestinationPlayer implements CubeDestination {

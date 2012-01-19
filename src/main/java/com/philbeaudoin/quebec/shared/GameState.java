@@ -117,6 +117,21 @@ public class GameState {
   }
 
   /**
+   * Get the state of a given tile. The tiles are compared by pointer, so they must come from the
+   * same pool.
+   * @param tile The tile for which to get the state.
+   * @return The state of that tile, {@code null} if not found.
+   */
+  public TileState getTileState(Tile tile) {
+    for (TileState tileState : tileStates) {
+      if (tileState.getTile() == tile) {
+        return tileState;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Get the list of unused leader cards.
    * @return The unused player cards.
    */
@@ -135,7 +150,8 @@ public class GameState {
   }
 
   /**
-   * Gets the player and number of cubes in a given influence zone.
+   * Sets the player and number of cubes in a given influence zone.
+   * TODO(beaudoin): Can we get rid of this and use only change actions?
    * @param influenceType The type of the influence zone.
    * @param playerColor The color of the player, must not be NONE or NEUTRAL.
    * @param nbCubes The number of cubes in the influence zone for that player.

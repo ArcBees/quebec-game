@@ -56,6 +56,21 @@ public class BoardRenderer {
     }
   }
 
+  private static class TileInfo {
+    SceneNodeList root;
+    Tile tile;
+    double rotation;
+    CubeStack cubesOnSpot[] = new CubeStack[3];
+    public TileInfo(SceneNodeList root, Tile tile, double rotation) {
+      this.root = root;
+      this.tile = tile;
+      this.rotation = rotation;
+      for (int i = 0; i < 3; ++i) {
+        cubesOnSpot[i] = new CubeStack();
+      }
+    }
+  }
+
   public static final double WIDTH = 1.318209;
 
   private final SpriteResources spriteResources;
@@ -64,7 +79,7 @@ public class BoardRenderer {
 
   private final SceneNodeList backgroundBoardRoot;
   private final SceneNodeList foregroundBoardRoot;
-  private final SceneNodeList tileGrid[][] = new SceneNodeList[18][8];
+  private final TileInfo tileGrid[][] = new TileInfo[18][8];
 
   private final SceneNodeList[] influenceZoneNode = new SceneNodeList[5];
   private final CubeStack[][] cubeStacksInZone = new CubeStack[5][5];  // [influenceType][line]
@@ -97,7 +112,7 @@ public class BoardRenderer {
     backgroundBoardRoot.add(boardSprite);
     backgroundRoot.add(backgroundBoardRoot);
     foregroundBoardRoot.clear();
-    foregroundRoot.add(foregroundBoardRoot);
+//    foregroundRoot.add(foregroundBoardRoot);
 
     for (int i = 0; i < 5; ++i) {
       for (int j = 0; j < 5; ++j) {
@@ -125,8 +140,7 @@ public class BoardRenderer {
       double x = 0.068 * influenceType.ordinal() + 0.09;
       Sprite card = new Sprite(spriteResources.getLeader(influenceType),
           new ConstantTransform(new Vector2d(x, -0.3)));
-      // TODO: Determine foreground/background.
-      foregroundBoardRoot.add(card);
+      backgroundBoardRoot.add(card);
     }
   }
 
@@ -165,30 +179,30 @@ public class BoardRenderer {
           !tileState.isBuildingFacing());
       SceneNodeList tileNode = new SceneNodeList(tileTransform);
       backgroundBoardRoot.add(tileNode);
-      tileGrid[column][line] = tileNode;
+      double rotation = tileTransform.getRotation(0);
+      tileGrid[column][line] = new TileInfo(tileNode, tileState.getTile(), rotation);
 
       // Render the tile itself.
       if (tileState.isBuildingFacing()) {
         renderBuildingTile(tileState, tileNode);
       } else {
-        renderTile(gameState, tileState, tileNode, tileTransform.getRotation(0.0));
+        renderTile(gameState, tileGrid[column][line], tileState);
       }
     }
   }
 
-  private void renderTile(GameState gameState, TileState tileState, SceneNodeList tileNode,
-      double rotation) {
+  private void renderTile(GameState gameState, TileInfo tileInfo, TileState tileState) {
     Tile tile = tileState.getTile();
     Sprite tileSprite = new Sprite(spriteResources.getTile(tile.getInfluenceType(),
         tile.getCentury()));
-    tileNode.add(tileSprite);
+    tileInfo.root.add(tileSprite);
 
     // Add the architect pawn.
     PlayerColor architectColor = tileState.getArchitect();
     if (architectColor != PlayerColor.NONE) {
       SceneNodeList architectNode = new SceneNodeList(
-          new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -rotation));
-      tileNode.add(architectNode);
+          new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -tileInfo.rotation));
+      tileInfo.root.add(architectNode);
       Sprite architectSprite = new Sprite(spriteResources.getPawn(architectColor),
           new ConstantTransform(new Vector2d(0, -0.01)));
       architectNode.add(architectSprite);
@@ -196,29 +210,18 @@ public class BoardRenderer {
       // Add the active token if needed.
       if (tile.getCentury() == gameState.getCentury()) {
         Sprite activeTokenSprite = new Sprite(spriteResources.get(Type.activeToken),
-            new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -rotation));
-        tileNode.add(activeTokenSprite);
+            new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -tileInfo.rotation));
+        tileInfo.root.add(activeTokenSprite);
       }
     }
 
     // Add the cubes.
-    int cubesPerSpot = tileState.cubesPerSpot();
+    int cubesPerSpot = tileState.getCubesPerSpot();
     CubeGrid cubeGrid = new CubeGrid(cubesPerSpot, 1);
     for (int spot = 0; spot < 3; ++spot) {
       PlayerColor cubesColor = tileState.getColorInSpot(spot);
       if (cubesColor != PlayerColor.NONE) {
-        // Add the node to hold these cubes.
-        double x = -0.0225 + spot * 0.0225;
-        double y = spot == 1 ? 0.0225 : 0;
-        SceneNodeList cubes = new SceneNodeList(new ConstantTransform(new Vector2d(x, y), 1.0,
-            -rotation));
-        tileNode.add(cubes);
-        // Add all the cubes to the node.
-        for (int cubeIndex = 0; cubeIndex < cubesPerSpot; ++cubeIndex) {
-          Sprite cubeSprite = new Sprite(spriteResources.getCube(cubesColor),
-              new ConstantTransform(cubeGrid.getPosition(cubeIndex, 0)));
-          cubes.add(cubeSprite);
-        }
+        addCubesToTile(cubeGrid, tileInfo, cubesColor, spot, cubesPerSpot);
       }
     }
   }
@@ -342,5 +345,87 @@ public class BoardRenderer {
     }
     assert chosenLine != -1;
     return chosenLine;
+  }
+
+  /**
+   * Remove a given number of cubes from a given spot on a given tile and return the global
+   * transforms of the removed cubes. The number of cubes removed must be exactly the number that
+   * can be contained on that spot, the color must match the color of the player on the spot. Tiles
+   * are compared by pointer so they must come from the same pool.
+   *
+   * @param tile The tile to remove cubes from.
+   * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
+   * @param spot The index of the spot to remove cubes from.
+   * @param nbCubes The number of cubes to remove.
+   * @return The list of global transforms of the removed cubes.
+   */
+  public List<Transform> removeCubesFromTile(Tile tile, PlayerColor playerColor, int spot,
+      int nbCubes) {
+    assert nbCubes > 0;
+    assert playerColor.isNormalColor();
+    TileInfo tileInfo = findTileInfo(tile);
+    assert tileInfo != null;
+    assert tileInfo.cubesOnSpot[spot].playerColor == playerColor;
+    assert tileInfo.cubesOnSpot[spot].cubes.size() == nbCubes;
+    List<Transform> result = new ArrayList<Transform>(nbCubes);
+    for (SceneNode cube : tileInfo.cubesOnSpot[spot].cubes) {
+      result.add(cube.getTotalTransform(0));
+    }
+    // Remove the cube holder node itself, effectively removing all the cubes
+    tileInfo.cubesOnSpot[spot].cubes.get(0).getParent().setParent(null);
+
+    return result;
+  }
+
+  /**
+   * Add a given number of cubes to a given spot on a given tile and return the global transforms of
+   * the added cubes. The number of cubes added must be exactly the number that can be contained on
+   * that spot. Tiles are compared by pointer so they must come from the same pool.
+   *
+   * @param tile The tile to remove cubes from.
+   * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
+   * @param spot The index of the spot to remove cubes from.
+   * @param nbCubes The number of cubes to remove.
+   * @return The list of global transforms of the added cubes.
+   */
+  public List<Transform> addCubesToTile(Tile tile, PlayerColor playerColor, int spot, int nbCubes) {
+    return addCubesToTile(new CubeGrid(nbCubes, 1), findTileInfo(tile), playerColor, spot, nbCubes);
+  }
+
+  private List<Transform> addCubesToTile(CubeGrid cubeGrid, TileInfo tileInfo,
+      PlayerColor playerColor, int spot, int nbCubes) {
+    assert playerColor.isNormalColor();
+    assert nbCubes > 0;
+    List<Transform> result = new ArrayList<Transform>(nbCubes);
+    assert tileInfo != null;
+    // Add the node to hold these cubes.
+    double x = -0.0225 + spot * 0.0225;
+    double y = spot == 1 ? 0.0225 : 0;
+    SceneNodeList cubesNode = new SceneNodeList(new ConstantTransform(new Vector2d(x, y), 1.0,
+        -tileInfo.rotation));
+    tileInfo.root.add(cubesNode);
+    // Add all the cubes to the node.
+    tileInfo.cubesOnSpot[spot].playerColor = playerColor;
+    tileInfo.cubesOnSpot[spot].cubes.clear();
+    ConstantTransform parentTransform = cubesNode.getTotalTransform(0);
+    for (int cubeIndex = 0; cubeIndex < nbCubes; ++cubeIndex) {
+      ConstantTransform childTransform = new ConstantTransform(cubeGrid.getPosition(cubeIndex, 0));
+      Sprite cubeSprite = new Sprite(spriteResources.getCube(playerColor), childTransform);
+      tileInfo.cubesOnSpot[spot].cubes.add(cubeSprite);
+      result.add(parentTransform.times(childTransform));
+      cubesNode.add(cubeSprite);
+    }
+    return result;
+  }
+
+  private TileInfo findTileInfo(Tile tile) {
+    for (int i = 0; i < 18; ++i) {
+      for (int j = 0; j < 8; ++j) {
+        if (tileGrid[i][j] != null && tileGrid[i][j].tile == tile) {
+          return tileGrid[i][j];
+        }
+      }
+    }
+    return null;
   }
 }
