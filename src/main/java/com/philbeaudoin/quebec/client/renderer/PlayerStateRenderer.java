@@ -16,10 +16,14 @@
 
 package com.philbeaudoin.quebec.client.renderer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.scene.Rectangle;
+import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
@@ -54,6 +58,10 @@ public class PlayerStateRenderer {
   private final SceneNodeList activeCubes;
   private final SceneNodeList pawns;
   private final ScoreRenderer scoreRenderer;
+  private final ArrayList<SceneNode> activeCubeStack = new ArrayList<SceneNode>();
+  private final ArrayList<SceneNode> passiveCubeStack = new ArrayList<SceneNode>();
+
+  private PlayerColor playerColor;
 
   /**
    * Creates an object to hold the rendered state of a player zone. This will only be valid once
@@ -78,6 +86,15 @@ public class PlayerStateRenderer {
     pawns = new SceneNodeList(
         new ConstantTransform(new Vector2d(width * 0.61, height * 0.55)));
     this.scoreRenderer = scoreRenderer;
+    this.playerColor = PlayerColor.NONE;
+  }
+
+  /**
+   * Access the player color of this renderer.
+   * @return The player color, or NONE if no player has been rendered yet.
+   */
+  PlayerColor getPlayerColor() {
+    return playerColor;
   }
 
   /**
@@ -88,8 +105,8 @@ public class PlayerStateRenderer {
    */
   public void render(PlayerState playerState, SceneNodeList root,
       SceneNodeList boardRoot) {
-    PlayerColor color = playerState.getPlayer().getColor();
-    int paletteIndex = color.ordinal() - 1;
+    playerColor = playerState.getPlayer().getColor();
+    int paletteIndex = playerColor.ordinal() - 1;
 
     playerZone.clear();
     String contourColor = playerState.isCurrentPlayer() ? "#000" : null;
@@ -110,21 +127,8 @@ public class PlayerStateRenderer {
     playerZone.add(activeCubes);
     playerZone.add(pawns);
 
-    for (int i = 0; i < playerState.getNbActiveCubes(); ++i) {
-      int column = i % 9;
-      int line = i / 9;
-      Sprite cube = new Sprite(spriteResources.getCube(color),
-          new ConstantTransform(cubeGrid.getPosition(column, line)));
-      activeCubes.add(cube);
-    }
-
-    for (int i = 0; i < playerState.getNbPassiveCubes(); ++i) {
-      int column = i % 9;
-      int line = i / 9;
-      Sprite cube = new Sprite(spriteResources.getCube(color),
-          new ConstantTransform(cubeGrid.getPosition(column, line)));
-      passiveCubes.add(cube);
-    }
+    addCubesToPlayer(true, playerState.getNbActiveCubes());
+    addCubesToPlayer(false, playerState.getNbPassiveCubes());
 
     int nbPawns = 0;
     if (playerState.isHoldingArchitect()) {
@@ -137,7 +141,7 @@ public class PlayerStateRenderer {
       PawnStack pawnStack = new PawnStack(nbPawns);
       int index = 0;
       if (playerState.isHoldingArchitect()) {
-        Sprite pawn = new Sprite(spriteResources.getPawn(color),
+        Sprite pawn = new Sprite(spriteResources.getPawn(playerColor),
             new ConstantTransform(pawnStack.getPosition(index)));
         pawns.add(pawn);
         index++;
@@ -160,5 +164,62 @@ public class PlayerStateRenderer {
     root.add(playerZone);
 
     scoreRenderer.renderPlayer(playerState, boardRoot);
+  }
+
+  /**
+   * Remove a given number of cubes from a given player's active or passive reserve and return the
+   * global transforms of the removed cubes.
+   * @param active True to remove the cubes from the active reserve, false for the passive.
+   * @param nbCubes The number of cubes to remove, must be more than what is in the reserve.
+   * @return The list of global transforms of the added cubes.
+   */
+  public List<Transform> removeCubesFromPlayer(boolean active, int nbCubes) {
+    assert nbCubes >= 0;
+    List<Transform> result = new ArrayList<Transform>(nbCubes);
+    if (nbCubes == 0) {
+      return result;
+    }
+    List<SceneNode> cubes = active ? activeCubeStack : passiveCubeStack;
+    SceneNodeList parent = active ? activeCubes : passiveCubes;
+    assert cubes.size() >= nbCubes;
+    int newNbCubes = cubes.size() - nbCubes;
+
+    ConstantTransform parentTransform = parent.getTotalTransform(0);
+    for (int i = 0; i < nbCubes; ++i) {
+      SceneNode cube = cubes.remove(newNbCubes);
+      result.add(parentTransform.times(cube.getTransform()));
+      cube.setParent(null);
+    }
+    return result;
+  }
+
+  /**
+   * Add a given number of cubes of a given player to a given influence zone and return the
+   * global transforms of the newly added cubes.
+   * @param active True to add the cubes from the active reserve, false for the passive.
+   * @param nbCubes The number of cubes to add.
+   * @return The list of global transforms of the added cubes.
+   */
+  public List<Transform> addCubesToPlayer(boolean active, int nbCubes) {
+    assert nbCubes >= 0;
+    List<Transform> result = new ArrayList<Transform>(nbCubes);
+    if (nbCubes == 0) {
+      return result;
+    }
+    List<SceneNode> cubes = active ? activeCubeStack : passiveCubeStack;
+    SceneNodeList parent = active ? activeCubes : passiveCubes;
+    int newNbCubes = cubes.size() + nbCubes;
+
+    ConstantTransform parentTransform = parent.getTotalTransform(0);
+    for (int i = cubes.size(); i < newNbCubes; ++i) {
+      int column = i % 9;
+      int line = i / 9;
+      ConstantTransform childTransform = new ConstantTransform(cubeGrid.getPosition(column, line));
+      Sprite cube = new Sprite(spriteResources.getCube(playerColor), childTransform);
+      parent.add(cube);
+      result.add(parentTransform.times(childTransform));
+      cubes.add(cube);
+    }
+    return result;
   }
 }

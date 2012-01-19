@@ -63,7 +63,6 @@ public class GameStateRenderer {
   /**
    * Renders the game state.
    * @param gameState The desired game state.
-   * @param spriteResources The resources.
    */
   public void render(GameState gameState) {
     List<PlayerState> playerStates = gameState.getPlayerStates();
@@ -99,7 +98,6 @@ public class GameStateRenderer {
     return root;
   }
 
-
   /**
    * Creates the player state renderers if needed.
    * @param playerStates The states of the players to render.
@@ -123,7 +121,7 @@ public class GameStateRenderer {
    * global transforms of the removed cubes.
    * @param influenceType The influence type of the zone to remove cubes from.
    * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
-   * @param nbCubes The number of cubes to remove, must be more than what is contained in the zone.
+   * @param nbCubes The number of cubes to remove, cannot be more than what is in the zone.
    * @return The list of global transforms of the removed cubes.
    */
   public List<Transform> removeCubesFromInfluenceZone(InfluenceType influenceType,
@@ -151,5 +149,45 @@ public class GameStateRenderer {
    */
   public void resetColorForInfluenceZoneLines() {
     boardRenderer.resetColorForInfluenceZoneLines();
+  }
+
+  /**
+   * Remove a given number of cubes from a given player's active or passive reserve and return the
+   * global transforms of the removed cubes.
+   * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
+   * @param active True to remove the cubes from the active reserve, false for the passive.
+   * @param nbCubes The number of cubes to remove, must be more than what is in the reserve.
+   * @return The list of global transforms of the removed cubes.
+   */
+  public List<Transform> removeCubesFromPlayer(PlayerColor playerColor,
+      boolean active, int nbCubes) {
+    PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
+    assert playerStateRenderer != null;
+    return playerStateRenderer.removeCubesFromPlayer(active, nbCubes);
+  }
+
+  /**
+   * Add a given number of cubes from a given player's active or passive reserve and return the
+   * global transforms of the newly added cubes.
+   * @param playerColor The color of the player whose cube to add (not NONE or NEUTRAL).
+   * @param active True to add the cubes from the active reserve, false for the passive.
+   * @param nbCubes The number of cubes to add, must be positive or 0.
+   * @return The list of global transforms of the added cubes.
+   */
+  public List<Transform> addCubesToPlayer(PlayerColor playerColor,
+      boolean active, int nbCubes) {
+    PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
+    assert playerStateRenderer != null;
+    return playerStateRenderer.addCubesToPlayer(active, nbCubes);
+  }
+
+  private PlayerStateRenderer getPlayerStateRenderer(PlayerColor playerColor) {
+    assert playerColor.isNormalColor();
+    for (PlayerStateRenderer playerRenderer : playerStateRenderers) {
+      if (playerRenderer.getPlayerColor() == playerColor) {
+        return playerRenderer;
+      }
+    }
+    return null;
   }
 }

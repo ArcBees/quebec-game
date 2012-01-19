@@ -35,6 +35,8 @@ public class GameController {
    * @param gameState The state to reset and initialize.
    */
   public void initGame(GameState gameState, List<Player> players) {
+    gameState.setCentury(0);
+
     int nbPlayers = players.size();
     assert nbPlayers >= 2 && nbPlayers <= 5;
     int cubesPerPlayer = CUBES_FOR_N_PLAYERS[nbPlayers - 2];

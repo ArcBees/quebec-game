@@ -16,7 +16,6 @@
 
 package com.philbeaudoin.quebec.shared;
 
-
 /**
  * The cubes contained in an influence zone.
  *

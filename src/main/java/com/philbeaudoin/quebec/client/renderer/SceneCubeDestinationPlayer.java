@@ -21,42 +21,38 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.shared.CubeDestinationInfluenceZone;
-import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
- * A cube destination within a scene graph corresponding to an given player color within an
- * influence zone.
+ * A cube destination within a scene graph corresponding to the active or passive cubes of a given
+ * player color.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class SceneCubeDestinationInfluenceZone implements SceneCubeDestination {
+public class SceneCubeDestinationPlayer implements SceneCubeDestination {
 
-  private final CubeDestinationInfluenceZone cubeDestinationInfluenceZone;
+  private final CubeDestinationPlayer cubeDestinationPlayer;
 
   @Inject
-  public SceneCubeDestinationInfluenceZone(
-      @Assisted CubeDestinationInfluenceZone cubeDestinationInfluenceZone) {
-    this.cubeDestinationInfluenceZone = cubeDestinationInfluenceZone;
+  public SceneCubeDestinationPlayer(
+      @Assisted CubeDestinationPlayer cubeDestinationPlayer) {
+    this.cubeDestinationPlayer = cubeDestinationPlayer;
   }
 
   @Override
   public PlayerColor getPlayerColor() {
-    return cubeDestinationInfluenceZone.getPlayerColor();
+    return cubeDestinationPlayer.getPlayerColor();
   }
 
   @Override
   public List<Transform> removeFrom(int nbCubes, GameStateRenderer renderer) {
-    return renderer.removeCubesFromInfluenceZone(getInfluenceType(), getPlayerColor(), nbCubes);
+    return renderer.removeCubesFromPlayer(getPlayerColor(), cubeDestinationPlayer.isActive(),
+        nbCubes);
   }
 
   @Override
   public List<Transform> addTo(int nbCubes, GameStateRenderer renderer) {
-    return renderer.addCubesToInfluenceZone(getInfluenceType(), getPlayerColor(), nbCubes);
-  }
-
-  private InfluenceType getInfluenceType() {
-    return cubeDestinationInfluenceZone.getInfluenceType();
+    return renderer.addCubesToPlayer(getPlayerColor(), cubeDestinationPlayer.isActive(), nbCubes);
   }
 }
