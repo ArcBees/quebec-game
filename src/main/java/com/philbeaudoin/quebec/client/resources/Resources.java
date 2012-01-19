@@ -28,6 +28,8 @@ public interface Resources extends ClientBundle {
   @Source("board.jpg")
   DataResource board();
 
+  @Source("active_token.png")
+  DataResource activeToken();
   @Source("yellow_4.png")
   DataResource tileEconomicFour();
   @Source("yellow_4_1.png")

@@ -44,7 +44,7 @@ public class SpriteResources {
    * Static sprite types.
    */
   public static enum Type {
-    board
+    board, activeToken
   }
 
   /**
@@ -91,6 +91,7 @@ public class SpriteResources {
     Collection<Info> nullList = Collections.nCopies(Type.values().length, null);
     imageInfos.addAll(nullList);
     setInfoForType(Type.board, resources.board(), 0.00030656);
+    setInfoForType(Type.activeToken, resources.activeToken(), 0.000303);
 
     setInfoForTile(InfluenceType.RELIGIOUS, 0, resources.tileReligiousOne(),
         resources.tileReligiousOne1(), resources.tileReligiousOne2(), resources.tileReligiousOne3(),

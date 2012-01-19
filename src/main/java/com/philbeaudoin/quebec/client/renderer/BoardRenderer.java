@@ -26,6 +26,7 @@ import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
+import com.philbeaudoin.quebec.client.scene.SpriteResources.Type;
 import com.philbeaudoin.quebec.client.utils.CubeGrid;
 import com.philbeaudoin.quebec.shared.Board;
 import com.philbeaudoin.quebec.shared.BoardAction;
@@ -75,8 +76,8 @@ public class BoardRenderer {
         new ConstantTransform(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
     foregroundBoardRoot = new SceneNodeList(
         new ConstantTransform(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
-    for(int i = 0; i < 5; ++i) {
-      for(int j = 0; j < 5; ++j) {
+    for (int i = 0; i < 5; ++i) {
+      for (int j = 0; j < 5; ++j) {
         cubeStacksInZone[i][j] = new CubeStack();
       }
     }
@@ -98,8 +99,8 @@ public class BoardRenderer {
     foregroundBoardRoot.clear();
     foregroundRoot.add(foregroundBoardRoot);
 
-    for(int i = 0; i < 5; ++i) {
-      for(int j = 0; j < 5; ++j) {
+    for (int i = 0; i < 5; ++i) {
+      for (int j = 0; j < 5; ++j) {
         cubeStacksInZone[i][j].cubes.clear();
         cubeStacksInZone[i][j].playerColor = PlayerColor.NONE;
       }
@@ -170,18 +171,17 @@ public class BoardRenderer {
       if (tileState.isBuildingFacing()) {
         renderBuildingTile(tileState, tileNode);
       } else {
-        renderTile(tileState, tileNode, tileTransform.getRotation(0.0));
+        renderTile(gameState, tileState, tileNode, tileTransform.getRotation(0.0));
       }
     }
   }
 
-  private void renderTile(TileState tileState, SceneNodeList tileNode, double rotation) {
+  private void renderTile(GameState gameState, TileState tileState, SceneNodeList tileNode,
+      double rotation) {
     Tile tile = tileState.getTile();
     Sprite tileSprite = new Sprite(spriteResources.getTile(tile.getInfluenceType(),
         tile.getCentury()));
     tileNode.add(tileSprite);
-
-    // TODO: Add the current century marker.
 
     // Add the architect pawn.
     PlayerColor architectColor = tileState.getArchitect();
@@ -192,6 +192,13 @@ public class BoardRenderer {
       Sprite architectSprite = new Sprite(spriteResources.getPawn(architectColor),
           new ConstantTransform(new Vector2d(0, -0.01)));
       architectNode.add(architectSprite);
+    } else {
+      // Add the active token if needed.
+      if (tile.getCentury() == gameState.getCentury()) {
+        Sprite activeTokenSprite = new Sprite(spriteResources.get(Type.activeToken),
+            new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -rotation));
+        tileNode.add(activeTokenSprite);
+      }
     }
 
     // Add the cubes.
@@ -237,7 +244,7 @@ public class BoardRenderer {
    * transforms of the removed cubes.
    * @param influenceType The influence type of the zone to remove cubes from.
    * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
-   * @param nbCubes The number of cubes to remove, must be more than what is contained in the zone.
+   * @param nbCubes The number of cubes to remove, cannot be more than what is in the zone.
    * @return The list of global transforms of the removed cubes.
    */
   public List<Transform> removeCubesFromInfluenceZone(InfluenceType influenceType,

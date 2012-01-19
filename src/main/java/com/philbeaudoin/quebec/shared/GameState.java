@@ -30,6 +30,8 @@ public class GameState {
 
   private final InfluenceZoneState influenceZoneState[] = new InfluenceZoneState[5];
 
+  private int century;
+
   public GameState() {
     playerStates = new ArrayList<PlayerState>();
     tileStates = new ArrayList<TileState>();
@@ -37,6 +39,7 @@ public class GameState {
     for (int i = 0; i < influenceZoneState.length; ++i) {
       influenceZoneState[i] = new InfluenceZoneState();
     }
+    century = 0;
   }
 
   /**
@@ -44,6 +47,7 @@ public class GameState {
    * @param other The game state to copy.
    */
   public GameState(GameState other) {
+    century = other.century;
     playerStates = new ArrayList<PlayerState>(other.playerStates.size());
     for (PlayerState playerState : other.playerStates) {
       playerStates.add(new PlayerState(playerState));
@@ -65,11 +69,43 @@ public class GameState {
   }
 
   /**
+   * Access the current century.
+   * @returns The current century.
+   */
+  public int getCentury() {
+    return century;
+  }
+
+  /**
+   * Set the current century.
+   * @param century The current century.
+   */
+  public void setCentury(int century) {
+    this.century = century;
+  }
+
+  /**
    * Get the states of all the players.
    * @return The player states.
    */
   public ArrayList<PlayerState> getPlayerStates() {
     return playerStates;
+  }
+
+  /**
+   * Get the state of a given player.
+   * @param playerColor The color of the player for which to get the state, must not be
+   *     {@code PlayerColor.NONE} or {@code PlayerColor.NEUTRAL}.
+   * @return The state of a player with that color, {@code null} if not found.
+   */
+  public PlayerState getPlayerState(PlayerColor playerColor) {
+    assert playerColor.isNormalColor();
+    for (PlayerState playerState : playerStates) {
+      if (playerState.getPlayer().getColor() == playerColor) {
+        return playerState;
+      }
+    }
+    return null;
   }
 
   /**

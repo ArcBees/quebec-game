@@ -40,7 +40,6 @@ public class PlayerState {
     this.player = player;
   }
 
-
   /**
    * Copy constructor performing a deep copy of every mutable object contained in this one.
    * @param other The player state to copy.

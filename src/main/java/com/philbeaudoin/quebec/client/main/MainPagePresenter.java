@@ -35,8 +35,10 @@ import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.CubeDestinationInfluenceZone;
+import com.philbeaudoin.quebec.shared.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.GameController;
 import com.philbeaudoin.quebec.shared.GameState;
+import com.philbeaudoin.quebec.shared.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.NameTokens;
@@ -95,9 +97,19 @@ public class MainPagePresenter extends
     gameStateRenderer.render(gameState);
 
     // Dummy setup for a test.
-    GameStateChangeMoveCubes change = new GameStateChangeMoveCubes(4,
+    GameStateChangeMoveCubes changeA = new GameStateChangeMoveCubes(3,
+        new CubeDestinationPlayer(PlayerColor.WHITE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.WHITE));
+    GameStateChangeMoveCubes changeB = new GameStateChangeMoveCubes(5,
         new CubeDestinationInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK),
         new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.BLACK));
+    GameStateChangeMoveCubes changeC = new GameStateChangeMoveCubes(3,
+        new CubeDestinationPlayer(PlayerColor.WHITE, true),
+        new CubeDestinationPlayer(PlayerColor.WHITE, false));
+    GameStateChangeComposite change = new GameStateChangeComposite();
+    change.add(changeA);
+    change.add(changeB);
+    change.add(changeC);
     ChangeRendererGenerator generator = rendererFactories.createChangeRendererGenerator();
     generator.visit(change);
 
@@ -107,7 +119,6 @@ public class MainPagePresenter extends
 
     Arrow arrow = new Arrow(new Vector2d(0.7, 0.1), new Vector2d(1.699, 0.2));
     gameStateRenderer.getRoot().add(arrow);
-
   }
 
   @Override
