@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.client.scene.Rectangle;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
@@ -75,13 +76,19 @@ public class GameStateRenderer {
     foregroundRoot.clear();
 
     // Render the board first.
-    boardRenderer.render(gameState, backgroundRoot, foregroundRoot);
+    boardRenderer.render(gameState, backgroundRoot);
 
     int index = 0;
     for (PlayerState playerState : playerStates) {
       playerStateRenderers.get(index).render(playerState, backgroundRoot,
           boardRenderer.getBackgroundBoardRoot());
       index++;
+    }
+
+    // Render the possible actions.
+    PossibleActions possibleActions = gameState.getPossibleActions();
+    if (possibleActions != null) {
+      possibleActions.accept(factories.createPossibleActionsRenderer(this));
     }
 
     // If there is anything in the foreground, show the glass screen
@@ -270,5 +277,13 @@ public class GameStateRenderer {
    */
   public Transform addArchitectToTile(Tile tile, PlayerColor architectColor) {
     return boardRenderer.addArchitectToTile(tile, architectColor);
+  }
+
+  /**
+   * Highlight a specific tile.
+   * @param tile The tile to highlight.
+   */
+  public void highlightTile(Tile tile) {
+    boardRenderer.highlightTile(foregroundRoot, tile);
   }
 }

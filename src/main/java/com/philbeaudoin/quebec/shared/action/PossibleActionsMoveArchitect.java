@@ -118,4 +118,12 @@ public class PossibleActionsMoveArchitect implements PossibleActions {
   public void accept(PossibleActionsVisitor visitor) {
     visitor.visit(this);
   }
+
+  /**
+   * Access the destination tile of this move architect action.
+   * @return The destination tile.
+   */
+  public Tile getDestinationTile() {
+    return destinationTile;
+  }
 }

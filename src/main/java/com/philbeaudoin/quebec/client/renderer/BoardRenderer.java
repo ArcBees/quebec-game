@@ -84,7 +84,6 @@ public class BoardRenderer {
   private final CubeGrid zoneGrid = new CubeGrid(25, 5, 0.03);
 
   private final SceneNodeList backgroundBoardRoot;
-  private final SceneNodeList foregroundBoardRoot;
   private final TileInfo tileGrid[][] = new TileInfo[18][8];
 
   private final SceneNodeList[] influenceZoneNode = new SceneNodeList[5];
@@ -94,8 +93,6 @@ public class BoardRenderer {
   BoardRenderer(SpriteResources spriteResources, @Assisted double leftPosition) {
     this.spriteResources = spriteResources;
     backgroundBoardRoot = new SceneNodeList(
-        new ConstantTransform(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
-    foregroundBoardRoot = new SceneNodeList(
         new ConstantTransform(new Vector2d(leftPosition + 0.5 * WIDTH, 0.5)));
     for (int i = 0; i < 5; ++i) {
       for (int j = 0; j < 5; ++j) {
@@ -108,17 +105,13 @@ public class BoardRenderer {
    * Renders the board state.
    * @param gameState The desired game state.
    * @param backgroundRoot The root of the objects behind the glass screen.
-   * @param foregroundRoot The root of the objects in front of the glass screen.
    */
-  public void render(GameState gameState, SceneNodeList backgroundRoot,
-      SceneNodeList foregroundRoot) {
+  public void render(GameState gameState, SceneNodeList backgroundRoot) {
     // Clear everything first.
     backgroundBoardRoot.clear();
     Sprite boardSprite = new Sprite(spriteResources.get(SpriteResources.Type.board));
     backgroundBoardRoot.add(boardSprite);
     backgroundRoot.add(backgroundBoardRoot);
-    foregroundBoardRoot.clear();
-//    foregroundRoot.add(foregroundBoardRoot);
 
     for (int i = 0; i < 5; ++i) {
       for (int j = 0; j < 5; ++j) {
@@ -464,6 +457,18 @@ public class BoardRenderer {
         new ConstantTransform(new Vector2d(0, -0.01)));
     architectParentNode.add(tileInfo.architectNode);
     return tileInfo.architectNode.getTotalTransform(0);
+  }
+
+  /**
+   * Highlight a specific tile.
+   * @param foregroundRoot The root of the objects in front of the glass screen.
+   * @param tile The tile to highlight.
+   */
+  public void highlightTile(SceneNodeList foregroundRoot, Tile tile) {
+    TileInfo tileInfo = findTileInfo(tile);
+    Transform globalTransform = tileInfo.root.getTotalTransform(0);
+    tileInfo.root.setParent(foregroundRoot);
+    tileInfo.root.setTransform(globalTransform);
   }
 
   private TileInfo findTileInfo(Tile tile) {

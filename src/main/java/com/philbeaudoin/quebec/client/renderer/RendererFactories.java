@@ -54,4 +54,5 @@ public interface RendererFactories {
   ChangeRendererMoveArchitect createChangeRendererMoveArchitect(
       @Assisted("from") SceneArchitectDestination from,
       @Assisted("to") SceneArchitectDestination to);
+  PossibleActionsRenderer createPossibleActionsRenderer(GameStateRenderer gameStateRenderer);
 }

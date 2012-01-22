@@ -20,6 +20,8 @@ import java.util.List;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
+import com.philbeaudoin.quebec.shared.action.PossibleActionsMoveArchitect;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -53,6 +55,8 @@ public class GameController {
     }
     playerStates.get(0).setCurrentPlayer(true);
 
+    PossibleActionsComposite possibleActions = new PossibleActionsComposite();
+    gameState.setPossibleActions(possibleActions);
     List<TileState> tileStates = gameState.getTileStates();
     tileStates.clear();
     TileDeck tileDeck = new TileDeck();
@@ -64,6 +68,9 @@ public class GameController {
           TileState tileState = new TileState(tile, new Vector2d(column, line));
           tileState.setArchitect(PlayerColor.NONE);
           tileStates.add(tileState);
+          if (tileState.getTile().getCentury() == 0) {
+            possibleActions.add(new PossibleActionsMoveArchitect(tileState.getTile(), false));
+          }
         }
       }
     }
@@ -74,6 +81,8 @@ public class GameController {
     for (InfluenceType influenceType : InfluenceType.values()) {
       availableLeaderCards.add(new LeaderCard(influenceType));
     }
+
+    // TODO: Mark selecting cards as a valid initial action.
 
     for (InfluenceType influenceType : InfluenceType.values()) {
       for (PlayerColor playerColor : PlayerColor.values()) {
