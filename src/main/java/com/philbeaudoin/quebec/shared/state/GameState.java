@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 
 /**
  * The state of the entire game.
@@ -34,6 +35,8 @@ public class GameState {
   private final InfluenceZoneState influenceZoneState[] = new InfluenceZoneState[5];
 
   private int century;
+
+  private PossibleActions possibleActions;
 
   public GameState() {
     playerStates = new ArrayList<PlayerState>();
@@ -191,5 +194,21 @@ public class GameState {
     }
     assert false;
     return null;
+  }
+
+  /**
+   * Access the possible actions in this state.
+   * @return The possible actions in the current state.
+   */
+  public PossibleActions getPossibleActions() {
+    return possibleActions;
+  }
+
+  /**
+   * Set the possible actions in this state.
+   * @param possibleActions The possible actions in the current state.
+   */
+  public void setPossibleActions(PossibleActions possibleActions) {
+    this.possibleActions = possibleActions;
   }
 }
