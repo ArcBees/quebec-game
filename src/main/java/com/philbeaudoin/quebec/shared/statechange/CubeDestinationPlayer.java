@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.statechange;
+
+import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.PlayerState;
 
 /**
  * A cube destination corresponding to the personal reserve of a given player, either active or

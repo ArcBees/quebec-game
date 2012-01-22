@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.statechange;
+
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * A cube destination corresponding to an given player color within an influence zone.

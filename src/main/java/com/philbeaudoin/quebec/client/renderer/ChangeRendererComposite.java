@@ -24,7 +24,7 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.GameStateChangeComposite GameStateChangeComposite} to a
+ * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite GameStateChangeComposite} to a
  * scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */

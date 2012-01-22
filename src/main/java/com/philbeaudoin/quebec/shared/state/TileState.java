@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.state;
 
 import java.util.ArrayList;
 
+import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -30,15 +31,19 @@ public class TileState {
   private final Tile tile;
   private final Vector2d location;
   private PlayerColor architect = PlayerColor.NONE;
+  private boolean buildingFacing;
+  private PlayerColor starTokenColor;
+  private int nbStars;
+
   /* The color of the cubes at each of the three building spots. */
   private final ArrayList<PlayerColor> colorInSpot = new ArrayList<PlayerColor>(3);
-
-  private boolean buildingFacing;
 
   TileState(Tile tile, Vector2d location) {
     this.tile = tile;
     this.location = location;
-    this.buildingFacing = false;
+    buildingFacing = false;
+    starTokenColor = PlayerColor.NONE;
+    nbStars = 0;
     clearCubes();
   }
 
@@ -50,6 +55,9 @@ public class TileState {
     this.tile = other.tile;
     this.location = other.location;
     this.architect = other.architect;
+    this.buildingFacing = other.buildingFacing;
+    this.starTokenColor = other.starTokenColor;
+    this.nbStars = other.nbStars;
     for (PlayerColor color : other.colorInSpot) {
       colorInSpot.add(color);
     }
@@ -62,6 +70,9 @@ public class TileState {
     return tile;
   }
 
+  /**
+   * @return The location of the tile.
+   */
   public Vector2d getLocation() {
     return location;
   }
@@ -123,6 +134,14 @@ public class TileState {
   }
 
   /**
+   * Sets whether this tile is showing its building side or not.
+   * @param buildingFacing true to show the building side.
+   */
+  public void setBuildingFacing(boolean buildingFacing) {
+    this.buildingFacing = buildingFacing;
+  }
+
+  /**
    * @return The number of cube each building spot holds.
    */
   public int getCubesPerSpot() {
@@ -130,4 +149,33 @@ public class TileState {
         Board.actionForTileLocation(location.getColumn(), location.getLine());
     return boardAction.getCubesPerSpot();
   }
+
+  /**
+   * @return The color of the star token, or NONE if there is no star token on the tile.
+   */
+  public PlayerColor getStarTokenColor() {
+    return starTokenColor;
+  }
+
+  /**
+   * @return The number of stars on the star token, or 0 if none.
+   */
+  public int getNbStars() {
+    return nbStars;
+  }
+
+  /**
+   * Sets the color and number of stars of the star token. For a normal color, the number of stars
+   * must be 1, 2 or 3 unless. To remove the star token use NONE and 0 stars.
+   * @param starTokenColor The color of the star token, or NONE if no star token. Cannot be NEUTRAL.
+   * @param nbStars The number of stars on the star token.
+   */
+  public void setStarToken(PlayerColor starTokenColor, int nbStars) {
+    assert starTokenColor != PlayerColor.NEUTRAL;
+    assert starTokenColor.isNormalColor() && nbStars > 0 ||
+        starTokenColor == PlayerColor.NONE && nbStars == 0;
+    this.starTokenColor = starTokenColor;
+    this.nbStars = nbStars;
+  }
+
 }

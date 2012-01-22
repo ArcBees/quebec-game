@@ -23,11 +23,11 @@ import javax.inject.Inject;
 
 import com.philbeaudoin.quebec.client.scene.Rectangle;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
-import com.philbeaudoin.quebec.shared.GameState;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.PlayerState;
-import com.philbeaudoin.quebec.shared.Tile;
+import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.PlayerState;
+import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -202,7 +202,7 @@ public class GameStateRenderer {
    * @param playerColor The color of the player whose cube to remove (not NONE or NEUTRAL).
    * @param spot The index of the spot to remove cubes from.
    * @param nbCubes The number of cubes to remove.
-   * @return The list of global transforms of the added cubes.
+   * @return The list of global transforms of the removed cubes.
    */
   public List<Transform> removeCubesFromTile(Tile tile, PlayerColor playerColor, int spot,
       int nbCubes) {
@@ -222,5 +222,53 @@ public class GameStateRenderer {
    */
   public List<Transform> addCubesToTile(Tile tile, PlayerColor playerColor, int spot, int nbCubes) {
     return boardRenderer.addCubesToTile(tile, playerColor, spot, nbCubes);
+  }
+
+  /**
+   * Remove the standard or neutral architect from the given player zone.
+   * @param playerColor The color of the player zone from which to remove an architect (not NONE or
+   *     NEUTRAL).
+   * @param neutralArchitect True to remove the neutral architect.
+   * @return The global transforms of the removed architect.
+   */
+  public Transform removeArchitectFromPlayer(PlayerColor playerColor, boolean neutralArchitect) {
+    assert playerColor.isNormalColor();
+    PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
+    assert playerStateRenderer != null;
+    return playerStateRenderer.removeArchitect(neutralArchitect);
+  }
+
+  /**
+   * Add the standard or neutral architect to the given player zone.
+   * @param playerColor The color of the player zone to which to add an architect (not NONE or
+   *     NEUTRAL).
+   * @param neutralArchitect True to add the neutral architect.
+   * @return The global transforms of the added architect.
+   */
+  public Transform addArchitectToPlayer(PlayerColor playerColor, boolean neutralArchitect) {
+    assert playerColor.isNormalColor();
+    PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
+    assert playerStateRenderer != null;
+    return playerStateRenderer.addArchitect(neutralArchitect);
+  }
+
+  /**
+   * Remove an architect from the given tile.
+   * @param tile The tile to remove an architect from.
+   * @param architectColor The color of the architect to remove. (not NONE)
+   * @return The global transforms of the removed architect.
+   */
+  public Transform removeArchitectFromTile(Tile tile, PlayerColor architectColor) {
+    return boardRenderer.removeArchitectFromTile(tile, architectColor);
+  }
+
+  /**
+   * Add an architect to the given tile.
+   * @param tile The tile to add an architect to.
+   * @param architectColor The color of the architect to add. (not NONE)
+   * @return The global transforms of the added architect.
+   */
+  public Transform addArchitectToTile(Tile tile, PlayerColor architectColor) {
+    return boardRenderer.addArchitectToTile(tile, architectColor);
   }
 }

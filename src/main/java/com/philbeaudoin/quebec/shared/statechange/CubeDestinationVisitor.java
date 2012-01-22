@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.statechange;
 
 /**
  * Interface for a class that can visit a {@link CubeDestination}.

@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.statechange;
 
 import java.util.ArrayList;
+
+import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * A change of game state obtained by combining multiple different game state changes.
@@ -34,22 +36,26 @@ public class GameStateChangeComposite implements GameStateChange {
     return result;
   }
 
-  public void callOnEach(AcceptGameStateChange acceptGameStateChange) {
-    for (GameStateChange change : changes) {
-      acceptGameStateChange.execute(change);
-    }
-  }
-
   @Override
   public void accept(GameStateChangeVisitor visitor) {
     visitor.visit(this);
   }
 
   /**
+   * Call a given functor on all the elements of the composite.
+   * @param functor The functor to call.
+   */
+  public void callOnEach(AcceptGameStateChange functor) {
+    for (GameStateChange change : changes) {
+      functor.execute(change);
+    }
+  }
+
+  /**
    * Adds a change to this composite.
    * @param change The change to add.
    */
-  public void add(GameStateChangeMoveCubes change) {
+  public void add(GameStateChange change) {
     changes.add(change);
   }
 }

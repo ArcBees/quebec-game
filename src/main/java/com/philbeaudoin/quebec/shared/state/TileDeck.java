@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.state;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.google.gwt.user.client.Random;
+import com.philbeaudoin.quebec.shared.InfluenceType;
 
 /**
  * A randomized deck from which tile can be drawn.

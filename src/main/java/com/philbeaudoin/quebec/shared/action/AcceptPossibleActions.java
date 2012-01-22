@@ -14,30 +14,16 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.action;
 
 /**
- * Information about a player. This information never changes during the game. See also
- * {@link PlayerState}.
- *
+ * The interface for a functor that accepts a single {@link PossibleActions}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class Player {
-
-  public final String name;
-  public final PlayerColor color;
-
-  public Player(PlayerColor color, String name) {
-    assert color.isNormalColor();
-    this.name = name;
-    this.color = color;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public PlayerColor getColor() {
-    return color;
-  }
+public interface AcceptPossibleActions {
+  /**
+   * Executes the functor.
+   * @param possibleActions The parameter to use when executing the functor.
+   */
+  void execute(PossibleActions possibleActions);
 }

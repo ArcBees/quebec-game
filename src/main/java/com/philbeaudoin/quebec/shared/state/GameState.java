@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.state;
 
 import java.util.ArrayList;
+
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.PlayerColor;
 
 /**
  * The state of the entire game.
@@ -132,6 +135,20 @@ public class GameState {
   }
 
   /**
+   * Get the state of the tile containing the given architect.
+   * @param playerColor The color of the architect to look for, cannot be NONE.
+   * @return The state of that tile, {@code null} if this architect was not fount on any tile.
+   */
+  public TileState findTileUnderArchitect(PlayerColor playerColor) {
+    for (TileState tileState : tileStates) {
+      if (tileState.getArchitect() == playerColor) {
+        return tileState;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Get the list of unused leader cards.
    * @return The unused player cards.
    */
@@ -160,5 +177,19 @@ public class GameState {
       int nbCubes) {
     assert playerColor.isNormalColor();
     influenceZoneState[influenceType.ordinal()].setCubesForPlayer(playerColor, nbCubes);
+  }
+
+  /**
+   * Returns the state of the currently active player.
+   * @return The currently active player state.
+   */
+  public PlayerState getCurrentPlayer() {
+    for (PlayerState playerState : playerStates) {
+      if (playerState.isCurrentPlayer()) {
+        return playerState;
+      }
+    }
+    assert false;
+    return null;
   }
 }

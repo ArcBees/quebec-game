@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.action;
 
 /**
- * Interface for a class that can visit a {@link GameStateChange}.
+ * Interface for a class that can visit a {@link PossibleActions}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameStateChangeVisitor {
+public interface PossibleActionsVisitor {
   /**
-   * Visits a {@link GameStateChangeComposite}.
+   * Visits a {@link PossibleActionsComposite}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeComposite host);
+  void visit(PossibleActionsComposite host);
+
   /**
-   * Visits a {@link GameStateChangeMoveCubes}.
+   * Visits a {@link PossibleActionsMoveArchitect}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeMoveCubes host);
+  void visit(PossibleActionsMoveArchitect host);
 }

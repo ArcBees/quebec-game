@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.state;
+
+import com.philbeaudoin.quebec.shared.InfluenceType;
 
 /**
  * Information on a tile that can be placed on the board. This information never changes during the
@@ -48,7 +50,7 @@ public class Tile {
   }
 
   /**
-   * @return The index of the building that is printed on the backside of the tileß.
+   * @return The index of the building that is printed on the backside of the tile.
    */
   public int getBuildingIndex() {
     return buildingIndex;

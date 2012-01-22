@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.client.renderer;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 
 /**
- * Renders a {@link com.philbeaudoin.quebec.shared.GameStateChange GameStateChange} into a scene
+ * Renders a {@link com.philbeaudoin.quebec.shared.statechange.GameStateChange GameStateChange} into a scene
  * graph. Classes implementing this interface are usually generated using
  * {@link ChangeRendererGenerator}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>

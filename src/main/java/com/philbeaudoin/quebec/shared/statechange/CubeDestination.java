@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.statechange;
+
+import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * A valid place to take or send cubes. The destination implies a color of cubes.

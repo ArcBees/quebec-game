@@ -18,14 +18,14 @@ package com.philbeaudoin.quebec.client.renderer;
 
 import javax.inject.Inject;
 
-import com.philbeaudoin.quebec.shared.CubeDestinationInfluenceZone;
-import com.philbeaudoin.quebec.shared.CubeDestinationPlayer;
-import com.philbeaudoin.quebec.shared.CubeDestinationTile;
-import com.philbeaudoin.quebec.shared.CubeDestinationVisitor;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationTile;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationVisitor;
 
 /**
  * Use this class to generate the {@link SceneCubeDestination} corresponding to a given
- * {@link com.philbeaudoin.quebec.shared.CubeDestination CubeDestination}.
+ * {@link com.philbeaudoin.quebec.shared.statechange.CubeDestination CubeDestination}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class SceneCubeDestinationGenerator implements CubeDestinationVisitor {

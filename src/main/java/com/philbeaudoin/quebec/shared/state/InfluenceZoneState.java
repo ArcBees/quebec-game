@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.state;
+
+import com.philbeaudoin.quebec.shared.PlayerColor;
 
 /**
  * The cubes contained in an influence zone.

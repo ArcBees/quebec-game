@@ -16,43 +16,40 @@
 
 package com.philbeaudoin.quebec.client.renderer;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationTile;
+import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
- * A cube destination within a scene graph corresponding to the spot on a given tile.
+ * An architect destination within a scene graph corresponding to a given tile.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class SceneCubeDestinationTile implements SceneCubeDestination {
+public class SceneArchitectDestinationTile implements SceneArchitectDestination {
 
-  private final CubeDestinationTile cubeDestinationTile;
+  private final ArchitectDestinationTile architectDestinationTile;
 
   @Inject
-  public SceneCubeDestinationTile(
-      @Assisted CubeDestinationTile cubeDestinationTile) {
-    this.cubeDestinationTile = cubeDestinationTile;
+  public SceneArchitectDestinationTile(
+      @Assisted ArchitectDestinationTile architectDestinationTile) {
+    this.architectDestinationTile = architectDestinationTile;
   }
 
   @Override
-  public PlayerColor getPlayerColor() {
-    return cubeDestinationTile.getPlayerColor();
+  public PlayerColor getArchitectColor() {
+    return architectDestinationTile.getArchitectColor();
   }
 
   @Override
-  public List<Transform> removeFrom(int nbCubes, GameStateRenderer renderer) {
-    return renderer.removeCubesFromTile(cubeDestinationTile.getTile(), getPlayerColor(),
-        cubeDestinationTile.getSpot(), nbCubes);
+  public Transform removeFrom(GameStateRenderer renderer) {
+    return renderer.removeArchitectFromTile(architectDestinationTile.getTile(),
+        getArchitectColor());
   }
 
   @Override
-  public List<Transform> addTo(int nbCubes, GameStateRenderer renderer) {
-    return renderer.addCubesToTile(cubeDestinationTile.getTile(), getPlayerColor(),
-        cubeDestinationTile.getSpot(), nbCubes);
+  public Transform addTo(GameStateRenderer renderer) {
+    return renderer.addArchitectToTile(architectDestinationTile.getTile(), getArchitectColor());
   }
 }
