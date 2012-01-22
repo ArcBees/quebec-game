@@ -34,18 +34,13 @@ import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
-import com.philbeaudoin.quebec.shared.CubeDestinationInfluenceZone;
-import com.philbeaudoin.quebec.shared.CubeDestinationPlayer;
-import com.philbeaudoin.quebec.shared.CubeDestinationTile;
-import com.philbeaudoin.quebec.shared.GameController;
-import com.philbeaudoin.quebec.shared.GameState;
-import com.philbeaudoin.quebec.shared.GameStateChangeComposite;
-import com.philbeaudoin.quebec.shared.GameStateChangeMoveCubes;
-import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.NameTokens;
-import com.philbeaudoin.quebec.shared.Player;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.TileState;
+import com.philbeaudoin.quebec.shared.action.PossibleActionsMoveArchitect;
+import com.philbeaudoin.quebec.shared.state.GameController;
+import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.Player;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -97,41 +92,51 @@ public class MainPagePresenter extends
     gameController.initGame(gameState, players);
 
     // Dummy setup for a test.
-    gameState.setPlayerCubesInInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK, 8);
-    TileState tileState1 = gameState.getTileStates().get(21);
-    TileState tileState2 = gameState.getTileStates().get(14);
-    GameStateChangeMoveCubes setupChange = new GameStateChangeMoveCubes(
-        tileState2.getCubesPerSpot(),
-        new CubeDestinationPlayer(PlayerColor.PINK, true),
-        new CubeDestinationTile(tileState2.getTile(), PlayerColor.PINK, 1));
-    gameState = setupChange.apply(gameState);
+//    gameState.setPlayerCubesInInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK, 8);
+//    TileState tileState1 = gameState.getTileStates().get(21);
+//    TileState tileState2 = gameState.getTileStates().get(14);
+//    GameStateChangeMoveCubes setupChange = new GameStateChangeMoveCubes(
+//        tileState2.getCubesPerSpot(),
+//        new CubeDestinationPlayer(PlayerColor.PINK, true),
+//        new CubeDestinationTile(tileState2.getTile(), PlayerColor.PINK, 1));
+//    gameState = setupChange.apply(gameState);
 
     gameStateRenderer.render(gameState);
 
     // Some animations
-    GameStateChangeMoveCubes changeA = new GameStateChangeMoveCubes(3,
-        new CubeDestinationPlayer(PlayerColor.WHITE, false),
-        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.WHITE));
-    GameStateChangeMoveCubes changeB = new GameStateChangeMoveCubes(5,
-        new CubeDestinationInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK),
-        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.BLACK));
-    GameStateChangeMoveCubes changeC = new GameStateChangeMoveCubes(3,
-        new CubeDestinationPlayer(PlayerColor.WHITE, true),
-        new CubeDestinationPlayer(PlayerColor.WHITE, false));
-    GameStateChangeMoveCubes changeD = new GameStateChangeMoveCubes(tileState1.getCubesPerSpot(),
-        new CubeDestinationPlayer(PlayerColor.ORANGE, false),
-        new CubeDestinationTile(tileState1.getTile(), PlayerColor.ORANGE, 0));
-    GameStateChangeMoveCubes changeE = new GameStateChangeMoveCubes(tileState2.getCubesPerSpot(),
-        new CubeDestinationTile(tileState2.getTile(), PlayerColor.PINK, 1),
-        new CubeDestinationPlayer(PlayerColor.PINK, true));
-    GameStateChangeComposite change = new GameStateChangeComposite();
-    change.add(changeA);
-    change.add(changeB);
-    change.add(changeC);
-    change.add(changeD);
-    change.add(changeE);
+//    GameStateChangeMoveCubes changeA = new GameStateChangeMoveCubes(3,
+//        new CubeDestinationPlayer(PlayerColor.WHITE, false),
+//        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.WHITE));
+//    GameStateChangeMoveCubes changeB = new GameStateChangeMoveCubes(5,
+//        new CubeDestinationInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK),
+//        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.BLACK));
+//    GameStateChangeMoveCubes changeC = new GameStateChangeMoveCubes(3,
+//        new CubeDestinationPlayer(PlayerColor.WHITE, true),
+//        new CubeDestinationPlayer(PlayerColor.WHITE, false));
+//    GameStateChangeMoveCubes changeD = new GameStateChangeMoveCubes(tileState1.getCubesPerSpot(),
+//        new CubeDestinationPlayer(PlayerColor.ORANGE, false),
+//        new CubeDestinationTile(tileState1.getTile(), PlayerColor.ORANGE, 0));
+//    GameStateChangeMoveCubes changeE = new GameStateChangeMoveCubes(tileState2.getCubesPerSpot(),
+//        new CubeDestinationTile(tileState2.getTile(), PlayerColor.PINK, 1),
+//        new CubeDestinationPlayer(PlayerColor.PINK, true));
+//    GameStateChangeMoveArchitect changeF = new GameStateChangeMoveArchitect(
+//        new ArchitectDestinationPlayer(PlayerColor.GREEN, false),
+//        new ArchitectDestinationTile(tileState2.getTile(), PlayerColor.GREEN));
+//    GameStateChangeComposite change = new GameStateChangeComposite();
+//    change.add(changeA);
+//    change.add(changeB);
+//    change.add(changeC);
+//    change.add(changeD);
+//    change.add(changeE);
+//    change.add(changeF);
+
+    // Instead of canned animations, try an action.
+    PossibleActionsMoveArchitect possibleAction = new PossibleActionsMoveArchitect(
+        gameState.getTileStates().get(21).getTile(), false);
+    GameStateChange change = possibleAction.execute(0, gameState);
+
     ChangeRendererGenerator generator = rendererFactories.createChangeRendererGenerator();
-    generator.visit(change);
+    change.accept(generator);
 
     ChangeRenderer changeRenderer = generator.getChangeRenderer();
     changeRenderer.generateAnim(gameStateRenderer, dynamicRoot, 0.0);

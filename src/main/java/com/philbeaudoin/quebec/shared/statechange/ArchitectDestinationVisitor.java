@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.statechange;
 
 /**
- * The interface used to pass methods that accept a single {@link GameStateChange}.
+ * Interface for a class that can visit an {@link ArchitectDestination}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface AcceptGameStateChange {
-  void execute(GameStateChange gameStateChange);
+public interface ArchitectDestinationVisitor {
+  /**
+   * Visits a {@link ArchitectDestinationTile}.
+   * @param host The visited class.
+   */
+  void visit(ArchitectDestinationTile host);
+  /**
+   * Visits a {@link ArchitectDestinationPlayer}.
+   * @param host The visited class.
+   */
+  void visit(ArchitectDestinationPlayer host);
 }

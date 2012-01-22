@@ -21,8 +21,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.shared.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**

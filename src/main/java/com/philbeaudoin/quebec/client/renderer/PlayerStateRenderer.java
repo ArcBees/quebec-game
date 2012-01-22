@@ -31,7 +31,7 @@ import com.philbeaudoin.quebec.client.scene.Text;
 import com.philbeaudoin.quebec.client.utils.CubeGrid;
 import com.philbeaudoin.quebec.client.utils.PawnStack;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.PlayerState;
+import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -52,11 +52,13 @@ public class PlayerStateRenderer {
   private final SpriteResources spriteResources;
   private final SceneNodeList playerZone;
   private final CubeGrid cubeGrid = new CubeGrid(9, 3);
+  private final PawnStack pawnStack = new PawnStack(2);
   private final double width;
   private final double height;
   private final SceneNodeList passiveCubes;
   private final SceneNodeList activeCubes;
   private final SceneNodeList pawns;
+  private final Sprite architect[] = new Sprite[2];
   private final ScoreRenderer scoreRenderer;
   private final ArrayList<SceneNode> activeCubeStack = new ArrayList<SceneNode>();
   private final ArrayList<SceneNode> passiveCubeStack = new ArrayList<SceneNode>();
@@ -130,28 +132,11 @@ public class PlayerStateRenderer {
     addCubesToPlayer(true, playerState.getNbActiveCubes());
     addCubesToPlayer(false, playerState.getNbPassiveCubes());
 
-    int nbPawns = 0;
     if (playerState.isHoldingArchitect()) {
-      nbPawns++;
+      addArchitect(false);
     }
     if (playerState.isHoldingNeutralArchitect()) {
-      nbPawns++;
-    }
-    if (nbPawns > 0) {
-      PawnStack pawnStack = new PawnStack(nbPawns);
-      int index = 0;
-      if (playerState.isHoldingArchitect()) {
-        Sprite pawn = new Sprite(spriteResources.getPawn(playerColor),
-            new ConstantTransform(pawnStack.getPosition(index)));
-        pawns.add(pawn);
-        index++;
-      }
-      if (playerState.isHoldingNeutralArchitect()) {
-        Sprite pawn = new Sprite(spriteResources.getPawn(PlayerColor.NEUTRAL),
-            new ConstantTransform(pawnStack.getPosition(index)));
-        pawns.add(pawn);
-        index++;
-      }
+      addArchitect(true);
     }
 
     if (playerState.getLeaderCard() != null) {
@@ -171,7 +156,7 @@ public class PlayerStateRenderer {
    * global transforms of the removed cubes.
    * @param active True to remove the cubes from the active reserve, false for the passive.
    * @param nbCubes The number of cubes to remove, must be more than what is in the reserve.
-   * @return The list of global transforms of the added cubes.
+   * @return The list of global transforms of the removed cubes.
    */
   public List<Transform> removeCubesFromPlayer(boolean active, int nbCubes) {
     assert nbCubes >= 0;
@@ -221,5 +206,44 @@ public class PlayerStateRenderer {
       cubes.add(cube);
     }
     return result;
+  }
+
+  /**
+   * Remove the standard or neutral architect from the player zone.
+   * @param neutralArchitect True to remove the neutral architect.
+   * @return The global transforms of the removed architect.
+   */
+  public Transform removeArchitect(boolean neutralArchitect) {
+    int index = 0;
+    if (neutralArchitect) {
+      index = 1;
+    }
+    assert architect[index] != null;
+    Transform result = architect[index].getTotalTransform(0);
+    architect[index].setParent(null);
+    return result;
+  }
+
+  /**
+   * Add the standard or neutral architect to the player zone.
+   * @param neutralArchitect True to add the neutral architect.
+   * @return The global transforms of the added architect.
+   */
+  public Transform addArchitect(boolean neutralArchitect) {
+    int index = 0;
+    PlayerColor architectColor = playerColor;
+    if (neutralArchitect) {
+      index = 1;
+      architectColor = PlayerColor.NEUTRAL;
+    }
+    // Remove any architect that's already there.
+    if (architect[index] != null) {
+      architect[index].setParent(null);
+    }
+    // Add the architect.
+    architect[index] = new Sprite(spriteResources.getPawn(architectColor),
+        new ConstantTransform(pawnStack.getPosition(index)));
+    pawns.add(architect[index]);
+    return architect[index].getTotalTransform(0);
   }
 }

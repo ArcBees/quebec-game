@@ -28,14 +28,14 @@ import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.client.scene.SpriteResources.Type;
 import com.philbeaudoin.quebec.client.utils.CubeGrid;
-import com.philbeaudoin.quebec.shared.Board;
-import com.philbeaudoin.quebec.shared.BoardAction;
-import com.philbeaudoin.quebec.shared.GameState;
 import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.LeaderCard;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.Tile;
-import com.philbeaudoin.quebec.shared.TileState;
+import com.philbeaudoin.quebec.shared.state.Board;
+import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.LeaderCard;
+import com.philbeaudoin.quebec.shared.state.Tile;
+import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -60,11 +60,17 @@ public class BoardRenderer {
     SceneNodeList root;
     Tile tile;
     double rotation;
+    PlayerColor architectColor;
+    SceneNode architectNode;
+    SceneNode activeTokenNode;
     CubeStack cubesOnSpot[] = new CubeStack[3];
     public TileInfo(SceneNodeList root, Tile tile, double rotation) {
       this.root = root;
       this.tile = tile;
       this.rotation = rotation;
+      this.architectColor = PlayerColor.NONE;
+      this.architectNode = null;
+      this.activeTokenNode = null;
       for (int i = 0; i < 3; ++i) {
         cubesOnSpot[i] = new CubeStack();
       }
@@ -200,18 +206,14 @@ public class BoardRenderer {
     // Add the architect pawn.
     PlayerColor architectColor = tileState.getArchitect();
     if (architectColor != PlayerColor.NONE) {
-      SceneNodeList architectNode = new SceneNodeList(
-          new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -tileInfo.rotation));
-      tileInfo.root.add(architectNode);
-      Sprite architectSprite = new Sprite(spriteResources.getPawn(architectColor),
-          new ConstantTransform(new Vector2d(0, -0.01)));
-      architectNode.add(architectSprite);
+      addArchitectToTile(tileInfo, architectColor);
     } else {
       // Add the active token if needed.
       if (tile.getCentury() == gameState.getCentury()) {
-        Sprite activeTokenSprite = new Sprite(spriteResources.get(Type.activeToken),
+        tileInfo.architectColor = PlayerColor.NONE;
+        tileInfo.activeTokenNode = new Sprite(spriteResources.get(Type.activeToken),
             new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -tileInfo.rotation));
-        tileInfo.root.add(activeTokenSprite);
+        tileInfo.root.add(tileInfo.activeTokenNode);
       }
     }
 
@@ -392,6 +394,35 @@ public class BoardRenderer {
     return addCubesToTile(new CubeGrid(nbCubes, 1), findTileInfo(tile), playerColor, spot, nbCubes);
   }
 
+  /**
+   * Remove an architect from the given tile.
+   * @param tile The tile to remove an architect from.
+   * @param architectColor The color of the architect to remove. (not NONE)
+   * @return The global transforms of the removed architect.
+   */
+  public Transform removeArchitectFromTile(Tile tile, PlayerColor architectColor) {
+    TileInfo tileInfo = findTileInfo(tile);
+    assert tileInfo.architectColor == architectColor;
+    assert tileInfo.architectNode != null;
+    assert tileInfo.activeTokenNode == null;
+    // We remove the parent of the architect node from the tree.
+    Transform result = tileInfo.architectNode.getTotalTransform(0);
+    tileInfo.architectNode.getParent().setParent(null);
+    tileInfo.architectColor = PlayerColor.NONE;
+    tileInfo.architectNode = null;
+    return result;
+  }
+
+  /**
+   * Add an architect to the given tile.
+   * @param tile The tile to add an architect to.
+   * @param architectColor The color of the architect to add. (not NONE)
+   * @return The global transforms of the added architect.
+   */
+  public Transform addArchitectToTile(Tile tile, PlayerColor architectColor) {
+    return addArchitectToTile(findTileInfo(tile), architectColor);
+  }
+
   private List<Transform> addCubesToTile(CubeGrid cubeGrid, TileInfo tileInfo,
       PlayerColor playerColor, int spot, int nbCubes) {
     assert playerColor.isNormalColor();
@@ -416,6 +447,23 @@ public class BoardRenderer {
       cubesNode.add(cubeSprite);
     }
     return result;
+  }
+
+  private Transform addArchitectToTile(TileInfo tileInfo, PlayerColor architectColor) {
+    assert tileInfo.architectColor == PlayerColor.NONE;
+    assert tileInfo.architectNode == null;
+    if (tileInfo.activeTokenNode != null) {
+      tileInfo.activeTokenNode.setParent(null);
+      tileInfo.activeTokenNode = null;
+    }
+    tileInfo.architectColor = architectColor;
+    SceneNodeList architectParentNode = new SceneNodeList(
+        new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -tileInfo.rotation));
+    tileInfo.root.add(architectParentNode);
+    tileInfo.architectNode = new Sprite(spriteResources.getPawn(architectColor),
+        new ConstantTransform(new Vector2d(0, -0.01)));
+    architectParentNode.add(tileInfo.architectNode);
+    return tileInfo.architectNode.getTotalTransform(0);
   }
 
   private TileInfo findTileInfo(Tile tile) {

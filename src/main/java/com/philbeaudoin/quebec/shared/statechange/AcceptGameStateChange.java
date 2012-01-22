@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.statechange;
 
 /**
- * A class can can track a single change of the game state.
+ * The interface for a functor that accepts a single {@link GameStateChange}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameStateChange {
+public interface AcceptGameStateChange {
   /**
-   * Apply this change to the specified game change and return the modified game state.
-   * @param gameState The game state to apply this change to. It will not be modified.
-   * @return The modified game state.
+   * Executes the functor.
+   * @param gameStateChange The parameter to use when executing the functor.
    */
-  GameState apply(GameState gameState);
-
-  /**
-   * Accepts a visitor.
-   * @param visitor The visitor.
-   */
-  void accept(GameStateChangeVisitor visitor);
+  void execute(GameStateChange gameStateChange);
 }

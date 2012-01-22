@@ -17,9 +17,11 @@
 package com.philbeaudoin.quebec.client.renderer;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.shared.CubeDestinationInfluenceZone;
-import com.philbeaudoin.quebec.shared.CubeDestinationPlayer;
-import com.philbeaudoin.quebec.shared.CubeDestinationTile;
+import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationPlayer;
+import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationTile;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -38,10 +40,18 @@ public interface RendererFactories {
   ChangeRendererComposite createChangeRendererComposite();
   ChangeRendererMoveCubes createChangeRendererMoveCubes(int nbCubes,
       @Assisted("from") SceneCubeDestination from, @Assisted("to") SceneCubeDestination to);
-  SceneCubeDestinationGenerator createSceneGraphCubeDestinationGenerator();
+  SceneCubeDestinationGenerator createSceneCubeDestinationGenerator();
+  SceneArchitectDestinationGenerator createSceneArchitectDestinationGenerator();
   SceneCubeDestinationInfluenceZone createSceneCubeDestinationInfluenceZone(
       CubeDestinationInfluenceZone cubeDestinationInfluenceZone);
   SceneCubeDestinationPlayer createSceneCubeDestinationPlayer(
       CubeDestinationPlayer cubeDestinationPlayer);
   SceneCubeDestinationTile createSceneCubeDestinationTile(CubeDestinationTile cubeDestinationTile);
+  SceneArchitectDestinationTile createSceneArchitectDestinationTile(
+      ArchitectDestinationTile architectDestinationTile);
+  SceneArchitectDestinationPlayer createSceneArchitectDestinationPlayer(
+      ArchitectDestinationPlayer architectDestinationPlayer);
+  ChangeRendererMoveArchitect createChangeRendererMoveArchitect(
+      @Assisted("from") SceneArchitectDestination from,
+      @Assisted("to") SceneArchitectDestination to);
 }

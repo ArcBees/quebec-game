@@ -16,15 +16,12 @@
 
 package com.philbeaudoin.quebec.client.renderer;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
-import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.UserPreferences;
 import com.philbeaudoin.quebec.shared.utils.ArcTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -35,64 +32,55 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
  * scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ChangeRendererMoveCubes implements ChangeRenderer {
+public class ChangeRendererMoveArchitect implements ChangeRenderer {
 
   private final SpriteResources spriteResources;
   private final UserPreferences userPreferences;
-  private final int nbCubes;
-  private final SceneCubeDestination from;
-  private final SceneCubeDestination to;
+  private final SceneArchitectDestination from;
+  private final SceneArchitectDestination to;
 
   @Inject
-  ChangeRendererMoveCubes(
+  ChangeRendererMoveArchitect(
       SpriteResources spriteResources,
       UserPreferences userPreferences,
-      @Assisted int nbCubes,
-      @Assisted("from") SceneCubeDestination from,
-      @Assisted("to") SceneCubeDestination to) {
+      @Assisted("from") SceneArchitectDestination from,
+      @Assisted("to") SceneArchitectDestination to) {
     this.spriteResources = spriteResources;
     this.userPreferences = userPreferences;
-    this.nbCubes = nbCubes;
     this.from = from;
     this.to = to;
-    assert from.getPlayerColor() == to.getPlayerColor();
+    assert from.getArchitectColor() == to.getArchitectColor();
   }
 
   @Override
   public void applyRemovals(GameStateRenderer renderer) {
-    from.removeFrom(nbCubes, renderer);
+    from.removeFrom(renderer);
   }
 
   @Override
   public void applyAdditions(GameStateRenderer renderer) {
-    to.addTo(nbCubes, renderer);
+    to.addTo(renderer);
   }
 
   @Override
   public void undoRemovals(GameStateRenderer renderer) {
-    from.addTo(nbCubes, renderer);
+    from.addTo(renderer);
   }
 
   @Override
   public void undoAdditions(GameStateRenderer renderer) {
-    to.removeFrom(nbCubes, renderer);
+    to.removeFrom(renderer);
   }
 
   @Override
   public void generateAnim(GameStateRenderer renderer, SceneNodeList animRoot,
       double startingTime) {
-    List<Transform> startTransforms = from.removeFrom(nbCubes, renderer);
-    List<Transform> finishTransforms = to.addTo(nbCubes, renderer);
-    assert startTransforms.size() == finishTransforms.size();
-    assert startTransforms.size() == nbCubes;
+    Transform startTransform = from.removeFrom(renderer);
+    Transform finishTransform = to.addTo(renderer);
     double endingTime = startingTime + userPreferences.getAnimDuration();
-    PlayerColor playerColor = from.getPlayerColor();
-    for (int i = 0; i < nbCubes; ++i) {
-      Sprite cube = new Sprite(spriteResources.getCube(playerColor),
-          new ArcTransform(startTransforms.get(i), finishTransforms.get(i),
-              startingTime, endingTime));
-      animRoot.add(cube);
-    }
+    Sprite cube = new Sprite(spriteResources.getPawn(from.getArchitectColor()),
+        new ArcTransform(startTransform, finishTransform, startingTime, endingTime));
+    animRoot.add(cube);
   }
 
 }

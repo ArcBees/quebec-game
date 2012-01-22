@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.statechange;
+
+import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * A change of the game state obtained by moving cubes from one location to another.
@@ -65,7 +67,7 @@ public class GameStateChangeMoveCubes implements GameStateChange {
 
   /**
    * Access the cube destination to which the cubes go.
-   * @return The destination cube destination.
+   * @return The final cube destination.
    */
   public CubeDestination getTo() {
     return to;

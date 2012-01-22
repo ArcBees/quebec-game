@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.state;
 
+import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * Static information about the board the state of the game board. This information never changes
- * during the game.
+ * Static information about the board . This information never changes during the game.
  * TODO(beaudoin): Make all fields non-static and inject a singleton Board.
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>

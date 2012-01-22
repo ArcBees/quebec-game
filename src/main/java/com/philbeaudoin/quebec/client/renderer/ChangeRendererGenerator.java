@@ -18,11 +18,13 @@ package com.philbeaudoin.quebec.client.renderer;
 
 import javax.inject.Inject;
 
-import com.philbeaudoin.quebec.shared.AcceptGameStateChange;
-import com.philbeaudoin.quebec.shared.GameStateChange;
-import com.philbeaudoin.quebec.shared.GameStateChangeComposite;
-import com.philbeaudoin.quebec.shared.GameStateChangeMoveCubes;
-import com.philbeaudoin.quebec.shared.GameStateChangeVisitor;
+import com.philbeaudoin.quebec.shared.statechange.AcceptGameStateChange;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeVisitor;
 
 /**
  * Use this class to generate the {@link ChangeRenderer} corresponding to a given
@@ -66,13 +68,31 @@ public class ChangeRendererGenerator implements GameStateChangeVisitor {
   @Override
   public void visit(GameStateChangeMoveCubes host) {
     SceneCubeDestinationGenerator generatorFrom =
-        rendererFactory.createSceneGraphCubeDestinationGenerator();
+        rendererFactory.createSceneCubeDestinationGenerator();
     host.getFrom().accept(generatorFrom);
     SceneCubeDestinationGenerator generatorTo =
-        rendererFactory.createSceneGraphCubeDestinationGenerator();
+        rendererFactory.createSceneCubeDestinationGenerator();
     host.getTo().accept(generatorTo);
     changeRenderer = rendererFactory.createChangeRendererMoveCubes(host.getNbCubes(),
         generatorFrom.getSceneCubeDestination(),
         generatorTo.getSceneCubeDestination());
+  }
+
+  @Override
+  public void visit(GameStateChangeFlipTile host) {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public void visit(GameStateChangeMoveArchitect host) {
+    SceneArchitectDestinationGenerator generatorFrom =
+        rendererFactory.createSceneArchitectDestinationGenerator();
+    host.getFrom().accept(generatorFrom);
+    SceneArchitectDestinationGenerator generatorTo =
+        rendererFactory.createSceneArchitectDestinationGenerator();
+    host.getTo().accept(generatorTo);
+    changeRenderer = rendererFactory.createChangeRendererMoveArchitect(
+        generatorFrom.getSceneArchitectDestination(),
+        generatorTo.getSceneArchitectDestination());
   }
 }
