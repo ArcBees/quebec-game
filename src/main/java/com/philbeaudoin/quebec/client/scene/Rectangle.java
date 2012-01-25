@@ -74,22 +74,16 @@ public class Rectangle extends SceneNodeImpl {
   }
 
   @Override
-  public void draw(double time, Context2d context) {
-    context.save();
-    try {
-      getTransform().applies(time, context);
-      CanvasGradient gradient = context.createLinearGradient(x0, y0, x1, y1);
-      gradient.addColorStop(0, color0);
-      gradient.addColorStop(1, color1);
-      context.setFillStyle(gradient);
-      context.fillRect(x0, y0, w, h);
-      if (strokeColor != null && strokeWidth > 0) {
-        context.setStrokeStyle(strokeColor);
-        context.setLineWidth(strokeWidth);
-        context.strokeRect(ox0, oy0, ow, oh);
-      }
-    } finally {
-      context.restore();
+  public void drawUntransformed(double time, Context2d context) {
+    CanvasGradient gradient = context.createLinearGradient(x0, y0, x1, y1);
+    gradient.addColorStop(0, color0);
+    gradient.addColorStop(1, color1);
+    context.setFillStyle(gradient);
+    context.fillRect(x0, y0, w, h);
+    if (strokeColor != null && strokeWidth > 0) {
+      context.setStrokeStyle(strokeColor);
+      context.setLineWidth(strokeWidth);
+      context.strokeRect(ox0, oy0, ow, oh);
     }
   }
 

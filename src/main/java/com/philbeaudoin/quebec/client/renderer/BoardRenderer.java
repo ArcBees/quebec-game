@@ -113,6 +113,16 @@ public class BoardRenderer {
     backgroundBoardRoot.add(boardSprite);
     backgroundRoot.add(backgroundBoardRoot);
 
+    for (int i = 0; i < 18; ++i) {
+      for (int j = 0; j < 8; ++j) {
+        tileGrid[i][j] = null;
+      }
+    }
+
+    for (int i = 0; i < 5; ++i) {
+      influenceZoneNode[i] = null;
+    }
+
     for (int i = 0; i < 5; ++i) {
       for (int j = 0; j < 5; ++j) {
         cubeStacksInZone[i][j].cubes.clear();

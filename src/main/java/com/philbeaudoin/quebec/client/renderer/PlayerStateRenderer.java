@@ -111,6 +111,9 @@ public class PlayerStateRenderer {
     int paletteIndex = playerColor.ordinal() - 1;
 
     playerZone.clear();
+    passiveCubes.clear();
+    activeCubes.clear();
+    pawns.clear();
     String contourColor = playerState.isCurrentPlayer() ? "#000" : null;
     Rectangle mat = new Rectangle(0, 0, width, height,
         COLOR[paletteIndex][0], COLOR[paletteIndex][1], contourColor, 6);
@@ -128,6 +131,8 @@ public class PlayerStateRenderer {
     playerZone.add(passiveCubes);
     playerZone.add(activeCubes);
     playerZone.add(pawns);
+    activeCubeStack.clear();
+    passiveCubeStack.clear();
 
     addCubesToPlayer(true, playerState.getNbActiveCubes());
     addCubesToPlayer(false, playerState.getNbPassiveCubes());

@@ -28,12 +28,10 @@ public class GameStateChangeComposite implements GameStateChange {
   private final ArrayList<GameStateChange> changes = new ArrayList<GameStateChange>();
 
   @Override
-  public GameState apply(GameState gameState) {
-    GameState result = gameState;
+  public void apply(GameState gameState) {
     for (GameStateChange change : changes) {
-      result = change.apply(result);
+      change.apply(gameState);
     }
-    return result;
   }
 
   @Override

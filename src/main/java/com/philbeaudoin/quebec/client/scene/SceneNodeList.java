@@ -95,15 +95,9 @@ public class SceneNodeList extends SceneNodeImpl {
   }
 
   @Override
-  public void draw(double time, Context2d context) {
-    context.save();
-    try {
-      getTransform().applies(time, context);
-      for (SceneNode sceneNode : sceneNodes) {
-        sceneNode.draw(time, context);
-      }
-    } finally {
-      context.restore();
+  public void drawUntransformed(double time, Context2d context) {
+    for (SceneNode sceneNode : sceneNodes) {
+      sceneNode.draw(time, context);
     }
   }
 
@@ -123,4 +117,13 @@ public class SceneNodeList extends SceneNodeImpl {
     sceneNodes.remove(sceneNode);
   }
 
+  @Override
+  protected boolean areChildrenAnimationsCompleted(double time) {
+    for (SceneNode sceneNode : sceneNodes) {
+      if (!sceneNode.isAnimationCompleted(time)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }

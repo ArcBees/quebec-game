@@ -81,23 +81,17 @@ public class Arrow extends SceneNodeImpl {
   }
 
   @Override
-  public void draw(double time, Context2d context) {
-    context.save();
-    try {
-      getTransform().applies(time, context);
-      context.beginPath();
-      context.moveTo(from.getX(), from.getY());
-      context.bezierCurveTo(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY());
-      context.lineTo(p4.getX(), p4.getY());
-      context.lineTo(to.getX(), to.getY());
-      context.lineTo(p5.getX(), p5.getY());
-      context.lineTo(p6.getX(), p6.getY());
-      context.bezierCurveTo(p2.getX(), p2.getY(), p1.getX(), p1.getY(), from.getX(), from.getY());
-      context.stroke();
-      context.fill();
-    } finally {
-      context.restore();
-    }
+  public void drawUntransformed(double time, Context2d context) {
+    context.beginPath();
+    context.moveTo(from.getX(), from.getY());
+    context.bezierCurveTo(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY());
+    context.lineTo(p4.getX(), p4.getY());
+    context.lineTo(to.getX(), to.getY());
+    context.lineTo(p5.getX(), p5.getY());
+    context.lineTo(p6.getX(), p6.getY());
+    context.bezierCurveTo(p2.getX(), p2.getY(), p1.getX(), p1.getY(), from.getX(), from.getY());
+    context.stroke();
+    context.fill();
   }
 
 }

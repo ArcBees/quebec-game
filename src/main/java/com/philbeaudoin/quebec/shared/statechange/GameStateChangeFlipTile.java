@@ -38,12 +38,10 @@ public class GameStateChangeFlipTile implements GameStateChange {
   }
 
   @Override
-  public GameState apply(GameState gameState) {
-    GameState result = new GameState(gameState);
-    TileState tileState = result.getTileState(tile);
+  public void apply(GameState gameState) {
+    TileState tileState = gameState.getTileState(tile);
     tileState.setBuildingFacing(true);
     tileState.setStarToken(playerColor, nbStars);
-    return null;
   }
 
   @Override

@@ -17,6 +17,8 @@
 package com.philbeaudoin.quebec.client.scene;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.philbeaudoin.quebec.shared.utils.Callback;
+import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
@@ -64,4 +66,24 @@ public interface SceneNode {
    * @return The total transform.
    */
   ConstantTransform getTotalTransform(double time);
+
+  /**
+   * Adds a callback to be called as soon as the current animation is complete. The animation of a
+   * scene node is complete if its own transform's animation is complete and all the scene nodes
+   * below it have also completed their animation. The callbacks are triggered right after a call to
+   * {@link #draw} for which this condition holds. If you want the method to be called only once you
+   * must manually unregister it after it is called.
+   * @param callback The callback to trigger.
+   * @return A callback registration object that can be used to remove the callback.
+   */
+  CallbackRegistration addAnimationCompletedCallback(Callback callback);
+
+  /**
+   * Checks whether or not the node's animation is completed at the given time. The animation of a
+   * scene node is complete if its own transform's animation is complete and all the scene nodes
+   * below it have also completed their animation.
+   * @param time The time at which to check for animation completion.
+   * @return True if the animation is completed at that time, false otherwise.
+   */
+  boolean isAnimationCompleted(double time);
 }

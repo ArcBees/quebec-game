@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
-
-import com.philbeaudoin.quebec.shared.state.GameState;
+package com.philbeaudoin.quebec.shared.utils;
 
 /**
- * A class can can track a single change of the game state.
+ * Wraps a simple method that can be used as a callback.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameStateChange {
+public interface Callback {
   /**
-   * Apply this change to the specified game change.
-   * @param gameState The game state to apply this change to.
+   * Executes the callback.
    */
-  void apply(GameState gameState);
-
-  /**
-   * Accepts a visitor.
-   * @param visitor The visitor.
-   */
-  void accept(GameStateChangeVisitor visitor);
+  void execute();
 }

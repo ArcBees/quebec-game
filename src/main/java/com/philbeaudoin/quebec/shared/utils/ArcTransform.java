@@ -75,15 +75,10 @@ public class ArcTransform implements Transform {
 
   @Override
   public void applies(double time, Context2d context) {
-    applies(time, context, 1);
-  }
-
-  @Override
-  public void applies(double time, Context2d context, double sizeFactor) {
     Vector2d translation = getTranslation(time);
-    double totalScaling = getScaling(time) * sizeFactor;
+    double scaling = getScaling(time);
     context.translate(translation.x, translation.y);
-    context.scale(totalScaling, totalScaling);
+    context.scale(scaling, scaling);
     context.rotate(getRotation(time));
   }
 
@@ -110,5 +105,10 @@ public class ArcTransform implements Transform {
       r = 1;
     }
     return r;
+  }
+
+  @Override
+  public boolean isAnimationCompleted(double time) {
+    return time >= t1;
   }
 }

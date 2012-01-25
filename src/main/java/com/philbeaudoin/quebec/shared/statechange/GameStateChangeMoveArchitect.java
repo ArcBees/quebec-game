@@ -34,11 +34,9 @@ public class GameStateChangeMoveArchitect implements GameStateChange {
   }
 
   @Override
-  public GameState apply(GameState gameState) {
-    GameState result = new GameState(gameState);
-    from.removeFrom(result);
-    to.addTo(result);
-    return result;
+  public void apply(GameState gameState) {
+    from.removeFrom(gameState);
+    to.addTo(gameState);
   }
 
   @Override

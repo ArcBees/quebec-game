@@ -46,18 +46,14 @@ public class Sprite extends SceneNodeImpl {
   }
 
   @Override
-  public void draw(double time, Context2d context) {
+  public void drawUntransformed(double time, Context2d context) {
     if (info == null || info.getElement() == null) {
       logger.log(Level.SEVERE, "Trying to draw a sprite with null image element.");
     }
-    context.save();
-    try {
-      getTransform().applies(time, context, info.getSizeFactor());
-      ImageElement imageElement = info.getElement();
-      context.drawImage(imageElement, -imageElement.getWidth() / 2, -imageElement.getHeight() / 2);
-    } finally {
-      context.restore();
-    }
+    double sizeFactor = info.getSizeFactor();
+    ImageElement imageElement = info.getElement();
+    context.scale(sizeFactor, sizeFactor);
+    context.drawImage(imageElement, -imageElement.getWidth() / 2, -imageElement.getHeight() / 2);
   }
 
 }
