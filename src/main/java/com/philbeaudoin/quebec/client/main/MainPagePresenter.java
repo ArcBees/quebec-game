@@ -41,6 +41,8 @@ import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Player;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.utils.Callback;
+import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -54,8 +56,12 @@ public class MainPagePresenter extends
   public static final Object TYPE_RevealNewsContent = new Object();
 
   private final GameStateRenderer gameStateRenderer;
-
   private final SceneNodeList dynamicRoot = new SceneNodeList();
+
+  private GameState gameState = new GameState();
+  private CallbackRegistration animationCompletedRegistration;
+
+  private boolean refreshNeeded = true;
 
   /**
    * The presenter's view.
@@ -87,7 +93,6 @@ public class MainPagePresenter extends
     players.add(new Player(PlayerColor.GREEN, "Claudiane"));
     players.add(new Player(PlayerColor.PINK, "Bob"));
 
-    GameState gameState = new GameState();
     GameController gameController = new GameController();
     gameController.initGame(gameState, players);
 
@@ -102,6 +107,7 @@ public class MainPagePresenter extends
 //    gameState = setupChange.apply(gameState);
 
     gameStateRenderer.render(gameState);
+    refreshNeeded = true;
 
     // Some animations
 //    GameStateChangeMoveCubes changeA = new GameStateChangeMoveCubes(3,
@@ -133,7 +139,7 @@ public class MainPagePresenter extends
     // Instead of canned animations, try an action.
     PossibleActionsMoveArchitect possibleAction = new PossibleActionsMoveArchitect(
         gameState.getTileStates().get(21).getTile(), false);
-    GameStateChange change = possibleAction.execute(0, gameState);
+    final GameStateChange change = possibleAction.execute(0, gameState);
 
     ChangeRendererGenerator generator = rendererFactories.createChangeRendererGenerator();
     change.accept(generator);
@@ -144,6 +150,17 @@ public class MainPagePresenter extends
 
     Arrow arrow = new Arrow(new Vector2d(0.7, 0.1), new Vector2d(1.699, 0.2));
     gameStateRenderer.getRoot().add(arrow);
+
+    animationCompletedRegistration = dynamicRoot.addAnimationCompletedCallback(
+        new Callback() {
+          @Override public void execute() {
+            dynamicRoot.clear();
+            change.apply(gameState);
+            gameStateRenderer.render(gameState);
+            refreshNeeded = true;
+            animationCompletedRegistration.unregister();
+          }
+        });
   }
 
   @Override
@@ -194,10 +211,15 @@ public class MainPagePresenter extends
   }
 
   public void drawStaticLayer(Context2d context) {
+    refreshNeeded = false;
     gameStateRenderer.getRoot().draw(0, context);
   }
 
   public void drawDynamicLayer(double time, Context2d context) {
     dynamicRoot.draw(time, context);
+  }
+
+  public boolean isRefreshNeeded() {
+    return refreshNeeded;
   }
 }

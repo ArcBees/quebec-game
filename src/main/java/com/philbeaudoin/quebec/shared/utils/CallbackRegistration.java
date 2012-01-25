@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
-
-import com.philbeaudoin.quebec.shared.state.GameState;
+package com.philbeaudoin.quebec.shared.utils;
 
 /**
- * A class can can track a single change of the game state.
+ * An object that makes it easy to unregister a given callback.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameStateChange {
-  /**
-   * Apply this change to the specified game change.
-   * @param gameState The game state to apply this change to.
-   */
-  void apply(GameState gameState);
+public class CallbackRegistration {
+
+  private final CallbackRegistry registry;
+  private final Callback callback;
+
+  CallbackRegistration(CallbackRegistry registry, Callback callback) {
+    this.registry = registry;
+    this.callback = callback;
+  }
 
   /**
-   * Accepts a visitor.
-   * @param visitor The visitor.
+   * Unregisters the callback so that it is no longer invoked.
    */
-  void accept(GameStateChangeVisitor visitor);
+  public void unregister() {
+    registry.unregister(callback);
+  }
 }

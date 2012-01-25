@@ -93,14 +93,8 @@ public class ConstantTransform implements Transform {
 
   @Override
   public void applies(double time, Context2d context) {
-    applies(time, context, 1);
-  }
-
-  @Override
-  public void applies(double time, Context2d context, double sizeFactor) {
-    double totalScaling = scaling * sizeFactor;
     context.translate(translation.x, translation.y);
-    context.scale(totalScaling, totalScaling);
+    context.scale(scaling, scaling);
     context.rotate(rotation);
   }
 
@@ -128,5 +122,10 @@ public class ConstantTransform implements Transform {
     Vector2d totalTranslation = new Vector2d(translation.getX() + (cos * ox - sin * oy) * scaling,
         translation.getY() + (sin * ox + cos * oy) * scaling);
     return new ConstantTransform(totalTranslation, totalScaling, totalRotation);
+  }
+
+  @Override
+  public boolean isAnimationCompleted(double time) {
+    return true;
   }
 }

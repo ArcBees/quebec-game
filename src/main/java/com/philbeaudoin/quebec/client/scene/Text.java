@@ -38,15 +38,9 @@ public class Text extends SceneNodeImpl {
   }
 
   @Override
-  public void draw(double time, Context2d context) {
-    context.save();
-    try {
-      getTransform().applies(time, context);
-      context.scale(0.001, 0.001);
-      context.setFont("25px arial");
-      context.fillText(text, 0, 0);
-    } finally {
-      context.restore();
-    }
+  public void drawUntransformed(double time, Context2d context) {
+    context.scale(0.001, 0.001);
+    context.setFont("25px arial");
+    context.fillText(text, 0, 0);
   }
 }

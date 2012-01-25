@@ -36,12 +36,10 @@ public class GameStateChangeMoveCubes implements GameStateChange {
   }
 
   @Override
-  public GameState apply(GameState gameState) {
+  public void apply(GameState gameState) {
     assert from.getNbCubes(gameState) >= nbCubes;
-    GameState result = new GameState(gameState);
-    from.removeFrom(nbCubes, result);
-    to.addTo(nbCubes, result);
-    return result;
+    from.removeFrom(nbCubes, gameState);
+    to.addTo(nbCubes, gameState);
   }
 
   @Override

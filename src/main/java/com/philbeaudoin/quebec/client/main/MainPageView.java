@@ -31,7 +31,6 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
-import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.client.widget.FullCanvas;
 
 /**
@@ -70,23 +69,23 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
 
   private MainPagePresenter presenter;
 
+  // Setup refresh timer.
+  final Timer refreshTimer = new Timer() {
+    @Override
+    public void run() {
+      doRenderStaticLayer();
+      isRefreshing = false;
+    }
+  };
+
   @Inject
-  public MainPageView(SpriteResources spriteResources) {
+  public MainPageView() {
     widget = binder.createAndBindUi(this);
     canvas = fullCanvas.asCanvas();
     context = canvas.getContext2d();
 
     staticLayerCanvas = Canvas.createIfSupported();
     staticLayerContext = staticLayerCanvas.getContext2d();
-
-    // Setup refresh timer.
-    final Timer refreshTimer = new Timer() {
-      @Override
-      public void run() {
-        refreshStaticLayer();
-        isRefreshing = false;
-      }
-    };
 
     fullCanvas.addResizeHandler(new ResizeHandler() {
       @Override
@@ -98,9 +97,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
         context.rect(0, 0, width, height);
         context.fill();
         context.stroke();
-        isRefreshing = true;
-        refreshTimer.cancel();
-        refreshTimer.schedule(450);
+        refreshStaticLayer(450);
       }
     });
 
@@ -134,7 +131,13 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
     this.presenter = presenter;
   }
 
-  void refreshStaticLayer() {
+  void refreshStaticLayer(int delayMs) {
+    isRefreshing = true;
+    refreshTimer.cancel();
+    refreshTimer.schedule(delayMs);
+  }
+
+  void doRenderStaticLayer() {
     time = 0;
 
     int width = canvas.getCoordinateSpaceWidth();
@@ -160,6 +163,10 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
 
   void doUpdate() {
     if (isRefreshing) {
+      return;
+    }
+    if (presenter.isRefreshNeeded()) {
+      refreshStaticLayer(50);
       return;
     }
     cnt++;

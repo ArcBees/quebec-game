@@ -60,10 +60,9 @@ public interface Transform {
   ConstantTransform eval(double time);
 
   /**
-   * Applies the transform with an extra scaling factor.
-   * @param time The time at which to apply the transform.
-   * @param context The canvas context into which to render.
-   * @param sizeFactor An extra scaling factor to use.
+   * Checks whether the transform has completed running its animation at the provided time.
+   * @param time The time at which to check whether the animation has completed.
+   * @return True if the animation has completed at that time.
    */
-  void applies(double time, Context2d context, double sizeFactor);
+  boolean isAnimationCompleted(double time);
 }
