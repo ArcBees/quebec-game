@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 package com.philbeaudoin.quebec.client.renderer;
-
-import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 
 /**
  * Renders a {@link com.philbeaudoin.quebec.shared.statechange.GameStateChange GameStateChange} into a scene
@@ -57,8 +55,7 @@ public interface ChangeRenderer {
    * Generates an animation corresponding to a change.
    * @param renderer The renderer containing the scene graph. It will be modifiedduring the call as
    *     if {@link #applyRemovals} and {@link #applyAdditions} had been called.
-   * @param animRoot The root of the scene graph to which to add animations.
    * @param startingTime The starting time of the animations to add.
    */
-  void generateAnim(GameStateRenderer renderer, SceneNodeList animRoot, double startingTime);
+  void generateAnim(GameStateRenderer renderer,  double startingTime);
 }

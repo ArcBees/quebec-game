@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.philbeaudoin.quebec.client.renderer;
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.UserPreferences;
@@ -73,14 +72,13 @@ public class ChangeRendererMoveArchitect implements ChangeRenderer {
   }
 
   @Override
-  public void generateAnim(GameStateRenderer renderer, SceneNodeList animRoot,
-      double startingTime) {
+  public void generateAnim(GameStateRenderer renderer, double startingTime) {
     Transform startTransform = from.removeFrom(renderer);
     Transform finishTransform = to.addTo(renderer);
     double endingTime = startingTime + userPreferences.getAnimDuration();
     Sprite cube = new Sprite(spriteResources.getPawn(from.getArchitectColor()),
         new ArcTransform(startTransform, finishTransform, startingTime, endingTime));
-    animRoot.add(cube);
+    renderer.addToAnimationGraph(cube);
   }
 
 }

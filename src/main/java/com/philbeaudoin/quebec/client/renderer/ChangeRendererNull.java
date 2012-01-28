@@ -14,18 +14,31 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.server.guice;
-
-import com.gwtplatform.dispatch.server.guice.HandlerModule;
+package com.philbeaudoin.quebec.client.renderer;
 
 /**
- * Module which binds the handlers and configurations.
- *
+ * A change renderer that doesn't do anything.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ServerModule extends HandlerModule {
+public class ChangeRendererNull implements ChangeRenderer {
 
   @Override
-  protected void configureHandlers() {
+  public void applyRemovals(GameStateRenderer renderer) {
+  }
+
+  @Override
+  public void applyAdditions(GameStateRenderer renderer) {
+  }
+
+  @Override
+  public void undoRemovals(GameStateRenderer renderer) {
+  }
+
+  @Override
+  public void undoAdditions(GameStateRenderer renderer) {
+  }
+
+  @Override
+  public void generateAnim(GameStateRenderer renderer, double startingTime) {
   }
 }

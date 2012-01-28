@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,10 @@ public interface PossibleActions {
 
   /**
    * Apply a given action to a given game state and return the game state change resulting from it.
+   * The game state itself is not modified.
    * @param actionIndex The index of the action to execute, must be lower than the value returned by
    *     {@link #getNbActions()}.
-   * @param gameState The state of the game to which to apply the action.
+   * @param gameState The state of the game to which to apply the action, it is not modified.
    * @return The change to the game state resulting from the application of that action.
    */
   GameStateChange execute(int actionIndex, GameState gameState);

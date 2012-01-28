@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,11 @@ public interface RendererFactories {
   ChangeRendererComposite createChangeRendererComposite();
   ChangeRendererMoveCubes createChangeRendererMoveCubes(int nbCubes,
       @Assisted("from") SceneCubeDestination from, @Assisted("to") SceneCubeDestination to);
+  ChangeRendererMoveArchitect createChangeRendererMoveArchitect(
+      @Assisted("from") SceneArchitectDestination from,
+      @Assisted("to") SceneArchitectDestination to);
+  ChangeRendererNull createChangeRendererNull();
+
   SceneCubeDestinationGenerator createSceneCubeDestinationGenerator();
   SceneArchitectDestinationGenerator createSceneArchitectDestinationGenerator();
   SceneCubeDestinationInfluenceZone createSceneCubeDestinationInfluenceZone(
@@ -51,8 +56,4 @@ public interface RendererFactories {
       ArchitectDestinationTile architectDestinationTile);
   SceneArchitectDestinationPlayer createSceneArchitectDestinationPlayer(
       ArchitectDestinationPlayer architectDestinationPlayer);
-  ChangeRendererMoveArchitect createChangeRendererMoveArchitect(
-      @Assisted("from") SceneArchitectDestination from,
-      @Assisted("to") SceneArchitectDestination to);
-  PossibleActionsRenderer createPossibleActionsRenderer(GameStateRenderer gameStateRenderer);
 }

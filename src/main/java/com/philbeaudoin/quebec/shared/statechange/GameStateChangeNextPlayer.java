@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.server.guice;
+package com.philbeaudoin.quebec.shared.statechange;
 
-import com.gwtplatform.dispatch.server.guice.HandlerModule;
+import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
- * Module which binds the handlers and configurations.
- *
+ * A change of the game state obtained by switching to the next player.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ServerModule extends HandlerModule {
+public class GameStateChangeNextPlayer implements GameStateChange {
 
   @Override
-  protected void configureHandlers() {
+  public void apply(GameState gameState) {
+    gameState.nextPlayer();
   }
+
+  @Override
+  public void accept(GameStateChangeVisitor visitor) {
+    visitor.visit(this);
+  }
+
 }

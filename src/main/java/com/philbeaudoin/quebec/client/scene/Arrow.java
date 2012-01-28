@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,14 +70,18 @@ public class Arrow extends SceneNodeImpl {
     double ndy = ady / length;
     double npx = ndy;
     double npy = -ndx;
-    p3 = new Vector2d(to.getX() - ndx * ARROW_DEPTH + npx * ARROW_SMALL_WIDTH,
-        to.getY() - ndy * ARROW_DEPTH + npy * ARROW_SMALL_WIDTH);
-    p4 = new Vector2d(to.getX() - ndx * ARROW_DEPTH + npx * ARROW_LARGE_WIDTH,
-        to.getY() - ndy * ARROW_DEPTH + npy * ARROW_LARGE_WIDTH);
-    p5 = new Vector2d(to.getX() - ndx * ARROW_DEPTH - npx * ARROW_LARGE_WIDTH,
-        to.getY() - ndy * ARROW_DEPTH - npy * ARROW_LARGE_WIDTH);
-    p6 = new Vector2d(to.getX() - ndx * ARROW_DEPTH - npx * ARROW_SMALL_WIDTH,
-        to.getY() - ndy * ARROW_DEPTH - npy * ARROW_SMALL_WIDTH);
+    double size = Math.min(1.0, 0.3 + from.distanceTo(to));
+    double arrowDepth = ARROW_DEPTH * size;
+    double arrowSmallWidth = ARROW_SMALL_WIDTH * size;
+    double arrowLargeWidth = ARROW_LARGE_WIDTH * size;
+    p3 = new Vector2d(to.getX() - ndx * arrowDepth + npx * arrowSmallWidth,
+        to.getY() - ndy * arrowDepth + npy * arrowSmallWidth);
+    p4 = new Vector2d(to.getX() - ndx * arrowDepth + npx * arrowLargeWidth,
+        to.getY() - ndy * arrowDepth + npy * arrowLargeWidth);
+    p5 = new Vector2d(to.getX() - ndx * arrowDepth - npx * arrowLargeWidth,
+        to.getY() - ndy * arrowDepth - npy * arrowLargeWidth);
+    p6 = new Vector2d(to.getX() - ndx * arrowDepth - npx * arrowSmallWidth,
+        to.getY() - ndy * arrowDepth - npy * arrowSmallWidth);
   }
 
   @Override
@@ -90,8 +94,17 @@ public class Arrow extends SceneNodeImpl {
     context.lineTo(p5.getX(), p5.getY());
     context.lineTo(p6.getX(), p6.getY());
     context.bezierCurveTo(p2.getX(), p2.getY(), p1.getX(), p1.getY(), from.getX(), from.getY());
+    context.setLineWidth(0.0045);
+    context.setStrokeStyle("#aaa");
+    context.stroke();
+    context.setLineWidth(0.001);
+    context.setStrokeStyle("#000");
     context.stroke();
     context.fill();
   }
 
+  @Override
+  public SceneNode deepClone() {
+    return new Arrow(from, to);
+  }
 }

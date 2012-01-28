@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,7 +215,7 @@ public class BoardRenderer {
       if (tile.getCentury() == gameState.getCentury()) {
         tileInfo.architectColor = PlayerColor.NONE;
         tileInfo.activeTokenNode = new Sprite(spriteResources.get(Type.activeToken),
-            new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -tileInfo.rotation));
+            getArchitectParentTransform(tileInfo));
         tileInfo.root.add(tileInfo.activeTokenNode);
       }
     }
@@ -426,6 +426,26 @@ public class BoardRenderer {
     return addArchitectToTile(findTileInfo(tile), architectColor);
   }
 
+  /**
+   * Gets the transform of an architect on a given tile.
+   * @param tile The tile at which to get the architect transform.
+   * @return The global transforms of the architect.
+   */
+  public Transform getArchitectOnTileTransform(Tile tile) {
+    TileInfo tileInfo = findTileInfo(tile);
+    return tileInfo.root.getTotalTransform(0).times(getArchitectParentTransform(tileInfo));
+  }
+
+  /**
+   * Gets the global transform of a given tile.
+   * @param tile The tile for which to get the transform.
+   * @return The global transforms of the tile.
+   */
+  public Transform getTileTransform(Tile tile) {
+    TileInfo tileInfo = findTileInfo(tile);
+    return tileInfo.root.getTotalTransform(0);
+  }
+
   private List<Transform> addCubesToTile(CubeGrid cubeGrid, TileInfo tileInfo,
       PlayerColor playerColor, int spot, int nbCubes) {
     assert playerColor.isNormalColor();
@@ -460,13 +480,16 @@ public class BoardRenderer {
       tileInfo.activeTokenNode = null;
     }
     tileInfo.architectColor = architectColor;
-    SceneNodeList architectParentNode = new SceneNodeList(
-        new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -tileInfo.rotation));
+    SceneNodeList architectParentNode = new SceneNodeList(getArchitectParentTransform(tileInfo));
     tileInfo.root.add(architectParentNode);
     tileInfo.architectNode = new Sprite(spriteResources.getPawn(architectColor),
         new ConstantTransform(new Vector2d(0, -0.01)));
     architectParentNode.add(tileInfo.architectNode);
     return tileInfo.architectNode.getTotalTransform(0);
+  }
+
+  private ConstantTransform getArchitectParentTransform(TileInfo tileInfo) {
+    return new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -tileInfo.rotation);
   }
 
   /**
@@ -477,8 +500,9 @@ public class BoardRenderer {
   public void highlightTile(SceneNodeList foregroundRoot, Tile tile) {
     TileInfo tileInfo = findTileInfo(tile);
     Transform globalTransform = tileInfo.root.getTotalTransform(0);
-    tileInfo.root.setParent(foregroundRoot);
-    tileInfo.root.setTransform(globalTransform);
+    SceneNode highlightedTile = tileInfo.root.deepClone();
+    highlightedTile.setParent(foregroundRoot);
+    highlightedTile.setTransform(globalTransform);
   }
 
   private TileInfo findTileInfo(Tile tile) {

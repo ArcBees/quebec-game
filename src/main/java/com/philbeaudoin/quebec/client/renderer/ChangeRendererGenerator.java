@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeVisitor;
 
 /**
@@ -33,12 +34,12 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeVisitor;
  */
 public class ChangeRendererGenerator implements GameStateChangeVisitor {
 
-  private final RendererFactories rendererFactory;
+  private final RendererFactories factories;
   private ChangeRenderer changeRenderer;
 
   @Inject
   public ChangeRendererGenerator(RendererFactories rendererFactory) {
-    this.rendererFactory = rendererFactory;
+    this.factories = rendererFactory;
   }
 
   /**
@@ -52,12 +53,12 @@ public class ChangeRendererGenerator implements GameStateChangeVisitor {
 
   @Override
   public void visit(GameStateChangeComposite host) {
-    final ChangeRendererComposite result = rendererFactory.createChangeRendererComposite();
+    final ChangeRendererComposite result = factories.createChangeRendererComposite();
 
     host.callOnEach(new AcceptGameStateChange() {
       @Override
       public void execute(GameStateChange gameStateChange) {
-        ChangeRendererGenerator generator = rendererFactory.createChangeRendererGenerator();
+        ChangeRendererGenerator generator = factories.createChangeRendererGenerator();
         gameStateChange.accept(generator);
         result.add(generator.getChangeRenderer());
       }});
@@ -68,31 +69,36 @@ public class ChangeRendererGenerator implements GameStateChangeVisitor {
   @Override
   public void visit(GameStateChangeMoveCubes host) {
     SceneCubeDestinationGenerator generatorFrom =
-        rendererFactory.createSceneCubeDestinationGenerator();
+        factories.createSceneCubeDestinationGenerator();
     host.getFrom().accept(generatorFrom);
     SceneCubeDestinationGenerator generatorTo =
-        rendererFactory.createSceneCubeDestinationGenerator();
+        factories.createSceneCubeDestinationGenerator();
     host.getTo().accept(generatorTo);
-    changeRenderer = rendererFactory.createChangeRendererMoveCubes(host.getNbCubes(),
+    changeRenderer = factories.createChangeRendererMoveCubes(host.getNbCubes(),
         generatorFrom.getSceneCubeDestination(),
         generatorTo.getSceneCubeDestination());
   }
 
   @Override
   public void visit(GameStateChangeFlipTile host) {
-    // TODO Auto-generated method stub
+    // Nothing to do.
   }
 
   @Override
   public void visit(GameStateChangeMoveArchitect host) {
     SceneArchitectDestinationGenerator generatorFrom =
-        rendererFactory.createSceneArchitectDestinationGenerator();
+        factories.createSceneArchitectDestinationGenerator();
     host.getFrom().accept(generatorFrom);
     SceneArchitectDestinationGenerator generatorTo =
-        rendererFactory.createSceneArchitectDestinationGenerator();
+        factories.createSceneArchitectDestinationGenerator();
     host.getTo().accept(generatorTo);
-    changeRenderer = rendererFactory.createChangeRendererMoveArchitect(
+    changeRenderer = factories.createChangeRendererMoveArchitect(
         generatorFrom.getSceneArchitectDestination(),
         generatorTo.getSceneArchitectDestination());
+  }
+
+  @Override
+  public void visit(GameStateChangeNextPlayer host) {
+    changeRenderer = factories.createChangeRendererNull();
   }
 }

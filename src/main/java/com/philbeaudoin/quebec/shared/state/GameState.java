@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
@@ -28,6 +30,7 @@ import com.philbeaudoin.quebec.shared.action.PossibleActions;
  */
 public class GameState {
 
+  private final GameController gameController;
   private final ArrayList<PlayerState> playerStates;
   private final ArrayList<TileState> tileStates;
   private final ArrayList<LeaderCard> availableLeaderCards;
@@ -38,7 +41,9 @@ public class GameState {
 
   private PossibleActions possibleActions;
 
-  public GameState() {
+  @Inject
+  public GameState(GameController gameController) {
+    this.gameController = gameController;
     playerStates = new ArrayList<PlayerState>();
     tileStates = new ArrayList<TileState>();
     availableLeaderCards = new ArrayList<LeaderCard>();
@@ -53,6 +58,7 @@ public class GameState {
    * @param other The game state to copy.
    */
   public GameState(GameState other) {
+    gameController = other.gameController;
     century = other.century;
     playerStates = new ArrayList<PlayerState>(other.playerStates.size());
     for (PlayerState playerState : other.playerStates) {
@@ -210,5 +216,30 @@ public class GameState {
    */
   public void setPossibleActions(PossibleActions possibleActions) {
     this.possibleActions = possibleActions;
+  }
+
+  public void initGame(ArrayList<Player> players) {
+    gameController.initGame(this, players);
+  }
+
+  /**
+   * Switch to the next player and setup the board for it.
+   */
+  public void nextPlayer() {
+    boolean lastWasActive = false;
+    for (PlayerState playerState : playerStates) {
+      if (lastWasActive) {
+        playerState.setCurrentPlayer(true);
+        lastWasActive = false;
+      } else if (playerState.isCurrentPlayer()) {
+        lastWasActive = true;
+        playerState.setCurrentPlayer(false);
+      }
+    }
+    if (lastWasActive) {
+      playerStates.get(0).setCurrentPlayer(true);
+    }
+    // TODO: Check for end-of-round and score.
+    gameController.configuePossibleActions(this);
   }
 }

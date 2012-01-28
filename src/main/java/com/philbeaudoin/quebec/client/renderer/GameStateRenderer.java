@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.google.gwt.canvas.dom.client.Context2d;
+import com.philbeaudoin.quebec.client.interaction.Interaction;
+import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.scene.Rectangle;
+import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -29,6 +33,8 @@ import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
+import com.philbeaudoin.quebec.shared.utils.Callback;
+import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -41,25 +47,36 @@ public class GameStateRenderer {
 
   public static final double LEFT_COLUMN_WIDTH = 0.38209;
 
-  private final SceneNodeList root = new SceneNodeList();
+  private final SceneNodeList staticRoot = new SceneNodeList();
+  private final SceneNodeList dynamicRoot = new SceneNodeList();
   private final SceneNodeList backgroundRoot = new SceneNodeList();
   private final SceneNodeList glassScreenRoot = new SceneNodeList();
   private final SceneNodeList foregroundRoot = new SceneNodeList();
+  private final SceneNodeList interactionRoot = new SceneNodeList();
+  private final SceneNodeList animationRoot = new SceneNodeList();
+  private final ArrayList<Interaction> interactions = new ArrayList<Interaction>();
 
   private final RendererFactories factories;
+  private final InteractionFactories interactionFactories;
   private final ScoreRenderer scoreRenderer;
   private final BoardRenderer boardRenderer;
   private final ArrayList<PlayerStateRenderer> playerStateRenderers =
       new ArrayList<PlayerStateRenderer>(5);
 
+  private boolean refreshNeeded = true;
+
   @Inject
-  public GameStateRenderer(RendererFactories factories) {
+  public GameStateRenderer(RendererFactories factories,
+      InteractionFactories interactionFactories) {
     this.factories = factories;
+    this.interactionFactories = interactionFactories;
     scoreRenderer = factories.createScoreRenderer();
     boardRenderer = factories.createBoardRenderer(LEFT_COLUMN_WIDTH);
-    root.add(backgroundRoot);
-    root.add(glassScreenRoot);
-    root.add(foregroundRoot);
+    staticRoot.add(backgroundRoot);
+    staticRoot.add(glassScreenRoot);
+    staticRoot.add(foregroundRoot);
+    dynamicRoot.add(interactionRoot);
+    dynamicRoot.add(animationRoot);
   }
 
   /**
@@ -67,13 +84,18 @@ public class GameStateRenderer {
    * @param gameState The desired game state.
    */
   public void render(GameState gameState) {
+    refreshNeeded = true;
     List<PlayerState> playerStates = gameState.getPlayerStates();
     initPlayerStateRenderers(playerStates);
+
+    // Clear interactions.
+    interactions.clear();
 
     // Clear everything save for the root.
     backgroundRoot.clear();
     glassScreenRoot.clear();
     foregroundRoot.clear();
+    interactionRoot.clear();
 
     // Render the board first.
     boardRenderer.render(gameState, backgroundRoot);
@@ -88,39 +110,19 @@ public class GameStateRenderer {
     // Render the possible actions.
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
-      possibleActions.accept(factories.createPossibleActionsRenderer(this));
+      possibleActions.accept(interactionFactories.createPossibleActionsRenderer(gameState, this));
     }
+  }
 
+  private void addOrClearGlassScreen() {
+    boolean glassScreenNeeded = !foregroundRoot.getChildren().isEmpty();
+    boolean glassScreenPresent = !glassScreenRoot.getChildren().isEmpty();
     // If there is anything in the foreground, show the glass screen
-    if (!foregroundRoot.getChildren().isEmpty()) {
+    if (glassScreenNeeded && !glassScreenPresent) {
       glassScreenRoot.add(new Rectangle(0, 0, 10, 10,
           "rgba(0, 0, 0, 0.5)", "rgba(0, 0, 0, 0.5)", null, 0));
-    }
-  }
-
-  /**
-   * Access the root of the objects.
-   * @return The rendered global root.
-   */
-  public SceneNodeList getRoot() {
-    return root;
-  }
-
-  /**
-   * Creates the player state renderers if needed.
-   * @param playerStates The states of the players to render.
-   */
-  private void initPlayerStateRenderers(List<PlayerState> playerStates) {
-    if (playerStateRenderers.size() != playerStates.size()) {
-      playerStateRenderers.clear();
-      double deltaY = 0;
-      for (int i = 0; i < playerStates.size(); ++i) {
-        PlayerStateRenderer playerStateRenderer = factories.createPlayerStateRenderer(
-            new Vector2d(LEFT_COLUMN_WIDTH, 0.15), new ConstantTransform(new Vector2d(0, deltaY)),
-            scoreRenderer);
-        deltaY += 0.15;
-        playerStateRenderers.add(playerStateRenderer);
-      }
+    } else if (!glassScreenNeeded && glassScreenPresent) {
+      glassScreenRoot.clear();
     }
   }
 
@@ -134,6 +136,7 @@ public class GameStateRenderer {
    */
   public List<Transform> removeCubesFromInfluenceZone(InfluenceType influenceType,
       PlayerColor playerColor, int nbCubes) {
+    refreshNeeded = true;
     return boardRenderer.removeCubesFromInfluenceZone(influenceType, playerColor, nbCubes);
   }
 
@@ -147,6 +150,7 @@ public class GameStateRenderer {
    */
   public List<Transform> addCubesToInfluenceZone(InfluenceType influenceType,
       PlayerColor playerColor, int nbCubes) {
+    refreshNeeded = true;
     return boardRenderer.addCubesToInfluenceZone(influenceType, playerColor, nbCubes);
   }
 
@@ -171,6 +175,7 @@ public class GameStateRenderer {
       boolean active, int nbCubes) {
     PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
     assert playerStateRenderer != null;
+    refreshNeeded = true;
     return playerStateRenderer.removeCubesFromPlayer(active, nbCubes);
   }
 
@@ -186,17 +191,20 @@ public class GameStateRenderer {
       boolean active, int nbCubes) {
     PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
     assert playerStateRenderer != null;
+    refreshNeeded = true;
     return playerStateRenderer.addCubesToPlayer(active, nbCubes);
   }
 
-  private PlayerStateRenderer getPlayerStateRenderer(PlayerColor playerColor) {
-    assert playerColor.isNormalColor();
-    for (PlayerStateRenderer playerRenderer : playerStateRenderers) {
-      if (playerRenderer.getPlayerColor() == playerColor) {
-        return playerRenderer;
-      }
-    }
-    return null;
+  /**
+   * Gets the global transform for a given player's active or passive reserve.
+   * @param playerColor The color of the desired player reserve (not NONE or NEUTRAL).
+   * @param active True to get the active reserve, false for the passive.
+   * @return The global transform of the reserve.
+   */
+  public Transform getPlayerCubeZoneTransform(PlayerColor playerColor, boolean active) {
+    PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
+    assert playerStateRenderer != null;
+    return playerStateRenderer.getCubeZoneTransform(active);
   }
 
   /**
@@ -213,6 +221,7 @@ public class GameStateRenderer {
    */
   public List<Transform> removeCubesFromTile(Tile tile, PlayerColor playerColor, int spot,
       int nbCubes) {
+    refreshNeeded = true;
     return boardRenderer.removeCubesFromTile(tile, playerColor, spot, nbCubes);
   }
 
@@ -228,6 +237,7 @@ public class GameStateRenderer {
    * @return The list of global transforms of the removed cubes.
    */
   public List<Transform> addCubesToTile(Tile tile, PlayerColor playerColor, int spot, int nbCubes) {
+    refreshNeeded = true;
     return boardRenderer.addCubesToTile(tile, playerColor, spot, nbCubes);
   }
 
@@ -242,6 +252,7 @@ public class GameStateRenderer {
     assert playerColor.isNormalColor();
     PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
     assert playerStateRenderer != null;
+    refreshNeeded = true;
     return playerStateRenderer.removeArchitect(neutralArchitect);
   }
 
@@ -256,7 +267,22 @@ public class GameStateRenderer {
     assert playerColor.isNormalColor();
     PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
     assert playerStateRenderer != null;
+    refreshNeeded = true;
     return playerStateRenderer.addArchitect(neutralArchitect);
+  }
+
+  /**
+   * Gets the transform of the standard or neutral architect on the given player zone.
+   * @param playerColor The color of the player zone (not NONE or NEUTRAL).
+   * @param neutralArchitect True to get the transform of the neutral architect.
+   * @return The global transforms of the architect.
+   */
+  public Transform getArchitectOnPlayerTransform(PlayerColor playerColor,
+      boolean neutralArchitect) {
+    assert playerColor.isNormalColor();
+    PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
+    assert playerStateRenderer != null;
+    return playerStateRenderer.getArchitectTransform(neutralArchitect);
   }
 
   /**
@@ -266,6 +292,7 @@ public class GameStateRenderer {
    * @return The global transforms of the removed architect.
    */
   public Transform removeArchitectFromTile(Tile tile, PlayerColor architectColor) {
+    refreshNeeded = true;
     return boardRenderer.removeArchitectFromTile(tile, architectColor);
   }
 
@@ -276,7 +303,26 @@ public class GameStateRenderer {
    * @return The global transforms of the added architect.
    */
   public Transform addArchitectToTile(Tile tile, PlayerColor architectColor) {
+    refreshNeeded = true;
     return boardRenderer.addArchitectToTile(tile, architectColor);
+  }
+
+  /**
+   * Gets the transform of an architect on a given tile.
+   * @param tile The tile at which to get the architect transform.
+   * @return The global transforms of the architect.
+   */
+  public Transform getArchitectOnTileTransform(Tile tile) {
+    return boardRenderer.getArchitectOnTileTransform(tile);
+  }
+
+  /**
+   * Gets the global transform of a given tile.
+   * @param tile The tile for which to get the transform.
+   * @return The global transforms of the tile.
+   */
+  public Transform getTileTransform(Tile tile) {
+    return boardRenderer.getTileTransform(tile);
   }
 
   /**
@@ -284,6 +330,149 @@ public class GameStateRenderer {
    * @param tile The tile to highlight.
    */
   public void highlightTile(Tile tile) {
+    refreshNeeded = true;
     boardRenderer.highlightTile(foregroundRoot, tile);
+    addOrClearGlassScreen();
+  }
+
+  /**
+   * Remove all the highlighted components by clearing all the node in the foreground layer.
+   */
+  public void removeAllHighlights() {
+    refreshNeeded = true;
+    foregroundRoot.clear();
+    addOrClearGlassScreen();
+  }
+
+  /**
+   * Indicates that the mouse has moved and that active interactions should be executed.
+   * @param x The x location of the mouse.
+   * @param y The y location of the mouse.
+   */
+  public void onMouseMove(double x, double y) {
+    interactionRoot.clear();
+    for (Interaction interaction : interactions) {
+      interaction.onMouseMove(x, y, this);
+    }
+  }
+
+  /**
+   * Indicates that the mouse has been clicked and that active interactions should be executed.
+   * @param x The x location of the mouse.
+   * @param y The y location of the mouse.
+   * @param gameState The game state.
+   */
+  public void onMouseClick(double x, double y, GameState gameState) {
+    interactionRoot.clear();
+    for (Interaction interaction : interactions) {
+      interaction.onMouseClick(x, y, gameState, this);
+    }
+  }
+
+  /**
+   * Adds an interaction that the user can have with the board.
+   * @param interaction The interaction to add.
+   */
+  public void addInteraction(Interaction interaction) {
+    interactions.add(interaction);
+  }
+
+  /**
+   * Clear all the interactions the user can have with the board.
+   */
+  public void clearInteractions() {
+    interactions.clear();
+  }
+
+  /**
+   * Adds a node to be rendered in the interaction graph. The nodes in that graph are cleared each
+   * time the mouse is moved.
+   * @param sceneNode The scene node to add.
+   */
+  public void addToInteractionGraph(SceneNode sceneNode) {
+    interactionRoot.add(sceneNode);
+  }
+
+  /**
+   * Adds a node to be rendered in the animation graph.
+   * @param sceneNode The scene node to add.
+   */
+  public void addToAnimationGraph(SceneNode sceneNode) {
+    animationRoot.add(sceneNode);
+  }
+
+  /**
+   * Clears the entire animation graph.
+   */
+  public void clearAnimationGraph() {
+    animationRoot.clear();
+  }
+
+  /**
+   * Adds a callback to be triggered when the animation is completed.
+   * @param callback The callback to tigger.
+   * @return The callback registration.
+   */
+  public CallbackRegistration addAnimationCompletedCallback(Callback callback) {
+    return animationRoot.addAnimationCompletedCallback(callback);
+  }
+
+  /**
+   * Draws everything in the static layers to the given HTML5 context.
+   * @param context The context to draw to.
+   */
+  public void drawStaticLayers(Context2d context) {
+    refreshNeeded = false;
+    staticRoot.draw(0, context);
+  }
+
+  /**
+   * Draws everything in the dynamic layers to the given HTML5 context.
+   * @param context The context to draw to.
+   */
+  public void drawDynamicLayers(double time, Context2d context) {
+    dynamicRoot.draw(time, context);
+  }
+
+  /**
+   * Creates the player state renderers if needed.
+   * @param playerStates The states of the players to render.
+   */
+  private void initPlayerStateRenderers(List<PlayerState> playerStates) {
+    if (playerStateRenderers.size() != playerStates.size()) {
+      playerStateRenderers.clear();
+      double deltaY = 0;
+      for (int i = 0; i < playerStates.size(); ++i) {
+        PlayerStateRenderer playerStateRenderer = factories.createPlayerStateRenderer(
+            new Vector2d(LEFT_COLUMN_WIDTH, 0.15), new ConstantTransform(new Vector2d(0, deltaY)),
+            scoreRenderer);
+        deltaY += 0.15;
+        playerStateRenderers.add(playerStateRenderer);
+      }
+    }
+  }
+
+  /**
+   * Gets the player state renderer for a given player color.
+   * @param playerColor The player color.
+   * @return The player state renderer.
+   */
+  private PlayerStateRenderer getPlayerStateRenderer(PlayerColor playerColor) {
+    assert playerColor.isNormalColor();
+    for (PlayerStateRenderer playerRenderer : playerStateRenderers) {
+      if (playerRenderer.getPlayerColor() == playerColor) {
+        return playerRenderer;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Checks whether the static layers need to be redrawn.
+   * @return True if the static layers need to be redrawn.
+   */
+  public boolean isRefreshNeeded() {
+    return refreshNeeded;
   }
 }
+

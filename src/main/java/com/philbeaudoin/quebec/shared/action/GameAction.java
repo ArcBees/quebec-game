@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.server.guice;
+package com.philbeaudoin.quebec.shared.action;
 
-import com.gwtplatform.dispatch.server.guice.HandlerModule;
+import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
 /**
- * Module which binds the handlers and configurations.
- *
+ * A possible action in the game.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ServerModule extends HandlerModule {
-
-  @Override
-  protected void configureHandlers() {
-  }
+public interface GameAction {
+  /**
+   * Apply the action to a given game state and return the game state change resulting from it.
+   * The game state itself is not modified.
+   * @param gameState The state of the game to which to apply the action, it will not be modified.
+   * @return The change to the game state resulting from the application of that action.
+   */
+  GameStateChange execute(GameState gameState);
 }
