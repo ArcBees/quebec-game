@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.client.interaction;
 
+import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.scene.SceneNode;
+import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * A class can can track a single change of the game state.
+ * Factory methods of the various renderer classes, used in assisted injection.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameStateChange {
-  /**
-   * Apply this change to the specified game change.
-   * @param gameState The game state to apply this change to.
-   */
-  void apply(GameState gameState);
-
-  /**
-   * Accepts a visitor.
-   * @param visitor The visitor.
-   */
-  void accept(GameStateChangeVisitor visitor);
+public interface InteractionFactories {
+  PossibleActionsRenderer createPossibleActionsRenderer(GameState gameState,
+      GameStateRenderer gameStateRenderer);
+  Interaction getInteraction(Trigger trigger, SceneNode mouseOverNode, GameAction action);
+  CircleTrigger getCircleTrigger(Vector2d translation, double radius);
 }

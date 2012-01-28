@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,17 +34,18 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 
 /**
  * The action of moving an architect.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class PossibleActionsMoveArchitect implements PossibleActions {
+public class ActionMoveArchitect implements PossibleActions, GameAction {
 
   private final Tile destinationTile;
   private final boolean neutralArchitect;
 
-  public PossibleActionsMoveArchitect(Tile destinationTile, boolean neutralArchitect) {
+  public ActionMoveArchitect(Tile destinationTile, boolean neutralArchitect) {
     this.destinationTile = destinationTile;
     this.neutralArchitect = neutralArchitect;
   }
@@ -56,10 +57,15 @@ public class PossibleActionsMoveArchitect implements PossibleActions {
   @Override
   public GameStateChange execute(int actionIndex, GameState gameState) {
     assert actionIndex == 0;
+    return execute(gameState);
+  }
+
+  @Override
+  public GameStateChange execute(GameState gameState) {
     GameStateChangeComposite result = new GameStateChangeComposite();
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor playerColor = playerState.getPlayer().getColor();
-    PlayerColor architectColor = neutralArchitect ? PlayerColor.NEUTRAL : playerColor;
+    PlayerColor activePlayer = playerState.getPlayer().getColor();
+    PlayerColor architectColor = neutralArchitect ? PlayerColor.NEUTRAL : activePlayer;
 
     ArchitectDestination architectOrigin;
 
@@ -71,7 +77,7 @@ public class PossibleActionsMoveArchitect implements PossibleActions {
       completeBuilding(gameState, playerState, originState, result);
       architectOrigin = new ArchitectDestinationTile(originState.getTile(), architectColor);
     } else {
-      architectOrigin = new ArchitectDestinationPlayer(playerColor, neutralArchitect);
+      architectOrigin = new ArchitectDestinationPlayer(activePlayer, neutralArchitect);
     }
 
     // Move the architect.
@@ -81,8 +87,11 @@ public class PossibleActionsMoveArchitect implements PossibleActions {
     // Activate 3 cubes (or less if the player doesn't have enough).
     int nbCubesToActivate = Math.min(3, playerState.getNbPassiveCubes());
     result.add(new GameStateChangeMoveCubes(nbCubesToActivate,
-        new CubeDestinationPlayer(playerColor, false),
-        new CubeDestinationPlayer(playerColor, true)));
+        new CubeDestinationPlayer(activePlayer, false),
+        new CubeDestinationPlayer(activePlayer, true)));
+
+    // Move to next player.
+    result.add(new GameStateChangeNextPlayer());
 
     return result;
   }
@@ -125,5 +134,13 @@ public class PossibleActionsMoveArchitect implements PossibleActions {
    */
   public Tile getDestinationTile() {
     return destinationTile;
+  }
+
+  /**
+   * Checks if the action moves the neutral architect or the player's architect.
+   * @return True if the action moves the neutral architect.
+   */
+  public boolean isNeutralArchitect() {
+    return neutralArchitect;
   }
 }

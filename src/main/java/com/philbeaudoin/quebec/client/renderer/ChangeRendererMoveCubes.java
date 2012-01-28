@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -79,8 +78,7 @@ public class ChangeRendererMoveCubes implements ChangeRenderer {
   }
 
   @Override
-  public void generateAnim(GameStateRenderer renderer, SceneNodeList animRoot,
-      double startingTime) {
+  public void generateAnim(GameStateRenderer renderer, double startingTime) {
     List<Transform> startTransforms = from.removeFrom(nbCubes, renderer);
     List<Transform> finishTransforms = to.addTo(nbCubes, renderer);
     assert startTransforms.size() == finishTransforms.size();
@@ -91,7 +89,7 @@ public class ChangeRendererMoveCubes implements ChangeRenderer {
       Sprite cube = new Sprite(spriteResources.getCube(playerColor),
           new ArcTransform(startTransforms.get(i), finishTransforms.get(i),
               startingTime, endingTime));
-      animRoot.add(cube);
+      renderer.addToAnimationGraph(cube);
     }
   }
 

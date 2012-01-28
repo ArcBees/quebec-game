@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,5 +125,15 @@ public class SceneNodeList extends SceneNodeImpl {
       }
     }
     return true;
+  }
+
+  @Override
+  public SceneNode deepClone() {
+    SceneNodeList clone = new SceneNodeList(getTransform());
+    for (SceneNode sceneNode : sceneNodes) {
+      SceneNode childClone = sceneNode.deepClone();
+      childClone.setParent(clone);
+    }
+    return clone;
   }
 }

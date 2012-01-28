@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package com.philbeaudoin.quebec.client.renderer;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
-
-import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 
 /**
  * A change renderer that can apply a
@@ -74,10 +72,9 @@ public class ChangeRendererComposite implements ChangeRenderer {
   }
 
   @Override
-  public void generateAnim(GameStateRenderer renderer,
-      SceneNodeList animRoot, double startingTime) {
+  public void generateAnim(GameStateRenderer renderer, double startingTime) {
     for (ChangeRenderer gameStateChangeRenderer : gameStateChangeRenderers) {
-      gameStateChangeRenderer.generateAnim(renderer, animRoot, startingTime);
+      gameStateChangeRenderer.generateAnim(renderer, startingTime);
     }
   }
 }

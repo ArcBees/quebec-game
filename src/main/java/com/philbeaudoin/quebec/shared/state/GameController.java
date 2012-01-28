@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import java.util.List;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
-import com.philbeaudoin.quebec.shared.action.PossibleActionsMoveArchitect;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -55,8 +55,6 @@ public class GameController {
     }
     playerStates.get(0).setCurrentPlayer(true);
 
-    PossibleActionsComposite possibleActions = new PossibleActionsComposite();
-    gameState.setPossibleActions(possibleActions);
     List<TileState> tileStates = gameState.getTileStates();
     tileStates.clear();
     TileDeck tileDeck = new TileDeck();
@@ -68,9 +66,6 @@ public class GameController {
           TileState tileState = new TileState(tile, new Vector2d(column, line));
           tileState.setArchitect(PlayerColor.NONE);
           tileStates.add(tileState);
-          if (tileState.getTile().getCentury() == 0) {
-            possibleActions.add(new PossibleActionsMoveArchitect(tileState.getTile(), false));
-          }
         }
       }
     }
@@ -82,8 +77,6 @@ public class GameController {
       availableLeaderCards.add(new LeaderCard(influenceType));
     }
 
-    // TODO: Mark selecting cards as a valid initial action.
-
     for (InfluenceType influenceType : InfluenceType.values()) {
       for (PlayerColor playerColor : PlayerColor.values()) {
         if (playerColor.isNormalColor()) {
@@ -91,5 +84,27 @@ public class GameController {
         }
       }
     }
+
+    configuePossibleActions(gameState);
+  }
+
+  /**
+   * Configure the possible actions given the current game state.
+   * @param gameState The state to reset and initialize.
+   */
+  public void configuePossibleActions(GameState gameState) {
+    int century = gameState.getCentury();
+    PossibleActionsComposite possibleActions = new PossibleActionsComposite();
+
+    // Mark moving architect as a possible action.
+    gameState.setPossibleActions(possibleActions);
+    for (TileState tileState : gameState.getTileStates()) {
+      if (tileState.getTile().getCentury() == century &&
+          tileState.getArchitect() == PlayerColor.NONE) {
+        possibleActions.add(new ActionMoveArchitect(tileState.getTile(), false));
+      }
+    }
+
+    // TODO: Mark selecting cards as a valid initial action.
   }
 }

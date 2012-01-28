@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.philbeaudoin.quebec.client.main;
 
 import java.util.ArrayList;
 
+import javax.inject.Provider;
+
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -27,23 +29,13 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
-import com.philbeaudoin.quebec.client.renderer.ChangeRenderer;
-import com.philbeaudoin.quebec.client.renderer.ChangeRendererGenerator;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
-import com.philbeaudoin.quebec.client.scene.Arrow;
-import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.action.PossibleActionsMoveArchitect;
-import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Player;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
-import com.philbeaudoin.quebec.shared.utils.Callback;
-import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * This is the presenter of the main application page.
@@ -56,12 +48,7 @@ public class MainPagePresenter extends
   public static final Object TYPE_RevealNewsContent = new Object();
 
   private final GameStateRenderer gameStateRenderer;
-  private final SceneNodeList dynamicRoot = new SceneNodeList();
-
-  private GameState gameState = new GameState();
-  private CallbackRegistration animationCompletedRegistration;
-
-  private boolean refreshNeeded = true;
+  private final GameState gameState;
 
   /**
    * The presenter's view.
@@ -81,10 +68,13 @@ public class MainPagePresenter extends
   // TODO Remove dependency on SpriteResources.
   @Inject
   public MainPagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-      final SpriteResources spriteResources, RendererFactories rendererFactories) {
+      final SpriteResources spriteResources, RendererFactories rendererFactories,
+      Provider<GameState> gameStateProvider) {
     super(eventBus, view, proxy);
     view.setPresenter(this);
     gameStateRenderer = rendererFactories.createGameStateRenderer();
+
+    gameState = gameStateProvider.get();
 
     ArrayList<Player> players = new ArrayList<Player>(5);
     players.add(new Player(PlayerColor.BLACK, "Filou"));
@@ -93,74 +83,8 @@ public class MainPagePresenter extends
     players.add(new Player(PlayerColor.GREEN, "Claudiane"));
     players.add(new Player(PlayerColor.PINK, "Bob"));
 
-    GameController gameController = new GameController();
-    gameController.initGame(gameState, players);
-
-    // Dummy setup for a test.
-//    gameState.setPlayerCubesInInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK, 8);
-//    TileState tileState1 = gameState.getTileStates().get(21);
-//    TileState tileState2 = gameState.getTileStates().get(14);
-//    GameStateChangeMoveCubes setupChange = new GameStateChangeMoveCubes(
-//        tileState2.getCubesPerSpot(),
-//        new CubeDestinationPlayer(PlayerColor.PINK, true),
-//        new CubeDestinationTile(tileState2.getTile(), PlayerColor.PINK, 1));
-//    gameState = setupChange.apply(gameState);
-
+    gameState.initGame(players);
     gameStateRenderer.render(gameState);
-    refreshNeeded = true;
-
-    // Some animations
-//    GameStateChangeMoveCubes changeA = new GameStateChangeMoveCubes(3,
-//        new CubeDestinationPlayer(PlayerColor.WHITE, false),
-//        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.WHITE));
-//    GameStateChangeMoveCubes changeB = new GameStateChangeMoveCubes(5,
-//        new CubeDestinationInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK),
-//        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.BLACK));
-//    GameStateChangeMoveCubes changeC = new GameStateChangeMoveCubes(3,
-//        new CubeDestinationPlayer(PlayerColor.WHITE, true),
-//        new CubeDestinationPlayer(PlayerColor.WHITE, false));
-//    GameStateChangeMoveCubes changeD = new GameStateChangeMoveCubes(tileState1.getCubesPerSpot(),
-//        new CubeDestinationPlayer(PlayerColor.ORANGE, false),
-//        new CubeDestinationTile(tileState1.getTile(), PlayerColor.ORANGE, 0));
-//    GameStateChangeMoveCubes changeE = new GameStateChangeMoveCubes(tileState2.getCubesPerSpot(),
-//        new CubeDestinationTile(tileState2.getTile(), PlayerColor.PINK, 1),
-//        new CubeDestinationPlayer(PlayerColor.PINK, true));
-//    GameStateChangeMoveArchitect changeF = new GameStateChangeMoveArchitect(
-//        new ArchitectDestinationPlayer(PlayerColor.GREEN, false),
-//        new ArchitectDestinationTile(tileState2.getTile(), PlayerColor.GREEN));
-//    GameStateChangeComposite change = new GameStateChangeComposite();
-//    change.add(changeA);
-//    change.add(changeB);
-//    change.add(changeC);
-//    change.add(changeD);
-//    change.add(changeE);
-//    change.add(changeF);
-
-    // Instead of canned animations, try an action.
-    PossibleActionsMoveArchitect possibleAction = new PossibleActionsMoveArchitect(
-        gameState.getTileStates().get(21).getTile(), false);
-    final GameStateChange change = possibleAction.execute(0, gameState);
-
-    ChangeRendererGenerator generator = rendererFactories.createChangeRendererGenerator();
-    change.accept(generator);
-
-    ChangeRenderer changeRenderer = generator.getChangeRenderer();
-    changeRenderer.generateAnim(gameStateRenderer, dynamicRoot, 0.0);
-    changeRenderer.undoAdditions(gameStateRenderer);
-
-    Arrow arrow = new Arrow(new Vector2d(0.7, 0.1), new Vector2d(1.699, 0.2));
-    gameStateRenderer.getRoot().add(arrow);
-
-    animationCompletedRegistration = dynamicRoot.addAnimationCompletedCallback(
-        new Callback() {
-          @Override public void execute() {
-            dynamicRoot.clear();
-            change.apply(gameState);
-            gameStateRenderer.render(gameState);
-            refreshNeeded = true;
-            animationCompletedRegistration.unregister();
-          }
-        });
   }
 
   @Override
@@ -169,57 +93,44 @@ public class MainPagePresenter extends
   }
 
   /**
-   * Called whenever the mouse is moved inside the board canvas.
-   *
+   * Should be called whenever the mouse is moved inside the board canvas.
    * @param x The X normalized mouse position.
    * @param y The Y normalized mouse position.
    */
-  public void mouseMove(double x, double y) {
-    /*
-    if (highlightedTile != null) {
-      MutableTransform transform =
-          new MutableTransform(highlightedTile.getTransform());
-      transform.setScaling(1.0);
-      highlightedTile.setTransform(transform);
-    }
-
-    // Make position relative to the board center.
-    double boardX = x - LEFT_COLUMN_WIDTH - Board.ASPECT_RATIO / 2.0;
-    double boardY = y - 0.5;
-    Vector2d loc = Board.locationForPosition(boardX, boardY);
-    int column = loc.getColumn();
-    int line = loc.getLine();
-    if (column < 0 || column >= 18 || line < 0 || line >= 8) {
-      highlightedTile = null;
-      return;
-    }
-    highlightedTile = tileGrid[column][line];
-    if (highlightedTile == null) {
-      return;
-    }
-    Vector2d center = Board.positionForLocation(column, line);
-    double distX = boardX - center.getX();
-    double distY = boardY - center.getY();
-    double dist = distX * distX + distY * distY;
-    double scaling = Math.max(1.0, 1.5 - dist * 500.0);
-    MutableTransform transform =
-        new MutableTransform(highlightedTile.getTransform());
-    transform.setScaling(scaling);
-    highlightedTile.setTransform(transform);
-    boardNodes.sendToFront(highlightedTile);
-    */
+  public void onMouseMove(double x, double y) {
+    gameStateRenderer.onMouseMove(x, y);
   }
 
-  public void drawStaticLayer(Context2d context) {
-    refreshNeeded = false;
-    gameStateRenderer.getRoot().draw(0, context);
+  /**
+   * Should be called whenever the mouse is clicked inside the board canvas.
+   * @param x The X normalized mouse position.
+   * @param y The Y normalized mouse position.
+   */
+  public void onMouseClick(double x, double y) {
+    gameStateRenderer.onMouseClick(x, y, gameState);
   }
 
-  public void drawDynamicLayer(double time, Context2d context) {
-    dynamicRoot.draw(time, context);
+  /**
+   * Draws all the static layers inside a given context.
+   * @param context The context to draw into.
+   */
+  public void drawStaticLayers(Context2d context) {
+    gameStateRenderer.drawStaticLayers(context);
   }
 
+  /**
+   * Draws all the dynamic layers inside a given context.
+   * @param context The context to draw into.
+   */
+  public void drawDynamicLayers(double time, Context2d context) {
+    gameStateRenderer.drawDynamicLayers(time, context);
+  }
+
+  /**
+   * Checks whether the static layers need to be redrawn.
+   * @return True if the static layers need to be redrawn.
+   */
   public boolean isRefreshNeeded() {
-    return refreshNeeded;
+    return gameStateRenderer.isRefreshNeeded();
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.util.Date;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -116,7 +118,17 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
         double height = canvas.getOffsetHeight();
         double x = event.getRelativeX(fullCanvas.getElement()) / height;
         double y = event.getRelativeY(fullCanvas.getElement()) / height;
-        presenter.mouseMove(x, y);
+        presenter.onMouseMove(x, y);
+      }
+    });
+
+    fullCanvas.addMouseDownHandler(new MouseDownHandler() {
+      @Override
+      public void onMouseDown(MouseDownEvent event) {
+        double height = canvas.getOffsetHeight();
+        double x = event.getRelativeX(fullCanvas.getElement()) / height;
+        double y = event.getRelativeY(fullCanvas.getElement()) / height;
+        presenter.onMouseClick(x, y);
       }
     });
   }
@@ -154,7 +166,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
       try {
         staticLayerContext.scale(height, height);
         staticLayerContext.setLineWidth(0.001);
-        presenter.drawStaticLayer(staticLayerContext);
+        presenter.drawStaticLayers(staticLayerContext);
       } finally {
         staticLayerContext.restore();
       }
@@ -193,7 +205,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
         context.fillText("FPS: " + fps, 2, height - 2);
         context.scale(height, height);
         context.setLineWidth(0.001);
-        presenter.drawDynamicLayer(time, context);
+        presenter.drawDynamicLayers(time, context);
       } finally {
         context.restore();
       }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -214,6 +214,16 @@ public class PlayerStateRenderer {
   }
 
   /**
+   * Gets the global transform of the player's active or passive reserve.
+   * @param active True to get the active reserve, false for the passive.
+   * @return The global transform of the reserve.
+   */
+  public Transform getCubeZoneTransform(boolean active) {
+    SceneNodeList parent = active ? activeCubes : passiveCubes;
+    return parent.getTotalTransform(0);
+  }
+
+  /**
    * Remove the standard or neutral architect from the player zone.
    * @param neutralArchitect True to remove the neutral architect.
    * @return The global transforms of the removed architect.
@@ -250,5 +260,18 @@ public class PlayerStateRenderer {
         new ConstantTransform(pawnStack.getPosition(index)));
     pawns.add(architect[index]);
     return architect[index].getTotalTransform(0);
+  }
+
+  /**
+   * Gets the transform of the standard or neutral architect on the player zone.
+   * @param neutralArchitect True to get the transform of the neutral architect.
+   * @return The global transforms of the architect.
+   */
+  public Transform getArchitectTransform(boolean neutralArchitect) {
+    int index = 0;
+    if (neutralArchitect) {
+      index = 1;
+    }
+    return pawns.getTotalTransform(0).times(new ConstantTransform(pawnStack.getPosition(index)));
   }
 }

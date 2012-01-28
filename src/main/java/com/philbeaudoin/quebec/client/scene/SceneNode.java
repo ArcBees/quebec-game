@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,4 +86,10 @@ public interface SceneNode {
    * @return True if the animation is completed at that time, false otherwise.
    */
   boolean isAnimationCompleted(double time);
+
+  /**
+   * Clone the entire tree under that node. After cloning, the tree has a null parent node.
+   * @return The cloned scene node.
+   */
+  SceneNode deepClone();
 }

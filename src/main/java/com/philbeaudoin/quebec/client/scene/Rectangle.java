@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Philippe Beaudoin
+ * Copyright 2012 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,11 @@ public class Rectangle extends SceneNodeImpl {
       context.setLineWidth(strokeWidth);
       context.strokeRect(ox0, oy0, ow, oh);
     }
+  }
+
+  @Override
+  public SceneNode deepClone() {
+    return new Rectangle(x0, y0, x1, y1, color0, color1, strokeColor, strokeWidth);
   }
 
 }

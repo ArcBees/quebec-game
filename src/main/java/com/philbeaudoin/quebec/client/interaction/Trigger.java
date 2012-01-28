@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.server.guice;
-
-import com.gwtplatform.dispatch.server.guice.HandlerModule;
+package com.philbeaudoin.quebec.client.interaction;
 
 /**
- * Module which binds the handlers and configurations.
- *
+ * A class that can be used to check whether a given mouse location should trigger something,
+ * usually an interaction.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ServerModule extends HandlerModule {
-
-  @Override
-  protected void configureHandlers() {
-  }
+public interface Trigger {
+  /**
+   * Indicates whether this trigger should be active at a given mouse location.
+   * @param x The x location at which to check the trigger.
+   * @param y The y location at which to check the trigger.
+   */
+  boolean triggerAt(double x, double y);
 }
