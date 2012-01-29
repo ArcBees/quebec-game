@@ -96,9 +96,10 @@ public class MainPagePresenter extends
    * Should be called whenever the mouse is moved inside the board canvas.
    * @param x The X normalized mouse position.
    * @param y The Y normalized mouse position.
+   * @param time The current time.
    */
-  public void onMouseMove(double x, double y) {
-    gameStateRenderer.onMouseMove(x, y);
+  public void onMouseMove(double x, double y, double time) {
+    gameStateRenderer.onMouseMove(x, y, time);
   }
 
   /**

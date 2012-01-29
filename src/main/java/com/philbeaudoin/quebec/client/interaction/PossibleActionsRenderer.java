@@ -21,15 +21,22 @@ import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
+import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
+import com.philbeaudoin.quebec.client.utils.Animation;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.AcceptPossibleActions;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
+import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
 import com.philbeaudoin.quebec.shared.action.PossibleActionsVisitor;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
+import com.philbeaudoin.quebec.shared.state.TileState;
+import com.philbeaudoin.quebec.shared.utils.ArcTransform;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
@@ -63,19 +70,27 @@ public class PossibleActionsRenderer implements PossibleActionsVisitor {
 
   @Override
   public void visit(ActionMoveArchitect host) {
-    // TODO: Handle moving from one tile to another.
-
-    Tile tile = host.getDestinationTile();
-    Transform tileTransform = gameStateRenderer.getTileTransform(tile);
-    gameStateRenderer.highlightTile(tile);
+    Tile destination = host.getDestinationTile();
+    gameStateRenderer.highlightTile(destination);
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    TileState origin = gameState.findTileUnderArchitect(playerColor);
+
     SceneNodeList arrows = new SceneNodeList();
 
-    // Arrow to move architect.
     Transform architectFrom = gameStateRenderer.getArchitectOnPlayerTransform(
         playerColor, host.isNeutralArchitect());
-    Transform architectTo = gameStateRenderer.getArchitectOnTileTransform(tile);
+    if (origin == null) {
+      // Architect starts from the player zone.
+      architectFrom = gameStateRenderer.getArchitectOnPlayerTransform(
+          playerColor, host.isNeutralArchitect());
+    } else {
+      // Architect starts from its current tile.
+      architectFrom = gameStateRenderer.getArchitectOnTileTransform(origin.getTile());
+    }
+
+    // Arrow to move architect.
+    Transform architectTo = gameStateRenderer.getArchitectOnTileTransform(destination);
     arrows.add(new Arrow(architectFrom.getTranslation(0), architectTo.getTranslation(0)));
 
     // Arrow to move passive cubes to active.
@@ -83,8 +98,44 @@ public class PossibleActionsRenderer implements PossibleActionsVisitor {
     Transform cubeTo = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, true);
     arrows.add(new Arrow(cubeFrom.getTranslation(0), cubeTo.getTranslation(0)));
 
+    // Create scale up animation of the tile.
+    addTileInteraction(host, destination, arrows);
+  }
+
+  @Override
+  public void visit(ActionSendWorkers host) {
+    Tile destination = host.getDestinationTile();
+    gameStateRenderer.highlightTile(destination);
+
+    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    SceneNodeList arrows = new SceneNodeList();
+
+    Transform cubesFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, true);
+    Transform cubesTo = gameStateRenderer.getTileTransform(destination);
+
+    // Arrow to move cubes.
+    arrows.add(new Arrow(cubesFrom.getTranslation(0), cubesTo.getTranslation(0)));
+
+    addTileInteraction(host, destination, arrows);
+  }
+
+  private void addTileInteraction(GameAction action, Tile destination,
+      SceneNodeList arrows) {
+    // Create scale up animation of the tile.
+    Transform destinationTransform = gameStateRenderer.getTileTransform(destination);
+    SceneNode copiedTile = gameStateRenderer.copyTile(destination);
+    ConstantTransform scaledDestination = new ConstantTransform(
+        destinationTransform.getTranslation(0),
+        destinationTransform.getScaling(0) * 1.08,
+        destinationTransform.getRotation(0));
+    Animation enterAnim = new Animation(copiedTile,
+        new ArcTransform(destinationTransform, scaledDestination, 0, 1.0), 0.2);
+    Animation leaveAnim = new Animation(copiedTile,
+        new ArcTransform(scaledDestination, destinationTransform, 0, 1.0), 0.2);
+
+    // Create interaction.
     Interaction interaction = factories.getInteraction(factories.getCircleTrigger(
-        tileTransform.getTranslation(0), 0.044), arrows, host);
+        destinationTransform.getTranslation(0), 0.044), arrows, enterAnim, leaveAnim, action);
     gameStateRenderer.addInteraction(interaction);
   }
 }

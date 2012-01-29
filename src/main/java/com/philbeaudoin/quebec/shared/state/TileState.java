@@ -111,7 +111,7 @@ public class TileState {
    *     {@code PlayerColor.NONE} if the spot is empty.
    */
   public void setColorInSpot(int spot, PlayerColor playerColor) {
-    assert playerColor.isNormalColor();
+    assert playerColor != PlayerColor.NEUTRAL;
     assert spot < 3;
     colorInSpot.set(spot, playerColor);
   }

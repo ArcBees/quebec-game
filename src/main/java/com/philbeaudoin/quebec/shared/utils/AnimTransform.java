@@ -14,28 +14,34 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.action;
+package com.philbeaudoin.quebec.shared.utils;
 
 /**
- * Interface for a class that can visit a {@link PossibleActions}.
+ * The interface for a transform that can be used to generate animations.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface PossibleActionsVisitor {
-  /**
-   * Visits a {@link PossibleActionsComposite}.
-   * @param host The visited class.
-   */
-  void visit(PossibleActionsComposite host);
+public abstract class AnimTransform implements Transform {
+
+  protected double t0;
+  protected double t1;
+
+  public AnimTransform(double t0, double t1) {
+    this.t0 = t0;
+    this.t1 = t1;
+  }
 
   /**
-   * Visits a {@link ActionMoveArchitect}.
-   * @param host The visited class.
+   * Sets the starting and ending time of the animation.
+   * @param t0 The starting time.
+   * @param t1 The ending time.
    */
-  void visit(ActionMoveArchitect host);
+  public void setTimes(double t0, double t1) {
+    this.t0 = t0;
+    this.t1 = t1;
+  }
 
-  /**
-   * Visits a {@link ActionSendWorkers}.
-   * @param host The visited class.
-   */
-  void visit(ActionSendWorkers host);
+  @Override
+  public boolean isAnimationCompleted(double time) {
+    return time >= t1;
+  }
 }

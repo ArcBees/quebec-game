@@ -16,8 +16,10 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
+import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
+import com.philbeaudoin.quebec.client.utils.Animation;
 import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -29,6 +31,8 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 public interface InteractionFactories {
   PossibleActionsRenderer createPossibleActionsRenderer(GameState gameState,
       GameStateRenderer gameStateRenderer);
-  Interaction getInteraction(Trigger trigger, SceneNode mouseOverNode, GameAction action);
+  Interaction getInteraction(Trigger trigger, SceneNode mouseOverNode,
+      @Assisted("enter") Animation mouseEnterAnim,
+      @Assisted("leave") Animation mouseLeaveAnim, GameAction action);
   CircleTrigger getCircleTrigger(Vector2d translation, double radius);
 }

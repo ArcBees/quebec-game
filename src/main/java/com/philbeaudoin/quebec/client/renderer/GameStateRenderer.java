@@ -75,8 +75,8 @@ public class GameStateRenderer {
     staticRoot.add(backgroundRoot);
     staticRoot.add(glassScreenRoot);
     staticRoot.add(foregroundRoot);
-    dynamicRoot.add(interactionRoot);
     dynamicRoot.add(animationRoot);
+    dynamicRoot.add(interactionRoot);
   }
 
   /**
@@ -336,6 +336,15 @@ public class GameStateRenderer {
   }
 
   /**
+   * Gets a copy of the scene node corresponding to the specified tile.
+   * @param tile The tile for which to get a copy of the scene node.
+   * @return A copied scene node corresponding to that tile.
+   */
+  public SceneNode copyTile(Tile tile) {
+    return boardRenderer.copyTile(tile);
+  }
+
+  /**
    * Remove all the highlighted components by clearing all the node in the foreground layer.
    */
   public void removeAllHighlights() {
@@ -348,11 +357,12 @@ public class GameStateRenderer {
    * Indicates that the mouse has moved and that active interactions should be executed.
    * @param x The x location of the mouse.
    * @param y The y location of the mouse.
+   * @param time The current time.
    */
-  public void onMouseMove(double x, double y) {
+  public void onMouseMove(double x, double y, double time) {
     interactionRoot.clear();
     for (Interaction interaction : interactions) {
-      interaction.onMouseMove(x, y, this);
+      interaction.onMouseMove(x, y, this, time);
     }
   }
 
@@ -364,6 +374,7 @@ public class GameStateRenderer {
    */
   public void onMouseClick(double x, double y, GameState gameState) {
     interactionRoot.clear();
+    animationRoot.clear();
     for (Interaction interaction : interactions) {
       interaction.onMouseClick(x, y, gameState, this);
     }

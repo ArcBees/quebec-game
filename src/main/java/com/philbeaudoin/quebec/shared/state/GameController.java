@@ -21,6 +21,7 @@ import java.util.List;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -95,13 +96,20 @@ public class GameController {
   public void configuePossibleActions(GameState gameState) {
     int century = gameState.getCentury();
     PossibleActionsComposite possibleActions = new PossibleActionsComposite();
-
-    // Mark moving architect as a possible action.
     gameState.setPossibleActions(possibleActions);
+
+    int nbActiveCubes = gameState.getCurrentPlayer().getNbActiveCubes();
+
+    // Mark moving architect or sending workers as a possible action.
     for (TileState tileState : gameState.getTileStates()) {
       if (tileState.getTile().getCentury() == century &&
-          tileState.getArchitect() == PlayerColor.NONE) {
+          tileState.getArchitect() == PlayerColor.NONE &&
+          !tileState.isBuildingFacing()) {
         possibleActions.add(new ActionMoveArchitect(tileState.getTile(), false));
+      } else if (tileState.getArchitect() != PlayerColor.NONE &&
+          nbActiveCubes >= tileState.getCubesPerSpot() &&
+          tileState.getColorInSpot(2) == PlayerColor.NONE) {
+        possibleActions.add(new ActionSendWorkers(tileState.getTile()));
       }
     }
 
