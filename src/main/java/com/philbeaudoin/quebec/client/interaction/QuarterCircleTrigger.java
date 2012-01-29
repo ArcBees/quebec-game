@@ -19,33 +19,29 @@ package com.philbeaudoin.quebec.client.interaction;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * A trigger that is triggered when a location is within a given circle.
+ * A trigger that is triggered when a location is within a given quarter of a circle.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class CircleTrigger implements Trigger {
+public class QuarterCircleTrigger implements Trigger {
 
-  private final double centerX;
-  private final double centerY;
-  private final double radius2;
+  private final CircleTrigger circleTrigger;
+  private final int quadrantX;
+  private final int quadrantY;
 
-  CircleTrigger(Vector2d center, double radius) {
-    this.centerX = center.getX();
-    this.centerY = center.getY();
-    this.radius2 = radius * radius;
+  QuarterCircleTrigger(Vector2d center, double radius, int quadrantX, int quadrantY) {
+    circleTrigger = new CircleTrigger(center, radius);
+    this.quadrantX = quadrantX;
+    this.quadrantY = quadrantY;
   }
 
   @Override
   public boolean triggerAt(double x, double y) {
-    double dx = x - centerX;
-    double dy = y - centerY;
-    return dx * dx + dy * dy < radius2;
+    if ((x - circleTrigger.getCenterX()) * quadrantX >= 0 &&
+        (y - circleTrigger.getCenterY()) * quadrantY >= 0) {
+      return circleTrigger.triggerAt(x, y);
+    } else {
+      return false;
+    }
   }
 
-  public double getCenterX() {
-    return centerX;
-  }
-
-  public double getCenterY() {
-    return centerY;
-  }
 }

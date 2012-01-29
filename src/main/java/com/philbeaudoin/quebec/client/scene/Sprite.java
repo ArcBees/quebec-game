@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 import com.philbeaudoin.quebec.client.utils.LoggerFactory;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
@@ -34,13 +35,15 @@ public class Sprite extends SceneNodeImpl {
   private final SpriteResources.Info info;
 
   public Sprite(SpriteResources.Info info) {
-    super();
-    logger = LoggerFactory.get(Sprite.class);
-    this.info = info;
+    this(info, new ConstantTransform(), true);
   }
 
   public Sprite(SpriteResources.Info info, Transform transform) {
-    super(transform);
+    this(info, transform, true);
+  }
+
+  private Sprite(SpriteResources.Info info, Transform transform, boolean visible) {
+    super(transform, visible);
     logger = LoggerFactory.get(Sprite.class);
     this.info = info;
   }
@@ -58,7 +61,7 @@ public class Sprite extends SceneNodeImpl {
 
   @Override
   public SceneNode deepClone() {
-    return new Sprite(info, getTransform());
+    return new Sprite(info, getTransform(), isVisible());
   }
 
 }

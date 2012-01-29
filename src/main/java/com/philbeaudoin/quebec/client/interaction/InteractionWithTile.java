@@ -50,8 +50,7 @@ public abstract class InteractionWithTile extends InteractionImpl {
       GameState gameState, GameStateRenderer gameStateRenderer, GameActionOnTile action,
       Tile destinationTile, Transform destinationTransform) {
     super(scheduler, rendererFactories, gameState, gameStateRenderer,
-        interactionFactories.createCircleTrigger(destinationTransform.getTranslation(0), 0.044),
-        action);
+        new CircleTrigger(destinationTransform.getTranslation(0), 0.044), action);
 
     this.destinationTile = destinationTile;
     this.destinationTransform = destinationTransform;
@@ -81,6 +80,11 @@ public abstract class InteractionWithTile extends InteractionImpl {
     gameStateRenderer.highlightTile(destinationTile);
   }
 
+  @Override
+  protected void doMouseMove(double x, double y, double time) {
+  }
+
+  // TODO: Extract this logic.
   @Override
   protected void doMouseEnter(double x, double y, double time) {
     // Bump up.

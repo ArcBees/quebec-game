@@ -99,7 +99,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
         context.rect(0, 0, width, height);
         context.fill();
         context.stroke();
-        refreshStaticLayer(450);
+        refreshStaticLayer(650);
       }
     });
 

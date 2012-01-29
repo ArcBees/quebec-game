@@ -182,6 +182,16 @@ public interface Resources extends ClientBundle {
   DataResource leaderCultural();
   @Source("leader_citadel.png")
   DataResource leaderCitadel();
+  @Source("purple_zone.png")
+  DataResource influenceZoneReligious();
+  @Source("red_zone.png")
+  DataResource influenceZonePolitic();
+  @Source("yellow_zone.png")
+  DataResource influenceZoneEconomic();
+  @Source("blue_zone.png")
+  DataResource influenceZoneCultural();
+  @Source("gray_zone.png")
+  DataResource influenceZoneCitadel();
 
   @Source("quebec.css")
   Style style();

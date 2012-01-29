@@ -100,6 +100,19 @@ public class BoardRenderer {
         cubeStacksInZone[i][j] = new CubeStack();
       }
     }
+
+    for (InfluenceType influenceType : InfluenceType.values()) {
+      int index = influenceType.ordinal();
+      // Add the main node for the influence zone.
+      Vector2d translation;
+      if (influenceType == InfluenceType.CITADEL) {
+        translation = new Vector2d(0.45, -0.05);
+      } else {
+        translation = new Vector2d(0.51 * (((index + 1) % 4 / 2 == 0) ? 1 : -1),
+                                   0.35 * ((index / 2 == 0) ? 1 : -1));
+      }
+      influenceZoneNode[index] = new SceneNodeList(new ConstantTransform(translation));
+    }
   }
 
   /**
@@ -120,8 +133,9 @@ public class BoardRenderer {
       }
     }
 
-    for (int i = 0; i < 5; ++i) {
-      influenceZoneNode[i] = null;
+    for (SceneNodeList node : influenceZoneNode) {
+      node.clear();
+      backgroundBoardRoot.add(node);
     }
 
     for (int i = 0; i < 5; ++i) {
@@ -155,18 +169,6 @@ public class BoardRenderer {
 
   private void renderInfluenceZones(GameState gameState) {
     for (InfluenceType influenceType : InfluenceType.values()) {
-      int index = influenceType.ordinal();
-      // Add the main node for the influence zone.
-      Vector2d translation;
-      if (influenceType == InfluenceType.CITADEL) {
-        translation = new Vector2d(0.45, -0.05);
-      } else {
-        translation = new Vector2d(0.51 * (((index + 1) % 4 / 2 == 0) ? 1 : -1),
-                                   0.35 * ((index / 2 == 0) ? 1 : -1));
-      }
-      influenceZoneNode[index] = new SceneNodeList(new ConstantTransform(translation));
-      backgroundBoardRoot.add(influenceZoneNode[index]);
-
       for (PlayerColor playerColor : PlayerColor.values()) {
         if (playerColor.isNormalColor()) {
           addCubesToInfluenceZone(influenceType, playerColor,
@@ -310,6 +312,15 @@ public class BoardRenderer {
       influenceZoneNode[index].add(cube);
     }
     return result;
+  }
+
+  /**
+   * Returns the node containing the cubes of the specified influence zone.
+   * @param influenceZone The influence zone for which to get the node.
+   * @return The node containing the cubes of that influence zone.
+   */
+  public SceneNode getInfluenceZoneNode(InfluenceType influenceZone) {
+    return influenceZoneNode[influenceZone.ordinal()];
   }
 
   /**
@@ -528,5 +539,14 @@ public class BoardRenderer {
       }
     }
     return null;
+  }
+
+  /**
+   * Ensure that all the not that can be turned invisible are made back visible here.
+   */
+  void resetVisiblity() {
+    for (SceneNode node : influenceZoneNode)  {
+      node.setVisible(true);
+    }
   }
 }

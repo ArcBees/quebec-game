@@ -21,6 +21,7 @@ import java.util.List;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -110,6 +111,13 @@ public class GameController {
           nbActiveCubes >= tileState.getCubesPerSpot() &&
           tileState.getColorInSpot(2) == PlayerColor.NONE) {
         possibleActions.add(new ActionSendWorkers(tileState.getTile()));
+      }
+    }
+
+    // Mark moving one cube to influence zones as a possible action.
+    if (nbActiveCubes >= 1) {
+      for (InfluenceType influenceZone : InfluenceType.values()) {
+        possibleActions.add(new ActionSendOneWorker(influenceZone));
       }
     }
 

@@ -18,9 +18,9 @@ package com.philbeaudoin.quebec.client.interaction;
 
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * Factory methods of the various renderer classes, used in assisted injection.
@@ -33,5 +33,6 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
   InteractionSendWorkers createInteractionSendWorkers(GameState gameState,
       GameStateRenderer gameStateRenderer, ActionSendWorkers action);
-  CircleTrigger createCircleTrigger(Vector2d translation, double radius);
+  InteractionSendOneWorker createInteractionSendOneWorker(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionSendOneWorker host);
 }

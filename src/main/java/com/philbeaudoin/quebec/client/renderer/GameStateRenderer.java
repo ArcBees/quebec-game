@@ -52,7 +52,6 @@ public class GameStateRenderer {
   private final SceneNodeList backgroundRoot = new SceneNodeList();
   private final SceneNodeList glassScreenRoot = new SceneNodeList();
   private final SceneNodeList foregroundRoot = new SceneNodeList();
-  private final SceneNodeList interactionRoot = new SceneNodeList();
   private final SceneNodeList animationRoot = new SceneNodeList();
   private final ArrayList<Interaction> interactions = new ArrayList<Interaction>();
 
@@ -63,6 +62,7 @@ public class GameStateRenderer {
   private final ArrayList<PlayerStateRenderer> playerStateRenderers =
       new ArrayList<PlayerStateRenderer>(5);
 
+  private boolean forceHighlight;
   private boolean refreshNeeded = true;
 
   @Inject
@@ -76,7 +76,6 @@ public class GameStateRenderer {
     staticRoot.add(glassScreenRoot);
     staticRoot.add(foregroundRoot);
     dynamicRoot.add(animationRoot);
-    dynamicRoot.add(interactionRoot);
   }
 
   /**
@@ -95,7 +94,6 @@ public class GameStateRenderer {
     backgroundRoot.clear();
     glassScreenRoot.clear();
     foregroundRoot.clear();
-    interactionRoot.clear();
 
     // Render the board first.
     boardRenderer.render(gameState, backgroundRoot);
@@ -118,7 +116,7 @@ public class GameStateRenderer {
   }
 
   private void addOrClearGlassScreen() {
-    boolean glassScreenNeeded = !foregroundRoot.getChildren().isEmpty();
+    boolean glassScreenNeeded = !foregroundRoot.getChildren().isEmpty() || forceHighlight;
     boolean glassScreenPresent = !glassScreenRoot.getChildren().isEmpty();
     // If there is anything in the foreground, show the glass screen
     if (glassScreenNeeded && !glassScreenPresent) {
@@ -208,6 +206,15 @@ public class GameStateRenderer {
     PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
     assert playerStateRenderer != null;
     return playerStateRenderer.getCubeZoneTransform(active);
+  }
+
+  /**
+   * Returns the node containing the cubes of the specified influence zone.
+   * @param influenceZone The influence zone for which to get the node.
+   * @return The node containing the cubes of that influence zone.
+   */
+  public SceneNode getInfluenceZoneNode(InfluenceType influenceZone) {
+    return boardRenderer.getInfluenceZoneNode(influenceZone);
   }
 
   /**
@@ -338,6 +345,12 @@ public class GameStateRenderer {
     addOrClearGlassScreen();
   }
 
+  public void forceHighlight() {
+    refreshNeeded = true;
+    forceHighlight = true;
+    addOrClearGlassScreen();
+  }
+
   /**
    * Gets a copy of the scene node corresponding to the specified tile.
    * @param tile The tile for which to get a copy of the scene node.
@@ -352,6 +365,7 @@ public class GameStateRenderer {
    */
   public void removeAllHighlights() {
     refreshNeeded = true;
+    forceHighlight = false;
     foregroundRoot.clear();
     addOrClearGlassScreen();
   }
@@ -363,7 +377,6 @@ public class GameStateRenderer {
    * @param time The current time.
    */
   public void onMouseMove(double x, double y, double time) {
-    interactionRoot.clear();
     for (Interaction interaction : interactions) {
       interaction.onMouseMove(x, y, time);
     }
@@ -376,8 +389,6 @@ public class GameStateRenderer {
    * @param time The current time.
    */
   public void onMouseClick(double x, double y, double time) {
-    interactionRoot.clear();
-    animationRoot.clear();
     for (Interaction interaction : interactions) {
       interaction.onMouseClick(x, y, time);
     }
@@ -396,15 +407,8 @@ public class GameStateRenderer {
    */
   public void clearInteractions() {
     interactions.clear();
-  }
-
-  /**
-   * Adds a node to be rendered in the interaction graph. The nodes in that graph are cleared each
-   * time the mouse is moved.
-   * @param sceneNode The scene node to add.
-   */
-  public void addToInteractionGraph(SceneNode sceneNode) {
-    interactionRoot.add(sceneNode);
+    // Some interactions make node invisible, turn these nodes visible here.
+    boardRenderer.resetVisiblity();
   }
 
   /**

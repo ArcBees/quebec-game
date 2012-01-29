@@ -49,6 +49,18 @@ public interface SceneNode {
   void draw(double time, Context2d context);
 
   /**
+   * Indicates whether or not this node should be visible.
+   * @param visible True to make the node visible.
+   */
+  void setVisible(boolean visible);
+
+  /**
+   * Checks whether or not this node is visible.
+   * @return True if this node is visible.
+   */
+  boolean isVisible();
+
+  /**
    * Sets the local transform of the scene node.
    * @param transform The desired transform.
    */

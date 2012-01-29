@@ -63,7 +63,14 @@ public class InteractionSendWorkers extends InteractionWithTile {
   }
 
   @Override
-  protected void doMouseMove(double x, double y, double time) {
-    gameStateRenderer.addToInteractionGraph(arrows);
+  protected void doMouseEnter(double x, double y, double time) {
+    super.doMouseEnter(x, y, time);
+    gameStateRenderer.addToAnimationGraph(arrows);
+  }
+
+  @Override
+  protected void doMouseLeave(double x, double y, double time) {
+    super.doMouseLeave(x, y, time);
+    arrows.setParent(null);
   }
 }

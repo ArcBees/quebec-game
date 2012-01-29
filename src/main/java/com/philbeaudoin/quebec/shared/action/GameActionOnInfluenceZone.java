@@ -16,32 +16,16 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
+import com.philbeaudoin.quebec.shared.InfluenceType;
+
 /**
- * Interface for a class that can visit a {@link PossibleActions}.
+ * A possible action that has a specific influence zone as a destination.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface PossibleActionsVisitor {
+public interface GameActionOnInfluenceZone extends GameAction {
   /**
-   * Visits a {@link PossibleActionsComposite}.
-   * @param host The visited class.
+   * Access the influence zone on which this action operates.
+   * @return The influence zone.
    */
-  void visit(PossibleActionsComposite host);
-
-  /**
-   * Visits a {@link ActionMoveArchitect}.
-   * @param host The visited class.
-   */
-  void visit(ActionMoveArchitect host);
-
-  /**
-   * Visits a {@link ActionSendWorkers}.
-   * @param host The visited class.
-   */
-  void visit(ActionSendWorkers host);
-
-  /**
-   * Visits a {@link ActionSendOneWorker}.
-   * @param host The visited class.
-   */
-  void visit(ActionSendOneWorker host);
+  InfluenceType getInfluenceZone();
 }

@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.client.scene;
 
 import com.google.gwt.canvas.dom.client.CanvasGradient;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 
 /**
  * Scene tree node drawing a rectangle with a vertical color gradient and optionally a contour
@@ -55,7 +56,12 @@ public class Rectangle extends SceneNodeImpl {
    */
   public Rectangle(double x0, double y0, double x1, double y1, String color0, String color1,
       String strokeColor, double strokeWidth) {
-    super();
+    this(x0, y0, x1, y1, color0, color1, strokeColor, strokeWidth, true);
+  }
+
+  private Rectangle(double x0, double y0, double x1, double y1, String color0, String color1,
+      String strokeColor, double strokeWidth, boolean visible) {
+    super(new ConstantTransform(), visible);
     this.x0 = x0;
     this.y0 = y0;
     this.x1 = x1;
@@ -89,7 +95,7 @@ public class Rectangle extends SceneNodeImpl {
 
   @Override
   public SceneNode deepClone() {
-    return new Rectangle(x0, y0, x1, y1, color0, color1, strokeColor, strokeWidth);
+    return new Rectangle(x0, y0, x1, y1, color0, color1, strokeColor, strokeWidth, isVisible());
   }
 
 }
