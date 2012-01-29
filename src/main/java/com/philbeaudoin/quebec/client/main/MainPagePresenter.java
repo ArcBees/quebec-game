@@ -106,9 +106,10 @@ public class MainPagePresenter extends
    * Should be called whenever the mouse is clicked inside the board canvas.
    * @param x The X normalized mouse position.
    * @param y The Y normalized mouse position.
+   * @param time The current time.
    */
-  public void onMouseClick(double x, double y) {
-    gameStateRenderer.onMouseClick(x, y, gameState);
+  public void onMouseClick(double x, double y, double time) {
+    gameStateRenderer.onMouseClick(x, y, time);
   }
 
   /**
