@@ -33,7 +33,11 @@ public class Text extends SceneNodeImpl {
    * @param transform The transform to apply.
    */
   public Text(String text, Transform transform) {
-    super(transform);
+    this(text, transform, true);
+  }
+
+  private Text(String text, Transform transform, boolean visible) {
+    super(transform, visible);
     this.text = text;
   }
 
@@ -46,6 +50,6 @@ public class Text extends SceneNodeImpl {
 
   @Override
   public SceneNode deepClone() {
-    return new Text(text, getTransform());
+    return new Text(text, getTransform(), isVisible());
   }
 }

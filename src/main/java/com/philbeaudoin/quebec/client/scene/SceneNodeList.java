@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
@@ -32,11 +33,15 @@ public class SceneNodeList extends SceneNodeImpl {
   private final ArrayList<SceneNode> sceneNodes = new ArrayList<SceneNode>();
 
   public SceneNodeList() {
-    super();
+    this(new ConstantTransform(), true);
   }
 
   public SceneNodeList(Transform transform) {
-    super(transform);
+    this(transform, true);
+  }
+
+  public SceneNodeList(Transform transform, boolean visible) {
+    super(transform, visible);
   }
 
   /**
@@ -129,7 +134,7 @@ public class SceneNodeList extends SceneNodeImpl {
 
   @Override
   public SceneNode deepClone() {
-    SceneNodeList clone = new SceneNodeList(getTransform());
+    SceneNodeList clone = new SceneNodeList(getTransform(), isVisible());
     for (SceneNode sceneNode : sceneNodes) {
       SceneNode childClone = sceneNode.deepClone();
       childClone.setParent(clone);

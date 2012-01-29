@@ -40,8 +40,8 @@ public abstract class InteractionImpl implements Interaction {
   protected final RendererFactories rendererFactories;
   protected final GameState gameState;
   protected final GameStateRenderer gameStateRenderer;
-  private final Trigger trigger;
-  private final GameAction action;
+  protected final Trigger trigger;
+  protected final GameAction action;
 
   private boolean inside;
   private CallbackRegistration animationCompletedRegistration;
@@ -74,6 +74,7 @@ public abstract class InteractionImpl implements Interaction {
   @Override
   public void onMouseClick(double x, double y, double time) {
     if (trigger.triggerAt(x, y)) {
+      gameStateRenderer.clearAnimationGraph();
       if (animationCompletedRegistration != null) {
         animationCompletedRegistration.unregister();
         animationCompletedRegistration = null;

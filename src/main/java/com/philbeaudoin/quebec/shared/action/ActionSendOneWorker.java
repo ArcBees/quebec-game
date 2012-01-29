@@ -16,28 +16,27 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
+import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.PlayerState;
-import com.philbeaudoin.quebec.shared.state.Tile;
-import com.philbeaudoin.quebec.shared.state.TileState;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationTile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 
 /**
- * The action of sending worker cubes to a spot on a tile.
+ * The action of sending one worker to an influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSendWorkers implements PossibleActions, GameActionOnTile {
+public class ActionSendOneWorker implements PossibleActions, GameActionOnInfluenceZone {
 
-  private final Tile destinationTile;
+  private final InfluenceType influenceZone;
 
-  public ActionSendWorkers(Tile destinationTile) {
-    this.destinationTile = destinationTile;
+  public ActionSendOneWorker(InfluenceType influenceZone) {
+    this.influenceZone = influenceZone;
   }
 
   @Override
@@ -57,23 +56,12 @@ public class ActionSendWorkers implements PossibleActions, GameActionOnTile {
     PlayerState playerState = gameState.getCurrentPlayer();
     PlayerColor activePlayer = playerState.getPlayer().getColor();
 
-    TileState tileState = gameState.getTileState(destinationTile);
-    int destinationSpot = -1;
-    for (int spot = 0; spot < 3; ++spot) {
-      if (tileState.getColorInSpot(spot) == PlayerColor.NONE) {
-        destinationSpot = spot;
-        break;
-      }
-    }
-    assert destinationSpot != -1;
-    assert playerState.getNbActiveCubes() >= tileState.getCubesPerSpot();
+    assert playerState.getNbActiveCubes() >= 1;
 
     // Move the cubes.
-    result.add(new GameStateChangeMoveCubes(tileState.getCubesPerSpot(),
+    result.add(new GameStateChangeMoveCubes(1,
         new CubeDestinationPlayer(activePlayer, true),
-        new CubeDestinationTile(destinationTile, activePlayer, destinationSpot)));
-
-    // TODO: Execute action if needed.
+        new CubeDestinationInfluenceZone(influenceZone, activePlayer)));
 
     // Move to next player.
     result.add(new GameStateChangeNextPlayer());
@@ -87,7 +75,7 @@ public class ActionSendWorkers implements PossibleActions, GameActionOnTile {
   }
 
   @Override
-  public Tile getDestinationTile() {
-    return destinationTile;
+  public InfluenceType getInfluenceZone() {
+    return influenceZone;
   }
 }

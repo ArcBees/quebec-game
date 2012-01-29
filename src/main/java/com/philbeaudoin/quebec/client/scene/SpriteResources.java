@@ -85,6 +85,7 @@ public class SpriteResources {
   private final Info[] cubeInfos = new Info[5];
   private final Info[] pawnInfos = new Info[6];
   private final Info[] leaderInfos = new Info[5];
+  private final Info[] influenceZoneInfos = new Info[5];
 
   @Inject
   SpriteResources(Resources resources) {
@@ -149,6 +150,12 @@ public class SpriteResources {
     setInfoForLeader(InfluenceType.ECONOMIC, resources.leaderEconomic());
     setInfoForLeader(InfluenceType.CULTURAL, resources.leaderCultural());
     setInfoForLeader(InfluenceType.CITADEL, resources.leaderCitadel());
+
+    setInfoForInfluenceZone(InfluenceType.RELIGIOUS, resources.influenceZoneReligious());
+    setInfoForInfluenceZone(InfluenceType.POLITIC, resources.influenceZonePolitic());
+    setInfoForInfluenceZone(InfluenceType.ECONOMIC, resources.influenceZoneEconomic());
+    setInfoForInfluenceZone(InfluenceType.CULTURAL, resources.influenceZoneCultural());
+    setInfoForInfluenceZone(InfluenceType.CITADEL, resources.influenceZoneCitadel());
   }
 
   /**
@@ -231,6 +238,17 @@ public class SpriteResources {
   }
 
   /**
+   * Obtain information, including the {@link ImageElement}, for the given type of influence zone.
+   * @param influenceZone The type of the influence zone for which to get information.
+   * @return The information on that sprite.
+   */
+  public Info getInfluenceZone(InfluenceType influenceZone) {
+    Info imageInfo = influenceZoneInfos[influenceZone.ordinal()];
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+
+  /**
    * Lazily instantiate the image element of an image info, if needed.
    * @param imageInfo The image info into which to instantiate the image element.
    */
@@ -267,4 +285,9 @@ public class SpriteResources {
   private void setInfoForLeader(InfluenceType leaderType, DataResource dataResource) {
     leaderInfos[leaderType.ordinal()] = new Info(dataResource.getSafeUri(), 0.000265);
   }
+
+  private void setInfoForInfluenceZone(InfluenceType influenceZone, DataResource dataResource) {
+    influenceZoneInfos[influenceZone.ordinal()] = new Info(dataResource.getSafeUri(), 0.000303);
+  }
+
 }

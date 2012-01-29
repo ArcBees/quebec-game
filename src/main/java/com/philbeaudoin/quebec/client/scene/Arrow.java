@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.client.scene;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -46,7 +47,11 @@ public class Arrow extends SceneNodeImpl {
    * @param to The ending point of the arrow.
    */
   public Arrow(Vector2d from, Vector2d to) {
-    super();
+    this(from, to, true);
+  }
+
+  private Arrow(Vector2d from, Vector2d to, boolean visible) {
+    super(new ConstantTransform(), visible);
     this.from = from;
     this.to = to;
     double dx = to.getX() - from.getX();

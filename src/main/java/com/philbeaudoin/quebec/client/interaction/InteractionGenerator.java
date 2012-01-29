@@ -22,6 +22,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.action.AcceptPossibleActions;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
@@ -68,6 +69,12 @@ public class InteractionGenerator implements PossibleActionsVisitor {
   @Override
   public void visit(ActionSendWorkers host) {
     gameStateRenderer.addInteraction(factories.createInteractionSendWorkers(gameState,
+        gameStateRenderer, host));
+  }
+
+  @Override
+  public void visit(ActionSendOneWorker host) {
+    gameStateRenderer.addInteraction(factories.createInteractionSendOneWorker(gameState,
         gameStateRenderer, host));
   }
 }

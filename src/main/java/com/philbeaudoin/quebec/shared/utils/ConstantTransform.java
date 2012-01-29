@@ -124,6 +124,19 @@ public class ConstantTransform implements Transform {
     return new ConstantTransform(totalTranslation, totalScaling, totalRotation);
   }
 
+  /**
+   * Inverse this transform.
+   * @return The inverted transform.
+   */
+  public ConstantTransform inverse() {
+    double cos = Math.cos(rotation);
+    double sin = Math.sin(rotation);
+    double tx = translation.x / scaling;
+    double ty = translation.y / scaling;
+    return new ConstantTransform(new Vector2d(-cos * tx - sin * ty, sin * tx - cos * ty),
+        1.0 / scaling, -rotation);
+  }
+
   @Override
   public boolean isAnimationCompleted(double time) {
     return true;

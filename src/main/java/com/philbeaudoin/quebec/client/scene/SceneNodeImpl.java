@@ -21,7 +21,6 @@ import com.philbeaudoin.quebec.shared.utils.Callback;
 import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 import com.philbeaudoin.quebec.shared.utils.CallbackRegistry;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
-import com.philbeaudoin.quebec.shared.utils.MutableTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
@@ -34,13 +33,11 @@ public abstract class SceneNodeImpl implements SceneNode {
   private final CallbackRegistry animationCompletedCallbacks = new CallbackRegistry();
   private Transform transform;
   private SceneNodeList parent;
+  private boolean visible = true;
 
-  public SceneNodeImpl() {
-    this.transform = new MutableTransform();
-  }
-
-  public SceneNodeImpl(Transform transform) {
+  public SceneNodeImpl(Transform transform, boolean visible) {
     this.transform = transform;
+    this.visible = visible;
   }
 
   @Override
@@ -85,6 +82,9 @@ public abstract class SceneNodeImpl implements SceneNode {
 
   @Override
   public void draw(double time, Context2d context) {
+    if (!visible) {
+      return;
+    }
     context.save();
     try {
       getTransform().applies(time, context);
@@ -95,6 +95,16 @@ public abstract class SceneNodeImpl implements SceneNode {
     } finally {
       context.restore();
     }
+  }
+
+  @Override
+  public void setVisible(boolean visible) {
+    this.visible = visible;
+  }
+
+  @Override
+  public boolean isVisible() {
+    return visible;
   }
 
   @Override
