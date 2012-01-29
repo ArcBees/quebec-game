@@ -61,6 +61,7 @@ public class BoardRenderer {
     Tile tile;
     double rotation;
     PlayerColor architectColor;
+    SceneNode tileSprite;
     SceneNode architectNode;
     SceneNode activeTokenNode;
     CubeStack cubesOnSpot[] = new CubeStack[3];
@@ -126,7 +127,6 @@ public class BoardRenderer {
     for (int i = 0; i < 5; ++i) {
       for (int j = 0; j < 5; ++j) {
         cubeStacksInZone[i][j].cubes.clear();
-        cubeStacksInZone[i][j].playerColor = PlayerColor.NONE;
       }
     }
 
@@ -192,19 +192,20 @@ public class BoardRenderer {
       tileGrid[column][line] = new TileInfo(tileNode, tileState.getTile(), rotation);
 
       // Render the tile itself.
+      TileInfo tileInfo = tileGrid[column][line];
       if (tileState.isBuildingFacing()) {
-        renderBuildingTile(tileState, tileNode);
+        renderBuildingTile(tileInfo, tileState, tileNode);
       } else {
-        renderTile(gameState, tileGrid[column][line], tileState);
+        renderTile(gameState, tileInfo, tileState);
       }
     }
   }
 
   private void renderTile(GameState gameState, TileInfo tileInfo, TileState tileState) {
     Tile tile = tileState.getTile();
-    Sprite tileSprite = new Sprite(spriteResources.getTile(tile.getInfluenceType(),
+    tileInfo.tileSprite = new Sprite(spriteResources.getTile(tile.getInfluenceType(),
         tile.getCentury()));
-    tileInfo.root.add(tileSprite);
+    tileInfo.root.add(tileInfo.tileSprite);
 
     // Add the architect pawn.
     PlayerColor architectColor = tileState.getArchitect();
@@ -231,11 +232,11 @@ public class BoardRenderer {
     }
   }
 
-  private void renderBuildingTile(TileState tileState, SceneNodeList tileNode) {
+  private void renderBuildingTile(TileInfo tileInfo, TileState tileState, SceneNodeList tileNode) {
     Tile tile = tileState.getTile();
-    Sprite tileSprite = new Sprite(spriteResources.getBuildingTile(tile.getInfluenceType(),
+    tileInfo.tileSprite = new Sprite(spriteResources.getBuildingTile(tile.getInfluenceType(),
         tile.getCentury(), tile.getBuildingIndex()));
-    tileNode.add(tileSprite);
+    tileNode.add(tileInfo.tileSprite);
 
     // TODO: Render star marker.
   }
@@ -458,6 +459,8 @@ public class BoardRenderer {
     SceneNodeList cubesNode = new SceneNodeList(new ConstantTransform(new Vector2d(x, y), 1.0,
         -tileInfo.rotation));
     tileInfo.root.add(cubesNode);
+    tileInfo.root.sendToBack(cubesNode);
+    tileInfo.root.sendToBack(tileInfo.tileSprite);
     // Add all the cubes to the node.
     tileInfo.cubesOnSpot[spot].playerColor = playerColor;
     tileInfo.cubesOnSpot[spot].cubes.clear();
@@ -482,6 +485,7 @@ public class BoardRenderer {
     tileInfo.architectColor = architectColor;
     SceneNodeList architectParentNode = new SceneNodeList(getArchitectParentTransform(tileInfo));
     tileInfo.root.add(architectParentNode);
+    tileInfo.root.sendToFront(architectParentNode);
     tileInfo.architectNode = new Sprite(spriteResources.getPawn(architectColor),
         new ConstantTransform(new Vector2d(0, -0.01)));
     architectParentNode.add(tileInfo.architectNode);

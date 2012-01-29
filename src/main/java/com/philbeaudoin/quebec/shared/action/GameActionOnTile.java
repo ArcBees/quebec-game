@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.utils;
+package com.philbeaudoin.quebec.shared.action;
+
+import com.philbeaudoin.quebec.shared.state.Tile;
 
 /**
- * The interface for a transform that can be used to generate animations.
+ * A possible action that has a specific tile as a destination.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public abstract class AnimTransform implements Transform {
-
-  protected final double t0;
-  protected final double t1;
-
-  public AnimTransform(double t0, double t1) {
-    this.t0 = t0;
-    this.t1 = t1;
-  }
-
-  @Override
-  public boolean isAnimationCompleted(double time) {
-    return time >= t1;
-  }
+public interface GameActionOnTile extends GameAction {
+  /**
+   * Access the destination tile on which this action operates.
+   * @return The destination tile.
+   */
+  Tile getDestinationTile();
 }

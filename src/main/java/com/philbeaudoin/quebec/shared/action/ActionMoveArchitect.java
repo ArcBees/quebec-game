@@ -40,7 +40,7 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
  * The action of moving an architect.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionMoveArchitect implements PossibleActions, GameAction {
+public class ActionMoveArchitect implements PossibleActions, GameActionOnTile {
 
   private final Tile destinationTile;
   private final boolean neutralArchitect;
@@ -128,10 +128,7 @@ public class ActionMoveArchitect implements PossibleActions, GameAction {
     visitor.visit(this);
   }
 
-  /**
-   * Access the destination tile of this move architect action.
-   * @return The destination tile.
-   */
+  @Override
   public Tile getDestinationTile() {
     return destinationTile;
   }

@@ -32,7 +32,7 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
  * The action of sending worker cubes to a zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSendWorkers implements PossibleActions, GameAction {
+public class ActionSendWorkers implements PossibleActions, GameActionOnTile {
 
   private final Tile destinationTile;
 
@@ -86,10 +86,7 @@ public class ActionSendWorkers implements PossibleActions, GameAction {
     visitor.visit(this);
   }
 
-  /**
-   * Access the destination tile on which this action sends workers.
-   * @return The destination tile.
-   */
+  @Override
   public Tile getDestinationTile() {
     return destinationTile;
   }

@@ -110,7 +110,10 @@ public class GameStateRenderer {
     // Render the possible actions.
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
-      possibleActions.accept(interactionFactories.createPossibleActionsRenderer(gameState, this));
+      possibleActions.accept(interactionFactories.createInteractionRenderer(gameState, this));
+    }
+    for (Interaction interaction : interactions) {
+      interaction.highlight();
     }
   }
 
@@ -362,7 +365,7 @@ public class GameStateRenderer {
   public void onMouseMove(double x, double y, double time) {
     interactionRoot.clear();
     for (Interaction interaction : interactions) {
-      interaction.onMouseMove(x, y, this, time);
+      interaction.onMouseMove(x, y, time);
     }
   }
 
@@ -370,13 +373,13 @@ public class GameStateRenderer {
    * Indicates that the mouse has been clicked and that active interactions should be executed.
    * @param x The x location of the mouse.
    * @param y The y location of the mouse.
-   * @param gameState The game state.
+   * @param time The current time.
    */
-  public void onMouseClick(double x, double y, GameState gameState) {
+  public void onMouseClick(double x, double y, double time) {
     interactionRoot.clear();
     animationRoot.clear();
     for (Interaction interaction : interactions) {
-      interaction.onMouseClick(x, y, gameState, this);
+      interaction.onMouseClick(x, y, time);
     }
   }
 

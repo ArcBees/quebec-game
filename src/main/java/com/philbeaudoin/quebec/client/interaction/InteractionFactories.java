@@ -16,11 +16,9 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
-import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.scene.SceneNode;
-import com.philbeaudoin.quebec.client.utils.Animation;
-import com.philbeaudoin.quebec.shared.action.GameAction;
+import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -29,10 +27,11 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface InteractionFactories {
-  PossibleActionsRenderer createPossibleActionsRenderer(GameState gameState,
+  InteractionGenerator createInteractionRenderer(GameState gameState,
       GameStateRenderer gameStateRenderer);
-  Interaction getInteraction(Trigger trigger, SceneNode mouseOverNode,
-      @Assisted("enter") Animation mouseEnterAnim,
-      @Assisted("leave") Animation mouseLeaveAnim, GameAction action);
-  CircleTrigger getCircleTrigger(Vector2d translation, double radius);
+  InteractionMoveArchitect createInteractionMoveArchitect(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
+  InteractionSendWorkers createInteractionSendWorkers(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionSendWorkers action);
+  CircleTrigger createCircleTrigger(Vector2d translation, double radius);
 }
