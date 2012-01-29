@@ -22,17 +22,14 @@ import com.google.gwt.canvas.dom.client.Context2d;
  * A transform that animates between two others using an arc and an ease-in/ease-out curve.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ArcTransform implements Transform {
+public class ArcTransform extends AnimTransform {
   private final Transform start;
   private final Transform finish;
-  private final double t0;
-  private final double t1;
 
   public ArcTransform(Transform start, Transform finish, double t0, double t1) {
+    super(t0, t1);
     this.start = start;
     this.finish = finish;
-    this.t0 = t0;
-    this.t1 = t1;
   }
 
   @Override
@@ -105,10 +102,5 @@ public class ArcTransform implements Transform {
       r = 1;
     }
     return r;
-  }
-
-  @Override
-  public boolean isAnimationCompleted(double time) {
-    return time >= t1;
   }
 }

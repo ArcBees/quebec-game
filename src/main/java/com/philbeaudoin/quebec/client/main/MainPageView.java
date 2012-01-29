@@ -118,7 +118,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
         double height = canvas.getOffsetHeight();
         double x = event.getRelativeX(fullCanvas.getElement()) / height;
         double y = event.getRelativeY(fullCanvas.getElement()) / height;
-        presenter.onMouseMove(x, y);
+        presenter.onMouseMove(x, y, time);
       }
     });
 

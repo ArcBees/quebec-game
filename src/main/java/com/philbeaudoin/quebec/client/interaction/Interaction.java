@@ -26,6 +26,7 @@ import com.philbeaudoin.quebec.client.renderer.ChangeRendererGenerator;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
+import com.philbeaudoin.quebec.client.utils.Animation;
 import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
@@ -42,18 +43,26 @@ public class Interaction {
   private final RendererFactories rendererFactories;
   private final Trigger trigger;
   private final SceneNode mouseOverNode;
+  private final Animation mouseEnterAnim;
+  private final Animation mouseLeaveAnim;
   private final GameAction action;
   private CallbackRegistration animationCompletedRegistration;
+  private CallbackRegistration mouseOutRegistration;
+
+  private boolean inside;
 
   @Inject
   Interaction(Scheduler scheduler,
       RendererFactories rendererFactories,
       @Assisted Trigger trigger, @Assisted SceneNode mouseOverNode,
-      @Assisted GameAction action) {
+      @Assisted("enter") Animation mouseEnterAnim,
+      @Assisted("leave") Animation mouseLeaveAnim, @Assisted GameAction action) {
     this.scheduler = scheduler;
     this.rendererFactories = rendererFactories;
     this.trigger = trigger;
     this.mouseOverNode = mouseOverNode;
+    this.mouseEnterAnim = mouseEnterAnim;
+    this.mouseLeaveAnim = mouseLeaveAnim;
     this.action = action;
   }
 
@@ -63,10 +72,42 @@ public class Interaction {
    * @param x The x location of the mouse.
    * @param y The y location of the mouse.
    * @param gameStateRenderer The game state renderer.
+   * @param time The current time.
    */
-  public void onMouseMove(double x, double y, GameStateRenderer gameStateRenderer) {
+  public void onMouseMove(double x, double y, GameStateRenderer gameStateRenderer, double time) {
     if (trigger.triggerAt(x, y)) {
       gameStateRenderer.addToInteractionGraph(mouseOverNode);
+      if (!inside) {
+        if (mouseOutRegistration != null) {
+          mouseOutRegistration.unregister();
+          mouseOutRegistration = null;
+        }
+        inside = true;
+        gameStateRenderer.addToAnimationGraph(mouseEnterAnim.generate(time));
+      }
+    } else if (inside) {
+      inside = false;
+      final SceneNode animatedNode = mouseLeaveAnim.generate(time);
+      gameStateRenderer.addToAnimationGraph(animatedNode);
+      if (mouseOutRegistration != null) {
+        mouseOutRegistration.unregister();
+        mouseOutRegistration = null;
+      }
+      mouseOutRegistration = animatedNode.addAnimationCompletedCallback(new Callback() {
+        @Override
+        public void execute() {
+          scheduler.scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+              animatedNode.setParent(null);
+              if (mouseOutRegistration != null) {
+                mouseOutRegistration.unregister();
+                mouseOutRegistration = null;
+              }
+            }
+          });
+        }
+      });
     }
   }
 

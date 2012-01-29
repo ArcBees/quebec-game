@@ -161,7 +161,7 @@ public class BoardRenderer {
       if (influenceType == InfluenceType.CITADEL) {
         translation = new Vector2d(0.45, -0.05);
       } else {
-        translation = new Vector2d(0.51 * ((index % 2 == 0) ? 1 : -1),
+        translation = new Vector2d(0.51 * (((index + 1) % 4 / 2 == 0) ? 1 : -1),
                                    0.35 * ((index / 2 == 0) ? 1 : -1));
       }
       influenceZoneNode[index] = new SceneNodeList(new ConstantTransform(translation));
@@ -503,6 +503,16 @@ public class BoardRenderer {
     SceneNode highlightedTile = tileInfo.root.deepClone();
     highlightedTile.setParent(foregroundRoot);
     highlightedTile.setTransform(globalTransform);
+  }
+
+  /**
+   * Gets a copy of the scene node corresponding to the specified tile.
+   * @param tile The tile for which to get a copy of the scene node.
+   * @return A copied scene node corresponding to that tile.
+   */
+  public SceneNode copyTile(Tile tile) {
+    TileInfo tileInfo = findTileInfo(tile);
+    return tileInfo.root.deepClone();
   }
 
   private TileInfo findTileInfo(Tile tile) {
