@@ -45,8 +45,7 @@ public abstract class InteractionWithTile extends InteractionImpl {
 
   private CallbackRegistration bumpAnimRegistration;
 
-  protected InteractionWithTile(Scheduler scheduler,
-      InteractionFactories interactionFactories, RendererFactories rendererFactories,
+  protected InteractionWithTile(Scheduler scheduler, RendererFactories rendererFactories,
       GameState gameState, GameStateRenderer gameStateRenderer, GameActionOnTile action,
       Tile destinationTile, Transform destinationTransform) {
     super(scheduler, rendererFactories, gameState, gameStateRenderer,
@@ -61,17 +60,16 @@ public abstract class InteractionWithTile extends InteractionImpl {
     animatedTile = gameStateRenderer.copyTile(destinationTile);
   }
 
-  protected InteractionWithTile(Scheduler scheduler,
-      InteractionFactories factories, RendererFactories rendererFactories, GameState gameState,
-      GameStateRenderer gameStateRenderer, GameActionOnTile action, Tile destinationTile) {
-    this(scheduler, factories, rendererFactories, gameState, gameStateRenderer, action,
+  protected InteractionWithTile(Scheduler scheduler, RendererFactories rendererFactories,
+      GameState gameState, GameStateRenderer gameStateRenderer, GameActionOnTile action,
+      Tile destinationTile) {
+    this(scheduler, rendererFactories, gameState, gameStateRenderer, action,
         destinationTile, gameStateRenderer.getTileTransform(destinationTile));
   }
 
-  protected InteractionWithTile(Scheduler scheduler,
-      InteractionFactories factories, RendererFactories rendererFactories,  GameState gameState,
-      GameStateRenderer gameStateRenderer, GameActionOnTile action) {
-    this(scheduler, factories, rendererFactories, gameState, gameStateRenderer, action,
+  protected InteractionWithTile(Scheduler scheduler, RendererFactories rendererFactories,
+      GameState gameState, GameStateRenderer gameStateRenderer, GameActionOnTile action) {
+    this(scheduler, rendererFactories, gameState, gameStateRenderer, action,
         action.getDestinationTile());
   }
 

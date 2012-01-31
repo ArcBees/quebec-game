@@ -39,11 +39,10 @@ public class InteractionMoveArchitect extends InteractionWithTile {
 
   private final SceneNodeList arrows;
 
-  private InteractionMoveArchitect(Scheduler scheduler,
-      InteractionFactories factories, RendererFactories rendererFactories, GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionMoveArchitect action, Tile destinationTile) {
-    super(scheduler, factories, rendererFactories, gameState, gameStateRenderer, action,
-        destinationTile);
+  private InteractionMoveArchitect(Scheduler scheduler, RendererFactories rendererFactories,
+      GameState gameState, GameStateRenderer gameStateRenderer, ActionMoveArchitect action,
+      Tile destinationTile) {
+    super(scheduler, rendererFactories, gameState, gameStateRenderer, action, destinationTile);
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     TileState origin = gameState.findTileUnderArchitect(playerColor);
@@ -65,18 +64,19 @@ public class InteractionMoveArchitect extends InteractionWithTile {
     Transform architectTo = gameStateRenderer.getArchitectOnTileTransform(destinationTile);
     arrows.add(new Arrow(architectFrom.getTranslation(0), architectTo.getTranslation(0)));
 
-    // Arrow to move passive cubes to active.
-    Transform cubeFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, false);
-    Transform cubeTo = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, true);
-    arrows.add(new Arrow(cubeFrom.getTranslation(0), cubeTo.getTranslation(0)));
+    // Arrow to move passive cubes to active, if needed.
+    if (gameState.getCurrentPlayer().getNbPassiveCubes() > 0) {
+      Transform cubeFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, false);
+      Transform cubeTo = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, true);
+      arrows.add(new Arrow(cubeFrom.getTranslation(0), cubeTo.getTranslation(0)));
+    }
   }
 
   @Inject
-  public InteractionMoveArchitect(Scheduler scheduler,
-      InteractionFactories factories, RendererFactories rendererFactories,
+  public InteractionMoveArchitect(Scheduler scheduler, RendererFactories rendererFactories,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
       @Assisted ActionMoveArchitect action) {
-    this(scheduler, factories, rendererFactories, gameState, gameStateRenderer, action,
+    this(scheduler, rendererFactories, gameState, gameStateRenderer, action,
         action.getDestinationTile());
   }
 

@@ -242,4 +242,18 @@ public class GameState {
     // TODO: Check for end-of-round and score.
     gameController.configuePossibleActions(this);
   }
+
+  /**
+   * Count the number of player who hold a player card.
+   * @return The number of player who hold a player card.
+   */
+  public int nbPlayerWithLeaders() {
+    int result = 0;
+    for (PlayerState playerState : playerStates) {
+      if (playerState.getLeaderCard() != null) {
+        result++;
+      }
+    }
+    return result;
+  }
 }

@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.state;
-
-import com.philbeaudoin.quebec.shared.InfluenceType;
+package com.philbeaudoin.quebec.shared.statechange;
 
 /**
- * A specific leader card. This information never changes during the game.
- * TODO: Refactor into an enum.
+ * Interface for a class that can visit a {@link LeaderDestination}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class LeaderCard {
-  private final InfluenceType influenceType;
-
-  public LeaderCard(InfluenceType influenceType) {
-    this.influenceType = influenceType;
-  }
-
+public interface LeaderDestinationVisitor {
   /**
-   * Access the influence type of that leader card.
-   * @return The influence type.
+   * Visits a {@link LeaderDestinationBoard}.
+   * @param host The visited class.
    */
-  public InfluenceType getInfluenceType() {
-    return influenceType;
-  }
+  void visit(LeaderDestinationBoard host);
+  /**
+   * Visits a {@link LeaderDestinationPlayer}.
+   * @param host The visited class.
+   */
+  void visit(LeaderDestinationPlayer host);
 }

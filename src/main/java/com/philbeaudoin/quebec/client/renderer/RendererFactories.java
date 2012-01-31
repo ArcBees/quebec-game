@@ -22,6 +22,8 @@ import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationTile;
+import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationBoard;
+import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationPlayer;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -43,17 +45,25 @@ public interface RendererFactories {
   ChangeRendererMoveArchitect createChangeRendererMoveArchitect(
       @Assisted("from") SceneArchitectDestination from,
       @Assisted("to") SceneArchitectDestination to);
+  ChangeRendererMoveLeader createChangeRendererMoveLeader(
+      @Assisted("from") SceneLeaderDestination from, @Assisted("to") SceneLeaderDestination to);
   ChangeRendererNull createChangeRendererNull();
 
   SceneCubeDestinationGenerator createSceneCubeDestinationGenerator();
-  SceneArchitectDestinationGenerator createSceneArchitectDestinationGenerator();
   SceneCubeDestinationInfluenceZone createSceneCubeDestinationInfluenceZone(
       CubeDestinationInfluenceZone cubeDestinationInfluenceZone);
   SceneCubeDestinationPlayer createSceneCubeDestinationPlayer(
       CubeDestinationPlayer cubeDestinationPlayer);
   SceneCubeDestinationTile createSceneCubeDestinationTile(CubeDestinationTile cubeDestinationTile);
+
+  SceneArchitectDestinationGenerator createSceneArchitectDestinationGenerator();
   SceneArchitectDestinationTile createSceneArchitectDestinationTile(
       ArchitectDestinationTile architectDestinationTile);
   SceneArchitectDestinationPlayer createSceneArchitectDestinationPlayer(
       ArchitectDestinationPlayer architectDestinationPlayer);
+  SceneArchitectDestinationOffboardNeutral createSceneArchitectDestinationOffboardNeutral();
+
+  SceneLeaderDestinationGenerator createSceneLeaderDestinationGenerator();
+  SceneLeaderDestinationPlayer createSceneLeaderDestinationPlayer(LeaderDestinationPlayer host);
+  SceneLeaderDestinationBoard createSceneLeaderDestinationBoard(LeaderDestinationBoard host);
 }

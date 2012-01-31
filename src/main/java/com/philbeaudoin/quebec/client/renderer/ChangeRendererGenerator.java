@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveLeader;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeVisitor;
 
@@ -100,5 +101,18 @@ public class ChangeRendererGenerator implements GameStateChangeVisitor {
   @Override
   public void visit(GameStateChangeNextPlayer host) {
     changeRenderer = factories.createChangeRendererNull();
+  }
+
+  @Override
+  public void visit(GameStateChangeMoveLeader host) {
+    SceneLeaderDestinationGenerator generatorFrom =
+        factories.createSceneLeaderDestinationGenerator();
+    host.getFrom().accept(generatorFrom);
+    SceneLeaderDestinationGenerator generatorTo =
+        factories.createSceneLeaderDestinationGenerator();
+    host.getTo().accept(generatorTo);
+    changeRenderer = factories.createChangeRendererMoveLeader(
+        generatorFrom.getSceneLeaderDestination(),
+        generatorTo.getSceneLeaderDestination());
   }
 }

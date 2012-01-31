@@ -20,6 +20,7 @@ import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
+import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -35,4 +36,6 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, ActionSendWorkers action);
   InteractionSendOneWorker createInteractionSendOneWorker(GameState gameState,
       GameStateRenderer gameStateRenderer, ActionSendOneWorker host);
+  InteractionTakeLeaderCard createInteractionTakeLeaderCard(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionTakeLeaderCard host);
 }

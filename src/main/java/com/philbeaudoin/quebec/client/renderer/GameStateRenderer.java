@@ -31,6 +31,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.utils.Callback;
@@ -62,7 +63,7 @@ public class GameStateRenderer {
   private final ArrayList<PlayerStateRenderer> playerStateRenderers =
       new ArrayList<PlayerStateRenderer>(5);
 
-  private boolean forceHighlight;
+  private boolean forceGlassScreen;
   private boolean refreshNeeded = true;
 
   @Inject
@@ -116,7 +117,7 @@ public class GameStateRenderer {
   }
 
   private void addOrClearGlassScreen() {
-    boolean glassScreenNeeded = !foregroundRoot.getChildren().isEmpty() || forceHighlight;
+    boolean glassScreenNeeded = !foregroundRoot.getChildren().isEmpty() || forceGlassScreen;
     boolean glassScreenPresent = !glassScreenRoot.getChildren().isEmpty();
     // If there is anything in the foreground, show the glass screen
     if (glassScreenNeeded && !glassScreenPresent) {
@@ -336,6 +337,78 @@ public class GameStateRenderer {
   }
 
   /**
+   * Remove the leader card from the given player zone.
+   * @param playerColor The color of the player zone from which to remove the leader card (not NONE
+   *     or NEUTRAL).
+   * @return The global transforms of the removed leader card.
+   */
+  public Transform removeLeaderCardFromPlayer(PlayerColor playerColor) {
+    assert playerColor.isNormalColor();
+    PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
+    assert playerStateRenderer != null;
+    refreshNeeded = true;
+    return playerStateRenderer.removeLeaderCard();
+  }
+
+  /**
+   * Add the leader card to the given player zone.
+   * @param playerColor The color of the player zone to which to add the leader card (not NONE
+   *     or NEUTRAL).
+   * @param leaderCard The leader card to add.
+   * @return The global transforms of the added leader card.
+   */
+  public Transform addLeaderCardToPlayer(PlayerColor playerColor, LeaderCard leaderCard) {
+    assert playerColor.isNormalColor();
+    PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
+    assert playerStateRenderer != null;
+    refreshNeeded = true;
+    return playerStateRenderer.addLeaderCard(leaderCard);
+  }
+
+  /**
+   * Gets the global transform of the leader card location on a given player.
+   * @param playerColor The color of the player zone on which to look for the leader card transform
+   *     (not NONE or NEUTRAL).
+   * @return The global transforms of the leader card location.
+   */
+  public Transform getLeaderCardOnPlayerTransform(PlayerColor playerColor) {
+    assert playerColor.isNormalColor();
+    PlayerStateRenderer playerStateRenderer = getPlayerStateRenderer(playerColor);
+    assert playerStateRenderer != null;
+    refreshNeeded = true;
+    return playerStateRenderer.getLeaderCardTransform();
+  }
+
+  /**
+   * Remove the leader card from the board.
+   * @param leaderCard The leader card to remove.
+   * @return The global transforms of the removed leader card.
+   */
+  public Transform removeLeaderCardFromBoard(LeaderCard leaderCard) {
+    refreshNeeded = true;
+    return boardRenderer.removeLeaderCard(leaderCard);
+  }
+
+  /**
+   * Add the leader card to the board.
+   * @param leaderCard The leader card to add.
+   * @return The global transforms of the added leader card.
+   */
+  public Transform addLeaderCardToBoard(LeaderCard leaderCard) {
+    refreshNeeded = true;
+    return boardRenderer.addLeaderCard(leaderCard);
+  }
+
+  /**
+   * Gets the global transform of the leader card location on the board.
+   * @param leaderCard The leader card to get.
+   * @return The global transforms of the leader card location.
+   */
+  public Transform getLeaderCardOnBoardTransform(LeaderCard leaderCard) {
+    return boardRenderer.getLeaderCardTransform(leaderCard);
+  }
+
+  /**
    * Highlight a specific tile.
    * @param tile The tile to highlight.
    */
@@ -345,9 +418,22 @@ public class GameStateRenderer {
     addOrClearGlassScreen();
   }
 
-  public void forceHighlight() {
+  /**
+   * Highlight a specific leader card on the board.
+   * @param leaderCard The leader card to highlight.
+   */
+  public void highlightLeaderCard(LeaderCard leaderCard) {
     refreshNeeded = true;
-    forceHighlight = true;
+    boardRenderer.highlightLeaderCard(foregroundRoot, leaderCard);
+    addOrClearGlassScreen();
+  }
+
+  /**
+   * Forces the glass screen to be shown so tiles drawn in the animation layer appear highlighted.
+   */
+  public void forceGlassScreen() {
+    refreshNeeded = true;
+    forceGlassScreen = true;
     addOrClearGlassScreen();
   }
 
@@ -361,11 +447,20 @@ public class GameStateRenderer {
   }
 
   /**
+   * Gets a copy of the scene node corresponding to the specified leader card on the board.
+   * @param leaderCard The leader card for which to get a copy of the scene node.
+   * @return A copied scene node corresponding to that leader card.
+   */
+  public SceneNode copyLeaderCardOnBoard(LeaderCard leaderCard) {
+    return boardRenderer.copyLeaderCard(leaderCard);
+  }
+
+  /**
    * Remove all the highlighted components by clearing all the node in the foreground layer.
    */
   public void removeAllHighlights() {
     refreshNeeded = true;
-    forceHighlight = false;
+    forceGlassScreen = false;
     foregroundRoot.clear();
     addOrClearGlassScreen();
   }

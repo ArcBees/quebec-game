@@ -30,8 +30,8 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes GameStateChangeMoveCubes} to a
- * scene graph.
+ * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes GameStateChangeMoveCubes}
+ * to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ChangeRendererMoveCubes implements ChangeRenderer {

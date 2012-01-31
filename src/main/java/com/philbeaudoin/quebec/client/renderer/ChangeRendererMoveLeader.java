@@ -27,28 +27,28 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes GameStateChangeMoveCubes} to a
- * scene graph.
+ * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveLeader GameStateChangeMoveLeader}
+ * to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ChangeRendererMoveArchitect implements ChangeRenderer {
+public class ChangeRendererMoveLeader implements ChangeRenderer {
 
   private final SpriteResources spriteResources;
   private final UserPreferences userPreferences;
-  private final SceneArchitectDestination from;
-  private final SceneArchitectDestination to;
+  private final SceneLeaderDestination from;
+  private final SceneLeaderDestination to;
 
   @Inject
-  ChangeRendererMoveArchitect(
+  ChangeRendererMoveLeader(
       SpriteResources spriteResources,
       UserPreferences userPreferences,
-      @Assisted("from") SceneArchitectDestination from,
-      @Assisted("to") SceneArchitectDestination to) {
+      @Assisted("from") SceneLeaderDestination from,
+      @Assisted("to") SceneLeaderDestination to) {
     this.spriteResources = spriteResources;
     this.userPreferences = userPreferences;
     this.from = from;
     this.to = to;
-    assert from.getArchitectColor() == to.getArchitectColor();
+    assert from.getLeaderCard() == to.getLeaderCard();
   }
 
   @Override
@@ -76,7 +76,7 @@ public class ChangeRendererMoveArchitect implements ChangeRenderer {
     Transform startTransform = from.removeFrom(renderer);
     Transform finishTransform = to.addTo(renderer);
     double endingTime = startingTime + userPreferences.getAnimDuration();
-    Sprite sprite = new Sprite(spriteResources.getPawn(from.getArchitectColor()),
+    Sprite sprite = new Sprite(spriteResources.getLeader(from.getLeaderCard().getInfluenceType()),
         new ArcTransform(startTransform, finishTransform, startingTime, endingTime));
     renderer.addToAnimationGraph(sprite);
   }

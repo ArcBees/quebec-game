@@ -23,6 +23,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
+import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -99,7 +100,8 @@ public class GameController {
     PossibleActionsComposite possibleActions = new PossibleActionsComposite();
     gameState.setPossibleActions(possibleActions);
 
-    int nbActiveCubes = gameState.getCurrentPlayer().getNbActiveCubes();
+    PlayerState currentPlayer = gameState.getCurrentPlayer();
+    int nbActiveCubes = currentPlayer.getNbActiveCubes();
 
     // Mark moving architect or sending workers as a possible action.
     for (TileState tileState : gameState.getTileStates()) {
@@ -121,6 +123,11 @@ public class GameController {
       }
     }
 
-    // TODO: Mark selecting cards as a valid initial action.
+    // Mark getting a leader card as a possible action.
+    if (currentPlayer.getLeaderCard() == null) {
+      for (LeaderCard leaderCard : gameState.getAvailableLeaderCards()) {
+        possibleActions.add(new ActionTakeLeaderCard(leaderCard));
+      }
+    }
   }
 }
