@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.client.renderer;
 
 import javax.inject.Inject;
 
+import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationOffboardNeutral;
 import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
 import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationVisitor;
@@ -54,5 +55,9 @@ public class SceneArchitectDestinationGenerator implements ArchitectDestinationV
   @Override
   public void visit(ArchitectDestinationPlayer host) {
     sceneArchitectDestination = rendererFactory.createSceneArchitectDestinationPlayer(host);
+  }
+  @Override
+  public void visit(ArchitectDestinationOffboardNeutral host) {
+    sceneArchitectDestination = rendererFactory.createSceneArchitectDestinationOffboardNeutral();
   }
 }

@@ -14,27 +14,30 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.state;
+package com.philbeaudoin.quebec.client.interaction;
 
-import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * A specific leader card. This information never changes during the game.
- * TODO: Refactor into an enum.
+ * A trigger that is triggered when a location is within a given rectangle.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class LeaderCard {
-  private final InfluenceType influenceType;
+public class SquareTrigger implements Trigger {
 
-  public LeaderCard(InfluenceType influenceType) {
-    this.influenceType = influenceType;
+  private final double minX;
+  private final double minY;
+  private final double maxX;
+  private final double maxY;
+
+  SquareTrigger(Vector2d center, double width, double height) {
+    minX = center.getX() - width / 2.0;
+    minY = center.getY() - height / 2.0;
+    maxX = minX + width;
+    maxY = minY + height;
   }
 
-  /**
-   * Access the influence type of that leader card.
-   * @return The influence type.
-   */
-  public InfluenceType getInfluenceType() {
-    return influenceType;
+  @Override
+  public boolean triggerAt(double x, double y) {
+    return minX <= x && x <= maxX && minY <= y && y <= maxY;
   }
 }

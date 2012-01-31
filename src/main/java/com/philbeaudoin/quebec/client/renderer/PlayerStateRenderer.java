@@ -31,6 +31,7 @@ import com.philbeaudoin.quebec.client.scene.Text;
 import com.philbeaudoin.quebec.client.utils.CubeGrid;
 import com.philbeaudoin.quebec.client.utils.PawnStack;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -62,7 +63,9 @@ public class PlayerStateRenderer {
   private final ScoreRenderer scoreRenderer;
   private final ArrayList<SceneNode> activeCubeStack = new ArrayList<SceneNode>();
   private final ArrayList<SceneNode> passiveCubeStack = new ArrayList<SceneNode>();
+  private final Transform leaderCardTransform;
 
+  private SceneNode leaderCardNode;
   private PlayerColor playerColor;
 
   /**
@@ -89,6 +92,7 @@ public class PlayerStateRenderer {
         new ConstantTransform(new Vector2d(width * 0.61, height * 0.55)));
     this.scoreRenderer = scoreRenderer;
     this.playerColor = PlayerColor.NONE;
+    leaderCardTransform = new ConstantTransform(new Vector2d(width * 0.8, height * 0.58));
   }
 
   /**
@@ -114,6 +118,7 @@ public class PlayerStateRenderer {
     passiveCubes.clear();
     activeCubes.clear();
     pawns.clear();
+    leaderCardNode = null;
     String contourColor = playerState.isCurrentPlayer() ? "#000" : null;
     Rectangle mat = new Rectangle(0, 0, width, height,
         COLOR[paletteIndex][0], COLOR[paletteIndex][1], contourColor, 6);
@@ -144,11 +149,9 @@ public class PlayerStateRenderer {
       addArchitect(true);
     }
 
-    if (playerState.getLeaderCard() != null) {
-      Sprite card = new Sprite(spriteResources.getLeader(
-          playerState.getLeaderCard().getInfluenceType()),
-          new ConstantTransform(new Vector2d(width * 0.8, height * 0.58)));
-      playerZone.add(card);
+    LeaderCard leaderCard = playerState.getLeaderCard();
+    if (leaderCard != null) {
+      addLeaderCard(leaderCard);
     }
 
     root.add(playerZone);
@@ -260,6 +263,39 @@ public class PlayerStateRenderer {
         new ConstantTransform(pawnStack.getPosition(index)));
     pawns.add(architect[index]);
     return architect[index].getTotalTransform(0);
+  }
+
+  /**
+   * Remove the leader card from the player zone.
+   * @return The global transforms of the removed leader card.
+   */
+  public Transform removeLeaderCard() {
+    assert leaderCardNode != null;
+    Transform result = leaderCardNode.getTotalTransform(0);
+    leaderCardNode.setParent(null);
+    leaderCardNode = null;
+    return result;
+  }
+
+  /**
+   * Adds the leader card to the player zone.
+   * @param leaderCard The leader card to add.
+   * @return The global transforms of the added leader card.
+   */
+  public Transform addLeaderCard(LeaderCard leaderCard) {
+    assert leaderCardNode == null;
+    leaderCardNode = new Sprite(spriteResources.getLeader(leaderCard.getInfluenceType()),
+        leaderCardTransform);
+    playerZone.add(leaderCardNode);
+    return leaderCardNode.getTotalTransform(0);
+  }
+
+  /**
+   * Gets the global transform of the leader card location.
+   * @return The global transforms of the leader card location.
+   */
+  public Transform getLeaderCardTransform() {
+    return playerZone.getTotalTransform(0).times(leaderCardTransform);
   }
 
   /**

@@ -38,11 +38,10 @@ public class InteractionSendWorkers extends InteractionWithTile {
 
   private final SceneNodeList arrows;
 
-  private InteractionSendWorkers(Scheduler scheduler,
-      InteractionFactories factories, RendererFactories rendererFactories, GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionSendWorkers action, Tile destinationTile) {
-    super(scheduler, factories, rendererFactories, gameState, gameStateRenderer, action,
-        destinationTile);
+  private InteractionSendWorkers(Scheduler scheduler, RendererFactories rendererFactories,
+      GameState gameState, GameStateRenderer gameStateRenderer, ActionSendWorkers action,
+      Tile destinationTile) {
+    super(scheduler, rendererFactories, gameState, gameStateRenderer, action, destinationTile);
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
 
     arrows = new SceneNodeList();
@@ -54,11 +53,10 @@ public class InteractionSendWorkers extends InteractionWithTile {
   }
 
   @Inject
-  public InteractionSendWorkers(Scheduler scheduler,
-      InteractionFactories factories, RendererFactories rendererFactories,
+  public InteractionSendWorkers(Scheduler scheduler, RendererFactories rendererFactories,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
       @Assisted ActionSendWorkers action) {
-    this(scheduler, factories, rendererFactories, gameState, gameStateRenderer, action,
+    this(scheduler, rendererFactories, gameState, gameStateRenderer, action,
         action.getDestinationTile());
   }
 

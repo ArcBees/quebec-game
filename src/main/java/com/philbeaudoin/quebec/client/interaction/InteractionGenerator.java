@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.action.AcceptPossibleActions;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
+import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
 import com.philbeaudoin.quebec.shared.action.PossibleActionsVisitor;
@@ -75,6 +76,12 @@ public class InteractionGenerator implements PossibleActionsVisitor {
   @Override
   public void visit(ActionSendOneWorker host) {
     gameStateRenderer.addInteraction(factories.createInteractionSendOneWorker(gameState,
+        gameStateRenderer, host));
+  }
+
+  @Override
+  public void visit(ActionTakeLeaderCard host) {
+    gameStateRenderer.addInteraction(factories.createInteractionTakeLeaderCard(gameState,
         gameStateRenderer, host));
   }
 }

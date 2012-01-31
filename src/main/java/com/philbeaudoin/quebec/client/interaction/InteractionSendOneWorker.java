@@ -98,7 +98,7 @@ public class InteractionSendOneWorker extends InteractionImpl {
   public void highlight() {
     // Hide the non-highlighted no to ensure we don't double-render it.
     gameStateRenderer.getInfluenceZoneNode(influenceZone).setVisible(false);
-    gameStateRenderer.forceHighlight();
+    gameStateRenderer.forceGlassScreen();
     gameStateRenderer.addToAnimationGraph(zoneNode);
   }
 

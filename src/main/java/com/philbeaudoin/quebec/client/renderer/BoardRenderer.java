@@ -90,6 +90,8 @@ public class BoardRenderer {
   private final SceneNodeList[] influenceZoneNode = new SceneNodeList[5];
   private final CubeStack[][] cubeStacksInZone = new CubeStack[5][5];  // [influenceType][line]
 
+  private final SceneNode[] leaderCardNode = new SceneNode[5];
+
   @Inject
   BoardRenderer(SpriteResources spriteResources, @Assisted double leftPosition) {
     this.spriteResources = spriteResources;
@@ -144,6 +146,10 @@ public class BoardRenderer {
       }
     }
 
+    for (int i = 0; i < 5; ++i) {
+      leaderCardNode[i] = null;
+    }
+
     renderCards(gameState);
     renderInfluenceZones(gameState);
     renderTiles(gameState);
@@ -159,11 +165,7 @@ public class BoardRenderer {
 
   private void renderCards(GameState gameState) {
     for (LeaderCard leaderCard : gameState.getAvailableLeaderCards()) {
-      InfluenceType influenceType = leaderCard.getInfluenceType();
-      double x = 0.068 * influenceType.ordinal() + 0.09;
-      Sprite card = new Sprite(spriteResources.getLeader(influenceType),
-          new ConstantTransform(new Vector2d(x, -0.3)));
-      backgroundBoardRoot.add(card);
+      addLeaderCard(leaderCard);
     }
   }
 
@@ -514,10 +516,24 @@ public class BoardRenderer {
    */
   public void highlightTile(SceneNodeList foregroundRoot, Tile tile) {
     TileInfo tileInfo = findTileInfo(tile);
+    assert tileInfo != null;
     Transform globalTransform = tileInfo.root.getTotalTransform(0);
     SceneNode highlightedTile = tileInfo.root.deepClone();
     highlightedTile.setParent(foregroundRoot);
     highlightedTile.setTransform(globalTransform);
+  }
+
+  /**
+   * Highlight a specific leader card on the board.
+   * @param leaderCard The leader card to highlight.
+   */
+  public void highlightLeaderCard(SceneNodeList foregroundRoot, LeaderCard leaderCard) {
+    SceneNode node = leaderCardNode[leaderCard.getInfluenceType().ordinal()];
+    assert node != null;
+    Transform globalTransform = node.getTotalTransform(0);
+    SceneNode highlightedCard = node.deepClone();
+    highlightedCard.setParent(foregroundRoot);
+    highlightedCard.setTransform(globalTransform);
   }
 
   /**
@@ -528,6 +544,17 @@ public class BoardRenderer {
   public SceneNode copyTile(Tile tile) {
     TileInfo tileInfo = findTileInfo(tile);
     return tileInfo.root.deepClone();
+  }
+
+  /**
+   * Gets a copy of the scene node corresponding to the specified leader card on the board.
+   * @param leaderCard The leader card for which to get a copy of the scene node.
+   * @return A copied scene node corresponding to that leader card.
+   */
+  public SceneNode copyLeaderCard(LeaderCard leaderCard) {
+    SceneNode node = leaderCardNode[leaderCard.getInfluenceType().ordinal()];
+    assert node != null;
+    return node.deepClone();
   }
 
   private TileInfo findTileInfo(Tile tile) {
@@ -548,5 +575,50 @@ public class BoardRenderer {
     for (SceneNode node : influenceZoneNode)  {
       node.setVisible(true);
     }
+  }
+
+  /**
+   * Remove the leader card from the board.
+   * @param leaderCard The leader card to remove.
+   * @return The global transforms of the removed leader card.
+   */
+  public Transform removeLeaderCard(LeaderCard leaderCard) {
+    InfluenceType influenceType = leaderCard.getInfluenceType();
+    int index = influenceType.ordinal();
+    assert leaderCardNode[index] != null;
+    Transform result = leaderCardNode[index].getTotalTransform(0);
+    leaderCardNode[index].setParent(null);
+    leaderCardNode[index] = null;
+    return result;
+  }
+
+  /**
+   * Add the leader card to the board.
+   * @param leaderCard The leader card to add.
+   * @return The global transforms of the added leader card.
+   */
+  public Transform addLeaderCard(LeaderCard leaderCard) {
+    InfluenceType influenceType = leaderCard.getInfluenceType();
+    int index = influenceType.ordinal();
+    assert leaderCardNode[index] == null;
+    leaderCardNode[index] = new Sprite(spriteResources.getLeader(influenceType),
+        getLeaderCardTransform(index));
+    backgroundBoardRoot.add(leaderCardNode[index]);
+    return leaderCardNode[index].getTotalTransform(0);
+  }
+
+  /**
+   * Gets the global transform of the leader card location on the board.
+   * @param leaderCard The leader card to get.
+   * @return The global transforms of the leader card location.
+   */
+  public Transform getLeaderCardTransform(LeaderCard leaderCard) {
+    int index = leaderCard.getInfluenceType().ordinal();
+    return backgroundBoardRoot.getTotalTransform(0).times(getLeaderCardTransform(index));
+  }
+
+  private ConstantTransform getLeaderCardTransform(int index) {
+    double x = 0.068 * index + 0.09;
+    return new ConstantTransform(new Vector2d(x, -0.3));
   }
 }

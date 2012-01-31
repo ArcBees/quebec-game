@@ -44,4 +44,10 @@ public interface PossibleActionsVisitor {
    * @param host The visited class.
    */
   void visit(ActionSendOneWorker host);
+
+  /**
+   * Visits a {@link ActionTakeLeaderCard}.
+   * @param host The visited class.
+   */
+  void visit(ActionTakeLeaderCard host);
 }
