@@ -28,25 +28,51 @@ import com.philbeaudoin.quebec.shared.state.TileState;
 public class GameStateChangeFlipTile implements GameStateChange {
 
   private final Tile tile;
-  private final PlayerColor playerColor;
+  private final PlayerColor starTokenColor;
   private final int nbStars;
 
-  public GameStateChangeFlipTile(Tile tile, PlayerColor playerColor, int nbStars) {
+  public GameStateChangeFlipTile(Tile tile, PlayerColor starTokenColor, int nbStars) {
     this.tile = tile;
-    this.playerColor = playerColor;
+    this.starTokenColor = starTokenColor;
     this.nbStars = nbStars;
+    assert starTokenColor != PlayerColor.NONE || nbStars == 0;
+    assert nbStars != 0 || starTokenColor == PlayerColor.NONE;
   }
 
   @Override
   public void apply(GameState gameState) {
     TileState tileState = gameState.getTileState(tile);
     tileState.setBuildingFacing(true);
-    PlayerColor starTokenColor = nbStars == 0 ? PlayerColor.NONE : playerColor;
-    tileState.setStarToken(starTokenColor, nbStars);
+    tileState.setStarToken(this.starTokenColor, nbStars);
   }
 
   @Override
   public void accept(GameStateChangeVisitor visitor) {
     visitor.visit(this);
+  }
+
+  /**
+   * Access the tile to flip.
+   * @return The tile to flip.
+   */
+  public Tile getTile() {
+    return tile;
+  }
+
+  /**
+   * Access the color of the player owning the star token on that tile, can be {@code NONE} if there
+   * is no star token.
+   * @return The color of the player, or NONE.
+   */
+  public PlayerColor getStarTokenColor() {
+    return starTokenColor;
+  }
+
+  /**
+   * Access the number of stars on the token, 0 if there are no star token.
+   * @return The number of star on the token.
+   */
+  public int getNbStars() {
+    return nbStars;
   }
 }

@@ -192,6 +192,36 @@ public interface Resources extends ClientBundle {
   DataResource influenceZoneCultural();
   @Source("gray_zone.png")
   DataResource influenceZoneCitadel();
+  @Source("star_black_1.png")
+  DataResource starBlack1();
+  @Source("star_black_2.png")
+  DataResource starBlack2();
+  @Source("star_black_3.png")
+  DataResource starBlack3();
+  @Source("star_white_1.png")
+  DataResource starWhite1();
+  @Source("star_white_2.png")
+  DataResource starWhite2();
+  @Source("star_white_3.png")
+  DataResource starWhite3();
+  @Source("star_orange_1.png")
+  DataResource starOrange1();
+  @Source("star_orange_2.png")
+  DataResource starOrange2();
+  @Source("star_orange_3.png")
+  DataResource starOrange3();
+  @Source("star_green_1.png")
+  DataResource starGreen1();
+  @Source("star_green_2.png")
+  DataResource starGreen2();
+  @Source("star_green_3.png")
+  DataResource starGreen3();
+  @Source("star_pink_1.png")
+  DataResource starPink1();
+  @Source("star_pink_2.png")
+  DataResource starPink2();
+  @Source("star_pink_3.png")
+  DataResource starPink3();
 
   @Source("quebec.css")
   Style style();

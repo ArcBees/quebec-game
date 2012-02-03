@@ -65,6 +65,7 @@ public class BoardRenderer {
     SceneNode architectNode;
     SceneNode activeTokenNode;
     CubeStack cubesOnSpot[] = new CubeStack[3];
+    SceneNodeList starTokenNode;
     public TileInfo(SceneNodeList root, Tile tile, double rotation) {
       this.root = root;
       this.tile = tile;
@@ -241,8 +242,10 @@ public class BoardRenderer {
     tileInfo.tileSprite = new Sprite(spriteResources.getBuildingTile(tile.getInfluenceType(),
         tile.getCentury(), tile.getBuildingIndex()));
     tileNode.add(tileInfo.tileSprite);
-
-    // TODO: Render star marker.
+    PlayerColor starTokenColor = tileState.getStarTokenColor();
+    if (starTokenColor != PlayerColor.NONE) {
+      addStarTokenTo(tileInfo, tileState.getStarTokenColor(), tileState.getNbStars());
+    }
   }
 
   private Transform getTileTransform(int column, int line, double scaling,
@@ -615,6 +618,43 @@ public class BoardRenderer {
   public Transform getLeaderCardTransform(LeaderCard leaderCard) {
     int index = leaderCard.getInfluenceType().ordinal();
     return backgroundBoardRoot.getTotalTransform(0).times(getLeaderCardTransform(index));
+  }
+
+  /**
+   * Removes a star token sitting on a given tile. Does nothing if the tile has no star token.
+   * @param tile The tile from which to remove the star token.
+   */
+  public void removeStarTokenFrom(Tile tile) {
+    TileInfo tileInfo = findTileInfo(tile);
+    assert tileInfo != null;
+    if (tileInfo.starTokenNode != null) {
+      tileInfo.starTokenNode.setParent(null);
+      tileInfo.starTokenNode = null;
+    }
+  }
+
+  /**
+   * Adds a star token on a given tile, returns the transform of the added token.
+   * @param tile The tile to which to add the star token.
+   * @param starTokenColor The color of the star token to add.
+   * @param nbStars The number of stars to add.
+   * @return The transform of the newly added star token.
+   */
+  public Transform addStarTokenTo(Tile tile, PlayerColor starTokenColor, int nbStars) {
+    return addStarTokenTo(findTileInfo(tile), starTokenColor, nbStars);
+  }
+
+  private Transform addStarTokenTo(TileInfo tileInfo, PlayerColor starTokenColor, int nbStars) {
+    assert tileInfo != null;
+    assert tileInfo.starTokenNode == null;
+    tileInfo.starTokenNode = new SceneNodeList(new ConstantTransform(new Vector2d(), 1,
+        -tileInfo.rotation));
+    tileInfo.root.add(tileInfo.starTokenNode);
+    tileInfo.root.sendToFront(tileInfo.starTokenNode);
+    Sprite starToken = new Sprite(spriteResources.getStarToken(starTokenColor, nbStars),
+        new ConstantTransform(new Vector2d(0, -0.02)));
+    tileInfo.starTokenNode.add(starToken);
+    return starToken.getTotalTransform(0);
   }
 
   private ConstantTransform getLeaderCardTransform(int index) {

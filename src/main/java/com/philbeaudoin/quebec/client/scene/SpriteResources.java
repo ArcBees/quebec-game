@@ -86,6 +86,7 @@ public class SpriteResources {
   private final Info[] pawnInfos = new Info[6];
   private final Info[] leaderInfos = new Info[5];
   private final Info[] influenceZoneInfos = new Info[5];
+  private final Info[][] starTokensInfo = new Info[5][3];
 
   @Inject
   SpriteResources(Resources resources) {
@@ -156,6 +157,22 @@ public class SpriteResources {
     setInfoForInfluenceZone(InfluenceType.ECONOMIC, resources.influenceZoneEconomic());
     setInfoForInfluenceZone(InfluenceType.CULTURAL, resources.influenceZoneCultural());
     setInfoForInfluenceZone(InfluenceType.CITADEL, resources.influenceZoneCitadel());
+
+    setInfoForStarToken(PlayerColor.BLACK, 1, resources.starBlack1());
+    setInfoForStarToken(PlayerColor.BLACK, 2, resources.starBlack2());
+    setInfoForStarToken(PlayerColor.BLACK, 3, resources.starBlack3());
+    setInfoForStarToken(PlayerColor.WHITE, 1, resources.starWhite1());
+    setInfoForStarToken(PlayerColor.WHITE, 2, resources.starWhite2());
+    setInfoForStarToken(PlayerColor.WHITE, 3, resources.starWhite3());
+    setInfoForStarToken(PlayerColor.ORANGE, 1, resources.starOrange1());
+    setInfoForStarToken(PlayerColor.ORANGE, 2, resources.starOrange2());
+    setInfoForStarToken(PlayerColor.ORANGE, 3, resources.starOrange3());
+    setInfoForStarToken(PlayerColor.GREEN, 1, resources.starGreen1());
+    setInfoForStarToken(PlayerColor.GREEN, 2, resources.starGreen2());
+    setInfoForStarToken(PlayerColor.GREEN, 3, resources.starGreen3());
+    setInfoForStarToken(PlayerColor.PINK, 1, resources.starPink1());
+    setInfoForStarToken(PlayerColor.PINK, 2, resources.starPink2());
+    setInfoForStarToken(PlayerColor.PINK, 3, resources.starPink3());
   }
 
   /**
@@ -249,6 +266,20 @@ public class SpriteResources {
   }
 
   /**
+   * Obtain information, including the {@link ImageElement}, for the given type of star token.
+   * @param starTokenColor The color of the desired star token. Not NONE or NEUTRAL.
+   * @param nbStars The number of stars on the star token (1, 2 or 3).
+   * @return The information on that sprite.
+   */
+  public Info getStarToken(PlayerColor starTokenColor, int nbStars) {
+    assert starTokenColor.isNormalColor();
+    assert nbStars > 0 && nbStars < 4;
+    Info imageInfo = starTokensInfo[starTokenColor.ordinal() - 1][nbStars - 1];
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+
+  /**
    * Lazily instantiate the image element of an image info, if needed.
    * @param imageInfo The image info into which to instantiate the image element.
    */
@@ -290,4 +321,9 @@ public class SpriteResources {
     influenceZoneInfos[influenceZone.ordinal()] = new Info(dataResource.getSafeUri(), 0.000303);
   }
 
+  private void setInfoForStarToken(PlayerColor starTokenColor, int nbStars,
+      DataResource dataResource) {
+    starTokensInfo[starTokenColor.ordinal() - 1][nbStars - 1] =
+        new Info(dataResource.getSafeUri(), 0.000403);
+  }
 }

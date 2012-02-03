@@ -409,6 +409,25 @@ public class GameStateRenderer {
   }
 
   /**
+   * Removes a star token sitting on a given tile. Does nothing if the tile has no star token.
+   * @param tile The tile from which to remove the star token.
+   */
+  public void removeStarTokenFrom(Tile tile) {
+    boardRenderer.removeStarTokenFrom(tile);
+  }
+
+  /**
+   * Adds a star token on a given tile, returns the transform of the added token.
+   * @param tile The tile to which to add the star token.
+   * @param starTokenColor The color of the star token to add.
+   * @param nbStars The number of stars to add.
+   * @return The transform of the newly added star token.
+   */
+  public Transform addStarTokenTo(Tile tile, PlayerColor starTokenColor, int nbStars) {
+    return boardRenderer.addStarTokenTo(tile, starTokenColor, nbStars);
+  }
+
+  /**
    * Highlight a specific tile.
    * @param tile The tile to highlight.
    */
