@@ -82,7 +82,7 @@ public class ChangeRendererGenerator implements GameStateChangeVisitor {
 
   @Override
   public void visit(GameStateChangeFlipTile host) {
-    changeRenderer = factories.createChangeRendererNull();
+    changeRenderer = factories.createChangeRendererFlipTile(host);
   }
 
   @Override

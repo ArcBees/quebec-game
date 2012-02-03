@@ -117,8 +117,9 @@ public class ActionMoveArchitect implements PossibleActions, GameActionOnTile {
     }
 
     // Flip the tile and place a star token on it.
-    result.add(new GameStateChangeFlipTile(origin, playerState.getPlayer().getColor(),
-        nbFilledSpots));
+    PlayerColor starTokenColor = nbFilledSpots == 0 ? PlayerColor.NONE :
+        playerState.getPlayer().getColor();
+    result.add(new GameStateChangeFlipTile(origin, starTokenColor, nbFilledSpots));
 
     // TODO: Score points if the user has the purple leader.
   }
