@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
+import com.philbeaudoin.quebec.shared.ActionType;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -115,22 +116,38 @@ public class Board {
 
   private static void initIfNeeded() {
     if (boardActions[0] == null) {
-      boardActions[0] = new BoardAction(3, 0, InfluenceType.CULTURAL, 1);
-      boardActions[1] = new BoardAction(7, 0, InfluenceType.ECONOMIC, 3);
-      boardActions[2] = new BoardAction(1, 2, InfluenceType.POLITIC, 3);
-      boardActions[3] = new BoardAction(6, 3, InfluenceType.RELIGIOUS, 2);
-      boardActions[4] = new BoardAction(9, 2, InfluenceType.POLITIC, 2);
-      boardActions[5] = new BoardAction(3, 4, InfluenceType.ECONOMIC, 2);
-      boardActions[6] = new BoardAction(5, 6, InfluenceType.POLITIC, 2);
-      boardActions[7] = new BoardAction(1, 6, InfluenceType.RELIGIOUS, 1);
-      boardActions[8] = new BoardAction(16, 1, InfluenceType.ECONOMIC, 1);
-      boardActions[9] = new BoardAction(12, 1, InfluenceType.CULTURAL, 2);
-      boardActions[10] = new BoardAction(14, 3, InfluenceType.RELIGIOUS, 2);
-      boardActions[11] = new BoardAction(8, 5, InfluenceType.CULTURAL, 2);
-      boardActions[12] = new BoardAction(11, 4, InfluenceType.ECONOMIC, 2);
-      boardActions[13] = new BoardAction(16, 5, InfluenceType.CULTURAL, 3);
-      boardActions[14] = new BoardAction(10, 7, InfluenceType.RELIGIOUS, 3);
-      boardActions[15] = new BoardAction(14, 7, InfluenceType.POLITIC, 1);
+      boardActions[0] = new BoardAction(3, 0, InfluenceType.CULTURAL, 1,
+          ActionType.BLUE_ANY);
+      boardActions[1] = new BoardAction(7, 0, InfluenceType.ECONOMIC, 3,
+          ActionType.YELLOW_ACTIVATE_THREE);
+      boardActions[2] = new BoardAction(1, 2, InfluenceType.POLITIC, 3,
+          ActionType.RED_TWO_TO_CITADEL);
+      boardActions[3] = new BoardAction(6, 3, InfluenceType.RELIGIOUS, 2,
+          ActionType.PURPLE_ONE_TO_CITADEL_ONE_TO_ANY);
+      boardActions[4] = new BoardAction(9, 2, InfluenceType.POLITIC, 2,
+          ActionType.RED_TWO_TO_PURPLE_OR_YELLOW);
+      boardActions[5] = new BoardAction(3, 4, InfluenceType.ECONOMIC, 2,
+          ActionType.YELLOW_MOVE_ARCHITECT);
+      boardActions[6] = new BoardAction(5, 6, InfluenceType.POLITIC, 2,
+          ActionType.RED_TWO_TO_RED_OR_BLUE);
+      boardActions[7] = new BoardAction(1, 6, InfluenceType.RELIGIOUS, 1,
+          ActionType.PURPLE_ANY);
+      boardActions[8] = new BoardAction(16, 1, InfluenceType.ECONOMIC, 1,
+          ActionType.YELLOW_ANY);
+      boardActions[9] = new BoardAction(12, 1, InfluenceType.CULTURAL, 2,
+          ActionType.BLUE_SCORE_FOR_CUBES_IN_HAND);
+      boardActions[10] = new BoardAction(14, 3, InfluenceType.RELIGIOUS, 2,
+          ActionType.PURPLE_ONE_POINT_ONE_TO_ANY_ACTIVATE_ONE);
+      boardActions[11] = new BoardAction(8, 5, InfluenceType.CULTURAL, 2,
+          ActionType.BLUE_SCORE_FOR_ZONES);
+      boardActions[12] = new BoardAction(11, 4, InfluenceType.ECONOMIC, 2,
+          ActionType.YELLOW_FILL_ONE_SPOT);
+      boardActions[13] = new BoardAction(16, 5, InfluenceType.CULTURAL, 3,
+          ActionType.BLUE_ADD_STAR);
+      boardActions[14] = new BoardAction(10, 7, InfluenceType.RELIGIOUS, 3,
+          ActionType.PURPLE_ONE_TO_ANY_MOVE_TWO);
+      boardActions[15] = new BoardAction(14, 7, InfluenceType.POLITIC, 1,
+          ActionType.RED_ANY);
 
       addSymmetricalActions(2, 1, 0);
       addSymmetricalActions(4, 1, 0);

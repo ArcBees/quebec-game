@@ -28,6 +28,7 @@ import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.ui.Image;
 import com.google.inject.Inject;
 import com.philbeaudoin.quebec.client.resources.Resources;
+import com.philbeaudoin.quebec.shared.ActionType;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 
@@ -87,6 +88,7 @@ public class SpriteResources {
   private final Info[] leaderInfos = new Info[5];
   private final Info[] influenceZoneInfos = new Info[5];
   private final Info[][] starTokensInfo = new Info[5][3];
+  private final Info[] actionInfos = new Info[16];
 
   @Inject
   SpriteResources(Resources resources) {
@@ -173,6 +175,23 @@ public class SpriteResources {
     setInfoForStarToken(PlayerColor.PINK, 1, resources.starPink1());
     setInfoForStarToken(PlayerColor.PINK, 2, resources.starPink2());
     setInfoForStarToken(PlayerColor.PINK, 3, resources.starPink3());
+
+    setInfoForAction(ActionType.PURPLE_ANY, resources.actionPurple1());
+    setInfoForAction(ActionType.PURPLE_ONE_TO_CITADEL_ONE_TO_ANY, resources.actionPurple2());
+    setInfoForAction(ActionType.PURPLE_ONE_POINT_ONE_TO_ANY_ACTIVATE_ONE, resources.actionPurple3());
+    setInfoForAction(ActionType.PURPLE_ONE_TO_ANY_MOVE_TWO, resources.actionPurple4());
+    setInfoForAction(ActionType.RED_ANY, resources.actionRed1());
+    setInfoForAction(ActionType.RED_TWO_TO_RED_OR_BLUE, resources.actionRed2());
+    setInfoForAction(ActionType.RED_TWO_TO_PURPLE_OR_YELLOW, resources.actionRed3());
+    setInfoForAction(ActionType.RED_TWO_TO_CITADEL, resources.actionRed4());
+    setInfoForAction(ActionType.YELLOW_ANY, resources.actionYellow1());
+    setInfoForAction(ActionType.YELLOW_FILL_ONE_SPOT, resources.actionYellow2());
+    setInfoForAction(ActionType.YELLOW_MOVE_ARCHITECT, resources.actionYellow3());
+    setInfoForAction(ActionType.YELLOW_ACTIVATE_THREE, resources.actionYellow4());
+    setInfoForAction(ActionType.BLUE_ANY, resources.actionBlue1());
+    setInfoForAction(ActionType.BLUE_SCORE_FOR_CUBES_IN_HAND, resources.actionBlue2());
+    setInfoForAction(ActionType.BLUE_SCORE_FOR_ZONES, resources.actionBlue3());
+    setInfoForAction(ActionType.BLUE_ADD_STAR, resources.actionBlue4());
   }
 
   /**
@@ -280,6 +299,17 @@ public class SpriteResources {
   }
 
   /**
+   * Obtain information, including the {@link ImageElement}, for the given type of action.
+   * @param actionType The type of action.
+   * @return The information on that sprite.
+   */
+  public Info getAction(ActionType actionType) {
+    Info imageInfo = actionInfos[actionType.ordinal()];
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+
+  /**
    * Lazily instantiate the image element of an image info, if needed.
    * @param imageInfo The image info into which to instantiate the image element.
    */
@@ -326,4 +356,9 @@ public class SpriteResources {
     starTokensInfo[starTokenColor.ordinal() - 1][nbStars - 1] =
         new Info(dataResource.getSafeUri(), 0.000403);
   }
+
+  private void setInfoForAction(ActionType actionType, DataResource dataResource) {
+    actionInfos[actionType.ordinal()] = new Info(dataResource.getSafeUri(), 0.000303);
+  }
+
 }

@@ -463,6 +463,17 @@ public class BoardRenderer {
     return tileInfo.root.getTotalTransform(0);
   }
 
+  /**
+   * Gets the global transform of a given action.
+   * @param boardAction The board action for which to get the transform.
+   * @return The global transforms of the board action.
+   */
+  public Transform getActionTransform(BoardAction boardAction) {
+    Vector2d actionLocation = boardAction.getLocation();
+    return backgroundBoardRoot.getTotalTransform(0).times(new ConstantTransform(
+        Board.positionForLocation(actionLocation.getColumn(), actionLocation.getLine())));
+  }
+
   private List<Transform> addCubesToTile(CubeGrid cubeGrid, TileInfo tileInfo,
       PlayerColor playerColor, int spot, int nbCubes) {
     assert playerColor.isNormalColor();
