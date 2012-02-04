@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
+import com.philbeaudoin.quebec.shared.ActionType;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -28,6 +29,7 @@ public class BoardAction {
   private final Vector2d location;
   private final InfluenceType influenceType;
   private final int cubesPerSpot;
+  private final ActionType actionType;
 
   /**
    * Create information for one of the actions in the game.
@@ -39,10 +41,11 @@ public class BoardAction {
    *     action.
    */
   public BoardAction(int column, int line, InfluenceType influenceType,
-      int cubesPerSpot) {
+      int cubesPerSpot, ActionType actionType) {
     this.location = new Vector2d(column, line);
     this.influenceType = influenceType;
     this.cubesPerSpot = cubesPerSpot;
+    this.actionType = actionType;
   }
 
   /**
@@ -64,5 +67,9 @@ public class BoardAction {
    */
   public int getCubesPerSpot() {
     return cubesPerSpot;
+  }
+
+  public ActionType getActionType() {
+    return actionType;
   }
 }

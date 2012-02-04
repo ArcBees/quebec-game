@@ -222,6 +222,38 @@ public interface Resources extends ClientBundle {
   DataResource starPink2();
   @Source("star_pink_3.png")
   DataResource starPink3();
+  @Source("purple_a_1.png")
+  DataResource actionPurple1();
+  @Source("purple_a_2.png")
+  DataResource actionPurple2();
+  @Source("purple_a_3.png")
+  DataResource actionPurple3();
+  @Source("purple_a_4.png")
+  DataResource actionPurple4();
+  @Source("red_a_1.png")
+  DataResource actionRed1();
+  @Source("red_a_2.png")
+  DataResource actionRed2();
+  @Source("red_a_3.png")
+  DataResource actionRed3();
+  @Source("red_a_4.png")
+  DataResource actionRed4();
+  @Source("yellow_a_1.png")
+  DataResource actionYellow1();
+  @Source("yellow_a_2.png")
+  DataResource actionYellow2();
+  @Source("yellow_a_3.png")
+  DataResource actionYellow3();
+  @Source("yellow_a_4.png")
+  DataResource actionYellow4();
+  @Source("blue_a_1.png")
+  DataResource actionBlue1();
+  @Source("blue_a_2.png")
+  DataResource actionBlue2();
+  @Source("blue_a_3.png")
+  DataResource actionBlue3();
+  @Source("blue_a_4.png")
+  DataResource actionBlue4();
 
   @Source("quebec.css")
   Style style();

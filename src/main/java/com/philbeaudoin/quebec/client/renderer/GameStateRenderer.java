@@ -30,6 +30,7 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.PlayerState;
@@ -334,6 +335,15 @@ public class GameStateRenderer {
    */
   public Transform getTileTransform(Tile tile) {
     return boardRenderer.getTileTransform(tile);
+  }
+
+  /**
+   * Gets the global transform of a given action.
+   * @param boardAction The board action for which to get the transform.
+   * @return The global transforms of the board action.
+   */
+  public Transform getActionTransform(BoardAction boardAction) {
+    return boardRenderer.getActionTransform(boardAction);
   }
 
   /**
