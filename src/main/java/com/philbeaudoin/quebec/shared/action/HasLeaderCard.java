@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.action;
+
+import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**
- * Keeps track of values that can be modified by the user.
- *
+ * An object that has a leader card.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class UserPreferences {
-  public double getAnimDuration() {
-    return 0.5;
-  }
+public interface HasLeaderCard {
+  /**
+   * Access the leader card of the object.
+   * @return The leader card.
+   */
+  LeaderCard getLeaderCard();
 }

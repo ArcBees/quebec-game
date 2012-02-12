@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
+import com.philbeaudoin.quebec.shared.PlayerColor;
+
 /**
  * State of a player during the game.
  *
@@ -158,5 +160,15 @@ public class PlayerState {
    */
   public int getScore() {
     return score;
+  }
+
+  /**
+   * Checks whether the current player owns the specified architect.
+   * @param architectColor The architect color to check for, can be NEUTRAL.
+   * @return True if the player owns the specified architect.
+   */
+  public boolean ownsArchitect(PlayerColor architectColor) {
+    return architectColor == getPlayer().getColor() ||
+        architectColor == PlayerColor.NEUTRAL && getLeaderCard() == LeaderCard.ECONOMIC;
   }
 }

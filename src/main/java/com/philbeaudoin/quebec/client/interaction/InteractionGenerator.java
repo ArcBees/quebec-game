@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
+import java.util.ArrayList;
+
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
@@ -42,6 +44,15 @@ public class InteractionGenerator implements PossibleActionsVisitor {
   private final GameState gameState;
   private final GameStateRenderer gameStateRenderer;
 
+  private final ArrayList<ActionMoveArchitect> moveArchitectActions =
+      new ArrayList<ActionMoveArchitect>();
+  private final ArrayList<ActionSendWorkers> sendWorkersActions =
+      new ArrayList<ActionSendWorkers>();
+  private final ArrayList<ActionSendOneWorker> sendOneWorkerActions =
+      new ArrayList<ActionSendOneWorker>();
+  private final ArrayList<ActionTakeLeaderCard> takeLeaderCardActions =
+      new ArrayList<ActionTakeLeaderCard>();
+
   @Inject
   InteractionGenerator(InteractionFactories factories,
       @Assisted GameState gameState,
@@ -49,6 +60,56 @@ public class InteractionGenerator implements PossibleActionsVisitor {
     this.factories = factories;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
+  }
+
+  /**
+   * Generates all the interactions that correspond to the visited actions. The method should be
+   * called exactly once after the possible actions have been visited.
+   */
+  public void generateInteractions() {
+
+    // Look at move architect action and pair them if possible. Actions are paired if they send
+    // the regular and the neutral architect to the same tile.
+    while (!moveArchitectActions.isEmpty()) {
+      ActionMoveArchitect action = moveArchitectActions.remove(moveArchitectActions.size() - 1);
+      boolean paired = false;
+      for (ActionMoveArchitect other : moveArchitectActions) {
+        if (action.getDestinationTile() == other.getDestinationTile()) {
+          paired = true;
+          if (action.isNeutralArchitect()) {
+            assert !other.isNeutralArchitect();
+            gameStateRenderer.addInteraction(factories.createInteractionMoveUnknownArchitect(
+                gameState, gameStateRenderer, other, action));
+          } else {
+            assert !action.isNeutralArchitect();
+            gameStateRenderer.addInteraction(factories.createInteractionMoveUnknownArchitect(
+                gameState, gameStateRenderer, action, other));
+          }
+          moveArchitectActions.remove(other);
+          break;
+        }
+      }
+      if (!paired) {
+        gameStateRenderer.addInteraction(factories.createInteractionMoveArchitect(gameState,
+            gameStateRenderer, action));
+      }
+    }
+
+    for (ActionSendWorkers action : sendWorkersActions) {
+      gameStateRenderer.addInteraction(factories.createInteractionSendWorkers(gameState,
+          gameStateRenderer, action));
+    }
+    sendWorkersActions.clear();
+    for (ActionSendOneWorker action : sendOneWorkerActions) {
+      gameStateRenderer.addInteraction(factories.createInteractionSendOneWorker(gameState,
+          gameStateRenderer, action));
+    }
+    sendOneWorkerActions.clear();
+    for (ActionTakeLeaderCard action : takeLeaderCardActions) {
+      gameStateRenderer.addInteraction(factories.createInteractionTakeLeaderCard(gameState,
+          gameStateRenderer, action));
+    }
+    takeLeaderCardActions.clear();
   }
 
   @Override
@@ -63,25 +124,21 @@ public class InteractionGenerator implements PossibleActionsVisitor {
 
   @Override
   public void visit(ActionMoveArchitect host) {
-    gameStateRenderer.addInteraction(factories.createInteractionMoveArchitect(gameState,
-        gameStateRenderer, host));
+    moveArchitectActions.add(host);
   }
 
   @Override
   public void visit(ActionSendWorkers host) {
-    gameStateRenderer.addInteraction(factories.createInteractionSendWorkers(gameState,
-        gameStateRenderer, host));
+    sendWorkersActions.add(host);
   }
 
   @Override
   public void visit(ActionSendOneWorker host) {
-    gameStateRenderer.addInteraction(factories.createInteractionSendOneWorker(gameState,
-        gameStateRenderer, host));
+    sendOneWorkerActions.add(host);
   }
 
   @Override
   public void visit(ActionTakeLeaderCard host) {
-    gameStateRenderer.addInteraction(factories.createInteractionTakeLeaderCard(gameState,
-        gameStateRenderer, host));
+    takeLeaderCardActions.add(host);
   }
 }

@@ -76,8 +76,8 @@ public class GameController {
     // TODO: The specific cards available depend on the number of players.
     List<LeaderCard> availableLeaderCards = gameState.getAvailableLeaderCards();
     availableLeaderCards.clear();
-    for (InfluenceType influenceType : InfluenceType.values()) {
-      availableLeaderCards.add(new LeaderCard(influenceType));
+    for (LeaderCard leaderCard : LeaderCard.values()) {
+      availableLeaderCards.add(leaderCard);
     }
 
     for (InfluenceType influenceType : InfluenceType.values()) {
@@ -109,6 +109,10 @@ public class GameController {
           tileState.getArchitect() == PlayerColor.NONE &&
           !tileState.isBuildingFacing()) {
         possibleActions.add(new ActionMoveArchitect(tileState.getTile(), false));
+        // If the player has the yellow leader, he can also move the neutral architect.
+        if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC) {
+          possibleActions.add(new ActionMoveArchitect(tileState.getTile(), true));
+        }
       } else if (tileState.getArchitect() != PlayerColor.NONE &&
           nbActiveCubes >= tileState.getCubesPerSpot() &&
           tileState.getColorInSpot(2) == PlayerColor.NONE) {

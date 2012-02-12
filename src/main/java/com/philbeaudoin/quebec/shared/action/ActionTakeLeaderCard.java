@@ -38,7 +38,7 @@ import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationPlayer;
  * The action of taking a leader card from an influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionTakeLeaderCard implements PossibleActions, GameAction {
+public class ActionTakeLeaderCard implements PossibleActions, GameAction, HasLeaderCard {
 
   private final LeaderCard leaderCard;
 
@@ -71,7 +71,7 @@ public class ActionTakeLeaderCard implements PossibleActions, GameAction {
 
     // If it's the gray leader, send three cubes to the citadel.
     int nbPassiveCubes = playerState.getNbPassiveCubes();
-    if (leaderCard.getInfluenceType() == InfluenceType.CITADEL) {
+    if (leaderCard == LeaderCard.CITADEL) {
       int nbPassiveCubesMoved = 0;
       nbPassiveCubesMoved = Math.min(3, nbPassiveCubes);
       if (nbPassiveCubesMoved > 0) {
@@ -100,7 +100,7 @@ public class ActionTakeLeaderCard implements PossibleActions, GameAction {
     }
 
     // If it's the yellow leader, move the neutral architect.
-    if (leaderCard.getInfluenceType() == InfluenceType.ECONOMIC) {
+    if (leaderCard == LeaderCard.ECONOMIC) {
       result.add(new GameStateChangeMoveArchitect(
           new ArchitectDestinationOffboardNeutral(),
           new ArchitectDestinationPlayer(activePlayer, true)));
@@ -117,10 +117,7 @@ public class ActionTakeLeaderCard implements PossibleActions, GameAction {
     visitor.visit(this);
   }
 
-  /**
-   * Access the leader card taken with this action.
-   * @return The leader card.
-   */
+  @Override
   public LeaderCard getLeaderCard() {
     return leaderCard;
   }

@@ -29,6 +29,7 @@ import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.main.MainPagePresenter;
 import com.philbeaudoin.quebec.client.main.MainPageView;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
+import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
 import com.philbeaudoin.quebec.shared.Constants;
 import com.philbeaudoin.quebec.shared.state.GameController;
 
@@ -42,6 +43,7 @@ public class QuebecClientModule extends AbstractPresenterModule {
     // Install factories for assisted injection.
     install(new GinFactoryModuleBuilder().build(RendererFactories.class));
     install(new GinFactoryModuleBuilder().build(InteractionFactories.class));
+    install(new GinFactoryModuleBuilder().build(SceneNodeAnimation.Factory.class));
 
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);
 

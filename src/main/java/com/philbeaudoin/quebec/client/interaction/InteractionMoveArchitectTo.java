@@ -26,17 +26,18 @@ import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
- * This is an interaction with the game board for the action of moving one's architect.
+ * This is an interaction with the game board for the action of moving one's architect by selecting
+ * the architect to move.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionMoveArchitect extends InteractionMoveArchitectBase {
+public class InteractionMoveArchitectTo extends InteractionMoveArchitectBase {
 
   @Inject
-  public InteractionMoveArchitect(Scheduler scheduler, RendererFactories rendererFactories,
+  public InteractionMoveArchitectTo(Scheduler scheduler, RendererFactories rendererFactories,
       InteractionFactories interactionFactories, @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionMoveArchitect action) {
     super(scheduler, rendererFactories, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetTile(gameStateRenderer, action), action);
+        interactionFactories.createInteractionTargetArchitect(gameState, gameStateRenderer, action),
+        action);
   }
-
 }

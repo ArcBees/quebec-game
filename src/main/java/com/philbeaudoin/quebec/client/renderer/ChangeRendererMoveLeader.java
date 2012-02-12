@@ -76,7 +76,7 @@ public class ChangeRendererMoveLeader implements ChangeRenderer {
     Transform startTransform = from.removeFrom(renderer);
     Transform finishTransform = to.addTo(renderer);
     double endingTime = startingTime + userPreferences.getAnimDuration();
-    Sprite sprite = new Sprite(spriteResources.getLeader(from.getLeaderCard().getInfluenceType()),
+    Sprite sprite = new Sprite(spriteResources.getLeader(from.getLeaderCard()),
         new ArcTransform(startTransform, finishTransform, startingTime, endingTime));
     renderer.addToAnimationGraph(sprite);
   }

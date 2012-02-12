@@ -24,9 +24,11 @@ import javax.inject.Inject;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.philbeaudoin.quebec.client.interaction.Interaction;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
+import com.philbeaudoin.quebec.client.interaction.InteractionGenerator;
 import com.philbeaudoin.quebec.client.scene.Rectangle;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
+import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
@@ -69,7 +71,8 @@ public class GameStateRenderer {
 
   @Inject
   public GameStateRenderer(RendererFactories factories,
-      InteractionFactories interactionFactories) {
+      InteractionFactories interactionFactories,
+      SpriteResources spriteResources) {
     this.factories = factories;
     this.interactionFactories = interactionFactories;
     scoreRenderer = factories.createScoreRenderer();
@@ -110,7 +113,10 @@ public class GameStateRenderer {
     // Render the possible actions.
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
-      possibleActions.accept(interactionFactories.createInteractionRenderer(gameState, this));
+      InteractionGenerator generator =
+          interactionFactories.createInteractionGenerator(gameState, this);
+      possibleActions.accept(generator);
+      generator.generateInteractions();
     }
     for (Interaction interaction : interactions) {
       interaction.highlight();
@@ -317,6 +323,15 @@ public class GameStateRenderer {
   public Transform addArchitectToTile(Tile tile, PlayerColor architectColor) {
     refreshNeeded = true;
     return boardRenderer.addArchitectToTile(tile, architectColor);
+  }
+
+  /**
+   * Gets the transform of the architect slot on a given tile.
+   * @param tile The tile at which to get the architect transform.
+   * @return The global transforms of the architect.
+   */
+  public Transform getArchitectSlotOnTileTransform(Tile tile) {
+    return boardRenderer.getArchitectSlotOnTileTransform(tile);
   }
 
   /**

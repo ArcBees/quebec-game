@@ -16,45 +16,56 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
-import javax.inject.Inject;
-
 import com.google.gwt.core.client.Scheduler;
-import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
+import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
- * This is an interaction with the game board for the action of taking a leader card.
+ * This is the base class for interactions involving move architect actions.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionTakeLeaderCard extends InteractionWithAction {
+public abstract class InteractionMoveArchitectBase extends
+    InteractionWithAction {
 
   private final SceneNodeList arrows;
 
-  @Inject
-  public InteractionTakeLeaderCard(Scheduler scheduler, RendererFactories rendererFactories,
-      InteractionFactories interactionFactories, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionTakeLeaderCard action) {
-    super(scheduler, rendererFactories, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetLeaderCard(gameStateRenderer, action), action);
+  public InteractionMoveArchitectBase(Scheduler scheduler,
+      RendererFactories rendererFactories, GameState gameState,
+      GameStateRenderer gameStateRenderer, InteractionTarget target,
+      ActionMoveArchitect action) {
+    super(scheduler, rendererFactories, gameState, gameStateRenderer, target,
+        action);
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    PlayerColor architectColor = action.isNeutralArchitect() ? PlayerColor.NEUTRAL : playerColor;
+    TileState origin = gameState.findTileUnderArchitect(architectColor);
+
     arrows = new SceneNodeList();
 
-    // Arrow to move card.
-    Transform cardFrom = gameStateRenderer.getLeaderCardOnBoardTransform(action.getLeaderCard());
-    Transform cardTo = gameStateRenderer.getLeaderCardOnPlayerTransform(playerColor);
-    arrows.add(new Arrow(cardFrom.getTranslation(0), cardTo.getTranslation(0)));
+    Transform architectFrom;
+    if (origin == null) {
+      // Architect starts from the player zone.
+      architectFrom = gameStateRenderer.getArchitectOnPlayerTransform(
+          playerColor, action.isNeutralArchitect());
+    } else {
+      // Architect starts from its current tile.
+      architectFrom = gameStateRenderer.getArchitectSlotOnTileTransform(origin.getTile());
+    }
+
+    // Arrow to move architect.
+    Transform architectTo = gameStateRenderer.getArchitectSlotOnTileTransform(
+        action.getDestinationTile());
+    arrows.add(new Arrow(architectFrom.getTranslation(0), architectTo.getTranslation(0)));
 
     // Arrow to move passive cubes to active, if needed.
-    if (gameState.nbPlayerWithLeaders() > 0 &&
-        gameState.getCurrentPlayer().getNbPassiveCubes() > 0) {
+    if (gameState.getCurrentPlayer().getNbPassiveCubes() > 0) {
       Transform cubeFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, false);
       Transform cubeTo = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, true);
       arrows.add(new Arrow(cubeFrom.getTranslation(0), cubeTo.getTranslation(0)));

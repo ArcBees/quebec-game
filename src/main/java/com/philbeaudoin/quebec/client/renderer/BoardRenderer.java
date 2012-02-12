@@ -444,13 +444,24 @@ public class BoardRenderer {
   }
 
   /**
+   * Gets the transform of the architect slot on a given tile.
+   * @param tile The tile at which to get the architect transform.
+   * @return The global transforms of the architect.
+   */
+  public Transform getArchitectSlotOnTileTransform(Tile tile) {
+    TileInfo tileInfo = findTileInfo(tile);
+    return tileInfo.root.getTotalTransform(0).times(getArchitectParentTransform(tileInfo));
+  }
+
+  /**
    * Gets the transform of an architect on a given tile.
    * @param tile The tile at which to get the architect transform.
    * @return The global transforms of the architect.
    */
   public Transform getArchitectOnTileTransform(Tile tile) {
     TileInfo tileInfo = findTileInfo(tile);
-    return tileInfo.root.getTotalTransform(0).times(getArchitectParentTransform(tileInfo));
+    return tileInfo.root.getTotalTransform(0).times(getArchitectParentTransform(tileInfo)).times(
+        getArchitectTransform());
   }
 
   /**
@@ -514,13 +525,17 @@ public class BoardRenderer {
     tileInfo.root.add(architectParentNode);
     tileInfo.root.sendToFront(architectParentNode);
     tileInfo.architectNode = new Sprite(spriteResources.getPawn(architectColor),
-        new ConstantTransform(new Vector2d(0, -0.01)));
+        getArchitectTransform());
     architectParentNode.add(tileInfo.architectNode);
     return tileInfo.architectNode.getTotalTransform(0);
   }
 
   private ConstantTransform getArchitectParentTransform(TileInfo tileInfo) {
     return new ConstantTransform(new Vector2d(0, -0.0225), 1.0, -tileInfo.rotation);
+  }
+
+  private ConstantTransform getArchitectTransform() {
+    return new ConstantTransform(new Vector2d(0, -0.01));
   }
 
   /**
@@ -542,7 +557,7 @@ public class BoardRenderer {
    * @param leaderCard The leader card to highlight.
    */
   public void highlightLeaderCard(SceneNodeList foregroundRoot, LeaderCard leaderCard) {
-    SceneNode node = leaderCardNode[leaderCard.getInfluenceType().ordinal()];
+    SceneNode node = leaderCardNode[leaderCard.ordinal()];
     assert node != null;
     Transform globalTransform = node.getTotalTransform(0);
     SceneNode highlightedCard = node.deepClone();
@@ -566,7 +581,7 @@ public class BoardRenderer {
    * @return A copied scene node corresponding to that leader card.
    */
   public SceneNode copyLeaderCard(LeaderCard leaderCard) {
-    SceneNode node = leaderCardNode[leaderCard.getInfluenceType().ordinal()];
+    SceneNode node = leaderCardNode[leaderCard.ordinal()];
     assert node != null;
     return node.deepClone();
   }
@@ -597,8 +612,7 @@ public class BoardRenderer {
    * @return The global transforms of the removed leader card.
    */
   public Transform removeLeaderCard(LeaderCard leaderCard) {
-    InfluenceType influenceType = leaderCard.getInfluenceType();
-    int index = influenceType.ordinal();
+    int index = leaderCard.ordinal();
     assert leaderCardNode[index] != null;
     Transform result = leaderCardNode[index].getTotalTransform(0);
     leaderCardNode[index].setParent(null);
@@ -612,10 +626,9 @@ public class BoardRenderer {
    * @return The global transforms of the added leader card.
    */
   public Transform addLeaderCard(LeaderCard leaderCard) {
-    InfluenceType influenceType = leaderCard.getInfluenceType();
-    int index = influenceType.ordinal();
+    int index = leaderCard.ordinal();
     assert leaderCardNode[index] == null;
-    leaderCardNode[index] = new Sprite(spriteResources.getLeader(influenceType),
+    leaderCardNode[index] = new Sprite(spriteResources.getLeader(leaderCard),
         getLeaderCardTransform(index));
     backgroundBoardRoot.add(leaderCardNode[index]);
     return leaderCardNode[index].getTotalTransform(0);
@@ -627,7 +640,7 @@ public class BoardRenderer {
    * @return The global transforms of the leader card location.
    */
   public Transform getLeaderCardTransform(LeaderCard leaderCard) {
-    int index = leaderCard.getInfluenceType().ordinal();
+    int index = leaderCard.ordinal();
     return backgroundBoardRoot.getTotalTransform(0).times(getLeaderCardTransform(index));
   }
 

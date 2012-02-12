@@ -16,16 +16,9 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
-import com.philbeaudoin.quebec.shared.state.Tile;
-
 /**
  * A possible action that has a specific tile as a destination.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameActionOnTile extends GameAction {
-  /**
-   * Access the destination tile on which this action operates.
-   * @return The destination tile.
-   */
-  Tile getDestinationTile();
+public interface GameActionOnTile extends GameAction, HasDestinationTile {
 }

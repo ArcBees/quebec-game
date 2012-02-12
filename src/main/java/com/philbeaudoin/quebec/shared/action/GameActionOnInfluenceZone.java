@@ -22,7 +22,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
  * A possible action that has a specific influence zone as a destination.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameActionOnInfluenceZone extends GameAction {
+public interface GameActionOnInfluenceZone extends GameAction, HasInfluenceZone {
   /**
    * Access the influence zone on which this action operates.
    * @return The influence zone.
