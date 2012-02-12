@@ -284,7 +284,7 @@ public class PlayerStateRenderer {
    */
   public Transform addLeaderCard(LeaderCard leaderCard) {
     assert leaderCardNode == null;
-    leaderCardNode = new Sprite(spriteResources.getLeader(leaderCard.getInfluenceType()),
+    leaderCardNode = new Sprite(spriteResources.getLeader(leaderCard),
         leaderCardTransform);
     playerZone.add(leaderCardNode);
     return leaderCardNode.getTotalTransform(0);

@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.action;
+
+import com.philbeaudoin.quebec.shared.InfluenceType;
 
 /**
- * Keeps track of values that can be modified by the user.
- *
+ * An object that has an influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class UserPreferences {
-  public double getAnimDuration() {
-    return 0.5;
-  }
+public interface HasInfluenceZone {
+  /**
+   * Access the influence zone of the object.
+   * @return The influence zone.
+   */
+  InfluenceType getInfluenceZone();
 }

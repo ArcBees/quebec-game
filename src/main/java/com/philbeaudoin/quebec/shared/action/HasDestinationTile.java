@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.action;
+
+import com.philbeaudoin.quebec.shared.state.Tile;
 
 /**
- * Keeps track of values that can be modified by the user.
- *
+ * An object that has a destination tile.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class UserPreferences {
-  public double getAnimDuration() {
-    return 0.5;
-  }
+public interface HasDestinationTile {
+  /**
+   * Access the destination tile of the object.
+   * @return The destination tile.
+   */
+  Tile getDestinationTile();
 }

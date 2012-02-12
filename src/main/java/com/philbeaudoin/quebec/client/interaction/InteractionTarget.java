@@ -14,15 +14,34 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.client.interaction;
 
 /**
- * Keeps track of values that can be modified by the user.
- *
+ * A target element that can be selected during an interaction.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class UserPreferences {
-  public double getAnimDuration() {
-    return 0.5;
-  }
+public interface InteractionTarget {
+
+  /**
+   * Highlights the target.
+   */
+  void highlight();
+
+  /**
+   * Call this when the mouse enters the target.
+   * @param time The time at which the mouse entered the target.
+   */
+  void onMouseEnter(double time);
+
+  /**
+   * Call this when the mouse exits the target.
+   * @param time The time at which the mouse exited the target.
+   */
+  void onMouseLeave(double time);
+
+  /**
+   * Returns the trigger associated with this interaction target.
+   * @return The trigger.
+   */
+  Trigger getTrigger();
 }

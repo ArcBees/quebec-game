@@ -37,7 +37,7 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 
 /**
- * The action of moving an architect.
+ * The action of moving a specific architect.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ActionMoveArchitect implements PossibleActions, GameActionOnTile {

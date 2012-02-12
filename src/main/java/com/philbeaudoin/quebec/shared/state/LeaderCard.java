@@ -16,25 +16,14 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
-import com.philbeaudoin.quebec.shared.InfluenceType;
-
 /**
- * A specific leader card. This information never changes during the game.
- * TODO: Refactor into an enum.
+ * A specific leader card.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class LeaderCard {
-  private final InfluenceType influenceType;
-
-  public LeaderCard(InfluenceType influenceType) {
-    this.influenceType = influenceType;
-  }
-
-  /**
-   * Access the influence type of that leader card.
-   * @return The influence type.
-   */
-  public InfluenceType getInfluenceType() {
-    return influenceType;
-  }
+public enum LeaderCard {
+  RELIGIOUS,
+  POLITIC,
+  ECONOMIC,
+  CULTURAL,
+  CITADEL
 }

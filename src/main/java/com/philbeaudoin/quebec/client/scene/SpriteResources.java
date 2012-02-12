@@ -31,6 +31,7 @@ import com.philbeaudoin.quebec.client.resources.Resources;
 import com.philbeaudoin.quebec.shared.ActionType;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**
  * This class makes it possible to obtain the image element for any type of sprite. Images are
@@ -78,6 +79,22 @@ public class SpriteResources {
      */
     public ImageElement getElement() {
       return element;
+    }
+
+    /**
+     * Access the total width of the image, in pixel, not accounting for any rescaling.
+     * @return The image width in pixel.
+     */
+    public int getWidth() {
+      return element.getWidth();
+    }
+
+    /**
+     * Access the total height of the image, in pixel, not accounting for any rescaling.
+     * @return The image height in pixel.
+     */
+    public int getHeight() {
+      return element.getHeight();
     }
   }
 
@@ -148,11 +165,11 @@ public class SpriteResources {
     setInfoForPawn(PlayerColor.PINK, resources.pawnPink());
     setInfoForPawn(PlayerColor.NEUTRAL, resources.pawnGold());
 
-    setInfoForLeader(InfluenceType.RELIGIOUS, resources.leaderReligious());
-    setInfoForLeader(InfluenceType.POLITIC, resources.leaderPolitic());
-    setInfoForLeader(InfluenceType.ECONOMIC, resources.leaderEconomic());
-    setInfoForLeader(InfluenceType.CULTURAL, resources.leaderCultural());
-    setInfoForLeader(InfluenceType.CITADEL, resources.leaderCitadel());
+    setInfoForLeader(LeaderCard.RELIGIOUS, resources.leaderReligious());
+    setInfoForLeader(LeaderCard.POLITIC, resources.leaderPolitic());
+    setInfoForLeader(LeaderCard.ECONOMIC, resources.leaderEconomic());
+    setInfoForLeader(LeaderCard.CULTURAL, resources.leaderCultural());
+    setInfoForLeader(LeaderCard.CITADEL, resources.leaderCitadel());
 
     setInfoForInfluenceZone(InfluenceType.RELIGIOUS, resources.influenceZoneReligious());
     setInfoForInfluenceZone(InfluenceType.POLITIC, resources.influenceZonePolitic());
@@ -264,11 +281,11 @@ public class SpriteResources {
 
   /**
    * Obtain information, including the {@link ImageElement}, for the given type of leader card.
-   * @param leaderType The type of the leader for which to get the card.
+   * @param leaderCard The type of the leader for which to get the card.
    * @return The information on that sprite.
    */
-  public Info getLeader(InfluenceType leaderType) {
-    Info imageInfo = leaderInfos[leaderType.ordinal()];
+  public Info getLeader(LeaderCard leaderCard) {
+    Info imageInfo = leaderInfos[leaderCard.ordinal()];
     lazilyInstantiateImageElement(imageInfo);
     return imageInfo;
   }
@@ -343,8 +360,8 @@ public class SpriteResources {
     pawnInfos[playerColor.ordinal() - 1] = new Info(dataResource.getSafeUri(), 0.000355);
   }
 
-  private void setInfoForLeader(InfluenceType leaderType, DataResource dataResource) {
-    leaderInfos[leaderType.ordinal()] = new Info(dataResource.getSafeUri(), 0.000265);
+  private void setInfoForLeader(LeaderCard leaderCard, DataResource dataResource) {
+    leaderInfos[leaderCard.ordinal()] = new Info(dataResource.getSafeUri(), 0.000265);
   }
 
   private void setInfoForInfluenceZone(InfluenceType influenceZone, DataResource dataResource) {

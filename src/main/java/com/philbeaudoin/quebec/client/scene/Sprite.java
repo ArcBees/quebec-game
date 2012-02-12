@@ -56,7 +56,7 @@ public class Sprite extends SceneNodeImpl {
     double sizeFactor = info.getSizeFactor();
     ImageElement imageElement = info.getElement();
     context.scale(sizeFactor, sizeFactor);
-    context.drawImage(imageElement, -imageElement.getWidth() / 2, -imageElement.getHeight() / 2);
+    context.drawImage(imageElement, -info.getWidth() / 2, -info.getHeight() / 2);
   }
 
   @Override

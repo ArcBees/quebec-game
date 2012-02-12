@@ -16,50 +16,22 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.philbeaudoin.quebec.client.renderer.ChangeRenderer;
-import com.philbeaudoin.quebec.client.renderer.ChangeRendererGenerator;
-import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.RendererFactories;
-import com.philbeaudoin.quebec.shared.action.GameAction;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
-import com.philbeaudoin.quebec.shared.utils.Callback;
-import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
-
 /**
- * This is the basic implementation of an interaction a user can have with the game board. It will
- * keep track of entering and leaving a trigger area and will execute the animation and the action
- * upon a click.
+ * This is the basic implementation of an interaction associated with a specific trigger.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public abstract class InteractionImpl implements Interaction {
 
-  protected final Scheduler scheduler;
-  protected final RendererFactories rendererFactories;
-  protected final GameState gameState;
-  protected final GameStateRenderer gameStateRenderer;
-  protected final Trigger trigger;
-  protected final GameAction action;
-
   private boolean inside;
-  private CallbackRegistration animationCompletedRegistration;
+  private final InteractionTarget target;
 
-  protected InteractionImpl(Scheduler scheduler, RendererFactories rendererFactories,
-      GameState gameState, GameStateRenderer gameStateRenderer, Trigger trigger,
-      GameAction action) {
-    this.scheduler = scheduler;
-    this.rendererFactories = rendererFactories;
-    this.gameState = gameState;
-    this.gameStateRenderer = gameStateRenderer;
-    this.trigger = trigger;
-    this.action = action;
+  public InteractionImpl(InteractionTarget target) {
+    this.target = target;
   }
 
   @Override
   public void onMouseMove(double x, double y, double time) {
-    if (trigger.triggerAt(x, y)) {
+    if (target.getTrigger().triggerAt(x, y)) {
       doMouseMove(x, y, time);
       if (!inside) {
         doMouseEnter(x, y, time);
@@ -72,40 +44,16 @@ public abstract class InteractionImpl implements Interaction {
   }
 
   @Override
-  public void onMouseClick(double x, double y, double time) {
-    if (trigger.triggerAt(x, y)) {
-      gameStateRenderer.clearAnimationGraph();
-      if (animationCompletedRegistration != null) {
-        animationCompletedRegistration.unregister();
-        animationCompletedRegistration = null;
-      }
+  public void highlight() {
+    target.highlight();
+  }
 
-      scheduler.scheduleDeferred(new ScheduledCommand() {
-        @Override
-        public void execute() {
-          gameStateRenderer.clearInteractions();
-          gameStateRenderer.removeAllHighlights();
-        }
-      });
-
-      final GameStateChange change = action.execute(gameState);
-      ChangeRendererGenerator generator = rendererFactories.createChangeRendererGenerator();
-      change.accept(generator);
-
-      ChangeRenderer changeRenderer = generator.getChangeRenderer();
-      changeRenderer.generateAnim(gameStateRenderer, 0.0);
-      changeRenderer.undoAdditions(gameStateRenderer);
-
-      animationCompletedRegistration = gameStateRenderer.addAnimationCompletedCallback(
-      new Callback() {
-        @Override public void execute() {
-          gameStateRenderer.clearAnimationGraph();
-          change.apply(gameState);
-          gameStateRenderer.render(gameState);
-          animationCompletedRegistration.unregister();
-        }
-      });
-    }
+  /**
+   * Access the trigger of this interaction.
+   * @return The trigger of the interaction.
+   */
+  protected Trigger getTrigger() {
+    return target.getTrigger();
   }
 
   /**
@@ -115,7 +63,8 @@ public abstract class InteractionImpl implements Interaction {
    * @param y The y location of the mouse.
    * @param time The current time.
    */
-  protected abstract void doMouseMove(double x, double y, double time);
+  protected void doMouseMove(double x, double y, double time) {
+  }
 
   /**
    * Performs any graphical additions that should be performed when the mouse enters the
@@ -124,7 +73,9 @@ public abstract class InteractionImpl implements Interaction {
    * @param y The y location of the mouse.
    * @param time The current time.
    */
-  protected abstract void doMouseEnter(double x, double y, double time);
+  protected void doMouseEnter(double x, double y, double time) {
+    target.onMouseEnter(time);
+  }
 
   /**
    * Performs any graphical additions that should be performed when the mouse leaves the
@@ -133,6 +84,7 @@ public abstract class InteractionImpl implements Interaction {
    * @param y The y location of the mouse.
    * @param time The current time.
    */
-  protected abstract void doMouseLeave(double x, double y, double time);
-
+  protected void doMouseLeave(double x, double y, double time) {
+    target.onMouseLeave(time);
+  }
 }
