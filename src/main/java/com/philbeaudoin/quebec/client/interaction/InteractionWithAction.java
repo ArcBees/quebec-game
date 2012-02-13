@@ -79,15 +79,28 @@ public abstract class InteractionWithAction extends InteractionImpl {
       changeRenderer.generateAnim(gameStateRenderer, 0.0);
       changeRenderer.undoAdditions(gameStateRenderer);
 
-      animationCompletedRegistration = gameStateRenderer.addAnimationCompletedCallback(
-      new Callback() {
-        @Override public void execute() {
-          gameStateRenderer.clearAnimationGraph();
-          change.apply(gameState);
-          gameStateRenderer.render(gameState);
-          animationCompletedRegistration.unregister();
-        }
-      });
+      if (!gameStateRenderer.isAnimationCompleted(0.0)) {
+        animationCompletedRegistration = gameStateRenderer.addAnimationCompletedCallback(
+            new Callback() {
+              @Override public void execute() {
+                renderForNextMove(change);
+                animationCompletedRegistration.unregister();
+              }
+            });
+      } else {
+        scheduler.scheduleDeferred(new ScheduledCommand() {
+          @Override
+          public void execute() {
+            renderForNextMove(change);
+          }
+        });
+      }
     }
+  }
+
+  private void renderForNextMove(final GameStateChange change) {
+    gameStateRenderer.clearAnimationGraph();
+    change.apply(gameState);
+    gameStateRenderer.render(gameState);
   }
 }

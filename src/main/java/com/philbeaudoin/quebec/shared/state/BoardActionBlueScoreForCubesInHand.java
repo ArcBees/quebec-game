@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.state;
 
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 
 /**
- * A change of the game state obtained by switching to the next player.
+ * Board action: blue, 2 cubes to activate, score based on the number of cubes in hand.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameStateChangeNextPlayer implements GameStateChange {
-  @Override
-  public void apply(GameState gameState) {
-    gameState.nextPlayer();
+public class BoardActionBlueScoreForCubesInHand extends BoardAction {
+  public BoardActionBlueScoreForCubesInHand() {
+    super(12, 1, InfluenceType.CULTURAL, 2, ActionType.BLUE_SCORE_FOR_CUBES_IN_HAND);
   }
 
-  @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public PossibleActions getPossibleActions(GameState gameState) {
+    // TODO(beaudoin): Fill-in.
+    return null;
   }
 }

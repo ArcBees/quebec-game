@@ -50,4 +50,16 @@ public interface PossibleActionsVisitor {
    * @param host The visited class.
    */
   void visit(ActionTakeLeaderCard host);
+
+  /**
+   * Visits a {@link ActionSendCubesToZone}.
+   * @param host The visited class.
+   */
+  void visit(ActionSendCubesToZone host);
+
+  /**
+   * Visits a {@link ActionSelectBoadAction}.
+   * @param host The visited class.
+   */
+  void visit(ActionSelectBoadAction host);
 }

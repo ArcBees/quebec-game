@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
-
-import com.philbeaudoin.quebec.shared.state.GameState;
+package com.philbeaudoin.quebec.shared.action;
 
 /**
- * A change of the game state obtained by switching to the next player.
+ * A possible action that has a specific board action as a target.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameStateChangeNextPlayer implements GameStateChange {
-  @Override
-  public void apply(GameState gameState) {
-    gameState.nextPlayer();
-  }
-
-  @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
-  }
+public interface GameActionOnBoardAction extends GameAction, HasBoardAction {
 }

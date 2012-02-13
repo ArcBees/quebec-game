@@ -16,8 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
-import com.philbeaudoin.quebec.shared.ActionType;
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -25,7 +25,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class BoardAction {
+public abstract class BoardAction {
   private final Vector2d location;
   private final InfluenceType influenceType;
   private final int cubesPerSpot;
@@ -39,9 +39,10 @@ public class BoardAction {
    * @param influenceType The type (color) of the influence for this action.
    * @param cubesPerSpot The number of cubes for each spot on a building associated with this
    *     action.
+   * @param actionType The type of action of this board action.
    */
-  public BoardAction(int column, int line, InfluenceType influenceType,
-      int cubesPerSpot, ActionType actionType) {
+  protected BoardAction(int column, int line, InfluenceType influenceType, int cubesPerSpot,
+      ActionType actionType) {
     this.location = new Vector2d(column, line);
     this.influenceType = influenceType;
     this.cubesPerSpot = cubesPerSpot;
@@ -69,7 +70,18 @@ public class BoardAction {
     return cubesPerSpot;
   }
 
+  /**
+   * @return The type of this board action.
+   */
   public ActionType getActionType() {
     return actionType;
   }
+
+  /**
+   * Return the list of all possible game actions that can be executed as a result of performing
+   * this board action, or null if no action can be executed.
+   * @param gameState The current game state.
+   * @return The list of possible actions, or null.
+   */
+  public abstract PossibleActions getPossibleActions(GameState gameState);
 }

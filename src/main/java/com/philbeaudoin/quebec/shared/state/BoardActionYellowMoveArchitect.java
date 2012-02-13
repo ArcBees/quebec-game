@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.shared.state;
+
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 
 /**
- * The various possible types of actions in the circles on the board.
- *
+ * Board action: yellow, 2 cubes to activate, move your own architect.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public enum ActionType {
-  PURPLE_ANY,
-  PURPLE_ONE_TO_CITADEL_ONE_TO_ANY,
-  PURPLE_ONE_POINT_ONE_TO_ANY_ACTIVATE_ONE,
-  PURPLE_ONE_TO_ANY_MOVE_TWO,
-  RED_ANY,
-  RED_TWO_TO_PURPLE_OR_YELLOW,
-  RED_TWO_TO_RED_OR_BLUE,
-  RED_TWO_TO_CITADEL,
-  YELLOW_ANY,
-  YELLOW_MOVE_ARCHITECT,
-  YELLOW_FILL_ONE_SPOT,
-  YELLOW_ACTIVATE_THREE,
-  BLUE_ANY,
-  BLUE_SCORE_FOR_CUBES_IN_HAND,
-  BLUE_SCORE_FOR_ZONES,
-  BLUE_ADD_STAR;
+public class BoardActionYellowMoveArchitect extends BoardAction {
+  public BoardActionYellowMoveArchitect() {
+    super(3, 4, InfluenceType.ECONOMIC, 2, ActionType.YELLOW_MOVE_ARCHITECT);
+  }
+
+  public PossibleActions getPossibleActions(GameState gameState) {
+    // TODO(beaudoin): Fill-in.
+    return null;
+  }
 }

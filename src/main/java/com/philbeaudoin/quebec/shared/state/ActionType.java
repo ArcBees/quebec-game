@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
-
-import com.philbeaudoin.quebec.shared.state.GameState;
+package com.philbeaudoin.quebec.shared.state;
 
 /**
- * A change of the game state obtained by switching to the next player.
+ * The various possible types of actions in the circles on the board.
+ *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameStateChangeNextPlayer implements GameStateChange {
-  @Override
-  public void apply(GameState gameState) {
-    gameState.nextPlayer();
-  }
-
-  @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
-  }
+public enum ActionType {
+  PURPLE_ANY,
+  PURPLE_ONE_TO_CITADEL_ONE_TO_ANY,
+  PURPLE_ONE_POINT_ONE_TO_ANY_ACTIVATE_ONE,
+  PURPLE_ONE_TO_ANY_MOVE_TWO,
+  RED_ANY,
+  RED_TWO_TO_PURPLE_OR_YELLOW,
+  RED_TWO_TO_RED_OR_BLUE,
+  RED_TWO_TO_CITADEL,
+  YELLOW_ANY,
+  YELLOW_MOVE_ARCHITECT,
+  YELLOW_FILL_ONE_SPOT,
+  YELLOW_ACTIVATE_THREE,
+  BLUE_ANY,
+  BLUE_SCORE_FOR_CUBES_IN_HAND,
+  BLUE_SCORE_FOR_ZONES,
+  BLUE_ADD_STAR;
 }

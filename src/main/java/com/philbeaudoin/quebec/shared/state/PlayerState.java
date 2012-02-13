@@ -93,6 +93,13 @@ public class PlayerState {
   }
 
   /**
+   * @return The total number of active cubes held by the player, passive and active
+   */
+  public int getNbTotalCubes() {
+    return nbPassiveCubes + nbActiveCubes;
+  }
+
+  /**
    * @param currentPlayer True if this is the currently active player.
    */
   public void setCurrentPlayer(boolean currentPlayer) {
