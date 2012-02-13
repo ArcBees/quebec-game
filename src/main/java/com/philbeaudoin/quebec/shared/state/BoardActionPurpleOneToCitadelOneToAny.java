@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.state;
 
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 
 /**
- * A change of the game state obtained by switching to the next player.
+ * Board action: purple, 2 cubes to activate, send one passive cube to citadel and one passive cube
+ * to any zone (but not the citadel).
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameStateChangeNextPlayer implements GameStateChange {
-  @Override
-  public void apply(GameState gameState) {
-    gameState.nextPlayer();
+public class BoardActionPurpleOneToCitadelOneToAny extends BoardAction {
+  public BoardActionPurpleOneToCitadelOneToAny() {
+    super(6, 3, InfluenceType.RELIGIOUS, 2, ActionType.PURPLE_ONE_TO_CITADEL_ONE_TO_ANY);
   }
 
-  @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public PossibleActions getPossibleActions(GameState gameState) {
+    // TODO(beaudoin): Fill-in.
+    return null;
   }
 }

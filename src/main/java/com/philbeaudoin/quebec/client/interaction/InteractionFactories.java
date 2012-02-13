@@ -19,9 +19,11 @@ package com.philbeaudoin.quebec.client.interaction;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
-import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
+import com.philbeaudoin.quebec.shared.action.GameActionOnBoardAction;
+import com.philbeaudoin.quebec.shared.action.GameActionOnInfluenceZone;
+import com.philbeaudoin.quebec.shared.action.HasBoardAction;
 import com.philbeaudoin.quebec.shared.action.HasDestinationTile;
 import com.philbeaudoin.quebec.shared.action.HasInfluenceZone;
 import com.philbeaudoin.quebec.shared.action.HasLeaderCard;
@@ -44,10 +46,12 @@ public interface InteractionFactories {
       @Assisted("neutral") ActionMoveArchitect actionNeutralArchitect);
   InteractionSendWorkers createInteractionSendWorkers(GameState gameState,
       GameStateRenderer gameStateRenderer, ActionSendWorkers action);
-  InteractionSendOneWorker createInteractionSendOneWorker(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionSendOneWorker host);
+  InteractionSendCubesToZone createInteractionSendCubesToZone(GameState gameState,
+      GameStateRenderer gameStateRenderer, Boolean fromActive, GameActionOnInfluenceZone action);
   InteractionTakeLeaderCard createInteractionTakeLeaderCard(GameState gameState,
       GameStateRenderer gameStateRenderer, ActionTakeLeaderCard host);
+  InteractionSelectBoardAction createInteractionSelectBoardAction(GameState gameState,
+      GameStateRenderer gameStateRenderer, GameActionOnBoardAction action);
   InteractionTargetTile createInteractionTargetTile(
       GameStateRenderer gameStateRenderer, HasDestinationTile target);
   InteractionTargetInfluenceZone createInteractionTargetInfluenceZone(
@@ -56,4 +60,6 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, HasLeaderCard target);
   InteractionTargetArchitect createInteractionTargetArchitect(GameState gameState,
       GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
+  InteractionTargetBoardAction createInteractionTargetBoardAction(
+      GameStateRenderer gameStateRenderer, HasBoardAction target);
 }

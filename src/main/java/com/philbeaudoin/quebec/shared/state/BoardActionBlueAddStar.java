@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.state;
 
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 
 /**
- * A change of the game state obtained by switching to the next player.
+ * Board action: blue, 3 cubes to activate, add a star to one of your building below 3 stars.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameStateChangeNextPlayer implements GameStateChange {
-  @Override
-  public void apply(GameState gameState) {
-    gameState.nextPlayer();
+public class BoardActionBlueAddStar extends BoardAction {
+  public BoardActionBlueAddStar() {
+    super(16, 5, InfluenceType.CULTURAL, 3, ActionType.BLUE_ADD_STAR);
   }
 
-  @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public PossibleActions getPossibleActions(GameState gameState) {
+    // TODO(beaudoin): Fill-in.
+    return null;
   }
 }

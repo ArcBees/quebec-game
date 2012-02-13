@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.state;
 
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 
 /**
- * A change of the game state obtained by switching to the next player.
+ * Board action: yellow, 2 cubes to activate, fill one empty spot on a building for which
+ * construction has started.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameStateChangeNextPlayer implements GameStateChange {
-  @Override
-  public void apply(GameState gameState) {
-    gameState.nextPlayer();
+public class BoardActionYellowFillOneSpot extends BoardAction {
+  public BoardActionYellowFillOneSpot() {
+    super(11, 4, InfluenceType.ECONOMIC, 2, ActionType.YELLOW_FILL_ONE_SPOT);
   }
 
-  @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public PossibleActions getPossibleActions(GameState gameState) {
+    // TODO(beaudoin): Fill-in.
+    return null;
   }
 }

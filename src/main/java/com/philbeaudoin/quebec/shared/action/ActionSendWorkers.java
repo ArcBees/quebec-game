@@ -17,7 +17,10 @@
 package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.Board;
+import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.state.TileState;
@@ -27,6 +30,8 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * The action of sending worker cubes to a spot on a tile.
@@ -73,10 +78,17 @@ public class ActionSendWorkers implements PossibleActions, GameActionOnTile {
         new CubeDestinationPlayer(activePlayer, true),
         new CubeDestinationTile(destinationTile, activePlayer, destinationSpot)));
 
-    // TODO: Execute action if needed.
-
-    // Move to next player.
-    result.add(new GameStateChangeNextPlayer());
+    // Check if the action should be executed.
+    if (!playerState.ownsArchitect(tileState.getArchitect()) ||
+        playerState.getLeaderCard() == LeaderCard.RELIGIOUS) {
+      Vector2d tileLocation = tileState.getLocation();
+      BoardAction action = Board.actionForTileLocation(tileLocation.getColumn(),
+          tileLocation.getLine());
+      result.add(new GameStateChangePrepareAction(action));
+    } else {
+      // Move to next player.
+      result.add(new GameStateChangeNextPlayer());
+    }
 
     return result;
   }

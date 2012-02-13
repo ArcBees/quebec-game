@@ -24,6 +24,8 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.action.AcceptPossibleActions;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionSelectBoadAction;
+import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
@@ -52,6 +54,10 @@ public class InteractionGenerator implements PossibleActionsVisitor {
       new ArrayList<ActionSendOneWorker>();
   private final ArrayList<ActionTakeLeaderCard> takeLeaderCardActions =
       new ArrayList<ActionTakeLeaderCard>();
+  private final ArrayList<ActionSendCubesToZone> sendCubesToZoneActions =
+      new ArrayList<ActionSendCubesToZone>();
+  private final ArrayList<ActionSelectBoadAction> selectBoardActionActions =
+      new ArrayList<ActionSelectBoadAction>();
 
   @Inject
   InteractionGenerator(InteractionFactories factories,
@@ -101,8 +107,8 @@ public class InteractionGenerator implements PossibleActionsVisitor {
     }
     sendWorkersActions.clear();
     for (ActionSendOneWorker action : sendOneWorkerActions) {
-      gameStateRenderer.addInteraction(factories.createInteractionSendOneWorker(gameState,
-          gameStateRenderer, action));
+      gameStateRenderer.addInteraction(factories.createInteractionSendCubesToZone(gameState,
+          gameStateRenderer, true, action));
     }
     sendOneWorkerActions.clear();
     for (ActionTakeLeaderCard action : takeLeaderCardActions) {
@@ -110,6 +116,16 @@ public class InteractionGenerator implements PossibleActionsVisitor {
           gameStateRenderer, action));
     }
     takeLeaderCardActions.clear();
+    for (ActionSendCubesToZone action : sendCubesToZoneActions) {
+      gameStateRenderer.addInteraction(factories.createInteractionSendCubesToZone(gameState,
+          gameStateRenderer, false, action));
+    }
+    sendCubesToZoneActions.clear();
+    for (ActionSelectBoadAction action : selectBoardActionActions) {
+      gameStateRenderer.addInteraction(factories.createInteractionSelectBoardAction(gameState,
+          gameStateRenderer, action));
+    }
+    selectBoardActionActions.clear();
   }
 
   @Override
@@ -140,5 +156,15 @@ public class InteractionGenerator implements PossibleActionsVisitor {
   @Override
   public void visit(ActionTakeLeaderCard host) {
     takeLeaderCardActions.add(host);
+  }
+
+  @Override
+  public void visit(ActionSendCubesToZone host) {
+    sendCubesToZoneActions.add(host);
+  }
+
+  @Override
+  public void visit(ActionSelectBoadAction host) {
+    selectBoardActionActions.add(host);
   }
 }

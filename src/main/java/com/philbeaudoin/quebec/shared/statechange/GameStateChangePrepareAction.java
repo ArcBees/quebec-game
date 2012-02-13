@@ -16,16 +16,30 @@
 
 package com.philbeaudoin.quebec.shared.statechange;
 
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
- * A change of the game state obtained by switching to the next player.
+ * A change of the game state that consists of preparing the possible moves for a given board
+ * action.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameStateChangeNextPlayer implements GameStateChange {
+public class GameStateChangePrepareAction implements GameStateChange {
+
+  private final BoardAction boardAction;
+
+  public GameStateChangePrepareAction(BoardAction boardAction) {
+    this.boardAction = boardAction;
+  }
   @Override
   public void apply(GameState gameState) {
-    gameState.nextPlayer();
+    PossibleActions possibleActions = boardAction.getPossibleActions(gameState);
+    if (possibleActions != null && possibleActions.getNbActions() > 0) {
+      gameState.setPossibleActions(possibleActions);
+    } else {
+      gameState.nextPlayer();
+    }
   }
 
   @Override

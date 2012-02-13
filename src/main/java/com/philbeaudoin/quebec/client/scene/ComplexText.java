@@ -119,7 +119,7 @@ public class ComplexText extends SceneNodeImpl {
     double dx = -totalWidth / 2.0;
 
     Rectangle rectangle = new Rectangle(dx * 1.07, -0.03, (dx + totalWidth) * 1.14, 0.01,
-        "#ffffff", "#ffffff", "#000", 2);
+        "#dddddd", "#eeeeee", "#000", 2);
     rectangle.draw(time, context);
 
     for (Component component : components) {

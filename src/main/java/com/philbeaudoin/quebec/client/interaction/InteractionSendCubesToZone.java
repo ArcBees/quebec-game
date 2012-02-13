@@ -25,7 +25,7 @@ import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
+import com.philbeaudoin.quebec.shared.action.GameActionOnInfluenceZone;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
@@ -34,18 +34,18 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
  * zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionSendOneWorker extends InteractionWithAction {
+public class InteractionSendCubesToZone extends InteractionWithAction {
 
   private final SceneNodeList arrows;
 
-  public InteractionSendOneWorker(Scheduler scheduler, InteractionFactories interactionFactories,
+  public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
       RendererFactories rendererFactories, GameState gameState, GameStateRenderer gameStateRenderer,
-      InteractionTargetInfluenceZone target, ActionSendOneWorker action) {
+      InteractionTargetInfluenceZone target, boolean fromActive, GameActionOnInfluenceZone action) {
     super(scheduler, rendererFactories, gameState, gameStateRenderer, target, action);
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     arrows = new SceneNodeList();
-    Transform cubesFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, true);
+    Transform cubesFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, fromActive);
 
     // Arrow to move cubes.
     arrows.add(new Arrow(cubesFrom.getTranslation(0),
@@ -53,13 +53,13 @@ public class InteractionSendOneWorker extends InteractionWithAction {
   }
 
   @Inject
-  public InteractionSendOneWorker(Scheduler scheduler, InteractionFactories interactionFactories,
+  public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
       RendererFactories rendererFactories,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionSendOneWorker action) {
+      @Assisted Boolean fromActive, @Assisted GameActionOnInfluenceZone action) {
     this(scheduler, interactionFactories, rendererFactories, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetInfluenceZone(gameStateRenderer, action),
-        action);
+        fromActive, action);
   }
 
   @Override

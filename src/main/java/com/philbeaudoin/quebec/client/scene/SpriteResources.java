@@ -28,9 +28,9 @@ import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.ui.Image;
 import com.google.inject.Inject;
 import com.philbeaudoin.quebec.client.resources.Resources;
-import com.philbeaudoin.quebec.shared.ActionType;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.ActionType;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**

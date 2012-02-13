@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.state;
 
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 
 /**
- * A change of the game state obtained by switching to the next player.
+ * Board action: yellow, 3 cube to activate, activate three cubes.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameStateChangeNextPlayer implements GameStateChange {
-  @Override
-  public void apply(GameState gameState) {
-    gameState.nextPlayer();
+public class BoardActionYellowActivateThree extends BoardAction {
+  public BoardActionYellowActivateThree() {
+    super(7, 0, InfluenceType.ECONOMIC, 3, ActionType.YELLOW_ACTIVATE_THREE);
   }
 
-  @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public PossibleActions getPossibleActions(GameState gameState) {
+    // TODO(beaudoin): Fill-in.
+    return null;
   }
 }

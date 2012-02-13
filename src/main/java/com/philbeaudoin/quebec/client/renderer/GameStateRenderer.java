@@ -575,6 +575,15 @@ public class GameStateRenderer {
   }
 
   /**
+   * Checks whether or not the animation is completed at the given time.
+   * @param time The time at which to check for animation completion.
+   * @return True if the animation is completed at that time, false otherwise.
+   */
+  public boolean isAnimationCompleted(double time) {
+    return animationRoot.isAnimationCompleted(time);
+  }
+
+  /**
    * Draws everything in the static layers to the given HTML5 context.
    * @param context The context to draw to.
    */
@@ -631,5 +640,6 @@ public class GameStateRenderer {
   public boolean isRefreshNeeded() {
     return refreshNeeded;
   }
+
 }
 
