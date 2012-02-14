@@ -32,7 +32,6 @@ import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.state.Board;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
@@ -67,8 +66,7 @@ public class InteractionSendWorkers extends InteractionWithAction {
 
     // If the action is triggered, make sure we highlight it when needed.
     TileState tileState = gameState.getTileState(action.getDestinationTile());
-    if (!currentPlayer.ownsArchitect(tileState.getArchitect()) ||
-        currentPlayer.getLeaderCard() == LeaderCard.RELIGIOUS) {
+    if (action.canExecuteBoardAction(gameState)) {
       // TODO(beaudoin): Fancier detection of whether the action is triggered or not?
       Vector2d tileLocation = tileState.getLocation();
       BoardAction boardAction = Board.actionForTileLocation(tileLocation.getColumn(),

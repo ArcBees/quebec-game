@@ -22,25 +22,23 @@ import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.shared.action.AcceptPossibleActions;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.ActionSelectBoadAction;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
-import com.philbeaudoin.quebec.shared.action.PossibleActionsVisitor;
+import com.philbeaudoin.quebec.shared.action.GameActionVisitor;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * Use this class to generate the list of {@link Interaction} corresponding to a given
- * {@link PossibleActions}. All the generated interactions will be added to the provided
- * {@link GameStateRenderer}.
+ * {@link com.philbeaudoin.quebec.shared.action.GameAction GameAction}. All the generated
+ * interactions will be added to the provided{@link GameStateRenderer}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionGenerator implements PossibleActionsVisitor {
+public class InteractionGenerator implements GameActionVisitor {
 
   private final InteractionFactories factories;
   private final GameState gameState;
@@ -58,6 +56,8 @@ public class InteractionGenerator implements PossibleActionsVisitor {
       new ArrayList<ActionSendCubesToZone>();
   private final ArrayList<ActionSelectBoadAction> selectBoardActionActions =
       new ArrayList<ActionSelectBoadAction>();
+  private final ArrayList<ActionScorePoints> scorePointsActions =
+      new ArrayList<ActionScorePoints>();
 
   @Inject
   InteractionGenerator(InteractionFactories factories,
@@ -126,16 +126,12 @@ public class InteractionGenerator implements PossibleActionsVisitor {
           gameStateRenderer, action));
     }
     selectBoardActionActions.clear();
-  }
-
-  @Override
-  public void visit(PossibleActionsComposite host) {
-    host.callOnEach(new AcceptPossibleActions() {
-      @Override
-      public void execute(PossibleActions possibleActions) {
-        possibleActions.accept(InteractionGenerator.this);
-      }
-    });
+    for (ActionScorePoints action : scorePointsActions) {
+      // TODO(beaudoin): Internationalize.
+      gameStateRenderer.addInteraction(factories.createInteractionText(gameState,
+          gameStateRenderer, "Score " + action.getNbPoints() + " points", action));
+    }
+    selectBoardActionActions.clear();
   }
 
   @Override
@@ -166,5 +162,10 @@ public class InteractionGenerator implements PossibleActionsVisitor {
   @Override
   public void visit(ActionSelectBoadAction host) {
     selectBoardActionActions.add(host);
+  }
+
+  @Override
+  public void visit(ActionScorePoints host) {
+    scorePointsActions.add(host);
   }
 }

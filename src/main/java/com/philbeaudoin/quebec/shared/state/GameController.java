@@ -24,7 +24,7 @@ import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
-import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -93,11 +93,11 @@ public class GameController {
 
   /**
    * Configure the possible actions given the current game state.
-   * @param gameState The state to reset and initialize.
+   * @param gameState The state on which to configure possible actions.
    */
   public void configuePossibleActions(GameState gameState) {
     int century = gameState.getCentury();
-    PossibleActionsComposite possibleActions = new PossibleActionsComposite();
+    PossibleActions possibleActions = new PossibleActions();
     gameState.setPossibleActions(possibleActions);
 
     PlayerState currentPlayer = gameState.getCurrentPlayer();
@@ -105,15 +105,8 @@ public class GameController {
 
     // Mark moving architect or sending workers as a possible action.
     for (TileState tileState : gameState.getTileStates()) {
-      if (tileState.getTile().getCentury() == century &&
-          tileState.getArchitect() == PlayerColor.NONE &&
-          !tileState.isBuildingFacing()) {
-        possibleActions.add(new ActionMoveArchitect(tileState.getTile(), false));
-        // If the player has the yellow leader, he can also move the neutral architect.
-        if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC) {
-          possibleActions.add(new ActionMoveArchitect(tileState.getTile(), true));
-        }
-      } else if (tileState.getArchitect() != PlayerColor.NONE &&
+      addArchitectMoveActionIfPossible(century, possibleActions, currentPlayer, tileState);
+      if (tileState.getArchitect() != PlayerColor.NONE &&
           nbActiveCubes >= tileState.getCubesPerSpot() &&
           tileState.getColorInSpot(2) == PlayerColor.NONE) {
         possibleActions.add(new ActionSendWorkers(tileState.getTile()));
@@ -131,6 +124,34 @@ public class GameController {
     if (currentPlayer.getLeaderCard() == null) {
       for (LeaderCard leaderCard : gameState.getAvailableLeaderCards()) {
         possibleActions.add(new ActionTakeLeaderCard(leaderCard));
+      }
+    }
+  }
+
+  /**
+   * Retrieve the possible architect movement actions.
+   * @param gameState The state to reset and initialize.
+   */
+  public PossibleActions getPossibleMoveArchitectActions(GameState gameState) {
+    PossibleActions possibleActions = new PossibleActions();
+    PlayerState currentPlayer = gameState.getCurrentPlayer();
+    int century = gameState.getCentury();
+    for (TileState tileState : gameState.getTileStates()) {
+      addArchitectMoveActionIfPossible(century, possibleActions, currentPlayer, tileState);
+    }
+    return possibleActions;
+  }
+
+  private void addArchitectMoveActionIfPossible(int century,
+      PossibleActions possibleActions, PlayerState currentPlayer,
+      TileState tileState) {
+    if (tileState.getTile().getCentury() == century &&
+        tileState.getArchitect() == PlayerColor.NONE &&
+        !tileState.isBuildingFacing()) {
+      possibleActions.add(new ActionMoveArchitect(tileState.getTile(), false));
+      // If the player has the yellow leader, he can also move the neutral architect.
+      if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC) {
+        possibleActions.add(new ActionMoveArchitect(tileState.getTile(), true));
       }
     }
   }

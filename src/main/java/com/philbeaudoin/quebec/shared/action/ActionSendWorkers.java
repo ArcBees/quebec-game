@@ -37,23 +37,12 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * The action of sending worker cubes to a spot on a tile.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSendWorkers implements PossibleActions, GameActionOnTile {
+public class ActionSendWorkers implements GameActionOnTile {
 
   private final Tile destinationTile;
 
   public ActionSendWorkers(Tile destinationTile) {
     this.destinationTile = destinationTile;
-  }
-
-  @Override
-  public int getNbActions() {
-    return 1;
-  }
-
-  @Override
-  public GameStateChange execute(int actionIndex, GameState gameState) {
-    assert actionIndex == 0;
-    return execute(gameState);
   }
 
   @Override
@@ -79,8 +68,7 @@ public class ActionSendWorkers implements PossibleActions, GameActionOnTile {
         new CubeDestinationTile(destinationTile, activePlayer, destinationSpot)));
 
     // Check if the action should be executed.
-    if (!playerState.ownsArchitect(tileState.getArchitect()) ||
-        playerState.getLeaderCard() == LeaderCard.RELIGIOUS) {
+    if (canExecuteBoardAction(playerState, tileState)) {
       Vector2d tileLocation = tileState.getLocation();
       BoardAction action = Board.actionForTileLocation(tileLocation.getColumn(),
           tileLocation.getLine());
@@ -94,12 +82,27 @@ public class ActionSendWorkers implements PossibleActions, GameActionOnTile {
   }
 
   @Override
-  public void accept(PossibleActionsVisitor visitor) {
+  public void accept(GameActionVisitor visitor) {
     visitor.visit(this);
   }
 
   @Override
   public Tile getDestinationTile() {
     return destinationTile;
+  }
+
+  /**
+   * Checks if, given a game state, the player should execute the board action.
+   * @param gameState The game state.
+   * @return True if the player can execute the board action.
+   */
+  public boolean canExecuteBoardAction(GameState gameState) {
+    return canExecuteBoardAction(gameState.getCurrentPlayer(),
+        gameState.getTileState(destinationTile));
+  }
+
+  private boolean canExecuteBoardAction(PlayerState playerState, TileState tileState) {
+    return !playerState.ownsArchitect(tileState.getArchitect()) ||
+        playerState.getLeaderCard() == LeaderCard.RELIGIOUS;
   }
 }

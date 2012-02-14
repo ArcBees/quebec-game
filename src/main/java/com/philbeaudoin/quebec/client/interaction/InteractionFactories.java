@@ -21,6 +21,7 @@ import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
+import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.GameActionOnBoardAction;
 import com.philbeaudoin.quebec.shared.action.GameActionOnInfluenceZone;
 import com.philbeaudoin.quebec.shared.action.HasBoardAction;
@@ -52,6 +53,8 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, ActionTakeLeaderCard host);
   InteractionSelectBoardAction createInteractionSelectBoardAction(GameState gameState,
       GameStateRenderer gameStateRenderer, GameActionOnBoardAction action);
+  InteractionText createInteractionText(GameState gameState, GameStateRenderer gameStateRenderer,
+      String text, GameAction action);
   InteractionTargetTile createInteractionTargetTile(
       GameStateRenderer gameStateRenderer, HasDestinationTile target);
   InteractionTargetInfluenceZone createInteractionTargetInfluenceZone(
@@ -62,4 +65,6 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
   InteractionTargetBoardAction createInteractionTargetBoardAction(
       GameStateRenderer gameStateRenderer, HasBoardAction target);
+  InteractionTargetText createInteractionTargetText(
+      GameStateRenderer gameStateRenderer, String text);
 }

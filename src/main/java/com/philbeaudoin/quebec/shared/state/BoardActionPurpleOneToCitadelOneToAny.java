@@ -17,7 +17,9 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
 
 /**
  * Board action: purple, 2 cubes to activate, send one passive cube to citadel and one passive cube
@@ -30,7 +32,27 @@ public class BoardActionPurpleOneToCitadelOneToAny extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState) {
-    // TODO(beaudoin): Fill-in.
-    return null;
+    int totalCubes = gameState.getCurrentPlayer().getNbTotalCubes();
+    if (totalCubes == 0) {
+      return null;
+    }
+
+    PossibleActions sendAnywhere = null;
+    if (totalCubes >= 2) {
+      sendAnywhere = new PossibleActions();
+      sendAnywhere.add(new ActionSendCubesToZone(1, InfluenceType.RELIGIOUS));
+      sendAnywhere.add(new ActionSendCubesToZone(1, InfluenceType.POLITIC));
+      sendAnywhere.add(new ActionSendCubesToZone(1, InfluenceType.ECONOMIC));
+      sendAnywhere.add(new ActionSendCubesToZone(1, InfluenceType.CULTURAL));
+    }
+
+    PossibleActions result = new PossibleActions();
+    if (sendAnywhere != null) {
+      result.add(new ActionSendCubesToZone(1, InfluenceType.CITADEL,
+          new GameStateChangeQueuePossibleActions(sendAnywhere)));
+    } else {
+      result.add(new ActionSendCubesToZone(1, InfluenceType.CITADEL));
+    }
+    return result;
   }
 }

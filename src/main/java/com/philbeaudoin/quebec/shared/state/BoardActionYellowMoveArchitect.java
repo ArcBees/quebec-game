@@ -29,7 +29,6 @@ public class BoardActionYellowMoveArchitect extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState) {
-    // TODO(beaudoin): Fill-in.
-    return null;
+    return gameState.getController().getPossibleMoveArchitectActions(gameState);
   }
 }

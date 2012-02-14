@@ -17,11 +17,8 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
 
 /**
  * Board action: red, 3 cubes to activate, send two cubes to citadel.
@@ -34,11 +31,9 @@ public class BoardActionRedTwoToCitadel extends BoardAction {
 
   public PossibleActions getPossibleActions(GameState gameState) {
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor playerColor = playerState.getPlayer().getColor();
     int nbCubes = Math.min(2, playerState.getNbTotalCubes());
-    PossibleActionsComposite result = new PossibleActionsComposite();
-    result.add(new ActionSendCubesToZone(nbCubes,
-        new CubeDestinationInfluenceZone(InfluenceType.CITADEL, playerColor)));
+    PossibleActions result = new PossibleActions();
+    result.add(new ActionSendCubesToZone(nbCubes, InfluenceType.CITADEL));
     return result;
   }
 }

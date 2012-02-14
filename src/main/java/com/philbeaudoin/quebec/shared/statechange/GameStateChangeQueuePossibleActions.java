@@ -14,37 +14,31 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.action;
+package com.philbeaudoin.quebec.shared.statechange;
 
-import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
 
 /**
- * The action of selecting a board action to execute.
+ * A change of the game state that consists of preparing the possible moves for a given board
+ * action.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSelectBoadAction implements GameActionOnBoardAction {
+public class GameStateChangeQueuePossibleActions implements GameStateChange {
 
-  private final BoardAction boardAction;
+  private final PossibleActions possibleActions;
 
-  public ActionSelectBoadAction(BoardAction boardAction) {
-    this.boardAction = boardAction;
+  public GameStateChangeQueuePossibleActions(PossibleActions possibleActions) {
+    assert possibleActions != null && possibleActions.getNbActions() > 0;
+    this.possibleActions = possibleActions;
+  }
+  @Override
+  public void apply(GameState gameState) {
+    gameState.setPossibleActions(possibleActions);
   }
 
   @Override
-  public GameStateChange execute(GameState gameState) {
-    return new GameStateChangePrepareAction(boardAction);
-  }
-
-  @Override
-  public void accept(GameActionVisitor visitor) {
+  public void accept(GameStateChangeVisitor visitor) {
     visitor.visit(this);
-  }
-
-  @Override
-  public BoardAction getBoardAction() {
-    return boardAction;
   }
 }

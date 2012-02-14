@@ -16,55 +16,64 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
+import java.util.ArrayList;
+
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
-import com.philbeaudoin.quebec.shared.action.HasLeaderCard;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * This is a target for interactions occurring on a given leader card.
+ * This is a target for interactions occurring on a box of text.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionTargetLeaderCard implements InteractionTarget {
+public class InteractionTargetText implements InteractionTarget {
 
   private final GameStateRenderer gameStateRenderer;
-  private final LeaderCard leaderCard;
-  private final SceneNodeAnimation leaderCardAnimation;
+  private final ComplexText textNode;
+  private final SceneNodeAnimation textAnimation;
   private final Trigger trigger;
 
   @Inject
-  InteractionTargetLeaderCard(SceneNodeAnimation.Factory sceneNodeAnimationFactory,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted HasLeaderCard target) {
+  InteractionTargetText(SceneNodeAnimation.Factory sceneNodeAnimationFactory,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted String text) {
     this.gameStateRenderer = gameStateRenderer;
-    leaderCard = target.getLeaderCard();
-    Transform fromTransform = gameStateRenderer.getLeaderCardOnBoardTransform(leaderCard);
-    Transform toTransform = new ConstantTransform(
-        fromTransform.getTranslation(0),
-        fromTransform.getScaling(0) * 1.08,
-        fromTransform.getRotation(0));
-    leaderCardAnimation = sceneNodeAnimationFactory.create(gameStateRenderer, fromTransform,
-        toTransform, gameStateRenderer.copyLeaderCardOnBoard(leaderCard));
-    this.trigger = new RectangleTrigger(fromTransform.getTranslation(0), 0.06, 0.1);
+    Vector2d pos = new Vector2d(1.3, 0.1);
+    Vector2d center = new Vector2d(1.3, 0.088);
+    double width = 0.0137 * text.length();  // TODO(beaudoin): Approximate. Can we do better?
+    double height = 0.04;
+    Transform fromTransform = new ConstantTransform(pos);
+    Transform toTransform = new ConstantTransform(pos, 1.08, 0);
+
+    ArrayList<ComplexText.Component> components = new ArrayList<ComplexText.Component>();
+    components.add(new ComplexText.TextComponent(text));
+    textNode = new ComplexText(components, fromTransform);
+
+    textAnimation = sceneNodeAnimationFactory.create(gameStateRenderer, fromTransform, toTransform,
+        textNode);
+
+    this.trigger = new RectangleTrigger(center, width, height);
   }
 
   @Override
   public void highlight() {
-    gameStateRenderer.highlightLeaderCard(leaderCard);
+    gameStateRenderer.forceGlassScreen();
+    gameStateRenderer.addToAnimationGraph(textNode);
   }
 
   @Override
   public void onMouseEnter(double time) {
-    leaderCardAnimation.startAnim(time);
+    textAnimation.startAnim(time);
   }
 
   @Override
   public void onMouseLeave(double time) {
-    leaderCardAnimation.stopAnim(time);
+    textAnimation.stopAnim(time);
   }
 
   @Override

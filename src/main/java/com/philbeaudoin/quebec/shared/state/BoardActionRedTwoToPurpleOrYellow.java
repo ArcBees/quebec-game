@@ -17,11 +17,8 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
 
 /**
  * Board action: red, 2 cubes to activate, send two cubes to religious or economic influence zone.
@@ -34,13 +31,10 @@ public class BoardActionRedTwoToPurpleOrYellow extends BoardAction {
 
   public PossibleActions getPossibleActions(GameState gameState) {
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor playerColor = playerState.getPlayer().getColor();
     int nbCubes = Math.min(2, playerState.getNbTotalCubes());
-    PossibleActionsComposite result = new PossibleActionsComposite();
-    result.add(new ActionSendCubesToZone(nbCubes,
-        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, playerColor)));
-    result.add(new ActionSendCubesToZone(nbCubes,
-        new CubeDestinationInfluenceZone(InfluenceType.ECONOMIC, playerColor)));
+    PossibleActions result = new PossibleActions();
+    result.add(new ActionSendCubesToZone(nbCubes, InfluenceType.RELIGIOUS));
+    result.add(new ActionSendCubesToZone(nbCubes, InfluenceType.ECONOMIC));
     return result;
   }
 }

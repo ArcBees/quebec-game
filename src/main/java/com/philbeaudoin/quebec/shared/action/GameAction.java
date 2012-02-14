@@ -31,4 +31,10 @@ public interface GameAction {
    * @return The change to the game state resulting from the application of that action.
    */
   GameStateChange execute(GameState gameState);
+
+  /**
+   * Accepts a visitor.
+   * @param visitor The visitor to accept.
+   */
+  void accept(GameActionVisitor visitor);
 }
