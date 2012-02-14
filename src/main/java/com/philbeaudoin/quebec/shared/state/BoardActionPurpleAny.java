@@ -19,7 +19,6 @@ package com.philbeaudoin.quebec.shared.state;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.ActionSelectBoadAction;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.action.PossibleActionsComposite;
 
 /**
  * Board action: purple, 1 cube to activate, perform any purple action.
@@ -31,7 +30,7 @@ public class BoardActionPurpleAny extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState) {
-    PossibleActionsComposite result = new PossibleActionsComposite();
+    PossibleActions result = new PossibleActions();
     result.add(new ActionSelectBoadAction(new BoardActionPurpleOnePointOneToAnyActivateOne()));
     result.add(new ActionSelectBoadAction(new BoardActionPurpleOneToAnyMoveTwo()));
     result.add(new ActionSelectBoadAction(new BoardActionPurpleOneToCitadelOneToAny()));

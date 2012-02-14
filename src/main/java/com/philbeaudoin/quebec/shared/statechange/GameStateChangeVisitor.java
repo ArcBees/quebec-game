@@ -56,4 +56,14 @@ public interface GameStateChangeVisitor {
    * @param host The visited class.
    */
   void visit(GameStateChangePrepareAction host);
+  /**
+   * Visits a {@link GameStateChangeQueuePossibleActions}.
+   * @param host The visited class.
+   */
+  void visit(GameStateChangeQueuePossibleActions host);
+  /**
+   * Visits a {@link GameStateChangeScorePoints}.
+   * @param host The visited class.
+   */
+  void visit(GameStateChangeScorePoints host);
 }

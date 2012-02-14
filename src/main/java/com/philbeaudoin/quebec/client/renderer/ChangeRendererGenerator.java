@@ -27,6 +27,8 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveLeader;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeVisitor;
 
 /**
@@ -119,6 +121,17 @@ public class ChangeRendererGenerator implements GameStateChangeVisitor {
 
   @Override
   public void visit(GameStateChangePrepareAction host) {
+    changeRenderer = factories.createChangeRendererNull();
+  }
+
+  @Override
+  public void visit(GameStateChangeQueuePossibleActions host) {
+    changeRenderer = factories.createChangeRendererNull();
+  }
+
+  @Override
+  public void visit(GameStateChangeScorePoints host) {
+    // TODO We should have an animation here.
     changeRenderer = factories.createChangeRendererNull();
   }
 }

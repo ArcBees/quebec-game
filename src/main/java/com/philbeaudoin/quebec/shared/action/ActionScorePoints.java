@@ -16,26 +16,31 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
-import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
 
 /**
- * The action of selecting a board action to execute.
+ * A game action where the current player score points.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSelectBoadAction implements GameActionOnBoardAction {
+public class ActionScorePoints implements GameAction {
 
-  private final BoardAction boardAction;
+  private final int nbPoints;
 
-  public ActionSelectBoadAction(BoardAction boardAction) {
-    this.boardAction = boardAction;
+  public ActionScorePoints(int nbPoints) {
+    this.nbPoints = nbPoints;
   }
 
   @Override
   public GameStateChange execute(GameState gameState) {
-    return new GameStateChangePrepareAction(boardAction);
+    GameStateChangeComposite result = new GameStateChangeComposite();
+    result.add(new GameStateChangeScorePoints(
+        gameState.getCurrentPlayer().getPlayer().getColor(), nbPoints));
+    result.add(new GameStateChangeNextPlayer());
+    return result;
   }
 
   @Override
@@ -43,8 +48,11 @@ public class ActionSelectBoadAction implements GameActionOnBoardAction {
     visitor.visit(this);
   }
 
-  @Override
-  public BoardAction getBoardAction() {
-    return boardAction;
+  /**
+   * Access the number of points scored by that action.
+   * @return The number of points.
+   */
+  public int getNbPoints() {
+    return nbPoints;
   }
 }

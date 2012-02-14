@@ -22,14 +22,14 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * A trigger that is triggered when a location is within a given rectangle.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class SquareTrigger implements Trigger {
+public class RectangleTrigger implements Trigger {
 
   private final double minX;
   private final double minY;
   private final double maxX;
   private final double maxY;
 
-  SquareTrigger(Vector2d center, double width, double height) {
+  RectangleTrigger(Vector2d center, double width, double height) {
     minX = center.getX() - width / 2.0;
     minY = center.getY() - height / 2.0;
     maxX = minX + width;

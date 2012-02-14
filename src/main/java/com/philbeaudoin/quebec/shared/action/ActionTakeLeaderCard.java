@@ -38,23 +38,12 @@ import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationPlayer;
  * The action of taking a leader card from an influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionTakeLeaderCard implements PossibleActions, GameAction, HasLeaderCard {
+public class ActionTakeLeaderCard implements GameAction, HasLeaderCard {
 
   private final LeaderCard leaderCard;
 
   public ActionTakeLeaderCard(LeaderCard leaderCard) {
     this.leaderCard = leaderCard;
-  }
-
-  @Override
-  public int getNbActions() {
-    return 1;
-  }
-
-  @Override
-  public GameStateChange execute(int actionIndex, GameState gameState) {
-    assert actionIndex == 0;
-    return execute(gameState);
   }
 
   @Override
@@ -113,7 +102,7 @@ public class ActionTakeLeaderCard implements PossibleActions, GameAction, HasLea
   }
 
   @Override
-  public void accept(PossibleActionsVisitor visitor) {
+  public void accept(GameActionVisitor visitor) {
     visitor.visit(this);
   }
 

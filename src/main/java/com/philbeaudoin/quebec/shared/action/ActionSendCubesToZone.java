@@ -28,28 +28,24 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 
 /**
- * The action of sending worker cubes to a spot on a tile.
+ * The action of sending passive worker cubes to a given influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSendCubesToZone implements PossibleActions, GameActionOnInfluenceZone {
+public class ActionSendCubesToZone implements GameActionOnInfluenceZone {
 
   private final int nbCubes;
-  private final CubeDestinationInfluenceZone to;
+  private final InfluenceType to;
+  private final GameStateChange followup;
 
-  public ActionSendCubesToZone(int nbCubes, CubeDestinationInfluenceZone to) {
+  public ActionSendCubesToZone(int nbCubes, InfluenceType to) {
+    this(nbCubes, to, new GameStateChangeNextPlayer());
+  }
+
+  public ActionSendCubesToZone(int nbCubes, InfluenceType to, GameStateChange followup) {
+    assert followup != null;
     this.nbCubes = nbCubes;
     this.to = to;
-  }
-
-  @Override
-  public int getNbActions() {
-    return 1;
-  }
-
-  @Override
-  public GameStateChange execute(int actionIndex, GameState gameState) {
-    assert actionIndex == 0;
-    return execute(gameState);
+    this.followup = followup;
   }
 
   @Override
@@ -63,30 +59,31 @@ public class ActionSendCubesToZone implements PossibleActions, GameActionOnInflu
 
     // Move as much cube as we want from the passive reserve.
     int nbMoved = Math.min(nbCubes, playerState.getNbPassiveCubes());
+    CubeDestinationInfluenceZone destination = new CubeDestinationInfluenceZone(to, activePlayer);
     if (nbMoved > 0) {
       result.add(new GameStateChangeMoveCubes(nbMoved,
-          new CubeDestinationPlayer(activePlayer, false), to));
+          new CubeDestinationPlayer(activePlayer, false), destination));
     }
     // Move the balance from the active reserve.
     nbMoved = nbCubes - nbMoved;
     if (nbMoved > 0) {
       result.add(new GameStateChangeMoveCubes(nbMoved,
-          new CubeDestinationPlayer(activePlayer, true), to));
+          new CubeDestinationPlayer(activePlayer, true), destination));
     }
 
     // Move to next player.
-    result.add(new GameStateChangeNextPlayer());
+    result.add(followup);
 
     return result;
   }
 
   @Override
-  public void accept(PossibleActionsVisitor visitor) {
+  public void accept(GameActionVisitor visitor) {
     visitor.visit(this);
   }
 
   @Override
   public InfluenceType getInfluenceZone() {
-    return to.getInfluenceType();
+    return to;
   }
 }

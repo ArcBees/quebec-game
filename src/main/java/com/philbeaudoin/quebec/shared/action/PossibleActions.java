@@ -16,19 +16,26 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
+import java.util.ArrayList;
+
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
 /**
- * Information about all the possible actions that can be taken in the current state of the game.
+ * A set of possible actions that can be taken in the current state of the game.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface PossibleActions {
+public class PossibleActions {
+
+  private final ArrayList<GameAction> gameActions = new ArrayList<GameAction>();
+
   /**
    * The number of actions that can be taken.
    * @return The number of actions.
    */
-  int getNbActions();
+  public int getNbActions() {
+    return gameActions.size();
+  }
 
   /**
    * Apply a given action to a given game state and return the game state change resulting from it.
@@ -38,11 +45,26 @@ public interface PossibleActions {
    * @param gameState The state of the game to which to apply the action, it is not modified.
    * @return The change to the game state resulting from the application of that action.
    */
-  GameStateChange execute(int actionIndex, GameState gameState);
+  public GameStateChange execute(int actionIndex, GameState gameState) {
+    assert actionIndex > 0 && actionIndex < gameActions.size();
+    return gameActions.get(actionIndex).execute(gameState);
+  }
 
   /**
    * Accepts a visitor.
    * @param visitor The visitor.
    */
-  void accept(PossibleActionsVisitor visitor);
+  public void accept(GameActionVisitor visitor) {
+    for (GameAction gameAction : gameActions) {
+      gameAction.accept(visitor);
+    }
+  }
+
+  /**
+   * Adds an action to this list of possible actions.
+   * @param gameAction The action to add.
+   */
+  public void add(GameAction gameAction) {
+    gameActions.add(gameAction);
+  }
 }

@@ -17,16 +17,10 @@
 package com.philbeaudoin.quebec.shared.action;
 
 /**
- * Interface for a class that can visit a {@link PossibleActions}.
+ * Interface for a class that can visit a {@link GameAction}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface PossibleActionsVisitor {
-  /**
-   * Visits a {@link PossibleActionsComposite}.
-   * @param host The visited class.
-   */
-  void visit(PossibleActionsComposite host);
-
+public interface GameActionVisitor {
   /**
    * Visits a {@link ActionMoveArchitect}.
    * @param host The visited class.
@@ -62,4 +56,10 @@ public interface PossibleActionsVisitor {
    * @param host The visited class.
    */
   void visit(ActionSelectBoadAction host);
+
+  /**
+   * Visits a {@link ActionScorePoints}.
+   * @param host The visited class.
+   */
+  void visit(ActionScorePoints host);
 }

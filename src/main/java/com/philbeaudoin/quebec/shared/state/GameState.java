@@ -256,4 +256,12 @@ public class GameState {
     }
     return result;
   }
+
+  /**
+   * Access the controller of this game state.
+   * @return The controller.
+   */
+  public GameController getController() {
+    return gameController;
+  }
 }

@@ -71,7 +71,7 @@ public class InteractionTargetArchitect implements InteractionTarget {
     pawnAnimation = sceneNodeAnimationFactory.create(gameStateRenderer, fromTransform,
         toTransform, pawn);
 
-    trigger = new SquareTrigger(fromTransform.getTranslation(0), 0.019, 0.031);
+    trigger = new RectangleTrigger(fromTransform.getTranslation(0), 0.019, 0.031);
   }
 
   @Override

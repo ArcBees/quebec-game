@@ -17,6 +17,8 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 
 /**
@@ -30,7 +32,23 @@ public class BoardActionBlueScoreForZones extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState) {
-    // TODO(beaudoin): Fill-in.
-    return null;
+    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    int nbZonesWithAtLeastOneCube = 0;
+    for (InfluenceType influenceType : InfluenceType.values()) {
+      if (gameState.getPlayerCubesInInfluenceZone(influenceType, playerColor) > 0) {
+        nbZonesWithAtLeastOneCube++;
+      }
+    }
+    int nbPoints = 0;
+    if (nbZonesWithAtLeastOneCube >= 3) {
+      nbPoints = 4;
+    } else if (nbZonesWithAtLeastOneCube == 2) {
+      nbPoints = 2;
+    } else if (nbZonesWithAtLeastOneCube == 1) {
+      nbPoints = 1;
+    }
+    PossibleActions result = new PossibleActions();
+    result.add(new ActionScorePoints(nbPoints));
+    return result;
   }
 }

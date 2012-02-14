@@ -31,23 +31,12 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
  * The action of sending one worker to an influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSendOneWorker implements PossibleActions, GameActionOnInfluenceZone {
+public class ActionSendOneWorker implements GameActionOnInfluenceZone {
 
   private final InfluenceType influenceZone;
 
   public ActionSendOneWorker(InfluenceType influenceZone) {
     this.influenceZone = influenceZone;
-  }
-
-  @Override
-  public int getNbActions() {
-    return 1;
-  }
-
-  @Override
-  public GameStateChange execute(int actionIndex, GameState gameState) {
-    assert actionIndex == 0;
-    return execute(gameState);
   }
 
   @Override
@@ -70,7 +59,7 @@ public class ActionSendOneWorker implements PossibleActions, GameActionOnInfluen
   }
 
   @Override
-  public void accept(PossibleActionsVisitor visitor) {
+  public void accept(GameActionVisitor visitor) {
     visitor.visit(this);
   }
 
