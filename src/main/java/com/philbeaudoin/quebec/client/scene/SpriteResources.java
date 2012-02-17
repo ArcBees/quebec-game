@@ -104,6 +104,7 @@ public class SpriteResources {
   private final Info[] pawnInfos = new Info[6];
   private final Info[] leaderInfos = new Info[5];
   private final Info[] influenceZoneInfos = new Info[5];
+  private final Info[] zoneLogoInfos = new Info[5];
   private final Info[][] starTokensInfo = new Info[5][3];
   private final Info[] actionInfos = new Info[16];
 
@@ -176,6 +177,12 @@ public class SpriteResources {
     setInfoForInfluenceZone(InfluenceType.ECONOMIC, resources.influenceZoneEconomic());
     setInfoForInfluenceZone(InfluenceType.CULTURAL, resources.influenceZoneCultural());
     setInfoForInfluenceZone(InfluenceType.CITADEL, resources.influenceZoneCitadel());
+
+    setInfoForZoneLogo(InfluenceType.RELIGIOUS, resources.religiousZoneLogo());
+    setInfoForZoneLogo(InfluenceType.POLITIC, resources.politicZoneLogo());
+    setInfoForZoneLogo(InfluenceType.ECONOMIC, resources.economicZoneLogo());
+    setInfoForZoneLogo(InfluenceType.CULTURAL, resources.culturalZoneLogo());
+    setInfoForZoneLogo(InfluenceType.CITADEL, resources.citadelLogo());
 
     setInfoForStarToken(PlayerColor.BLACK, 1, resources.starBlack1());
     setInfoForStarToken(PlayerColor.BLACK, 2, resources.starBlack2());
@@ -302,6 +309,18 @@ public class SpriteResources {
   }
 
   /**
+   * Obtain information, including the {@link ImageElement}, for the logo of the given influence
+   * zone.
+   * @param influenceZone The type of the influence zone for which to get information.
+   * @return The information on that sprite.
+   */
+  public Info getZoneLogo(InfluenceType influenceZone) {
+    Info imageInfo = zoneLogoInfos[influenceZone.ordinal()];
+    lazilyInstantiateImageElement(imageInfo);
+    return imageInfo;
+  }
+
+  /**
    * Obtain information, including the {@link ImageElement}, for the given type of star token.
    * @param starTokenColor The color of the desired star token. Not NONE or NEUTRAL.
    * @param nbStars The number of stars on the star token (1, 2 or 3).
@@ -366,6 +385,10 @@ public class SpriteResources {
 
   private void setInfoForInfluenceZone(InfluenceType influenceZone, DataResource dataResource) {
     influenceZoneInfos[influenceZone.ordinal()] = new Info(dataResource.getSafeUri(), 0.000303);
+  }
+
+  private void setInfoForZoneLogo(InfluenceType influenceZone, DataResource dataResource) {
+    zoneLogoInfos[influenceZone.ordinal()] = new Info(dataResource.getSafeUri(), 0.000313);
   }
 
   private void setInfoForStarToken(PlayerColor starTokenColor, int nbStars,

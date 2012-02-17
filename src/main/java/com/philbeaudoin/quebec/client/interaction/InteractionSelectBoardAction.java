@@ -37,6 +37,7 @@ public class InteractionSelectBoardAction extends InteractionWithAction {
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
       @Assisted GameActionOnBoardAction action) {
     super(scheduler, rendererFactories, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetBoardAction(gameStateRenderer, action), action);
+        interactionFactories.createInteractionTargetBoardAction(gameStateRenderer, action),
+        action.execute(gameState));
   }
 }

@@ -20,11 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.philbeaudoin.quebec.client.interaction.Interaction;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.interaction.InteractionGenerator;
+import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.Rectangle;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
@@ -32,6 +34,7 @@ import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
@@ -61,6 +64,7 @@ public class GameStateRenderer {
 
   private final RendererFactories factories;
   private final InteractionFactories interactionFactories;
+  private final Provider<MessageRenderer> messageRendererProvider;
   private final ScoreRenderer scoreRenderer;
   private final BoardRenderer boardRenderer;
   private final ArrayList<PlayerStateRenderer> playerStateRenderers =
@@ -72,9 +76,11 @@ public class GameStateRenderer {
   @Inject
   public GameStateRenderer(RendererFactories factories,
       InteractionFactories interactionFactories,
-      SpriteResources spriteResources) {
+      SpriteResources spriteResources,
+      Provider<MessageRenderer> messageRendererProvider) {
     this.factories = factories;
     this.interactionFactories = interactionFactories;
+    this.messageRendererProvider = messageRendererProvider;
     scoreRenderer = factories.createScoreRenderer();
     boardRenderer = factories.createBoardRenderer(LEFT_COLUMN_WIDTH);
     staticRoot.add(backgroundRoot);
@@ -117,6 +123,13 @@ public class GameStateRenderer {
           interactionFactories.createInteractionGenerator(gameState, this);
       possibleActions.accept(generator);
       generator.generateInteractions();
+      Message message = possibleActions.getMessage();
+      if (message != null) {
+        MessageRenderer messageRenderer = messageRendererProvider.get();
+        message.accept(messageRenderer);
+        addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
+            new ConstantTransform(new Vector2d(1.05, 0.1))));
+      }
     }
     for (Interaction interaction : interactions) {
       interaction.highlight();
@@ -640,6 +653,5 @@ public class GameStateRenderer {
   public boolean isRefreshNeeded() {
     return refreshNeeded;
   }
-
 }
 

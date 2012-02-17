@@ -192,6 +192,16 @@ public interface Resources extends ClientBundle {
   DataResource influenceZoneCultural();
   @Source("gray_zone.png")
   DataResource influenceZoneCitadel();
+  @Source("purple_zone_logo.png")
+  DataResource religiousZoneLogo();
+  @Source("red_zone_logo.png")
+  DataResource politicZoneLogo();
+  @Source("yellow_zone_logo.png")
+  DataResource economicZoneLogo();
+  @Source("blue_zone_logo.png")
+  DataResource culturalZoneLogo();
+  @Source("gray_zone_logo.png")
+  DataResource citadelLogo();
   @Source("star_black_1.png")
   DataResource starBlack1();
   @Source("star_black_2.png")

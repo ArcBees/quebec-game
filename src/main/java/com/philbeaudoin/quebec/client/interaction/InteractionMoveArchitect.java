@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.state.GameState;
@@ -33,9 +34,10 @@ public class InteractionMoveArchitect extends InteractionMoveArchitectBase {
 
   @Inject
   public InteractionMoveArchitect(Scheduler scheduler, RendererFactories rendererFactories,
-      InteractionFactories interactionFactories, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionMoveArchitect action) {
-    super(scheduler, rendererFactories, gameState, gameStateRenderer,
+      InteractionFactories interactionFactories, MessageRenderer messageRenderer,
+      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted ActionMoveArchitect action) {
+    super(scheduler, rendererFactories, messageRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action), action);
   }
 

@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.shared.action;
 
 import java.util.ArrayList;
 
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
@@ -27,7 +28,22 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
  */
 public class PossibleActions {
 
+  private final Message message;
   private final ArrayList<GameAction> gameActions = new ArrayList<GameAction>();
+
+  /**
+   * Creates a list of possible actions without an information message.
+   */
+  public PossibleActions() {
+    message = null;
+  }
+
+  /**
+   * Creates a list of possible actions with an information message.
+   */
+  public PossibleActions(Message message) {
+    this.message = message;
+  }
 
   /**
    * The number of actions that can be taken.
@@ -66,5 +82,13 @@ public class PossibleActions {
    */
   public void add(GameAction gameAction) {
     gameActions.add(gameAction);
+  }
+
+  /**
+   * Returns the message associated with this list of possible actions, or null if none.
+   * @return The message, or null.
+   */
+  public Message getMessage() {
+    return message;
   }
 }

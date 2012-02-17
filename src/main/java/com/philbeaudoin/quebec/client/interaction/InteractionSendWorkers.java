@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
@@ -29,6 +30,8 @@ import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
+import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.state.ActionType;
 import com.philbeaudoin.quebec.shared.state.Board;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
@@ -50,10 +53,12 @@ public class InteractionSendWorkers extends InteractionWithAction {
   @Inject
   public InteractionSendWorkers(Scheduler scheduler, SpriteResources spriteResources,
       RendererFactories rendererFactories, InteractionFactories interactionFactories,
-      SceneNodeAnimation.Factory sceneNodeAnimationFactory, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionSendWorkers action) {
+      SceneNodeAnimation.Factory sceneNodeAnimationFactory, MessageRenderer messageRenderer,
+      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted ActionSendWorkers action) {
     super(scheduler, rendererFactories, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetTile(gameStateRenderer, action), action);
+        interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
+        createActionMessage(messageRenderer, gameState, action), action.execute(gameState));
     PlayerState currentPlayer = gameState.getCurrentPlayer();
     PlayerColor playerColor = currentPlayer.getPlayer().getColor();
 
@@ -100,5 +105,21 @@ public class InteractionSendWorkers extends InteractionWithAction {
     }
     super.doMouseLeave(x, y, time);
     arrows.setParent(null);
+  }
+
+  private static MessageRenderer createActionMessage(MessageRenderer messageRenderer,
+      GameState gameState, ActionSendWorkers action) {
+    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    TileState tileState = gameState.getTileState(action.getDestinationTile());
+    if (action.canExecuteBoardAction(gameState)) {
+      ActionType actionType = Board.actionForTileLocation(tileState.getLocation().getColumn(),
+          tileState.getLocation().getLine()).getActionType();
+      new Message.SendActiveCubesToThisTileAndExecuteAction(tileState.getCubesPerSpot(),
+          playerColor, actionType).accept(messageRenderer);
+    } else {
+      new Message.SendActiveCubesToThisTile(tileState.getCubesPerSpot(), playerColor).accept(
+          messageRenderer);
+    }
+    return messageRenderer;
   }
 }

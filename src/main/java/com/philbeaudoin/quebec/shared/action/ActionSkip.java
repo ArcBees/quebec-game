@@ -16,55 +16,38 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
-import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 
 /**
- * The action of sending one worker to an influence zone.
+ * The action of skipping a move.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSendOneWorker implements GameActionOnInfluenceZone {
+public class ActionSkip implements GameAction {
 
-  private final InfluenceType influenceZone;
+  private final GameStateChange followup;
 
-  public ActionSendOneWorker(InfluenceType influenceZone) {
-    this.influenceZone = influenceZone;
+  public ActionSkip() {
+    this(new GameStateChangeNextPlayer());
+  }
+
+  public ActionSkip(GameStateChange followup) {
+    assert followup != null;
+    this.followup = followup;
   }
 
   @Override
   public GameStateChange execute(GameState gameState) {
     GameStateChangeComposite result = new GameStateChangeComposite();
-    PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor activePlayer = playerState.getPlayer().getColor();
-
-    assert playerState.getNbActiveCubes() >= 1;
-
-    // Move the cubes.
-    result.add(new GameStateChangeMoveCubes(1,
-        new CubeDestinationPlayer(activePlayer, true),
-        new CubeDestinationInfluenceZone(influenceZone, activePlayer)));
-
     // Move to next player.
-    result.add(new GameStateChangeNextPlayer());
-
+    result.add(followup);
     return result;
   }
 
   @Override
   public void accept(GameActionVisitor visitor) {
     visitor.visit(this);
-  }
-
-  @Override
-  public InfluenceType getInfluenceZone() {
-    return influenceZone;
   }
 }

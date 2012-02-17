@@ -18,7 +18,9 @@ package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.ActionSelectBoadAction;
+import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 
 /**
  * Board action: yellow, 1 cube to activate, perform any yellow action.
@@ -30,10 +32,11 @@ public class BoardActionYellowAny extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState) {
-    PossibleActions result = new PossibleActions();
+    PossibleActions result = new PossibleActions(new Message.SelectAction());
     result.add(new ActionSelectBoadAction(new BoardActionYellowActivateThree()));
     result.add(new ActionSelectBoadAction(new BoardActionYellowFillOneSpot()));
     result.add(new ActionSelectBoadAction(new BoardActionYellowMoveArchitect()));
+    result.add(new ActionSkip());
     return result;
   }
 }

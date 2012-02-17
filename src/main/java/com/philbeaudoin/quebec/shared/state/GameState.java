@@ -264,4 +264,12 @@ public class GameState {
   public GameController getController() {
     return gameController;
   }
+
+  /**
+   * Checks whether or not the current set of possible actions is associated with a global message.
+   * @return True if there is a global possible action message, false otherwise.
+   */
+  public boolean hasPossibleActionMessage() {
+    return possibleActions != null && possibleActions.getMessage() != null;
+  }
 }

@@ -36,6 +36,7 @@ public class InteractionText extends InteractionWithAction {
       @Assisted GameStateRenderer gameStateRenderer, @Assisted String text,
       @Assisted GameAction action) {
     super(scheduler, rendererFactories, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetText(gameStateRenderer, text), action);
+        interactionFactories.createInteractionTargetText(gameStateRenderer, text),
+        action.execute(gameState));
   }
 }
