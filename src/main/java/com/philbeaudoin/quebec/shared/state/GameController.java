@@ -21,10 +21,11 @@ import java.util.List;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
-import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
+import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -116,7 +117,7 @@ public class GameController {
     // Mark moving one cube to influence zones as a possible action.
     if (nbActiveCubes >= 1) {
       for (InfluenceType influenceZone : InfluenceType.values()) {
-        possibleActions.add(new ActionSendOneWorker(influenceZone));
+        possibleActions.add(new ActionSendCubesToZone(1, true, influenceZone));
       }
     }
 
@@ -133,7 +134,16 @@ public class GameController {
    * @param gameState The state to reset and initialize.
    */
   public PossibleActions getPossibleMoveArchitectActions(GameState gameState) {
-    PossibleActions possibleActions = new PossibleActions();
+    return getPossibleMoveArchitectActions(gameState, null);
+  }
+
+  /**
+   * Retrieve the possible architect movement actions.
+   * @param gameState The state to reset and initialize.
+   * @param message The message to associate with that list of action.
+   */
+  public PossibleActions getPossibleMoveArchitectActions(GameState gameState, Message message) {
+    PossibleActions possibleActions = new PossibleActions(message);
     PlayerState currentPlayer = gameState.getCurrentPlayer();
     int century = gameState.getCentury();
     for (TileState tileState : gameState.getTileStates()) {

@@ -21,11 +21,13 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.action.GameActionOnInfluenceZone;
+import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
@@ -39,13 +41,17 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
   private final SceneNodeList arrows;
 
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      RendererFactories rendererFactories, GameState gameState, GameStateRenderer gameStateRenderer,
-      InteractionTargetInfluenceZone target, boolean fromActive, GameActionOnInfluenceZone action) {
-    super(scheduler, rendererFactories, gameState, gameStateRenderer, target, action);
+      RendererFactories rendererFactories, MessageRenderer messageRenderer, GameState gameState,
+      GameStateRenderer gameStateRenderer, InteractionTargetInfluenceZone target,
+      ActionSendCubesToZone action) {
+    super(scheduler, rendererFactories, gameState, gameStateRenderer, target,
+        createActionMessage(messageRenderer, gameState, action),
+        action.execute(gameState));
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     arrows = new SceneNodeList();
-    Transform cubesFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, fromActive);
+    Transform cubesFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor,
+        action.areCubesFromActive());
 
     // Arrow to move cubes.
     arrows.add(new Arrow(cubesFrom.getTranslation(0),
@@ -54,12 +60,12 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
 
   @Inject
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      RendererFactories rendererFactories,
+      RendererFactories rendererFactories, MessageRenderer messageRenderer,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted Boolean fromActive, @Assisted GameActionOnInfluenceZone action) {
-    this(scheduler, interactionFactories, rendererFactories, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetInfluenceZone(gameStateRenderer, action),
-        fromActive, action);
+      @Assisted ActionSendCubesToZone action) {
+    this(scheduler, interactionFactories, rendererFactories, messageRenderer, gameState,
+        gameStateRenderer, interactionFactories.createInteractionTargetInfluenceZone(
+            gameStateRenderer, action), action);
   }
 
   @Override
@@ -72,5 +78,18 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
   protected void doMouseLeave(double x, double y, double time) {
     super.doMouseLeave(x, y, time);
     arrows.setParent(null);
+  }
+
+  private static MessageRenderer createActionMessage(MessageRenderer messageRenderer,
+      GameState gameState, ActionSendCubesToZone action) {
+    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    if (action.areCubesFromActive()) {
+      new Message.SendActiveCubesToZone(action.getNbCubes(), playerColor,
+          action.getInfluenceZone()).accept(messageRenderer);
+    } else {
+      new Message.SendPassiveCubesToZone(action.getNbCubes(), playerColor,
+          action.getInfluenceZone()).accept(messageRenderer);
+    }
+    return messageRenderer;
   }
 }

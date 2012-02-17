@@ -81,7 +81,7 @@ public class Rectangle extends SceneNodeImpl {
 
   @Override
   public void drawUntransformed(double time, Context2d context) {
-    CanvasGradient gradient = context.createLinearGradient(x0, y0, x1, y1);
+    CanvasGradient gradient = context.createLinearGradient(x0, y0, x0, y1);
     gradient.addColorStop(0, color0);
     gradient.addColorStop(1, color1);
     context.setFillStyle(gradient);

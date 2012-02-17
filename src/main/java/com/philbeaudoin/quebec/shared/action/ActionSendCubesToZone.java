@@ -34,16 +34,19 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 public class ActionSendCubesToZone implements GameActionOnInfluenceZone {
 
   private final int nbCubes;
+  private final boolean fromActive;
   private final InfluenceType to;
   private final GameStateChange followup;
 
-  public ActionSendCubesToZone(int nbCubes, InfluenceType to) {
-    this(nbCubes, to, new GameStateChangeNextPlayer());
+  public ActionSendCubesToZone(int nbCubes, boolean fromActive, InfluenceType to) {
+    this(nbCubes, fromActive, to, new GameStateChangeNextPlayer());
   }
 
-  public ActionSendCubesToZone(int nbCubes, InfluenceType to, GameStateChange followup) {
+  public ActionSendCubesToZone(int nbCubes, boolean fromActive, InfluenceType to,
+      GameStateChange followup) {
     assert followup != null;
     this.nbCubes = nbCubes;
+    this.fromActive = fromActive;
     this.to = to;
     this.followup = followup;
   }
@@ -53,25 +56,29 @@ public class ActionSendCubesToZone implements GameActionOnInfluenceZone {
     PlayerState playerState = gameState.getCurrentPlayer();
     PlayerColor activePlayer = playerState.getPlayer().getColor();
 
-    assert nbCubes <= playerState.getNbTotalCubes();
-
     GameStateChangeComposite result = new GameStateChangeComposite();
 
-    // Move as much cube as we want from the passive reserve.
-    int nbMoved = Math.min(nbCubes, playerState.getNbPassiveCubes());
+    int nbMoved = 0;
     CubeDestinationInfluenceZone destination = new CubeDestinationInfluenceZone(to, activePlayer);
-    if (nbMoved > 0) {
-      result.add(new GameStateChangeMoveCubes(nbMoved,
-          new CubeDestinationPlayer(activePlayer, false), destination));
+    if (!fromActive) {
+      assert nbCubes <= playerState.getNbTotalCubes();
+      // Move as much cube as we want from the passive reserve.
+      nbMoved = Math.min(nbCubes, playerState.getNbPassiveCubes());
+      if (nbMoved > 0) {
+        result.add(new GameStateChangeMoveCubes(nbMoved,
+            new CubeDestinationPlayer(activePlayer, false), destination));
+      }
     }
+
     // Move the balance from the active reserve.
-    nbMoved = nbCubes - nbMoved;
-    if (nbMoved > 0) {
-      result.add(new GameStateChangeMoveCubes(nbMoved,
+    int nbToMove = nbCubes - nbMoved;
+    if (nbToMove > 0) {
+      assert nbToMove <= playerState.getNbActiveCubes();
+      result.add(new GameStateChangeMoveCubes(nbToMove,
           new CubeDestinationPlayer(activePlayer, true), destination));
     }
 
-    // Move to next player.
+    // Execute follow-up move.
     result.add(followup);
 
     return result;
@@ -85,5 +92,22 @@ public class ActionSendCubesToZone implements GameActionOnInfluenceZone {
   @Override
   public InfluenceType getInfluenceZone() {
     return to;
+  }
+
+  /**
+   * Returns the number of cubes sent by this action.
+   * @return The number of cubes.
+   */
+  public int getNbCubes() {
+    return nbCubes;
+  }
+
+  /**
+   * Returns whether the cubes come from the active or the passive reserve, with overflow coming
+   * from the active reserve.
+   * @return True if they come from the active reserve.
+   */
+  public boolean areCubesFromActive() {
+    return fromActive;
   }
 }

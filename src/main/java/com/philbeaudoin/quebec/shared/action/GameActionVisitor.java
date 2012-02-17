@@ -22,22 +22,10 @@ package com.philbeaudoin.quebec.shared.action;
  */
 public interface GameActionVisitor {
   /**
-   * Visits a {@link ActionMoveArchitect}.
-   * @param host The visited class.
-   */
-  void visit(ActionMoveArchitect host);
-
-  /**
    * Visits a {@link ActionSendWorkers}.
    * @param host The visited class.
    */
   void visit(ActionSendWorkers host);
-
-  /**
-   * Visits a {@link ActionSendOneWorker}.
-   * @param host The visited class.
-   */
-  void visit(ActionSendOneWorker host);
 
   /**
    * Visits a {@link ActionTakeLeaderCard}.
@@ -62,4 +50,16 @@ public interface GameActionVisitor {
    * @param host The visited class.
    */
   void visit(ActionScorePoints host);
+
+  /**
+   * Visits a {@link ActionMoveArchitect}.
+   * @param host The visited class.
+   */
+  void visit(ActionMoveArchitect host);
+
+  /**
+   * Visits a {@link ActionSkip}.
+   * @param host The visited class.
+   */
+  void visit(ActionSkip host);
 }

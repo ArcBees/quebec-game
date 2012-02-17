@@ -18,11 +18,13 @@ package com.philbeaudoin.quebec.client.interaction;
 
 import com.google.gwt.core.client.Scheduler;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -37,11 +39,11 @@ public abstract class InteractionMoveArchitectBase extends
   private final SceneNodeList arrows;
 
   public InteractionMoveArchitectBase(Scheduler scheduler,
-      RendererFactories rendererFactories, GameState gameState,
+      RendererFactories rendererFactories, MessageRenderer messageRenderer, GameState gameState,
       GameStateRenderer gameStateRenderer, InteractionTarget target,
       ActionMoveArchitect action) {
     super(scheduler, rendererFactories, gameState, gameStateRenderer, target,
-        action);
+        createActionMessage(messageRenderer), action.execute(gameState));
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     PlayerColor architectColor = action.isNeutralArchitect() ? PlayerColor.NEUTRAL : playerColor;
@@ -82,5 +84,10 @@ public abstract class InteractionMoveArchitectBase extends
   protected void doMouseLeave(double x, double y, double time) {
     super.doMouseLeave(x, y, time);
     arrows.setParent(null);
+  }
+
+  private static MessageRenderer createActionMessage(MessageRenderer messageRenderer) {
+    new Message.MoveYourArchitectToThisTile().accept(messageRenderer);
+    return messageRenderer;
   }
 }

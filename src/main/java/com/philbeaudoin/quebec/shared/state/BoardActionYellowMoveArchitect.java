@@ -17,7 +17,9 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 
 /**
  * Board action: yellow, 2 cubes to activate, move your own architect.
@@ -29,6 +31,9 @@ public class BoardActionYellowMoveArchitect extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState) {
-    return gameState.getController().getPossibleMoveArchitectActions(gameState);
+    PossibleActions result = gameState.getController().getPossibleMoveArchitectActions(gameState,
+        new Message.MoveYourArchitect());
+    result.add(new ActionSkip());
+    return result;
   }
 }

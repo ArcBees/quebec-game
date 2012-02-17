@@ -26,11 +26,12 @@ import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.ActionSelectBoadAction;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
-import com.philbeaudoin.quebec.shared.action.ActionSendOneWorker;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
+import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.action.GameActionVisitor;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.Tile;
 
 /**
  * Use this class to generate the list of {@link Interaction} corresponding to a given
@@ -48,8 +49,6 @@ public class InteractionGenerator implements GameActionVisitor {
       new ArrayList<ActionMoveArchitect>();
   private final ArrayList<ActionSendWorkers> sendWorkersActions =
       new ArrayList<ActionSendWorkers>();
-  private final ArrayList<ActionSendOneWorker> sendOneWorkerActions =
-      new ArrayList<ActionSendOneWorker>();
   private final ArrayList<ActionTakeLeaderCard> takeLeaderCardActions =
       new ArrayList<ActionTakeLeaderCard>();
   private final ArrayList<ActionSendCubesToZone> sendCubesToZoneActions =
@@ -58,6 +57,7 @@ public class InteractionGenerator implements GameActionVisitor {
       new ArrayList<ActionSelectBoadAction>();
   private final ArrayList<ActionScorePoints> scorePointsActions =
       new ArrayList<ActionScorePoints>();
+  private final ArrayList<ActionSkip> skipActions = new ArrayList<ActionSkip>();
 
   @Inject
   InteractionGenerator(InteractionFactories factories,
@@ -68,49 +68,32 @@ public class InteractionGenerator implements GameActionVisitor {
     this.gameStateRenderer = gameStateRenderer;
   }
 
+  private class PairedMoveArchitect {
+    final Tile destinationTile;
+    final ActionMoveArchitect a1;
+    ActionMoveArchitect a2;
+    public PairedMoveArchitect(ActionMoveArchitect action) {
+      destinationTile = action.getDestinationTile();
+      a1 = action;
+    }
+    public boolean isPair() {
+      return a2 != null;
+    }
+  }
+
   /**
    * Generates all the interactions that correspond to the visited actions. The method should be
    * called exactly once after the possible actions have been visited.
    */
   public void generateInteractions() {
 
-    // Look at move architect action and pair them if possible. Actions are paired if they send
-    // the regular and the neutral architect to the same tile.
-    while (!moveArchitectActions.isEmpty()) {
-      ActionMoveArchitect action = moveArchitectActions.remove(moveArchitectActions.size() - 1);
-      boolean paired = false;
-      for (ActionMoveArchitect other : moveArchitectActions) {
-        if (action.getDestinationTile() == other.getDestinationTile()) {
-          paired = true;
-          if (action.isNeutralArchitect()) {
-            assert !other.isNeutralArchitect();
-            gameStateRenderer.addInteraction(factories.createInteractionMoveUnknownArchitect(
-                gameState, gameStateRenderer, other, action));
-          } else {
-            assert !action.isNeutralArchitect();
-            gameStateRenderer.addInteraction(factories.createInteractionMoveUnknownArchitect(
-                gameState, gameStateRenderer, action, other));
-          }
-          moveArchitectActions.remove(other);
-          break;
-        }
-      }
-      if (!paired) {
-        gameStateRenderer.addInteraction(factories.createInteractionMoveArchitect(gameState,
-            gameStateRenderer, action));
-      }
-    }
+    generateMoveArchitectInteractions();
 
     for (ActionSendWorkers action : sendWorkersActions) {
       gameStateRenderer.addInteraction(factories.createInteractionSendWorkers(gameState,
           gameStateRenderer, action));
     }
     sendWorkersActions.clear();
-    for (ActionSendOneWorker action : sendOneWorkerActions) {
-      gameStateRenderer.addInteraction(factories.createInteractionSendCubesToZone(gameState,
-          gameStateRenderer, true, action));
-    }
-    sendOneWorkerActions.clear();
     for (ActionTakeLeaderCard action : takeLeaderCardActions) {
       gameStateRenderer.addInteraction(factories.createInteractionTakeLeaderCard(gameState,
           gameStateRenderer, action));
@@ -118,7 +101,7 @@ public class InteractionGenerator implements GameActionVisitor {
     takeLeaderCardActions.clear();
     for (ActionSendCubesToZone action : sendCubesToZoneActions) {
       gameStateRenderer.addInteraction(factories.createInteractionSendCubesToZone(gameState,
-          gameStateRenderer, false, action));
+          gameStateRenderer, action));
     }
     sendCubesToZoneActions.clear();
     for (ActionSelectBoadAction action : selectBoardActionActions) {
@@ -131,7 +114,54 @@ public class InteractionGenerator implements GameActionVisitor {
       gameStateRenderer.addInteraction(factories.createInteractionText(gameState,
           gameStateRenderer, "Score " + action.getNbPoints() + " points", action));
     }
-    selectBoardActionActions.clear();
+    scorePointsActions.clear();
+    for (ActionSkip action : skipActions) {
+      // TODO(beaudoin): Internationalize.
+      gameStateRenderer.addInteraction(factories.createInteractionText(gameState,
+          gameStateRenderer, "Skip", action));
+    }
+    skipActions.clear();
+  }
+
+  private void generateMoveArchitectInteractions() {
+    // Look at move architect action and pair them if possible. Actions are paired if they send
+    // the regular and the neutral architect to the same tile.
+    ArrayList<PairedMoveArchitect> pairedMoveArchitects = new ArrayList<PairedMoveArchitect>();
+    for (ActionMoveArchitect action : moveArchitectActions) {
+      boolean found = false;
+      for (PairedMoveArchitect pair : pairedMoveArchitects) {
+        if (pair.destinationTile == action.getDestinationTile()) {
+          pair.a2 = action;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        pairedMoveArchitects.add(new PairedMoveArchitect(action));
+      }
+    }
+
+    if (pairedMoveArchitects.size() == 1 && pairedMoveArchitects.get(0).isPair()) {
+      // Case where we have only one pair, let the user select which architect to move.
+      PairedMoveArchitect pair = pairedMoveArchitects.get(0);
+      gameStateRenderer.addInteraction(factories.createInteractionMoveArchitectTo(
+          gameState, gameStateRenderer, pair.a1));
+      gameStateRenderer.addInteraction(factories.createInteractionMoveArchitectTo(
+          gameState, gameStateRenderer, pair.a2));
+    } else {
+      // Many pairs (maybe they're not pairs) let the user select the destination tile.
+      for (PairedMoveArchitect pair : pairedMoveArchitects) {
+        if (pair.isPair()) {
+          // Not sure which architect to move.
+          gameStateRenderer.addInteraction(factories.createInteractionMoveUnknownArchitect(
+              gameState, gameStateRenderer, pair.a1, pair.a2));
+        } else {
+          // Only one architect to move.
+          gameStateRenderer.addInteraction(factories.createInteractionMoveArchitect(gameState,
+              gameStateRenderer, pair.a1));
+        }
+      }
+    }
   }
 
   @Override
@@ -142,11 +172,6 @@ public class InteractionGenerator implements GameActionVisitor {
   @Override
   public void visit(ActionSendWorkers host) {
     sendWorkersActions.add(host);
-  }
-
-  @Override
-  public void visit(ActionSendOneWorker host) {
-    sendOneWorkerActions.add(host);
   }
 
   @Override
@@ -167,5 +192,10 @@ public class InteractionGenerator implements GameActionVisitor {
   @Override
   public void visit(ActionScorePoints host) {
     scorePointsActions.add(host);
+  }
+
+  @Override
+  public void visit(ActionSkip host) {
+    skipActions.add(host);
   }
 }
