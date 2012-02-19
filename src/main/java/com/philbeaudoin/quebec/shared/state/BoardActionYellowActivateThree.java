@@ -17,6 +17,8 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
+import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 
 /**
@@ -29,7 +31,13 @@ public class BoardActionYellowActivateThree extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState) {
-    // TODO(beaudoin): Fill-in.
-    return null;
+    PlayerState playerState = gameState.getCurrentPlayer();
+    int nbCubes = Math.min(3, playerState.getNbPassiveCubes());
+    PossibleActions result = new PossibleActions();
+    if (nbCubes > 0) {
+      result.add(new ActionActivateCubes(nbCubes));
+    }
+    result.add(new ActionSkip());
+    return result;
   }
 }

@@ -128,7 +128,7 @@ public class GameStateRenderer {
         MessageRenderer messageRenderer = messageRendererProvider.get();
         message.accept(messageRenderer);
         addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
-            new ConstantTransform(new Vector2d(1.05, 0.1))));
+            new ConstantTransform(new Vector2d(1.05, 0.095))));
       }
     }
     for (Interaction interaction : interactions) {
@@ -451,6 +451,7 @@ public class GameStateRenderer {
    * @param tile The tile from which to remove the star token.
    */
   public void removeStarTokenFrom(Tile tile) {
+    refreshNeeded = true;
     boardRenderer.removeStarTokenFrom(tile);
   }
 
@@ -462,6 +463,7 @@ public class GameStateRenderer {
    * @return The transform of the newly added star token.
    */
   public Transform addStarTokenTo(Tile tile, PlayerColor starTokenColor, int nbStars) {
+    refreshNeeded = true;
     return boardRenderer.addStarTokenTo(tile, starTokenColor, nbStars);
   }
 

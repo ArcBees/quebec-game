@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import com.philbeaudoin.quebec.client.resources.text.GraphicConstants;
+import com.philbeaudoin.quebec.client.resources.text.GraphicMessages;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.ComplexText.Component;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
@@ -35,60 +36,87 @@ import com.philbeaudoin.quebec.shared.state.ActionType;
  */
 public class MessageRenderer implements Message.Visitor<Void> {
 
-  private final GraphicConstants messages;
+  private final GraphicConstants constants;
+  private final GraphicMessages messages;
   private final SpriteResources spriteResources;
   private final ArrayList<ComplexText.Component> components =
       new ArrayList<ComplexText.Component>();
 
   @Inject
-  public MessageRenderer(GraphicConstants messages, SpriteResources spriteResources) {
+  public MessageRenderer(GraphicConstants constants, GraphicMessages messages,
+      SpriteResources spriteResources) {
+    this.constants = constants;
     this.messages = messages;
     this.spriteResources = spriteResources;
   }
 
   /**
    * Obtain the components rendered by this renderer.
-   * @return
+   * @return The components.
    */
   public ArrayList<Component> getComponents() {
     return components;
   }
 
+  /**
+   * Calculates the approximate width of the series of components generated.
+   * @return The approximate width.
+   */
+  public double calculateApproximateWidth() {
+    double total = 0;
+    for (ComplexText.Component component : components) {
+      total += component.getApproximateWidth();
+    }
+    return total;
+  }
+
   @Override
   public Void visit(Message.MoveYourArchitect host) {
-    addText(messages.moveYourArchitect());
+    addText(constants.moveYourArchitect());
     return null;
   }
 
   @Override
   public Void visit(Message.MoveYourArchitectToThisTile host) {
-    addText(messages.moveYourArchitectToThisTile());
+    addText(constants.moveYourArchitectToThisTile());
     return null;
   }
 
   @Override
   public Void visit(Message.TakeThisLeaderCard host) {
-    addText(messages.takeThisLeaderCard());
+    addText(constants.takeThisLeaderCard());
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.Skip host) {
+    addText(constants.skip());
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.SelectStarTokenToIncrease host) {
+    addText(constants.selectStarTokenToIncrease());
     return null;
   }
 
   @Override
   public Void visit(Message.MoveEitherArchitect host) {
-    fillInPlaceholders(messages.moveEitherArchitect(),
+    fillInPlaceholders(constants.moveEitherArchitect(),
         newArchitect(host.getColor(0)), newArchitect(host.getColor(1)));
     return null;
   }
 
   @Override
   public Void visit(Message.SelectWhichArchitect host) {
-    fillInPlaceholders(messages.selectWhichArchitect(),
+    fillInPlaceholders(constants.selectWhichArchitect(),
         newArchitect(host.getColor(0)), newArchitect(host.getColor(1)));
     return null;
   }
 
   @Override
   public Void visit(Message.SendPassiveCubesToOneOfTwoZones host) {
-    fillInPlaceholders(repeatPlaceholder(messages.sendPassiveCubesToOneOfTwoZones(), 0,
+    fillInPlaceholders(repeatPlaceholder(constants.sendPassiveCubesToOneOfTwoZones(), 0,
         host.getCount()),
         newCube(host.getColor(0)),
         newZoneIcon(host.getZone(0)),
@@ -98,7 +126,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
 
   @Override
   public Void visit(Message.SendActiveCubesToOneOfTwoZones host) {
-    fillInPlaceholders(repeatPlaceholder(messages.sendActiveCubesToOneOfTwoZones(), 0,
+    fillInPlaceholders(repeatPlaceholder(constants.sendActiveCubesToOneOfTwoZones(), 0,
             host.getCount()),
         newCube(host.getColor(0)),
         newZoneIcon(host.getZone(0)),
@@ -108,7 +136,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
 
   @Override
   public Void visit(Message.SendActiveCubesToZone host) {
-    fillInPlaceholders(repeatPlaceholder(messages.sendActiveCubesToZone(), 0, host.getCount()),
+    fillInPlaceholders(repeatPlaceholder(constants.sendActiveCubesToZone(), 0, host.getCount()),
         newCube(host.getColor(0)),
         newZoneIcon(host.getZone(0)));
     return null;
@@ -116,7 +144,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
 
   @Override
   public Void visit(Message.SendPassiveCubesToZone host) {
-    fillInPlaceholders(repeatPlaceholder(messages.sendPassiveCubesToZone(), 0, host.getCount()),
+    fillInPlaceholders(repeatPlaceholder(constants.sendPassiveCubesToZone(), 0, host.getCount()),
         newCube(host.getColor(0)),
         newZoneIcon(host.getZone(0)));
     return null;
@@ -124,13 +152,14 @@ public class MessageRenderer implements Message.Visitor<Void> {
 
   @Override
   public Void visit(Message.SelectAction host) {
-    addText(messages.selectActionToExecute());
+    addText(constants.selectActionToExecute());
     return null;
   }
 
   @Override
   public Void visit(Message.SendPassiveCubesToAnyZone host) {
-    fillInPlaceholders(repeatPlaceholder(messages.sendPassiveCubesToAnyZone(), 0, host.getCount()),
+    fillInPlaceholders(repeatPlaceholder(constants.sendPassiveCubesToAnyZone(), 0,
+        host.getCount()),
         newCube(host.getColor(0)),
         newZoneIcon(InfluenceType.RELIGIOUS),
         newZoneIcon(InfluenceType.POLITIC),
@@ -140,23 +169,49 @@ public class MessageRenderer implements Message.Visitor<Void> {
   }
 
   @Override
+  public Void visit(Message.SendPassiveCubesToAnyZoneOrCitadel host) {
+    fillInPlaceholders(repeatPlaceholder(constants.sendPassiveCubesToAnyZoneOrCitadel(), 0,
+        host.getCount()),
+        newCube(host.getColor(0)),
+        newZoneIcon(InfluenceType.RELIGIOUS),
+        newZoneIcon(InfluenceType.POLITIC),
+        newZoneIcon(InfluenceType.ECONOMIC),
+        newZoneIcon(InfluenceType.CULTURAL),
+        newZoneIcon(InfluenceType.CITADEL));
+    return null;
+  }
+
+  @Override
   public Void visit(Message.SendPassiveCubesToThisTile host) {
-    fillInPlaceholders(repeatPlaceholder(messages.sendPassiveCubesToThisTile(), 0, host.getCount()),
-        newCube(host.getColor(0)));
+    fillInPlaceholders(repeatPlaceholder(constants.sendPassiveCubesToThisTile(), 0,
+        host.getCount()), newCube(host.getColor(0)));
     return null;
   }
 
   @Override
   public Void visit(Message.SendActiveCubesToThisTile host) {
-    fillInPlaceholders(repeatPlaceholder(messages.sendActiveCubesToThisTile(), 0, host.getCount()),
+    fillInPlaceholders(repeatPlaceholder(constants.sendActiveCubesToThisTile(), 0, host.getCount()),
         newCube(host.getColor(0)));
     return null;
   }
 
   @Override
   public Void visit(Message.SendActiveCubesToThisTileAndExecuteAction host) {
-    fillInPlaceholders(repeatPlaceholder(messages.sendActiveCubesToThisTileAndExecuteAction(), 0,
+    fillInPlaceholders(repeatPlaceholder(constants.sendActiveCubesToThisTileAndExecuteAction(), 0,
         host.getCount()), newCube(host.getColor(0)), newAction(host.getActionType()));
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.ActivateCubes host) {
+    fillInPlaceholders(repeatPlaceholder(constants.activateCubes(), 0,
+        host.getCount()), newCube(host.getColor(0)));
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.ScorePoints host) {
+    addText(messages.scorePoints(host.getCount()));
     return null;
   }
 
@@ -184,7 +239,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
     if (count == 1) {
       return text;
     }
-    String placeholder = "{" + placeholderIndex + "}";
+    String placeholder = "[" + placeholderIndex + "]";
     final StringBuilder repeatedPlaceholderSB = new StringBuilder();
     for (int i = 0; i < count; i++) {
       repeatedPlaceholderSB.append(placeholder);
@@ -207,12 +262,12 @@ public class MessageRenderer implements Message.Visitor<Void> {
   private void fillInPlaceholders(String text, ComplexText.SpriteComponent... sprites) {
     int startIndex = 0;
     int index = 0;
-    while ((index = text.indexOf('{', startIndex)) >= 0) {
+    while ((index = text.indexOf('[', startIndex)) >= 0) {
       if (index > startIndex) {
         addText(text.substring(startIndex, index));
       }
       int integerStart = index + 1;
-      startIndex = text.indexOf('}', integerStart);
+      startIndex = text.indexOf(']', integerStart);
       assert startIndex > integerStart;
       int spriteNumber = Integer.parseInt(text.substring(integerStart, startIndex));
       assert spriteNumber < sprites.length;
@@ -223,5 +278,4 @@ public class MessageRenderer implements Message.Visitor<Void> {
       addText(text.substring(startIndex));
     }
   }
-
 }

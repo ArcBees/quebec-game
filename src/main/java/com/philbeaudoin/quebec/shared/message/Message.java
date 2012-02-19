@@ -49,10 +49,15 @@ public interface Message {
     T visit(SendActiveCubesToZone host);
     T visit(SelectAction host);
     T visit(SendPassiveCubesToAnyZone host);
+    T visit(SendPassiveCubesToAnyZoneOrCitadel host);
     T visit(TakeThisLeaderCard host);
     T visit(SendPassiveCubesToThisTile host);
     T visit(SendActiveCubesToThisTile host);
     T visit(SendActiveCubesToThisTileAndExecuteAction host);
+    T visit(ActivateCubes host);
+    T visit(Skip host);
+    T visit(ScorePoints host);
+    T visit(SelectStarTokenToIncrease host);
   }
 
   /**
@@ -79,6 +84,26 @@ public interface Message {
    * Take this leader card.
    */
   public class TakeThisLeaderCard implements Message {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Skip.
+   */
+  public class Skip implements Message {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Select star token to increase.
+   */
+  public class SelectStarTokenToIncrease implements Message {
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -195,6 +220,19 @@ public interface Message {
   }
 
   /**
+   * Send {cube} to {religious}{politic}{economic}{cultural} or {citadel}.
+   */
+  public class SendPassiveCubesToAnyZoneOrCitadel extends BaseMessageWithCount implements Message {
+    public SendPassiveCubesToAnyZoneOrCitadel(int nbCubes, PlayerColor playerColor) {
+      super(nbCubes, playerColor);
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
    * Send passiv {cube}{cube} to this tile.
    * Send 2 active cubes to this tile.
    */
@@ -240,6 +278,33 @@ public interface Message {
     }
     public ActionType getActionType() {
       return actionType;
+    }
+  }
+
+  /**
+   * Activate {cube}{cube}.
+   * Activate 2 cubes.
+   */
+  public class ActivateCubes extends BaseMessageWithCount implements Message {
+    public ActivateCubes(int nbCubes, PlayerColor playerColor) {
+      super(nbCubes, playerColor);
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Score 5 points.
+   */
+  public class ScorePoints extends BaseMessageWithCount implements Message {
+    public ScorePoints(int nbPoints) {
+      super(nbPoints);
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
     }
   }
 }

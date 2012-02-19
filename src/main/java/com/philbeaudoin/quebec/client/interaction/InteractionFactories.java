@@ -18,6 +18,9 @@ package com.philbeaudoin.quebec.client.interaction;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
+import com.philbeaudoin.quebec.client.scene.SceneNode;
+import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
@@ -29,6 +32,7 @@ import com.philbeaudoin.quebec.shared.action.HasDestinationTile;
 import com.philbeaudoin.quebec.shared.action.HasInfluenceZone;
 import com.philbeaudoin.quebec.shared.action.HasLeaderCard;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * Factory methods of the various renderer classes, used in assisted injection.
@@ -53,8 +57,10 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, ActionTakeLeaderCard host);
   InteractionSelectBoardAction createInteractionSelectBoardAction(GameState gameState,
       GameStateRenderer gameStateRenderer, GameActionOnBoardAction action);
+  InteractionIncreaseStar createInteractionIncreaseStar(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionIncreaseStar action);
   InteractionText createInteractionText(GameState gameState, GameStateRenderer gameStateRenderer,
-      String text, GameAction action);
+      MessageRenderer messageRenderer, SceneNode extras, Vector2d pos, GameAction action);
   InteractionTargetTile createInteractionTargetTile(
       GameStateRenderer gameStateRenderer, HasDestinationTile target);
   InteractionTargetInfluenceZone createInteractionTargetInfluenceZone(
@@ -66,5 +72,6 @@ public interface InteractionFactories {
   InteractionTargetBoardAction createInteractionTargetBoardAction(
       GameStateRenderer gameStateRenderer, HasBoardAction target);
   InteractionTargetText createInteractionTargetText(
-      GameStateRenderer gameStateRenderer, String text);
+      GameStateRenderer gameStateRenderer, MessageRenderer messageRenderer, Vector2d pos);
+
 }

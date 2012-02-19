@@ -19,9 +19,16 @@ package com.philbeaudoin.quebec.client.interaction;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
+import com.philbeaudoin.quebec.client.scene.Arrow;
+import com.philbeaudoin.quebec.client.scene.SceneNode;
+import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
+import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.ActionSelectBoadAction;
@@ -29,9 +36,12 @@ import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
+import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.GameActionVisitor;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * Use this class to generate the list of {@link Interaction} corresponding to a given
@@ -41,7 +51,13 @@ import com.philbeaudoin.quebec.shared.state.Tile;
  */
 public class InteractionGenerator implements GameActionVisitor {
 
+  // Constants to specify text interaction location
+  private static final double TEXT_PADDING = 0.03;
+  private static final double TEXT_CENTER_X = 1.05;
+  private static final double TEXT_CENTER_Y = 0.136;
+
   private final InteractionFactories factories;
+  private final Provider<MessageRenderer> messageRendererProvider;
   private final GameState gameState;
   private final GameStateRenderer gameStateRenderer;
 
@@ -55,15 +71,17 @@ public class InteractionGenerator implements GameActionVisitor {
       new ArrayList<ActionSendCubesToZone>();
   private final ArrayList<ActionSelectBoadAction> selectBoardActionActions =
       new ArrayList<ActionSelectBoadAction>();
-  private final ArrayList<ActionScorePoints> scorePointsActions =
-      new ArrayList<ActionScorePoints>();
-  private final ArrayList<ActionSkip> skipActions = new ArrayList<ActionSkip>();
+  private final ArrayList<ActionIncreaseStar> increaseStarActions =
+      new ArrayList<ActionIncreaseStar>();
+  private final ArrayList<TextInteraction> textInteractions = new ArrayList<TextInteraction>();
 
   @Inject
   InteractionGenerator(InteractionFactories factories,
+      Provider<MessageRenderer> messageRendererProvider,
       @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer) {
     this.factories = factories;
+    this.messageRendererProvider = messageRendererProvider;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
   }
@@ -109,18 +127,12 @@ public class InteractionGenerator implements GameActionVisitor {
           gameStateRenderer, action));
     }
     selectBoardActionActions.clear();
-    for (ActionScorePoints action : scorePointsActions) {
-      // TODO(beaudoin): Internationalize.
-      gameStateRenderer.addInteraction(factories.createInteractionText(gameState,
-          gameStateRenderer, "Score " + action.getNbPoints() + " points", action));
+    for (ActionIncreaseStar action : increaseStarActions) {
+      gameStateRenderer.addInteraction(factories.createInteractionIncreaseStar(gameState,
+          gameStateRenderer, action));
     }
-    scorePointsActions.clear();
-    for (ActionSkip action : skipActions) {
-      // TODO(beaudoin): Internationalize.
-      gameStateRenderer.addInteraction(factories.createInteractionText(gameState,
-          gameStateRenderer, "Skip", action));
-    }
-    skipActions.clear();
+    increaseStarActions.clear();
+    generateTextInteractions();
   }
 
   private void generateMoveArchitectInteractions() {
@@ -140,6 +152,7 @@ public class InteractionGenerator implements GameActionVisitor {
         pairedMoveArchitects.add(new PairedMoveArchitect(action));
       }
     }
+    moveArchitectActions.clear();
 
     if (pairedMoveArchitects.size() == 1 && pairedMoveArchitects.get(0).isPair()) {
       // Case where we have only one pair, let the user select which architect to move.
@@ -162,6 +175,27 @@ public class InteractionGenerator implements GameActionVisitor {
         }
       }
     }
+  }
+
+  private void generateTextInteractions() {
+    // We only want padding between components, so remove one to compensate from the fact that we
+    // add one to many in the loop.
+    double totalWidth = -TEXT_PADDING;
+    for (TextInteraction textInteraction : textInteractions) {
+      totalWidth += textInteraction.messageRenderer.calculateApproximateWidth() + TEXT_PADDING;
+    }
+
+    double x = TEXT_CENTER_X - totalWidth / 2.0;
+    for (TextInteraction textInteraction : textInteractions) {
+      double width = textInteraction.messageRenderer.calculateApproximateWidth();
+      Vector2d pos = new Vector2d(x + width / 2.0, TEXT_CENTER_Y);
+      gameStateRenderer.addInteraction(factories.createInteractionText(gameState,
+        gameStateRenderer, textInteraction.messageRenderer, textInteraction.extras, pos,
+        textInteraction.action));
+      x += width + TEXT_PADDING;
+    }
+
+    textInteractions.clear();
   }
 
   @Override
@@ -189,13 +223,48 @@ public class InteractionGenerator implements GameActionVisitor {
     selectBoardActionActions.add(host);
   }
 
+
+  @Override
+  public void visit(ActionIncreaseStar host) {
+    increaseStarActions.add(host);
+  }
+
   @Override
   public void visit(ActionScorePoints host) {
-    scorePointsActions.add(host);
+    MessageRenderer messageRenderer = messageRendererProvider.get();
+    new Message.ScorePoints(host.getNbPoints()).accept(messageRenderer);
+    textInteractions.add(new TextInteraction(messageRenderer, null, host));
   }
 
   @Override
   public void visit(ActionSkip host) {
-    skipActions.add(host);
+    MessageRenderer messageRenderer = messageRendererProvider.get();
+    new Message.Skip().accept(messageRenderer);
+    textInteractions.add(new TextInteraction(messageRenderer, null, host));
+  }
+
+  @Override
+  public void visit(ActionActivateCubes host) {
+    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    Vector2d from = gameStateRenderer.getPlayerCubeZoneTransform(
+        playerColor, false).getTranslation(0);
+    Vector2d to = gameStateRenderer.getPlayerCubeZoneTransform(
+        playerColor, true).getTranslation(0);
+
+    MessageRenderer messageRenderer = messageRendererProvider.get();
+    new Message.ActivateCubes(host.getNbCubes(),
+        gameState.getCurrentPlayer().getPlayer().getColor()).accept(messageRenderer);
+    textInteractions.add(new TextInteraction(messageRenderer, new Arrow(from, to), host));
+  }
+
+  private class TextInteraction {
+    final MessageRenderer messageRenderer;
+    final SceneNode extras;
+    final GameAction action;
+    TextInteraction(MessageRenderer messageRenderer, SceneNode extras, GameAction action) {
+      this.messageRenderer = messageRenderer;
+      this.extras = extras;
+      this.action = action;
+    }
   }
 }

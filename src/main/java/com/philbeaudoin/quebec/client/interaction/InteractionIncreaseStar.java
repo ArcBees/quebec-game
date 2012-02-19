@@ -23,43 +23,24 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
-import com.philbeaudoin.quebec.client.scene.SceneNode;
-import com.philbeaudoin.quebec.shared.action.GameAction;
+import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * This is an interaction that allows triggering an action via a box of text.
+ * This is an interaction with the game board for the action of increasing the number of stars on
+ * a tile.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionText extends InteractionWithAction {
-  private final SceneNode extras;
+public class InteractionIncreaseStar extends InteractionWithAction {
 
   @Inject
-  public InteractionText(Scheduler scheduler, RendererFactories rendererFactories,
-      InteractionFactories interactionFactories, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted MessageRenderer messageRenderer,
-      @Assisted SceneNode extras, @Assisted Vector2d pos, @Assisted GameAction action) {
+  public InteractionIncreaseStar(Scheduler scheduler, RendererFactories rendererFactories,
+      InteractionFactories interactionFactories, MessageRenderer messageRenderer,
+      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted ActionIncreaseStar action) {
     super(scheduler, rendererFactories, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetText(gameStateRenderer, messageRenderer, pos),
+        interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
         action.execute(gameState));
-    this.extras = extras;
-  }
-
-  @Override
-  protected void doMouseEnter(double x, double y, double time) {
-    super.doMouseEnter(x, y, time);
-    if (extras != null) {
-      gameStateRenderer.addToAnimationGraph(extras);
-    }
-  }
-
-  @Override
-  protected void doMouseLeave(double x, double y, double time) {
-    super.doMouseLeave(x, y, time);
-    if (extras != null) {
-      extras.setParent(null);
-    }
   }
 
 }

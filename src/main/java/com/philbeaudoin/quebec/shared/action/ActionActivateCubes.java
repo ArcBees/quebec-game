@@ -16,36 +16,48 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
+import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.PlayerState;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
 
 /**
- * A game action where the current player score points.
+ * The action of sending passive worker cubes to a given influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionScorePoints implements GameAction {
+public class ActionActivateCubes implements GameAction {
 
-  private final int nbPoints;
+  private final int nbCubes;
   private final GameStateChange followup;
 
-  public ActionScorePoints(int nbPoints) {
-    this(nbPoints, new GameStateChangeNextPlayer());
+  public ActionActivateCubes(int nbCubes) {
+    this(nbCubes, new GameStateChangeNextPlayer());
   }
 
-  public ActionScorePoints(int nbPoints, GameStateChange followup) {
-    this.nbPoints = nbPoints;
+  public ActionActivateCubes(int nbCubes, GameStateChange followup) {
+    assert followup != null;
+    this.nbCubes = nbCubes;
     this.followup = followup;
   }
 
   @Override
   public GameStateChange execute(GameState gameState) {
+    PlayerState playerState = gameState.getCurrentPlayer();
+    PlayerColor activePlayer = playerState.getPlayer().getColor();
+    assert playerState.getNbPassiveCubes() >= nbCubes;
+
     GameStateChangeComposite result = new GameStateChangeComposite();
-    result.add(new GameStateChangeScorePoints(
-        gameState.getCurrentPlayer().getPlayer().getColor(), nbPoints));
+    result.add(new GameStateChangeMoveCubes(nbCubes,
+        new CubeDestinationPlayer(activePlayer, false),
+        new CubeDestinationPlayer(activePlayer, true)));
+
+    // Execute follow-up move.
     result.add(followup);
+
     return result;
   }
 
@@ -55,10 +67,10 @@ public class ActionScorePoints implements GameAction {
   }
 
   /**
-   * Access the number of points scored by that action.
-   * @return The number of points.
+   * Returns the number of cubes sent by this action.
+   * @return The number of cubes.
    */
-  public int getNbPoints() {
-    return nbPoints;
+  public int getNbCubes() {
+    return nbCubes;
   }
 }

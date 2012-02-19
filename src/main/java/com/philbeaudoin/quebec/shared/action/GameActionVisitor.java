@@ -62,4 +62,16 @@ public interface GameActionVisitor {
    * @param host The visited class.
    */
   void visit(ActionSkip host);
+
+  /**
+   * Visits a {@link ActionActivateCubes}.
+   * @param host The visited class.
+   */
+  void visit(ActionActivateCubes host);
+
+  /**
+   * Visits a {@link ActionIncreaseStar}.
+   * @param host The visited class.
+   */
+  void visit(ActionIncreaseStar host);
 }

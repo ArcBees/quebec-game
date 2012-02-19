@@ -68,7 +68,7 @@ public abstract class InteractionWithAction implements Interaction {
     if (messageRenderer != null && messageRenderer.getComponents().size() > 0 &&
         !gameState.hasPossibleActionMessage()) {
       this.actionText = new ComplexText(messageRenderer.getComponents(),
-          new ConstantTransform(new Vector2d(1.05, 0.1)));
+          new ConstantTransform(new Vector2d(1.05, 0.095)));
     } else {
       this.actionText = null;
     }

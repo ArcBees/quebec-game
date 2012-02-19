@@ -23,6 +23,7 @@ import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationTile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken;
 import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationBoard;
 import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationPlayer;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -49,6 +50,8 @@ public interface RendererFactories {
   ChangeRendererMoveLeader createChangeRendererMoveLeader(
       @Assisted("from") SceneLeaderDestination from, @Assisted("to") SceneLeaderDestination to);
   ChangeRendererFlipTile createChangeRendererFlipTile(GameStateChangeFlipTile host);
+  ChangeRendererIncreaseStarToken createChangeRendererIncreaseStarToken (
+      GameStateChangeIncreaseStarToken host);
   ChangeRendererNull createChangeRendererNull();
 
   SceneCubeDestinationGenerator createSceneCubeDestinationGenerator();

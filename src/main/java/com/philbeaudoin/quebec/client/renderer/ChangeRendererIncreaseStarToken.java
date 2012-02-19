@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.UserPreferences;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken;
 import com.philbeaudoin.quebec.shared.utils.ArcTransform;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -31,21 +31,21 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile GameStateChangeFlipTile}
+ * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken GameStateChangeIncreaseStarToken}
  * to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ChangeRendererFlipTile implements ChangeRenderer {
+public class ChangeRendererIncreaseStarToken implements ChangeRenderer {
 
   private final SpriteResources spriteResources;
   private final UserPreferences userPreferences;
-  private final GameStateChangeFlipTile change;
+  private final GameStateChangeIncreaseStarToken change;
 
   @Inject
-  ChangeRendererFlipTile(
+  ChangeRendererIncreaseStarToken(
       SpriteResources spriteResources,
       UserPreferences userPreferences,
-      @Assisted GameStateChangeFlipTile change) {
+      @Assisted GameStateChangeIncreaseStarToken change) {
     this.spriteResources = spriteResources;
     this.userPreferences = userPreferences;
     this.change = change;
@@ -58,16 +58,14 @@ public class ChangeRendererFlipTile implements ChangeRenderer {
 
   @Override
   public void applyAdditions(GameStateRenderer renderer) {
-    PlayerColor starTokenColor = change.getStarTokenColor();
-    if (starTokenColor != PlayerColor.NONE) {
-      renderer.addStarTokenTo(change.getTile(), starTokenColor, change.getNbStars());
-    }
+    renderer.addStarTokenTo(change.getTile(), change.getStarTokenColor(), 
+        change.getNbStarsAfter());
   }
 
   @Override
   public void undoRemovals(GameStateRenderer renderer) {
-    // No way to undo the removal, we don't know what was there before!
-    assert(false);
+    renderer.addStarTokenTo(change.getTile(), change.getStarTokenColor(), 
+        change.getNbStarsAfter() - 1);
   }
 
   @Override
@@ -77,20 +75,18 @@ public class ChangeRendererFlipTile implements ChangeRenderer {
 
   @Override
   public void generateAnim(GameStateRenderer renderer, double startingTime) {
-    // TODO(beaudoin): Common to ChangeRendererIncreaseStarToken extract.
+    renderer.removeStarTokenFrom(change.getTile());
     PlayerColor starTokenColor = change.getStarTokenColor();
-    if (starTokenColor != PlayerColor.NONE) {
-      int nbStars = change.getNbStars();
-      Transform finishTransform = renderer.addStarTokenTo(change.getTile(),
-          starTokenColor, nbStars);
-      Transform startTransform = new ConstantTransform(
-          new Vector2d(finishTransform.getTranslation(0)),
-          1.8 * finishTransform.getScaling(0),
-          finishTransform.getRotation(0));
-      double endingTime = startingTime + userPreferences.getAnimDuration();
-      Sprite sprite = new Sprite(spriteResources.getStarToken(starTokenColor, nbStars),
-          new ArcTransform(startTransform, finishTransform, startingTime, endingTime));
-      renderer.addToAnimationGraph(sprite);
-    }
+    int nbStars = change.getNbStarsAfter();
+    Transform finishTransform = renderer.addStarTokenTo(change.getTile(),
+        starTokenColor, nbStars);
+    Transform startTransform = new ConstantTransform(
+        new Vector2d(finishTransform.getTranslation(0)),
+        1.8 * finishTransform.getScaling(0),
+        finishTransform.getRotation(0));
+    double endingTime = startingTime + userPreferences.getAnimDuration();
+    Sprite sprite = new Sprite(spriteResources.getStarToken(starTokenColor, nbStars),
+        new ArcTransform(startTransform, finishTransform, startingTime, endingTime));
+    renderer.addToAnimationGraph(sprite);
   }
 }

@@ -37,6 +37,12 @@ public interface GameStateChangeVisitor {
    */
   void visit(GameStateChangeFlipTile host);
   /**
+   * Visits a {@link GameStateChangeIncreaseStarToken}.
+   * @param host The visited class.
+   */
+  void visit(GameStateChangeIncreaseStarToken host);
+
+  /**
    * Visits a {@link GameStateChangeMoveArchitect}.
    * @param host The visited class.
    */

@@ -16,36 +16,43 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
+import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.PlayerState;
+import com.philbeaudoin.quebec.shared.state.Tile;
+import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
 
 /**
- * A game action where the current player score points.
+ * The action of sending passive worker cubes to a given influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionScorePoints implements GameAction {
+public class ActionIncreaseStar implements GameActionOnTile {
 
-  private final int nbPoints;
-  private final GameStateChange followup;
+  private final Tile tileToIncrease;
 
-  public ActionScorePoints(int nbPoints) {
-    this(nbPoints, new GameStateChangeNextPlayer());
-  }
-
-  public ActionScorePoints(int nbPoints, GameStateChange followup) {
-    this.nbPoints = nbPoints;
-    this.followup = followup;
+  public ActionIncreaseStar(Tile tileToIncrease) {
+    this.tileToIncrease = tileToIncrease;
   }
 
   @Override
   public GameStateChange execute(GameState gameState) {
+    PlayerState playerState = gameState.getCurrentPlayer();
+    PlayerColor activePlayer = playerState.getPlayer().getColor();
+    TileState tileState = gameState.getTileState(tileToIncrease);
+    int nbStars = tileState.getNbStars();
+    assert tileState.getStarTokenColor() == activePlayer;
+    assert nbStars == 1 || nbStars == 2;
+
     GameStateChangeComposite result = new GameStateChangeComposite();
-    result.add(new GameStateChangeScorePoints(
-        gameState.getCurrentPlayer().getPlayer().getColor(), nbPoints));
-    result.add(followup);
+    result.add(new GameStateChangeIncreaseStarToken(tileToIncrease, activePlayer, nbStars + 1));
+
+    // Execute follow-up move.
+    result.add(new GameStateChangeNextPlayer());
+
     return result;
   }
 
@@ -54,11 +61,8 @@ public class ActionScorePoints implements GameAction {
     visitor.visit(this);
   }
 
-  /**
-   * Access the number of points scored by that action.
-   * @return The number of points.
-   */
-  public int getNbPoints() {
-    return nbPoints;
+  @Override
+  public Tile getDestinationTile() {
+    return tileToIncrease;
   }
 }
