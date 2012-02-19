@@ -16,8 +16,14 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
+import java.util.ArrayList;
+
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
+import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 
 /**
  * Board action: blue, 3 cubes to activate, add a star to one of your building below 3 stars.
@@ -29,7 +35,17 @@ public class BoardActionBlueAddStar extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState) {
-    // TODO(beaudoin): Fill-in.
-    return null;
+    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    ArrayList<TileState> tileStates = gameState.getTileStates();
+
+    PossibleActions result = new PossibleActions(new Message.SelectStarTokenToIncrease());
+    for (TileState tileState : tileStates) {
+      if (tileState.getStarTokenColor() == playerColor && tileState.getNbStars() > 0 &&
+          tileState.getNbStars() < 3) {
+        result.add(new ActionIncreaseStar(tileState.getTile()));
+      }
+    }
+    result.add(new ActionSkip());
+    return result;
   }
 }

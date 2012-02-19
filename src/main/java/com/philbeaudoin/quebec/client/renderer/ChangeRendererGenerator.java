@@ -22,6 +22,7 @@ import com.philbeaudoin.quebec.shared.statechange.AcceptGameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveLeader;
@@ -89,6 +90,11 @@ public class ChangeRendererGenerator implements GameStateChangeVisitor {
   }
 
   @Override
+  public void visit(GameStateChangeIncreaseStarToken host) {
+    changeRenderer = factories.createChangeRendererIncreaseStarToken(host);
+  }
+
+  @Override
   public void visit(GameStateChangeMoveArchitect host) {
     SceneArchitectDestinationGenerator generatorFrom =
         factories.createSceneArchitectDestinationGenerator();
@@ -131,7 +137,7 @@ public class ChangeRendererGenerator implements GameStateChangeVisitor {
 
   @Override
   public void visit(GameStateChangeScorePoints host) {
-    // TODO We should have an animation here.
+    // TODO(beaudoin): We should have an animation here.
     changeRenderer = factories.createChangeRendererNull();
   }
 }

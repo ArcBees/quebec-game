@@ -22,6 +22,7 @@ import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
 
 /**
@@ -38,28 +39,25 @@ public class BoardActionPurpleOneToCitadelOneToAny extends BoardAction {
     PlayerState playerState = gameState.getCurrentPlayer();
     PlayerColor playerColor = playerState.getPlayer().getColor();
     int totalCubes = playerState.getNbTotalCubes();
-    if (totalCubes == 0) {
-      return null;
-    }
 
-    PossibleActions sendAnywhere = null;
-    if (totalCubes >= 2) {
-      sendAnywhere = new PossibleActions(new Message.SendPassiveCubesToAnyZone(1, playerColor));
-      sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.RELIGIOUS));
-      sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.POLITIC));
-      sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.ECONOMIC));
-      sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CULTURAL));
-      sendAnywhere.add(new ActionSkip());
-    }
+    PossibleActions sendAnywhere = new PossibleActions(
+        new Message.SendPassiveCubesToAnyZone(1, playerColor));
+    sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.RELIGIOUS));
+    sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.POLITIC));
+    sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.ECONOMIC));
+    sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CULTURAL));
+    sendAnywhere.add(new ActionSkip());
 
+    GameStateChange sendAnywhereFollowup = new GameStateChangeQueuePossibleActions(sendAnywhere);
     PossibleActions result = new PossibleActions(new Message.SendPassiveCubesToZone(1,
         playerColor, InfluenceType.CITADEL));
-    if (sendAnywhere != null) {
-      result.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL,
-          new GameStateChangeQueuePossibleActions(sendAnywhere)));
-      result.add(new ActionSkip(new GameStateChangeQueuePossibleActions(sendAnywhere)));
-    } else {
+    if (totalCubes >= 2) {
+      result.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL, sendAnywhereFollowup));
+      result.add(new ActionSkip(sendAnywhereFollowup));
+    } else if (totalCubes >= 1) {
       result.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL));
+      result.add(new ActionSkip(sendAnywhereFollowup));
+    } else {
       result.add(new ActionSkip());
     }
     return result;

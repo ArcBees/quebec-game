@@ -17,7 +17,15 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
+import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
+import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
+import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
 
 /**
  * Board action: purple, 2 cubes to activate, score one point, send one passive cube to any zone,
@@ -30,7 +38,31 @@ public class BoardActionPurpleOnePointOneToAnyActivateOne extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState) {
-    // TODO(beaudoin): Fill-in.
-    return null;
+    PlayerState playerState = gameState.getCurrentPlayer();
+    PlayerColor playerColor = playerState.getPlayer().getColor();
+    int totalCubes = playerState.getNbTotalCubes();
+
+    PossibleActions sendAnywhere = new PossibleActions(
+        new Message.SendPassiveCubesToAnyZoneOrCitadel(1, playerColor));
+    sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.RELIGIOUS));
+    sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.POLITIC));
+    sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.ECONOMIC));
+    sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CULTURAL));
+    sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL));
+    sendAnywhere.add(new ActionSkip());
+    GameStateChange sendAnywhereFollowup = new GameStateChangeQueuePossibleActions(sendAnywhere);
+
+    PossibleActions activate = new PossibleActions();
+    activate.add(new ActionActivateCubes(1, sendAnywhereFollowup));
+    activate.add(new ActionSkip(sendAnywhereFollowup));
+    GameStateChange activateFollowup = new GameStateChangeQueuePossibleActions(activate);
+
+    PossibleActions result = new PossibleActions();
+    if (totalCubes >= 1) {
+      result.add(new ActionScorePoints(1, activateFollowup));
+    } else {
+      result.add(new ActionScorePoints(1));
+    }
+    return result;
   }
 }

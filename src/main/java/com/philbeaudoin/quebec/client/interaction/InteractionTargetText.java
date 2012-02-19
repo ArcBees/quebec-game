@@ -16,12 +16,11 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
@@ -41,18 +40,17 @@ public class InteractionTargetText implements InteractionTarget {
 
   @Inject
   InteractionTargetText(SceneNodeAnimation.Factory sceneNodeAnimationFactory,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted String text) {
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted MessageRenderer messageRenderer,
+      @Assisted Vector2d pos) {
     this.gameStateRenderer = gameStateRenderer;
-    Vector2d pos = new Vector2d(1.3, 0.1);
-    Vector2d center = new Vector2d(1.3, 0.088);
-    double width = 0.0137 * text.length();  // TODO(beaudoin): Approximate. Can we do better?
+    Vector2d center = new Vector2d(pos.getX(), pos.getY() - 0.012);
+    double width = messageRenderer.calculateApproximateWidth();
     double height = 0.04;
     Transform fromTransform = new ConstantTransform(pos);
     Transform toTransform = new ConstantTransform(pos, 1.08, 0);
 
-    ArrayList<ComplexText.Component> components = new ArrayList<ComplexText.Component>();
-    components.add(new ComplexText.TextComponent(text));
-    textNode = new ComplexText(components, fromTransform);
+    textNode = new ComplexText(messageRenderer.getComponents(), "#87CEEB", "#6A5ACD",
+        fromTransform);
 
     textAnimation = sceneNodeAnimationFactory.create(gameStateRenderer, fromTransform, toTransform,
         textNode);

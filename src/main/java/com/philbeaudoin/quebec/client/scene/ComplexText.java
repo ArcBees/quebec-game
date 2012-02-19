@@ -35,6 +35,7 @@ public class ComplexText extends SceneNodeImpl {
    */
   public interface Component {
     double getWidth(Context2d context);
+    double getApproximateWidth();
     void draw(double dx, Context2d context);
   }
 
@@ -61,6 +62,11 @@ public class ComplexText extends SceneNodeImpl {
     public void draw(double dx, Context2d context) {
       node.setTransform(new ConstantTransform(new Vector2d(dx, 0)));
       node.draw(0, context);
+    }
+    @Override
+    public double getApproximateWidth() {
+      // TODO(beaudoin): Approximate. Can we do better?
+      return 0.0137 * text.length();
     }
   }
 
@@ -95,18 +101,31 @@ public class ComplexText extends SceneNodeImpl {
           scale, 0));
       node.draw(0, context);
     }
+    @Override
+    public double getApproximateWidth() {
+      return getWidth();
+    }
   }
 
   private final ArrayList<Component> components;
+  private final String gradientFrom;
+  private final String gradientTo;
 
   public ComplexText(ArrayList<Component> components, Transform transform) {
-    this(components, transform, true);
+    this(components, "#aaa", "#ddd", transform);
   }
 
-  private ComplexText(ArrayList<Component> components,
+  public ComplexText(ArrayList<Component> components, String gradientFrom,
+      String gradientTo, Transform transform) {
+    this(components, gradientFrom, gradientTo, transform, true);
+  }
+
+  private ComplexText(ArrayList<Component> components, String gradientFrom, String gradientTo,
       Transform transform, boolean visible) {
     super(transform, visible);
     this.components = new ArrayList<Component>(components);
+    this.gradientFrom = gradientFrom;
+    this.gradientTo = gradientTo;
   }
 
   @Override
@@ -119,7 +138,7 @@ public class ComplexText extends SceneNodeImpl {
     double dx = -totalWidth / 2.0;
 
     Rectangle rectangle = new Rectangle(dx * 1.07, -0.03, (dx + totalWidth) * 1.14, 0.01,
-        "#aaa", "#ddd", "#000", 2);
+        gradientFrom, gradientTo, "#000", 2);
     rectangle.draw(time, context);
 
     for (Component component : components) {
@@ -130,6 +149,6 @@ public class ComplexText extends SceneNodeImpl {
 
   @Override
   public SceneNode deepClone() {
-    return new ComplexText(components, getTransform(), isVisible());
+    return new ComplexText(components, gradientFrom, gradientTo, getTransform(), isVisible());
   }
 }

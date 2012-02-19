@@ -25,6 +25,8 @@ public interface GraphicConstants extends Constants {
   String moveYourArchitect();
   String moveYourArchitectToThisTile();
   String takeThisLeaderCard();
+  String skip();
+  String selectStarTokenToIncrease();
   String moveEitherArchitect();
   String selectWhichArchitect();
   String sendPassiveCubesToOneOfTwoZones();
@@ -33,7 +35,9 @@ public interface GraphicConstants extends Constants {
   String sendActiveCubesToZone();
   String selectActionToExecute();
   String sendPassiveCubesToAnyZone();
+  String sendPassiveCubesToAnyZoneOrCitadel();
   String sendPassiveCubesToThisTile();
   String sendActiveCubesToThisTile();
   String sendActiveCubesToThisTileAndExecuteAction();
+  String activateCubes();
 }

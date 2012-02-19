@@ -53,7 +53,7 @@ public interface ChangeRenderer {
 
   /**
    * Generates an animation corresponding to a change.
-   * @param renderer The renderer containing the scene graph. It will be modifiedduring the call as
+   * @param renderer The renderer containing the scene graph. It will be modified during the call as
    *     if {@link #applyRemovals} and {@link #applyAdditions} had been called.
    * @param startingTime The starting time of the animations to add.
    */
