@@ -108,9 +108,8 @@ public class MessageRenderer implements Message.Visitor<Void> {
   }
 
   @Override
-  public Void visit(Message.SelectWhichArchitect host) {
-    fillInPlaceholders(constants.selectWhichArchitect(),
-        newArchitect(host.getColor(0)), newArchitect(host.getColor(1)));
+  public Void visit(Message.MoveArchitect host) {
+    fillInPlaceholders(constants.moveArchitect(), newArchitect(host.getColor(0)));
     return null;
   }
 

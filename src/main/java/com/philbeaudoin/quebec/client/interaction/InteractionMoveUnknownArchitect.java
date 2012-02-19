@@ -86,9 +86,7 @@ public class InteractionMoveUnknownArchitect extends InteractionWithAction {
       GameState gameState, ActionMoveArchitect actionArchitectA,
       ActionMoveArchitect actionArchitectB) {
 
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
-    PossibleActions possibleActions = new PossibleActions(
-        new Message.SelectWhichArchitect(playerColor, PlayerColor.NEUTRAL));
+    PossibleActions possibleActions = new PossibleActions();
     possibleActions.add(actionArchitectA);
     possibleActions.add(actionArchitectB);
     return new GameStateChangeQueuePossibleActions(possibleActions);
