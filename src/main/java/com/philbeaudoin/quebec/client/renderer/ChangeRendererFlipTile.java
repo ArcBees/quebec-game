@@ -67,7 +67,7 @@ public class ChangeRendererFlipTile implements ChangeRenderer {
   @Override
   public void undoRemovals(GameStateRenderer renderer) {
     // No way to undo the removal, we don't know what was there before!
-    assert(false);
+    assert false;
   }
 
   @Override

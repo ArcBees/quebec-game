@@ -58,13 +58,13 @@ public class ChangeRendererIncreaseStarToken implements ChangeRenderer {
 
   @Override
   public void applyAdditions(GameStateRenderer renderer) {
-    renderer.addStarTokenTo(change.getTile(), change.getStarTokenColor(), 
+    renderer.addStarTokenTo(change.getTile(), change.getStarTokenColor(),
         change.getNbStarsAfter());
   }
 
   @Override
   public void undoRemovals(GameStateRenderer renderer) {
-    renderer.addStarTokenTo(change.getTile(), change.getStarTokenColor(), 
+    renderer.addStarTokenTo(change.getTile(), change.getStarTokenColor(),
         change.getNbStarsAfter() - 1);
   }
 

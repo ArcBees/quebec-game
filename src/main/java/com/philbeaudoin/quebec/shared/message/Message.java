@@ -42,7 +42,7 @@ public interface Message {
     T visit(MoveYourArchitect host);
     T visit(MoveYourArchitectToThisTile host);
     T visit(MoveEitherArchitect host);
-    T visit(SelectWhichArchitect host);
+    T visit(MoveArchitect host);
     T visit(SendPassiveCubesToOneOfTwoZones host);
     T visit(SendActiveCubesToOneOfTwoZones host);
     T visit(SendPassiveCubesToZone host);
@@ -125,12 +125,12 @@ public interface Message {
   }
 
   /**
-   * Select {architect A} or {architect B}.
-   * Select the red or the neutral architect.
+   * Move {architect}.
+   * Select the red architect.
    */
-  public class SelectWhichArchitect extends BaseMessage implements Message {
-    public SelectWhichArchitect(PlayerColor architectA, PlayerColor architectB) {
-      super(architectA, architectB);
+  public class MoveArchitect extends BaseMessage implements Message {
+    public MoveArchitect(PlayerColor architect) {
+      super(architect);
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {

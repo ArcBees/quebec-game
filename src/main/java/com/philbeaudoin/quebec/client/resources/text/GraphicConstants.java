@@ -28,7 +28,7 @@ public interface GraphicConstants extends Constants {
   String skip();
   String selectStarTokenToIncrease();
   String moveEitherArchitect();
-  String selectWhichArchitect();
+  String moveArchitect();
   String sendPassiveCubesToOneOfTwoZones();
   String sendActiveCubesToOneOfTwoZones();
   String sendPassiveCubesToZone();

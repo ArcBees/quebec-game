@@ -132,6 +132,8 @@ public class InteractionGenerator implements GameActionVisitor {
           gameStateRenderer, action));
     }
     increaseStarActions.clear();
+
+    // Generate text interactions last, since other interactions may create them.
     generateTextInteractions();
   }
 
@@ -156,13 +158,22 @@ public class InteractionGenerator implements GameActionVisitor {
 
     if (pairedMoveArchitects.size() == 1 && pairedMoveArchitects.get(0).isPair()) {
       // Case where we have only one pair, let the user select which architect to move.
+      PlayerColor currentPlayer = gameState.getCurrentPlayer().getPlayer().getColor();
       PairedMoveArchitect pair = pairedMoveArchitects.get(0);
-      gameStateRenderer.addInteraction(factories.createInteractionMoveArchitectTo(
-          gameState, gameStateRenderer, pair.a1));
-      gameStateRenderer.addInteraction(factories.createInteractionMoveArchitectTo(
-          gameState, gameStateRenderer, pair.a2));
+      PlayerColor a1Color = pair.a1.isNeutralArchitect() ? PlayerColor.NEUTRAL : currentPlayer;
+      PlayerColor a2Color = pair.a2.isNeutralArchitect() ? PlayerColor.NEUTRAL : currentPlayer;
+      MessageRenderer messageRendererA1 = messageRendererProvider.get();
+      MessageRenderer messageRendererA2 = messageRendererProvider.get();
+      new Message.MoveArchitect(a1Color).accept(messageRendererA1);
+      new Message.MoveArchitect(a2Color).accept(messageRendererA2);
+      textInteractions.add(new TextInteraction(messageRendererA1,
+          Helpers.createArchitectArrow(gameState, gameStateRenderer, pair.a1),
+          pair.a1));
+      textInteractions.add(new TextInteraction(messageRendererA2,
+          Helpers.createArchitectArrow(gameState, gameStateRenderer, pair.a2),
+          pair.a2));
     } else {
-      // Many pairs (maybe they're not pairs) let the user select the destination tile.
+      // Many pairs (or singles) let the user select the destination tile.
       for (PairedMoveArchitect pair : pairedMoveArchitects) {
         if (pair.isPair()) {
           // Not sure which architect to move.
@@ -222,7 +233,6 @@ public class InteractionGenerator implements GameActionVisitor {
   public void visit(ActionSelectBoadAction host) {
     selectBoardActionActions.add(host);
   }
-
 
   @Override
   public void visit(ActionIncreaseStar host) {

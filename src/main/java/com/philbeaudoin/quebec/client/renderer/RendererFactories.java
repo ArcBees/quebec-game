@@ -50,7 +50,7 @@ public interface RendererFactories {
   ChangeRendererMoveLeader createChangeRendererMoveLeader(
       @Assisted("from") SceneLeaderDestination from, @Assisted("to") SceneLeaderDestination to);
   ChangeRendererFlipTile createChangeRendererFlipTile(GameStateChangeFlipTile host);
-  ChangeRendererIncreaseStarToken createChangeRendererIncreaseStarToken (
+  ChangeRendererIncreaseStarToken createChangeRendererIncreaseStarToken(
       GameStateChangeIncreaseStarToken host);
   ChangeRendererNull createChangeRendererNull();
 

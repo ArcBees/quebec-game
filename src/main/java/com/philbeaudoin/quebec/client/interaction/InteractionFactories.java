@@ -43,8 +43,6 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer);
   InteractionMoveArchitect createInteractionMoveArchitect(GameState gameState,
       GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
-  InteractionMoveArchitectTo createInteractionMoveArchitectTo(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
   InteractionMoveUnknownArchitect createInteractionMoveUnknownArchitect(GameState gameState,
       GameStateRenderer gameStateRenderer,
       @Assisted("a") ActionMoveArchitect actionArchitectA,
@@ -67,8 +65,6 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, HasInfluenceZone target);
   InteractionTargetLeaderCard createInteractionTargetLeaderCard(
       GameStateRenderer gameStateRenderer, HasLeaderCard target);
-  InteractionTargetArchitect createInteractionTargetArchitect(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
   InteractionTargetBoardAction createInteractionTargetBoardAction(
       GameStateRenderer gameStateRenderer, HasBoardAction target);
   InteractionTargetText createInteractionTargetText(
