@@ -17,7 +17,7 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.action.ActionSelectBoadAction;
+import com.philbeaudoin.quebec.shared.action.ActionSelectBoardAction;
 import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
@@ -31,11 +31,13 @@ public class BoardActionPurpleAny extends BoardAction {
     super(1, 6, InfluenceType.RELIGIOUS, 1, ActionType.PURPLE_ANY);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PossibleActions result = new PossibleActions(new Message.SelectAction());
-    result.add(new ActionSelectBoadAction(new BoardActionPurpleOnePointOneToAnyActivateOne()));
-    result.add(new ActionSelectBoadAction(new BoardActionPurpleOneToAnyMoveTwo()));
-    result.add(new ActionSelectBoadAction(new BoardActionPurpleOneToCitadelOneToAny()));
+    result.add(new ActionSelectBoardAction(new BoardActionPurpleOnePointOneToAnyActivateOne(),
+        triggeringTile));
+    result.add(new ActionSelectBoardAction(new BoardActionPurpleOneToAnyMoveTwo(), triggeringTile));
+    result.add(new ActionSelectBoardAction(new BoardActionPurpleOneToCitadelOneToAny(),
+        triggeringTile));
     result.add(new ActionSkip());
     return result;
   }

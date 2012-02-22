@@ -18,11 +18,8 @@ package com.philbeaudoin.quebec.client.interaction;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.philbeaudoin.quebec.client.renderer.ChangeRenderer;
-import com.philbeaudoin.quebec.client.renderer.ChangeRendererGenerator;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
@@ -39,7 +36,6 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 public abstract class InteractionWithAction implements Interaction {
 
   protected final Scheduler scheduler;
-  protected final RendererFactories rendererFactories;
   protected final GameState gameState;
   protected final GameStateRenderer gameStateRenderer;
   private final ComplexText actionText;
@@ -49,17 +45,16 @@ public abstract class InteractionWithAction implements Interaction {
   private CallbackRegistration animationCompletedRegistration;
   private boolean inside;
 
-  protected InteractionWithAction(Scheduler scheduler, RendererFactories rendererFactories,
-      GameState gameState, GameStateRenderer gameStateRenderer, InteractionTarget target,
+  protected InteractionWithAction(Scheduler scheduler, GameState gameState,
+      GameStateRenderer gameStateRenderer, InteractionTarget target,
       GameStateChange gameStateChange) {
-    this(scheduler, rendererFactories, gameState, gameStateRenderer, target, null, gameStateChange);
+    this(scheduler, gameState, gameStateRenderer, target, null, gameStateChange);
   }
 
-  protected InteractionWithAction(Scheduler scheduler, RendererFactories rendererFactories,
-      GameState gameState, GameStateRenderer gameStateRenderer, InteractionTarget target,
+  protected InteractionWithAction(Scheduler scheduler, GameState gameState,
+      GameStateRenderer gameStateRenderer, InteractionTarget target,
       MessageRenderer messageRenderer, GameStateChange gameStateChange) {
     this.scheduler = scheduler;
-    this.rendererFactories = rendererFactories;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
     this.gameStateChange = gameStateChange;
@@ -68,7 +63,8 @@ public abstract class InteractionWithAction implements Interaction {
     if (messageRenderer != null && messageRenderer.getComponents().size() > 0 &&
         !gameState.hasPossibleActionMessage()) {
       this.actionText = new ComplexText(messageRenderer.getComponents(),
-          new ConstantTransform(new Vector2d(1.05, 0.095)));
+          new ConstantTransform(new Vector2d(GameStateRenderer.TEXT_CENTER,
+              GameStateRenderer.TEXT_LINE_1)));
     } else {
       this.actionText = null;
     }
@@ -91,12 +87,7 @@ public abstract class InteractionWithAction implements Interaction {
         }
       });
 
-      ChangeRendererGenerator generator = rendererFactories.createChangeRendererGenerator();
-      gameStateChange.accept(generator);
-
-      ChangeRenderer changeRenderer = generator.getChangeRenderer();
-      changeRenderer.generateAnim(gameStateRenderer, 0.0);
-      changeRenderer.undoAdditions(gameStateRenderer);
+      gameStateRenderer.generateAnimFor(gameStateChange);
 
       if (!gameStateRenderer.isAnimationCompleted(0.0)) {
         animationCompletedRegistration = gameStateRenderer.addAnimationCompletedCallback(

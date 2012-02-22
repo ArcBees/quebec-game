@@ -35,7 +35,7 @@ public class GameStateChangeIncreaseStarToken implements GameStateChange {
     this.tile = tile;
     this.starTokenColor = starTokenColor;
     this.nbStarsAfter = nbStarsAfter;
-    assert starTokenColor != PlayerColor.NONE;
+    assert starTokenColor.isNormalColor();
     assert nbStarsAfter > 1 && nbStarsAfter <= 3;
   }
 
@@ -49,8 +49,8 @@ public class GameStateChangeIncreaseStarToken implements GameStateChange {
   }
 
   @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public <T> T accept(GameStateChangeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
   /**

@@ -31,7 +31,7 @@ public class BoardActionRedTwoToRedOrBlue extends BoardAction {
     super(5, 6, InfluenceType.POLITIC, 2, ActionType.RED_TWO_TO_RED_OR_BLUE);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PlayerState playerState = gameState.getCurrentPlayer();
     int nbCubes = Math.min(2, playerState.getNbTotalCubes());
     PossibleActions result = new PossibleActions(

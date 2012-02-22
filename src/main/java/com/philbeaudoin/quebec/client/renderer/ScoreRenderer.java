@@ -56,8 +56,7 @@ public class ScoreRenderer {
    */
   void renderPlayer(PlayerState playerState, SceneNodeList boardRoot) {
     PlayerColor color = playerState.getPlayer().getColor();
-    int colorIndex = color.ordinal() - 1;
-    assert colorIndex >= 0 && colorIndex < 5;
+    int colorIndex = color.normalColorIndex();
     if (pawns[colorIndex] == null) {
       pawns[colorIndex] = new Sprite(spriteResources.getPawn(color));
     }

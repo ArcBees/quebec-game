@@ -38,4 +38,30 @@ public enum PlayerColor {
   public boolean isNormalColor() {
     return this != NONE && this != NEUTRAL;
   }
+
+  /**
+   * Checks if the color is one of the 5 normal player colors or the neutral architect color.
+   * @return True if it is, false if it's {@code NONE}.
+   */
+  public boolean isArchitectColor() {
+    return this != NONE;
+  }
+
+  /**
+   * Returns the index of a normal color, will fail if the color is NONE or NEUTRAL.
+   * @return The index of the normal color.
+   */
+  public int normalColorIndex() {
+    assert isNormalColor();
+    return ordinal() - 1;
+  }
+
+  /**
+   * Returns the index of an architect color, will fail if the color is NONE.
+   * @return The index of the architect color.
+   */
+  public int architectIndex() {
+    assert isArchitectColor();
+    return ordinal() - 1;
+  }
 }

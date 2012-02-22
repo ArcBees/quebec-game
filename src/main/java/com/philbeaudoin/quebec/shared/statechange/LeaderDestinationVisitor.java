@@ -18,17 +18,18 @@ package com.philbeaudoin.quebec.shared.statechange;
 
 /**
  * Interface for a class that can visit a {@link LeaderDestination}.
+ * @param <T> The return type of the visit methods.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface LeaderDestinationVisitor {
+public interface LeaderDestinationVisitor<T> {
   /**
    * Visits a {@link LeaderDestinationBoard}.
    * @param host The visited class.
    */
-  void visit(LeaderDestinationBoard host);
+  T visit(LeaderDestinationBoard host);
   /**
    * Visits a {@link LeaderDestinationPlayer}.
    * @param host The visited class.
    */
-  void visit(LeaderDestinationPlayer host);
+  T visit(LeaderDestinationPlayer host);
 }

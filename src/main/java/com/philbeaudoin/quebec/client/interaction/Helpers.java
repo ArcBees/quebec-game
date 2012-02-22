@@ -22,8 +22,9 @@ import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.state.TileState;
-import com.philbeaudoin.quebec.shared.utils.Transform;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * A class containing various static helper methods.
@@ -45,20 +46,36 @@ public class Helpers {
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     PlayerColor architectColor = action.isNeutralArchitect() ? PlayerColor.NEUTRAL : playerColor;
     TileState origin = gameState.findTileUnderArchitect(architectColor);
-    Transform architectFrom;
+    Vector2d architectFrom;
     if (origin == null) {
       // Architect starts from the player zone.
       architectFrom = gameStateRenderer.getArchitectOnPlayerTransform(
-          playerColor, action.isNeutralArchitect());
+          playerColor, action.isNeutralArchitect()).getTranslation(0);
     } else {
       // Architect starts from its current tile.
-      architectFrom = gameStateRenderer.getArchitectSlotOnTileTransform(origin.getTile());
+      architectFrom = gameStateRenderer.getArchitectSlotOnTileTransform(
+          origin.getTile()).getTranslation(0);
     }
 
     // Arrow to move architect.
-    Transform architectTo = gameStateRenderer.getArchitectSlotOnTileTransform(
-        action.getDestinationTile());
-    return new Arrow(architectFrom.getTranslation(0), architectTo.getTranslation(0));
+    Vector2d architectTo;
+    Tile destination = action.getDestinationTile();
+    if (destination != null) {
+      architectTo = gameStateRenderer.getArchitectSlotOnTileTransform(
+          destination).getTranslation(0);
+    } else {
+      architectTo = gameStateRenderer.getArchitectOnPlayerTransform(playerColor,
+          false).getTranslation(0);
+      if (action.isNeutralArchitect()) {
+        // Move it entirely out of the board.
+        architectTo = new Vector2d(0, architectTo.getY());
+      }
+    }
+    // Move the architect to itself, create a fake left-pointing arrow.
+    if (architectFrom.distanceTo(architectTo) < 0.00001) {
+      architectFrom = new Vector2d(architectTo.getX() + 0.3, architectTo.getY());
+    }
+    return new Arrow(architectFrom, architectTo);
   }
 
 }

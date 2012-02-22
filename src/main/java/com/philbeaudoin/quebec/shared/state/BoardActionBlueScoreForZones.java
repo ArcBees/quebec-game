@@ -31,7 +31,7 @@ public class BoardActionBlueScoreForZones extends BoardAction {
     super(8, 5, InfluenceType.CULTURAL, 2, ActionType.BLUE_SCORE_FOR_ZONES);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     int nbZonesWithAtLeastOneCube = 0;
     for (InfluenceType influenceType : InfluenceType.values()) {

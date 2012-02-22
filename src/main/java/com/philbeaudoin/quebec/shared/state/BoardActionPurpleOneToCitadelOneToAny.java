@@ -35,7 +35,7 @@ public class BoardActionPurpleOneToCitadelOneToAny extends BoardAction {
     super(6, 3, InfluenceType.RELIGIOUS, 2, ActionType.PURPLE_ONE_TO_CITADEL_ONE_TO_ANY);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PlayerState playerState = gameState.getCurrentPlayer();
     PlayerColor playerColor = playerState.getPlayer().getColor();
     int totalCubes = playerState.getNbTotalCubes();

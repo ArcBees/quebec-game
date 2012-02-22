@@ -22,8 +22,8 @@ import javax.inject.Inject;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite GameStateChangeComposite} to a
- * scene graph.
+ * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite
+ * GameStateChangeComposite} to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ChangeRendererComposite implements ChangeRenderer {
@@ -32,7 +32,7 @@ public class ChangeRendererComposite implements ChangeRenderer {
       new ArrayList<ChangeRenderer>();
 
   @Inject
-  public ChangeRendererComposite() {
+  ChangeRendererComposite() {
   }
 
   /**
@@ -44,30 +44,16 @@ public class ChangeRendererComposite implements ChangeRenderer {
   }
 
   @Override
-  public void applyRemovals(GameStateRenderer renderer) {
+  public void applyAnimChanges(GameStateRenderer renderer) {
     for (ChangeRenderer gameStateChangeRenderer : gameStateChangeRenderers) {
-      gameStateChangeRenderer.applyRemovals(renderer);
-    }
-  }
-
-  @Override
-  public void applyAdditions(GameStateRenderer renderer) {
-    for (ChangeRenderer gameStateChangeRenderer : gameStateChangeRenderers) {
-      gameStateChangeRenderer.applyAdditions(renderer);
-    }
-  }
-
-  @Override
-  public void undoRemovals(GameStateRenderer renderer) {
-    for (int i = gameStateChangeRenderers.size() - 1; i >= 0; i--) {
-      gameStateChangeRenderers.get(i).undoRemovals(renderer);
+      gameStateChangeRenderer.applyAnimChanges(renderer);
     }
   }
 
   @Override
   public void undoAdditions(GameStateRenderer renderer) {
-    for (int i = gameStateChangeRenderers.size() - 1; i >= 0; i--) {
-      gameStateChangeRenderers.get(i).undoAdditions(renderer);
+    for (ChangeRenderer gameStateChangeRenderer : gameStateChangeRenderers) {
+      gameStateChangeRenderer.undoAdditions(renderer);
     }
   }
 

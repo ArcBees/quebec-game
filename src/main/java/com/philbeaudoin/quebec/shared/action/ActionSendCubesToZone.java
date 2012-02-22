@@ -28,7 +28,7 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 
 /**
- * The action of sending passive worker cubes to a given influence zone.
+ * The action of sending active or passive worker cubes to a given influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ActionSendCubesToZone implements GameActionOnInfluenceZone {
@@ -62,7 +62,7 @@ public class ActionSendCubesToZone implements GameActionOnInfluenceZone {
     CubeDestinationInfluenceZone destination = new CubeDestinationInfluenceZone(to, activePlayer);
     if (!fromActive) {
       assert nbCubes <= playerState.getNbTotalCubes();
-      // Move as much cube as we want from the passive reserve.
+      // Move as much cube as we can from the passive reserve.
       nbMoved = Math.min(nbCubes, playerState.getNbPassiveCubes());
       if (nbMoved > 0) {
         result.add(new GameStateChangeMoveCubes(nbMoved,

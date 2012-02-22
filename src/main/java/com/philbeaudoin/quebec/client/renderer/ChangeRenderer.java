@@ -17,44 +17,33 @@
 package com.philbeaudoin.quebec.client.renderer;
 
 /**
- * Renders a {@link com.philbeaudoin.quebec.shared.statechange.GameStateChange GameStateChange} into a scene
- * graph. Classes implementing this interface are usually generated using
+ * Renders a {@link com.philbeaudoin.quebec.shared.statechange.GameStateChange GameStateChange} into
+ * a scene graph. Classes implementing this interface are usually generated using
  * {@link ChangeRendererGenerator}.
+ *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface ChangeRenderer {
-  /**
-   * Applies only the removals of a change in-place in the specified scene graph. Follow this call
-   * by {@link #applyAdditions} to apply a complete state change.
-   * @param renderer The renderer containing the scene graph on which to apply removals.
-   */
-  void applyRemovals(GameStateRenderer renderer);
 
   /**
-   * Applies only the removals of a change in-place in the specified scene graph. Precede this call
-   * by {@link #applyRemovals} to apply a complete state change.
-   * @param renderer The renderer containing the scene graph on which to apply additions.
+   * Adds and removes any component that would be added to the scene graph itself by
+   * {@link #generateAnim}. This does not add anything that {@link #generateAnim} adds to the
+   * animation graph. Use this to simulate an "instantaneous" animation.
+   * @param renderer The renderer containing the scene graph.
    */
-  void applyAdditions(GameStateRenderer renderer);
+  void applyAnimChanges(GameStateRenderer renderer);
 
   /**
-   * Undoes only the removals of a change in-place in the specified scene graph. Precede this call
-   * by {@link #undoAdditions} to undo a complete state change.
-   * @param renderer The renderer containing the scene graph on which to undo removals.
-   */
-  void undoRemovals(GameStateRenderer renderer);
-
-  /**
-   * Applies only the removals of a change in-place in the specified scene graph. Follow this call
-   * by {@link #undoRemovals} to undo a complete state change.
-   * @param renderer The renderer containing the scene graph on which to undo additions.
+   * Removes any component added to the main scene graph by this change renderer.
+   * @param renderer The renderer containing the scene graph.
    */
   void undoAdditions(GameStateRenderer renderer);
 
   /**
    * Generates an animation corresponding to a change.
-   * @param renderer The renderer containing the scene graph. It will be modified during the call as
-   *     if {@link #applyRemovals} and {@link #applyAdditions} had been called.
+   * @param renderer The renderer containing the scene graph. It will be modified during the call.
+   *     you should call {@link #undoAdditions(GameStateRenderer)} to remove the newly added
+   *     components.
    * @param startingTime The starting time of the animations to add.
    */
   void generateAnim(GameStateRenderer renderer,  double startingTime);

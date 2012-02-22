@@ -40,10 +40,10 @@ public interface GameActionVisitor {
   void visit(ActionSendCubesToZone host);
 
   /**
-   * Visits a {@link ActionSelectBoadAction}.
+   * Visits a {@link ActionSelectBoardAction}.
    * @param host The visited class.
    */
-  void visit(ActionSelectBoadAction host);
+  void visit(ActionSelectBoardAction host);
 
   /**
    * Visits a {@link ActionScorePoints}.
@@ -74,4 +74,22 @@ public interface GameActionVisitor {
    * @param host The visited class.
    */
   void visit(ActionIncreaseStar host);
+
+  /**
+   * Visits a {@link ActionMoveCubes}.
+   * @param host The visited class.
+   */
+  void visit(ActionMoveCubes host);
+
+  /**
+   * Visits a {@link ActionEmptyTileToZone}.
+   * @param host The visited class.
+   */
+  void visit(ActionEmptyTileToZone host);
+
+  /**
+   * Visits a {@link ActionPerformScoringPhase}.
+   * @param host The visited class.
+   */
+  void visit(ActionPerformScoringPhase host);
 }

@@ -23,6 +23,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.philbeaudoin.quebec.client.interaction.Interaction;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.interaction.InteractionGenerator;
@@ -40,6 +42,7 @@ import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.utils.Callback;
 import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
@@ -54,6 +57,10 @@ public class GameStateRenderer {
 
   public static final double LEFT_COLUMN_WIDTH = 0.38209;
 
+  public static final double TEXT_CENTER = 1.05;
+  public static final double TEXT_LINE_1 = 0.095;
+  public static final double TEXT_LINE_2 = 0.136;
+
   private final SceneNodeList staticRoot = new SceneNodeList();
   private final SceneNodeList dynamicRoot = new SceneNodeList();
   private final SceneNodeList backgroundRoot = new SceneNodeList();
@@ -62,9 +69,11 @@ public class GameStateRenderer {
   private final SceneNodeList animationRoot = new SceneNodeList();
   private final ArrayList<Interaction> interactions = new ArrayList<Interaction>();
 
+  private final Scheduler scheduler;
   private final RendererFactories factories;
   private final InteractionFactories interactionFactories;
   private final Provider<MessageRenderer> messageRendererProvider;
+  private final ChangeRendererGenerator changeRendererGenerator;
   private final ScoreRenderer scoreRenderer;
   private final BoardRenderer boardRenderer;
   private final ArrayList<PlayerStateRenderer> playerStateRenderers =
@@ -73,14 +82,19 @@ public class GameStateRenderer {
   private boolean forceGlassScreen;
   private boolean refreshNeeded = true;
 
+  private CallbackRegistration animationCompletedRegistration;
+
   @Inject
-  public GameStateRenderer(RendererFactories factories,
+  public GameStateRenderer(Scheduler scheduler, RendererFactories factories,
       InteractionFactories interactionFactories,
       SpriteResources spriteResources,
-      Provider<MessageRenderer> messageRendererProvider) {
+      Provider<MessageRenderer> messageRendererProvider,
+      ChangeRendererGenerator changeRendererGenerator) {
+    this.scheduler = scheduler;
     this.factories = factories;
     this.interactionFactories = interactionFactories;
     this.messageRendererProvider = messageRendererProvider;
+    this.changeRendererGenerator = changeRendererGenerator;
     scoreRenderer = factories.createScoreRenderer();
     boardRenderer = factories.createBoardRenderer(LEFT_COLUMN_WIDTH);
     staticRoot.add(backgroundRoot);
@@ -93,7 +107,7 @@ public class GameStateRenderer {
    * Renders the game state.
    * @param gameState The desired game state.
    */
-  public void render(GameState gameState) {
+  public void render(final GameState gameState) {
     refreshNeeded = true;
     List<PlayerState> playerStates = gameState.getPlayerStates();
     initPlayerStateRenderers(playerStates);
@@ -116,24 +130,62 @@ public class GameStateRenderer {
       index++;
     }
 
-    // Render the possible actions.
-    PossibleActions possibleActions = gameState.getPossibleActions();
-    if (possibleActions != null) {
-      InteractionGenerator generator =
-          interactionFactories.createInteractionGenerator(gameState, this);
-      possibleActions.accept(generator);
-      generator.generateInteractions();
-      Message message = possibleActions.getMessage();
-      if (message != null) {
-        MessageRenderer messageRenderer = messageRendererProvider.get();
-        message.accept(messageRenderer);
-        addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
-            new ConstantTransform(new Vector2d(1.05, 0.095))));
+    // TODO(beaudoin): This is a bit of an anti-pattern. The player should probably render the
+    //     interactions.
+    if (gameState.getCurrentPlayer().getPlayer().isRobot()) {
+      PossibleActions possibleActions = gameState.getPossibleActions();
+      if (possibleActions != null && possibleActions.getNbActions() > 0) {
+        int actionIndex = (int) (Math.random() * possibleActions.getNbActions());
+
+        // TODO(beaudoin): This is duplicate code from InteractionWithAction, extract somewhere.
+        final GameStateChange gameStateChange = possibleActions.execute(actionIndex, gameState);
+
+        generateAnimFor(gameStateChange);
+
+        scheduler.scheduleDeferred(new ScheduledCommand() {
+          @Override
+          public void execute() {
+            if (!isAnimationCompleted(0.0)) {
+              animationCompletedRegistration = addAnimationCompletedCallback(
+                  new Callback() {
+                    @Override public void execute() {
+                        animationCompletedRegistration.unregister();
+                        animationCompletedRegistration = null;
+                        renderForNextMove(gameStateChange, gameState);
+                    }
+                  });
+            } else {
+              renderForNextMove(gameStateChange, gameState);
+            }
+          }
+        });
+      }
+    } else {
+      // Render the possible actions.
+      PossibleActions possibleActions = gameState.getPossibleActions();
+      if (possibleActions != null) {
+        InteractionGenerator generator =
+            interactionFactories.createInteractionGenerator(gameState, this);
+        possibleActions.accept(generator);
+        generator.generateInteractions();
+        Message message = possibleActions.getMessage();
+        if (message != null) {
+          MessageRenderer messageRenderer = messageRendererProvider.get();
+          message.accept(messageRenderer);
+          addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
+              new ConstantTransform(new Vector2d(TEXT_CENTER, TEXT_LINE_1))));
+        }
+      }
+      for (Interaction interaction : interactions) {
+        interaction.highlight();
       }
     }
-    for (Interaction interaction : interactions) {
-      interaction.highlight();
-    }
+  }
+
+  private void renderForNextMove(GameStateChange gameStateChange, GameState gameState) {
+    clearAnimationGraph();
+    gameStateChange.apply(gameState);
+    render(gameState);
   }
 
   private void addOrClearGlassScreen() {
@@ -654,6 +706,16 @@ public class GameStateRenderer {
    */
   public boolean isRefreshNeeded() {
     return refreshNeeded;
+  }
+
+  /**
+   * Generates the animation corresponding to a given game state change.
+   * @param gameStateChange The game state change to animate.
+   */
+  public void generateAnimFor(GameStateChange gameStateChange) {
+    ChangeRenderer changeRenderer = gameStateChange.accept(changeRendererGenerator);
+    changeRenderer.generateAnim(this, 0.0);
+    changeRenderer.undoAdditions(this);
   }
 }
 

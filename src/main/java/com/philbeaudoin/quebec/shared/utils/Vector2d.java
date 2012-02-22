@@ -53,6 +53,23 @@ public class Vector2d {
     return (int) y;
   }
 
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
+    }
+    if (!(that instanceof Vector2d)) {
+      return false;
+    }
+    Vector2d other = (Vector2d) that;
+    return x == other.x && y == other.y;
+  }
+
+  @Override
+  public int hashCode() {
+    return new Double(x).hashCode() ^ new Double(y).hashCode();
+  }
+
   public double distanceTo(Vector2d to) {
     double dx = to.x - x;
     double dy = to.y - y;

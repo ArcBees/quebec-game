@@ -18,22 +18,23 @@ package com.philbeaudoin.quebec.shared.statechange;
 
 /**
  * Interface for a class that can visit a {@link CubeDestination}.
+ * @param <T> The type returned by the visit method.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface CubeDestinationVisitor {
+public interface CubeDestinationVisitor<T> {
   /**
    * Visits a {@link CubeDestinationInfluenceZone}.
    * @param host The visited class.
    */
-  void visit(CubeDestinationInfluenceZone host);
+  T visit(CubeDestinationInfluenceZone host);
   /**
    * Visits a {@link CubeDestinationPlayer}.
    * @param host The visited class.
    */
-  void visit(CubeDestinationPlayer host);
+  T visit(CubeDestinationPlayer host);
   /**
    * Visits a {@link CubeDestinationTile}.
    * @param host The visited class.
    */
-  void visit(CubeDestinationTile host);
+  T visit(CubeDestinationTile host);
 }

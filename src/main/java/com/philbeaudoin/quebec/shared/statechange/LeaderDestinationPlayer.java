@@ -59,8 +59,8 @@ public class LeaderDestinationPlayer implements LeaderDestination {
   }
 
   @Override
-  public void accept(LeaderDestinationVisitor visitor) {
-    visitor.visit(this);
+  public <T> T accept(LeaderDestinationVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
   /**

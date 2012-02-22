@@ -62,7 +62,7 @@ public class PossibleActions {
    * @return The change to the game state resulting from the application of that action.
    */
   public GameStateChange execute(int actionIndex, GameState gameState) {
-    assert actionIndex > 0 && actionIndex < gameActions.size();
+    assert actionIndex >= 0 && actionIndex < gameActions.size();
     return gameActions.get(actionIndex).execute(gameState);
   }
 

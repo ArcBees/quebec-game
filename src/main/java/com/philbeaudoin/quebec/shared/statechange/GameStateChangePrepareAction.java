@@ -19,6 +19,7 @@ package com.philbeaudoin.quebec.shared.statechange;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.Tile;
 
 /**
  * A change of the game state that consists of preparing the possible moves for a given board
@@ -28,22 +29,24 @@ import com.philbeaudoin.quebec.shared.state.GameState;
 public class GameStateChangePrepareAction implements GameStateChange {
 
   private final BoardAction boardAction;
+  private final Tile triggeringTile;
 
-  public GameStateChangePrepareAction(BoardAction boardAction) {
+  public GameStateChangePrepareAction(BoardAction boardAction, Tile triggeringTile) {
     this.boardAction = boardAction;
+    this.triggeringTile = triggeringTile;
   }
   @Override
   public void apply(GameState gameState) {
-    PossibleActions possibleActions = boardAction.getPossibleActions(gameState);
+    PossibleActions possibleActions = boardAction.getPossibleActions(gameState, triggeringTile);
     if (possibleActions != null && possibleActions.getNbActions() > 0) {
       gameState.setPossibleActions(possibleActions);
     } else {
-      gameState.nextPlayer();
+      gameState.nextPlayer(true);
     }
   }
 
   @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public <T> T accept(GameStateChangeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 }

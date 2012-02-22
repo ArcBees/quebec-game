@@ -214,7 +214,7 @@ public class BoardRenderer {
 
     // Add the architect pawn.
     PlayerColor architectColor = tileState.getArchitect();
-    if (architectColor != PlayerColor.NONE) {
+    if (architectColor.isArchitectColor()) {
       addArchitectToTile(tileInfo, architectColor);
     } else {
       // Add the active token if needed.
@@ -231,7 +231,7 @@ public class BoardRenderer {
     CubeGrid cubeGrid = new CubeGrid(cubesPerSpot, 1);
     for (int spot = 0; spot < 3; ++spot) {
       PlayerColor cubesColor = tileState.getColorInSpot(spot);
-      if (cubesColor != PlayerColor.NONE) {
+      if (cubesColor.isNormalColor()) {
         addCubesToTile(cubeGrid, tileInfo, cubesColor, spot, cubesPerSpot);
       }
     }
@@ -243,7 +243,7 @@ public class BoardRenderer {
         tile.getCentury(), tile.getBuildingIndex()));
     tileNode.add(tileInfo.tileSprite);
     PlayerColor starTokenColor = tileState.getStarTokenColor();
-    if (starTokenColor != PlayerColor.NONE) {
+    if (starTokenColor.isNormalColor()) {
       addStarTokenTo(tileInfo, tileState.getStarTokenColor(), tileState.getNbStars());
     }
   }

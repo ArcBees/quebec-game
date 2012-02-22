@@ -29,6 +29,19 @@ public enum InfluenceType {
   CITADEL;
 
   /**
+   * Get the i-th scoring zone for the given century.
+   * @param century The century.
+   * @param index The index of the scoring zone (0 to 4).
+   * @return The scoring zone.
+   */
+  public static InfluenceType getScoringZoneForCentury(int century, int index) {
+    if (index == 0) {
+      return CITADEL;
+    }
+    return values()[(century + index - 1) % 4];
+  }
+
+  /**
    * Retrieves the number of tiles of a given influence type for a given century.
    * @param influenceType The influence type (color).
    * @param century The century (0, 1, 2 or 3).

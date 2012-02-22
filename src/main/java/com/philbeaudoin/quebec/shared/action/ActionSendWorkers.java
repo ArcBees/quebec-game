@@ -28,20 +28,24 @@ import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationTile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeInstantaneousDecorator;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * The action of sending worker cubes to a spot on a tile.
+ * The action of sending worker cubes to a spot on a tile. When coming from the passive reserve,
+ * the associated board action is never executed.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ActionSendWorkers implements GameActionOnTile {
 
+  private final boolean fromActive;
   private final Tile destinationTile;
 
-  public ActionSendWorkers(Tile destinationTile) {
+  public ActionSendWorkers(boolean fromActive, Tile destinationTile) {
+    this.fromActive = fromActive;
     this.destinationTile = destinationTile;
   }
 
@@ -60,19 +64,39 @@ public class ActionSendWorkers implements GameActionOnTile {
       }
     }
     assert destinationSpot != -1;
-    assert playerState.getNbActiveCubes() >= tileState.getCubesPerSpot();
 
-    // Move the cubes.
-    result.add(new GameStateChangeMoveCubes(tileState.getCubesPerSpot(),
-        new CubeDestinationPlayer(activePlayer, true),
-        new CubeDestinationTile(destinationTile, activePlayer, destinationSpot)));
+    int nbCubes = tileState.getCubesPerSpot();
+    assert nbCubes <= playerState.getNbTotalCubes();
+
+    CubeDestinationTile destination = new CubeDestinationTile(destinationTile, activePlayer,
+        destinationSpot);
+    if (!fromActive && playerState.getNbPassiveCubes() > 0) {
+      int cubesMissing = Math.max(0, nbCubes - playerState.getNbPassiveCubes());
+      if (cubesMissing > 0) {
+        // Not enough cubes in the passive reserve, move some from the active reserve. We do this
+        // instead of sending cubes simultaneously from both reserves because the system does not
+        // allow filling a spot in this way.
+        result.add(new GameStateChangeInstantaneousDecorator(
+            new GameStateChangeMoveCubes(cubesMissing,
+              new CubeDestinationPlayer(activePlayer, true),
+              new CubeDestinationPlayer(activePlayer, false))));
+      }
+      // Send as much cube as we can from the passive reserve.
+      result.add(new GameStateChangeMoveCubes(nbCubes,
+          new CubeDestinationPlayer(activePlayer, false), destination));
+    } else {
+      // Move all the cubes from the active reserve.
+      assert nbCubes <= playerState.getNbActiveCubes();
+      result.add(new GameStateChangeMoveCubes(nbCubes,
+          new CubeDestinationPlayer(activePlayer, true), destination));
+    }
 
     // Check if the action should be executed.
     if (canExecuteBoardAction(playerState, tileState)) {
       Vector2d tileLocation = tileState.getLocation();
       BoardAction action = Board.actionForTileLocation(tileLocation.getColumn(),
           tileLocation.getLine());
-      result.add(new GameStateChangePrepareAction(action));
+      result.add(new GameStateChangePrepareAction(action, destinationTile));
     } else {
       // Move to next player.
       result.add(new GameStateChangeNextPlayer());
@@ -102,7 +126,16 @@ public class ActionSendWorkers implements GameActionOnTile {
   }
 
   private boolean canExecuteBoardAction(PlayerState playerState, TileState tileState) {
-    return !playerState.ownsArchitect(tileState.getArchitect()) ||
-        playerState.getLeaderCard() == LeaderCard.RELIGIOUS;
+    return fromActive && (!playerState.ownsArchitect(tileState.getArchitect()) ||
+        playerState.getLeaderCard() == LeaderCard.RELIGIOUS);
+  }
+
+  /**
+   * Returns whether the cubes come from the active or the passive reserve, with overflow coming
+   * from the active reserve.
+   * @return True if they come from the active reserve.
+   */
+  public boolean areCubesFromActive() {
+    return fromActive;
   }
 }

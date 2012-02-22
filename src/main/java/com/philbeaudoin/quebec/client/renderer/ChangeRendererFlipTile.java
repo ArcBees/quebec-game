@@ -31,8 +31,8 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile GameStateChangeFlipTile}
- * to a scene graph.
+ * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile
+ * GameStateChangeFlipTile} to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ChangeRendererFlipTile implements ChangeRenderer {
@@ -52,34 +52,18 @@ public class ChangeRendererFlipTile implements ChangeRenderer {
   }
 
   @Override
-  public void applyRemovals(GameStateRenderer renderer) {
-    renderer.removeStarTokenFrom(change.getTile());
-  }
-
-  @Override
-  public void applyAdditions(GameStateRenderer renderer) {
-    PlayerColor starTokenColor = change.getStarTokenColor();
-    if (starTokenColor != PlayerColor.NONE) {
-      renderer.addStarTokenTo(change.getTile(), starTokenColor, change.getNbStars());
-    }
-  }
-
-  @Override
-  public void undoRemovals(GameStateRenderer renderer) {
-    // No way to undo the removal, we don't know what was there before!
-    assert false;
+  public void applyAnimChanges(GameStateRenderer renderer) {
   }
 
   @Override
   public void undoAdditions(GameStateRenderer renderer) {
-    renderer.removeStarTokenFrom(change.getTile());
   }
 
   @Override
   public void generateAnim(GameStateRenderer renderer, double startingTime) {
     // TODO(beaudoin): Common to ChangeRendererIncreaseStarToken extract.
     PlayerColor starTokenColor = change.getStarTokenColor();
-    if (starTokenColor != PlayerColor.NONE) {
+    if (starTokenColor.isNormalColor()) {
       int nbStars = change.getNbStars();
       Transform finishTransform = renderer.addStarTokenTo(change.getTile(),
           starTokenColor, nbStars);

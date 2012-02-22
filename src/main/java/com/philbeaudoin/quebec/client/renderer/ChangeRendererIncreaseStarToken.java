@@ -31,8 +31,8 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken GameStateChangeIncreaseStarToken}
- * to a scene graph.
+ * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken
+ * GameStateChangeIncreaseStarToken} to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ChangeRendererIncreaseStarToken implements ChangeRenderer {
@@ -52,25 +52,11 @@ public class ChangeRendererIncreaseStarToken implements ChangeRenderer {
   }
 
   @Override
-  public void applyRemovals(GameStateRenderer renderer) {
-    renderer.removeStarTokenFrom(change.getTile());
-  }
-
-  @Override
-  public void applyAdditions(GameStateRenderer renderer) {
-    renderer.addStarTokenTo(change.getTile(), change.getStarTokenColor(),
-        change.getNbStarsAfter());
-  }
-
-  @Override
-  public void undoRemovals(GameStateRenderer renderer) {
-    renderer.addStarTokenTo(change.getTile(), change.getStarTokenColor(),
-        change.getNbStarsAfter() - 1);
+  public void applyAnimChanges(GameStateRenderer renderer) {
   }
 
   @Override
   public void undoAdditions(GameStateRenderer renderer) {
-    renderer.removeStarTokenFrom(change.getTile());
   }
 
   @Override

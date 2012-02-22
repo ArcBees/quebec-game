@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
 
@@ -25,17 +26,19 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
  * The action of selecting a board action to execute.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSelectBoadAction implements GameActionOnBoardAction {
+public class ActionSelectBoardAction implements GameActionOnBoardAction {
 
   private final BoardAction boardAction;
+  private final Tile triggeringTile;
 
-  public ActionSelectBoadAction(BoardAction boardAction) {
+  public ActionSelectBoardAction(BoardAction boardAction, Tile triggeringTile) {
     this.boardAction = boardAction;
+    this.triggeringTile = triggeringTile;
   }
 
   @Override
   public GameStateChange execute(GameState gameState) {
-    return new GameStateChangePrepareAction(boardAction);
+    return new GameStateChangePrepareAction(boardAction, triggeringTile);
   }
 
   @Override

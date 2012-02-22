@@ -35,7 +35,7 @@ public class GameStateChangeFlipTile implements GameStateChange {
     this.tile = tile;
     this.starTokenColor = starTokenColor;
     this.nbStars = nbStars;
-    assert starTokenColor != PlayerColor.NONE || nbStars == 0;
+    assert starTokenColor.isNormalColor() || nbStars == 0;
     assert nbStars != 0 || starTokenColor == PlayerColor.NONE;
   }
 
@@ -47,8 +47,8 @@ public class GameStateChangeFlipTile implements GameStateChange {
   }
 
   @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public <T> T accept(GameStateChangeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
   /**

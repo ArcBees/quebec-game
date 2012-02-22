@@ -18,9 +18,6 @@ package com.philbeaudoin.quebec.client.renderer;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -34,9 +31,7 @@ public class SceneCubeDestinationPlayer implements SceneCubeDestination {
 
   private final CubeDestinationPlayer cubeDestinationPlayer;
 
-  @Inject
-  public SceneCubeDestinationPlayer(
-      @Assisted CubeDestinationPlayer cubeDestinationPlayer) {
+  public SceneCubeDestinationPlayer(CubeDestinationPlayer cubeDestinationPlayer) {
     this.cubeDestinationPlayer = cubeDestinationPlayer;
   }
 

@@ -18,6 +18,8 @@ package com.philbeaudoin.quebec.shared.message;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.ScoringInformation;
+import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
 import com.philbeaudoin.quebec.shared.state.ActionType;
 
 /**
@@ -41,6 +43,13 @@ public interface Message {
   public interface Visitor<T> {
     T visit(MoveYourArchitect host);
     T visit(MoveYourArchitectToThisTile host);
+    T visit(Skip host);
+    T visit(Continue host);
+    T visit(SelectStarTokenToIncrease host);
+    T visit(SelectSpotToFill selectSpotToFill);
+    T visit(ScoringPhaseBegins host);
+    T visit(PrepareNextCentury host);
+    T visit(TakeThisLeaderCard host);
     T visit(MoveEitherArchitect host);
     T visit(MoveArchitect host);
     T visit(SendPassiveCubesToOneOfTwoZones host);
@@ -50,14 +59,21 @@ public interface Message {
     T visit(SelectAction host);
     T visit(SendPassiveCubesToAnyZone host);
     T visit(SendPassiveCubesToAnyZoneOrCitadel host);
-    T visit(TakeThisLeaderCard host);
     T visit(SendPassiveCubesToThisTile host);
     T visit(SendActiveCubesToThisTile host);
     T visit(SendActiveCubesToThisTileAndExecuteAction host);
     T visit(ActivateCubes host);
-    T visit(Skip host);
     T visit(ScorePoints host);
-    T visit(SelectStarTokenToIncrease host);
+    T visit(MoveOneOrTwoCubesSelectOrigin host);
+    T visit(MoveCubesSelectDestination host);
+    T visit(SelectWhereToEmptyTile host);
+    T visit(MoveArchitectOut host);
+    T visit(RemoveNeutralArchitect host);
+    T visit(InformationOnZoneScore host);
+    T visit(InformationOnIncompleteBuildingsScore host);
+    T visit(InformationOnActiveCubesScore host);
+    T visit(InformationOnBuildingsScore host);
+    T visit(GameCompleted host);
   }
 
   /**
@@ -81,16 +97,6 @@ public interface Message {
   }
 
   /**
-   * Take this leader card.
-   */
-  public class TakeThisLeaderCard implements Message {
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
-    }
-  }
-
-  /**
    * Skip.
    */
   public class Skip implements Message {
@@ -101,9 +107,62 @@ public interface Message {
   }
 
   /**
+   * Continue.
+   */
+  public class Continue implements Message {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
    * Select star token to increase.
    */
   public class SelectStarTokenToIncrease implements Message {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Select spot to fill.
+   */
+  public class SelectSpotToFill implements Message {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Scoring phase begins, returning all leader cards.
+   */
+  public class ScoringPhaseBegins implements Message {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Cubes return to passive reserve, new buildings are available.
+   */
+  public class PrepareNextCentury implements Message {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Take this leader card.
+   */
+  public class TakeThisLeaderCard extends BaseMessageWithCount implements Message {
+    public TakeThisLeaderCard(int nbCubesToActivate, PlayerColor playerColor) {
+      super(nbCubesToActivate, playerColor);
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -302,6 +361,166 @@ public interface Message {
     public ScorePoints(int nbPoints) {
       super(nbPoints);
     }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Move {white cube} or {white cube}{white cube}, select origin
+   * Move 1 or 2 white cubes, select origin.
+   */
+  public class MoveOneOrTwoCubesSelectOrigin extends BaseMessage implements Message {
+    public MoveOneOrTwoCubesSelectOrigin(PlayerColor playerColor) {
+      super(playerColor);
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Move {white cube}{white cube} from {economic}, select destination
+   * Move 2 white cubes from the economic zone, select destination.
+   */
+  public class MoveCubesSelectDestination extends BaseMessageWithCount implements Message {
+    public MoveCubesSelectDestination(int nbCubes, PlayerColor playerColor, InfluenceType origin) {
+      super(nbCubes, array(playerColor), array(origin));
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Player {white pawn}, send cubes to {religious}{politic}{economic} or {cultural}.
+   * White player, send cubes to the religious, politic, economic or cultural zone.
+   */
+  public class SelectWhereToEmptyTile extends BaseMessage implements Message {
+    public SelectWhereToEmptyTile(PlayerColor playerColor) {
+      super(playerColor);
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Move {white architect} out, end century.
+   */
+  public class MoveArchitectOut extends BaseMessage implements Message {
+    public MoveArchitectOut(PlayerColor playerColor) {
+      super(playerColor);
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  /**
+   * Remove {neutral architect}, end century, do NOT activate cubes.
+   */
+  public class RemoveNeutralArchitect implements Message {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+  }
+
+  // TODO(beaudoin): Refactor the following classes, they are all quite similar.
+
+  /**
+   * Option 1)
+   * Scoring {religion}. Nobody scores.
+   * Option 2)
+   * Scoring {citadel}. {black pawn}: 1, {green pawn}:1. No Cascade.
+   * Option 3)
+   * Scoring {citadel}. {black pawn}: 3 {white pawn}: 6, {green pawn}: 6.
+   * Cascades 3{white cube}{green cube}.
+   */
+  public class InformationOnZoneScore implements Message {
+    private final ZoneScoringInformation scoringInformation;
+    public InformationOnZoneScore(ZoneScoringInformation scoringInformation) {
+      this.scoringInformation = scoringInformation;
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+    public ZoneScoringInformation getScoringInformation() {
+      return scoringInformation;
+    }
+  }
+
+  /**
+   * Option 1)
+   * Scoring incomplete buildings. Nobody scores.
+   * Option 2)
+   * Scoring incomplete buildings. {black pawn}: 1, {green pawn}:4.
+   */
+  public class InformationOnIncompleteBuildingsScore implements Message {
+    private final ScoringInformation scoringInformation;
+    public InformationOnIncompleteBuildingsScore(ScoringInformation scoringInformation) {
+      this.scoringInformation = scoringInformation;
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+    public ScoringInformation getScoringInformation() {
+      return scoringInformation;
+    }
+  }
+
+  /**
+   * Option 1)
+   * Scoring active cubes. Nobody scores.
+   * Option 2)
+   * Scoring active cubes. {black pawn}: 1, {green pawn}:4.
+   */
+  public class InformationOnActiveCubesScore implements Message {
+    private final ScoringInformation scoringInformation;
+    public InformationOnActiveCubesScore(ScoringInformation scoringInformation) {
+      this.scoringInformation = scoringInformation;
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+    public ScoringInformation getScoringInformation() {
+      return scoringInformation;
+    }
+  }
+
+  /**
+   * Option 1)
+   * Scoring buildings. Nobody scores.
+   * Option 2)
+   * Scoring buildings. {black pawn}: 1, {green pawn}:4.
+   */
+  public class InformationOnBuildingsScore implements Message {
+    private final ScoringInformation scoringInformation;
+    public InformationOnBuildingsScore(ScoringInformation scoringInformation) {
+      this.scoringInformation = scoringInformation;
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+    public ScoringInformation getScoringInformation() {
+      return scoringInformation;
+    }
+  }
+
+  /**
+   * TODO(beaudoin) Should state the final score and winner.
+   */
+  public class GameCompleted implements Message {
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);

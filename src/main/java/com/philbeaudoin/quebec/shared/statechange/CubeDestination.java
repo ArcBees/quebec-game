@@ -54,5 +54,5 @@ public interface CubeDestination {
    * Accepts a visitor.
    * @param visitor The visitor.
    */
-  void accept(CubeDestinationVisitor visitor);
+  <T> T accept(CubeDestinationVisitor<T> visitor);
 }

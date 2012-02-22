@@ -27,6 +27,8 @@ import com.philbeaudoin.quebec.client.scene.ComplexText.Component;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.ScoringInformation;
+import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.ActionType;
 
@@ -83,14 +85,14 @@ public class MessageRenderer implements Message.Visitor<Void> {
   }
 
   @Override
-  public Void visit(Message.TakeThisLeaderCard host) {
-    addText(constants.takeThisLeaderCard());
+  public Void visit(Message.Skip host) {
+    addText(constants.skip());
     return null;
   }
 
   @Override
-  public Void visit(Message.Skip host) {
-    addText(constants.skip());
+  public Void visit(Message.Continue host) {
+    addText(constants.continueMsg());
     return null;
   }
 
@@ -101,15 +103,44 @@ public class MessageRenderer implements Message.Visitor<Void> {
   }
 
   @Override
+  public Void visit(Message.SelectSpotToFill host) {
+    addText(constants.selectSpotToFill());
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.ScoringPhaseBegins host) {
+    addText(constants.scoringPhaseBegins());
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.PrepareNextCentury host) {
+    addText(constants.prepareNextCentury());
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.TakeThisLeaderCard host) {
+    if (host.getCount() == 0) {
+      addText(constants.takeThisLeaderCard());
+    } else {
+      fillInPlaceholders(repeatPlaceholder(constants.takeThisLeaderCardAndActivateCubes(), 0,
+          host.getCount()), newCube(host.getColor(0)));
+    }
+    return null;
+  }
+
+  @Override
   public Void visit(Message.MoveEitherArchitect host) {
     fillInPlaceholders(constants.moveEitherArchitect(),
-        newArchitect(host.getColor(0)), newArchitect(host.getColor(1)));
+        newPawn(host.getColor(0)), newPawn(host.getColor(1)));
     return null;
   }
 
   @Override
   public Void visit(Message.MoveArchitect host) {
-    fillInPlaceholders(constants.moveArchitect(), newArchitect(host.getColor(0)));
+    fillInPlaceholders(constants.moveArchitect(), newPawn(host.getColor(0)));
     return null;
   }
 
@@ -214,12 +245,213 @@ public class MessageRenderer implements Message.Visitor<Void> {
     return null;
   }
 
+  @Override
+  public Void visit(Message.MoveOneOrTwoCubesSelectOrigin host) {
+    fillInPlaceholders(constants.moveOneOrTwoCubesSelectOrigin(), newCube(host.getColor(0)));
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.MoveCubesSelectDestination host) {
+    fillInPlaceholders(repeatPlaceholder(constants.moveCubesSelectDestination(), 0,
+        host.getCount()), newCube(host.getColor(0)), newZoneIcon(host.getZone(0)));
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.SelectWhereToEmptyTile host) {
+    fillInPlaceholders(constants.selectWhereToEmptyTile(), newPawn(host.getColor(0)),
+        newZoneIcon(InfluenceType.RELIGIOUS),
+        newZoneIcon(InfluenceType.POLITIC),
+        newZoneIcon(InfluenceType.ECONOMIC),
+        newZoneIcon(InfluenceType.CULTURAL));
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.MoveArchitectOut host) {
+    fillInPlaceholders(constants.moveArchitectOut(), newPawn(host.getColor(0)));
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.RemoveNeutralArchitect host) {
+    fillInPlaceholders(constants.removeNeutralArchitect(), newPawn(PlayerColor.NEUTRAL));
+    return null;
+  }
+
+  // TODO(beaudoin): Refactor, the following visit methods are all quite similar.
+
+  @Override
+  public Void visit(Message.InformationOnZoneScore host) {
+    ZoneScoringInformation scoringInformation = host.getScoringInformation();
+
+    // Build sprite array, will be useful later.
+    ComplexText.SpriteComponent[] sprites = new ComplexText.SpriteComponent[11];
+    sprites[0] = newZoneIcon(scoringInformation.getZoneToScore());
+
+    StringBuilder scoreDisplay = new StringBuilder();
+    StringBuilder cascadeDisplay = new StringBuilder();
+    for (PlayerColor playerColor : PlayerColor.values()) {
+      if (!playerColor.isNormalColor()) {
+        continue;
+      }
+      // Placeholder 0 is for the zone logo.
+      int placeholderIndexForPawn = playerColor.normalColorIndex() + 1;
+      int placeholderIndexForCube = playerColor.normalColorIndex() + 6;  // 5 pawns
+
+      sprites[placeholderIndexForPawn] = newPawn(playerColor);
+      sprites[placeholderIndexForCube] = newCube(playerColor);
+
+      int score = scoringInformation.getScore(playerColor);
+      if (score > 0) {
+        if (scoreDisplay.length() > 0) {
+          scoreDisplay.append(", ");
+        }
+        scoreDisplay.append("[" + placeholderIndexForPawn + "]: " + score);
+      }
+
+      int cubesToCascade = scoringInformation.getCubesToCascade(playerColor);
+      if (cubesToCascade > 0) {
+        if (cascadeDisplay.length() == 0) {
+          // First cascade, insert the cascade size.
+          cascadeDisplay.append(cubesToCascade);
+        }
+        cascadeDisplay.append("[" + placeholderIndexForCube + "]");
+      }
+    }
+
+    if (scoreDisplay.length() == 0) {
+      // No score.
+      fillInPlaceholders(constants.scoreZoneWithoutScore(),
+          newZoneIcon(scoringInformation.getZoneToScore()));
+    } else if (cascadeDisplay.length() == 0) {
+      // No cascade.
+      String message = replacePlaceholders(constants.scoreZoneWithoutCascade(),
+          "[0]", scoreDisplay.toString());
+      fillInPlaceholders(message, sprites);
+    } else {
+      String message = replacePlaceholders(constants.scoreZoneWithCascade(),
+          "[0]", scoreDisplay.toString(), cascadeDisplay.toString());
+      fillInPlaceholders(message, sprites);
+    }
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.InformationOnIncompleteBuildingsScore host) {
+    ScoringInformation scoringInformation = host.getScoringInformation();
+
+    // Build sprite array, will be useful later.
+    ComplexText.SpriteComponent[] sprites = new ComplexText.SpriteComponent[5];
+    StringBuilder scoreDisplay = new StringBuilder();
+    for (PlayerColor playerColor : PlayerColor.values()) {
+      if (!playerColor.isNormalColor()) {
+        continue;
+      }
+      int placeholderIndexForPawn = playerColor.normalColorIndex();
+      sprites[placeholderIndexForPawn] = newPawn(playerColor);
+
+      int score = scoringInformation.getScore(playerColor);
+      if (score > 0) {
+        if (scoreDisplay.length() > 0) {
+          scoreDisplay.append(", ");
+        }
+        scoreDisplay.append("[" + placeholderIndexForPawn + "]: " + score);
+      }
+    }
+
+    if (scoreDisplay.length() == 0) {
+      // No score.
+      addText(constants.scoreIncompleteBuildingsWithoutScore());
+    } else {
+      String message = replacePlaceholders(constants.scoreIncompleteBuildings(),
+          scoreDisplay.toString());
+      fillInPlaceholders(message, sprites);
+    }
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.InformationOnActiveCubesScore host) {
+    ScoringInformation scoringInformation = host.getScoringInformation();
+
+    // Build sprite array, will be useful later.
+    ComplexText.SpriteComponent[] sprites = new ComplexText.SpriteComponent[5];
+    StringBuilder scoreDisplay = new StringBuilder();
+    for (PlayerColor playerColor : PlayerColor.values()) {
+      if (!playerColor.isNormalColor()) {
+        continue;
+      }
+      int placeholderIndexForPawn = playerColor.normalColorIndex();
+      sprites[placeholderIndexForPawn] = newPawn(playerColor);
+
+      int score = scoringInformation.getScore(playerColor);
+      if (score > 0) {
+        if (scoreDisplay.length() > 0) {
+          scoreDisplay.append(", ");
+        }
+        scoreDisplay.append("[" + placeholderIndexForPawn + "]: " + score);
+      }
+    }
+
+    if (scoreDisplay.length() == 0) {
+      // No score.
+      addText(constants.scoreActiveCubesWithoutScore());
+    } else {
+      String message = replacePlaceholders(constants.scoreActiveCubes(),
+          scoreDisplay.toString());
+      fillInPlaceholders(message, sprites);
+    }
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.InformationOnBuildingsScore host) {
+    ScoringInformation scoringInformation = host.getScoringInformation();
+
+    // Build sprite array, will be useful later.
+    ComplexText.SpriteComponent[] sprites = new ComplexText.SpriteComponent[5];
+    StringBuilder scoreDisplay = new StringBuilder();
+    for (PlayerColor playerColor : PlayerColor.values()) {
+      if (!playerColor.isNormalColor()) {
+        continue;
+      }
+      int placeholderIndexForPawn = playerColor.normalColorIndex();
+      sprites[placeholderIndexForPawn] = newPawn(playerColor);
+
+      int score = scoringInformation.getScore(playerColor);
+      if (score > 0) {
+        if (scoreDisplay.length() > 0) {
+          scoreDisplay.append(", ");
+        }
+        scoreDisplay.append("[" + placeholderIndexForPawn + "]: " + score);
+      }
+    }
+
+    if (scoreDisplay.length() == 0) {
+      // No score.
+      addText(constants.scoreBuildingsWithoutScore());
+    } else {
+      String message = replacePlaceholders(constants.scoreBuildings(),
+          scoreDisplay.toString());
+      fillInPlaceholders(message, sprites);
+    }
+    return null;
+  }
+
+  @Override
+  public Void visit(Message.GameCompleted host) {
+    addText(constants.gameCompleted());
+    return null;
+  }
+
   private void addText(String text) {
     components.add(new ComplexText.TextComponent(text));
   }
 
-  private ComplexText.SpriteComponent newArchitect(PlayerColor playerColor) {
-    return new ComplexText.SpriteComponent(spriteResources.getPawn(playerColor), 0.7, 0);
+  private ComplexText.SpriteComponent newPawn(PlayerColor playerColor) {
+    return new ComplexText.SpriteComponent(spriteResources.getPawn(playerColor), 0.7, -0.25);
   }
 
   private ComplexText.SpriteComponent newCube(PlayerColor playerColor) {
@@ -227,7 +459,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
   }
 
   private ComplexText.SpriteComponent newZoneIcon(InfluenceType influenceZone) {
-    return new ComplexText.SpriteComponent(spriteResources.getZoneLogo(influenceZone), 1, 0);
+    return new ComplexText.SpriteComponent(spriteResources.getZoneLogo(influenceZone), 1.2, -0.4);
   }
 
   private ComplexText.SpriteComponent newAction(ActionType actionType) {
@@ -258,6 +490,28 @@ public class MessageRenderer implements Message.Visitor<Void> {
     return result.toString();
   }
 
+  private String replacePlaceholders(String text, String... replacements) {
+    int startIndex = 0;
+    int index = 0;
+    StringBuilder result = new StringBuilder();
+    while ((index = text.indexOf('[', startIndex)) >= 0) {
+      if (index > startIndex) {
+        result.append(text, startIndex, index);
+      }
+      int integerStart = index + 1;
+      startIndex = text.indexOf(']', integerStart);
+      assert startIndex > integerStart;
+      int placeholderIndex = Integer.parseInt(text.substring(integerStart, startIndex));
+      assert placeholderIndex < replacements.length;
+      result.append(replacements[placeholderIndex]);
+      startIndex++;
+    }
+    if (startIndex < text.length()) {
+      result.append(text, startIndex, text.length());
+    }
+    return result.toString();
+  }
+
   private void fillInPlaceholders(String text, ComplexText.SpriteComponent... sprites) {
     int startIndex = 0;
     int index = 0;
@@ -268,12 +522,12 @@ public class MessageRenderer implements Message.Visitor<Void> {
       int integerStart = index + 1;
       startIndex = text.indexOf(']', integerStart);
       assert startIndex > integerStart;
-      int spriteNumber = Integer.parseInt(text.substring(integerStart, startIndex));
-      assert spriteNumber < sprites.length;
-      components.add(sprites[spriteNumber]);
+      int placeholderIndex = Integer.parseInt(text.substring(integerStart, startIndex));
+      assert placeholderIndex < sprites.length;
+      components.add(sprites[placeholderIndex]);
       startIndex++;
     }
-    if (startIndex < text.length() - 1) {
+    if (startIndex < text.length()) {
       addText(text.substring(startIndex));
     }
   }

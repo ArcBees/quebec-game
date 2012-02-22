@@ -57,8 +57,8 @@ public class ArchitectDestinationTile implements ArchitectDestination {
   }
 
   @Override
-  public void accept(ArchitectDestinationVisitor visitor) {
-    visitor.visit(this);
+  public <T> T accept(ArchitectDestinationVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
   /**

@@ -53,7 +53,7 @@ public class InfluenceZoneState {
    */
   public int getCubesForPlayer(PlayerColor playerColor) {
     assert playerColor.isNormalColor();
-    return cubesForPlayer[playerColor.ordinal() -  1];
+    return cubesForPlayer[playerColor.normalColorIndex()];
   }
 
   /**
@@ -63,6 +63,6 @@ public class InfluenceZoneState {
    */
   public void setCubesForPlayer(PlayerColor playerColor, int nbCubes) {
     assert playerColor.isNormalColor();
-    cubesForPlayer[playerColor.ordinal() -  1] = nbCubes;
+    cubesForPlayer[playerColor.normalColorIndex()] = nbCubes;
   }
 }

@@ -22,7 +22,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -41,11 +40,10 @@ public class InteractionMoveArchitect extends
   private final SceneNodeList arrows;
 
   @Inject
-  public InteractionMoveArchitect(Scheduler scheduler, RendererFactories rendererFactories,
-      InteractionFactories interactionFactories, MessageRenderer messageRenderer,
-      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionMoveArchitect action) {
-    super(scheduler, rendererFactories, gameState, gameStateRenderer,
+  public InteractionMoveArchitect(Scheduler scheduler, InteractionFactories interactionFactories,
+      MessageRenderer messageRenderer, @Assisted GameState gameState,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionMoveArchitect action) {
+    super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
         createActionMessage(messageRenderer), action.execute(gameState));
 

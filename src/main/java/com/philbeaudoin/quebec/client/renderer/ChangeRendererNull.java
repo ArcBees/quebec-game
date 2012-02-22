@@ -21,17 +21,8 @@ package com.philbeaudoin.quebec.client.renderer;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ChangeRendererNull implements ChangeRenderer {
-
   @Override
-  public void applyRemovals(GameStateRenderer renderer) {
-  }
-
-  @Override
-  public void applyAdditions(GameStateRenderer renderer) {
-  }
-
-  @Override
-  public void undoRemovals(GameStateRenderer renderer) {
+  public void applyAnimChanges(GameStateRenderer renderer) {
   }
 
   @Override

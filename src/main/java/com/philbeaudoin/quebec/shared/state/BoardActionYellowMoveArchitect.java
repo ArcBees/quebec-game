@@ -30,9 +30,9 @@ public class BoardActionYellowMoveArchitect extends BoardAction {
     super(3, 4, InfluenceType.ECONOMIC, 2, ActionType.YELLOW_MOVE_ARCHITECT);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
-    PossibleActions result = gameState.getController().getPossibleMoveArchitectActions(gameState,
-        new Message.MoveYourArchitect());
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+    PossibleActions result = new PossibleActions(new Message.MoveYourArchitect());
+    gameState.getController().getPossibleMoveArchitectActions(gameState, result);
     result.add(new ActionSkip());
     return result;
   }

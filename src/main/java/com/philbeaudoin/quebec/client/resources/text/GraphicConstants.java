@@ -24,9 +24,14 @@ import com.google.gwt.i18n.client.Constants;
 public interface GraphicConstants extends Constants {
   String moveYourArchitect();
   String moveYourArchitectToThisTile();
-  String takeThisLeaderCard();
   String skip();
+  String continueMsg();
   String selectStarTokenToIncrease();
+  String selectSpotToFill();
+  String scoringPhaseBegins();
+  String prepareNextCentury();
+  String takeThisLeaderCard();
+  String takeThisLeaderCardAndActivateCubes();
   String moveEitherArchitect();
   String moveArchitect();
   String sendPassiveCubesToOneOfTwoZones();
@@ -40,4 +45,19 @@ public interface GraphicConstants extends Constants {
   String sendActiveCubesToThisTile();
   String sendActiveCubesToThisTileAndExecuteAction();
   String activateCubes();
+  String moveOneOrTwoCubesSelectOrigin();
+  String moveCubesSelectDestination();
+  String selectWhereToEmptyTile();
+  String moveArchitectOut();
+  String removeNeutralArchitect();
+  String scoreZoneWithoutScore();
+  String scoreZoneWithoutCascade();
+  String scoreZoneWithCascade();
+  String scoreIncompleteBuildingsWithoutScore();
+  String scoreIncompleteBuildings();
+  String scoreActiveCubesWithoutScore();
+  String scoreActiveCubes();
+  String scoreBuildingsWithoutScore();
+  String scoreBuildings();
+  String gameCompleted();
 }

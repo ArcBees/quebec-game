@@ -18,9 +18,6 @@ package com.philbeaudoin.quebec.client.renderer;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
@@ -35,9 +32,8 @@ public class SceneCubeDestinationInfluenceZone implements SceneCubeDestination {
 
   private final CubeDestinationInfluenceZone cubeDestinationInfluenceZone;
 
-  @Inject
   public SceneCubeDestinationInfluenceZone(
-      @Assisted CubeDestinationInfluenceZone cubeDestinationInfluenceZone) {
+      CubeDestinationInfluenceZone cubeDestinationInfluenceZone) {
     this.cubeDestinationInfluenceZone = cubeDestinationInfluenceZone;
   }
 

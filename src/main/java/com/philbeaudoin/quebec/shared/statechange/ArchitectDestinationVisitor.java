@@ -18,22 +18,23 @@ package com.philbeaudoin.quebec.shared.statechange;
 
 /**
  * Interface for a class that can visit an {@link ArchitectDestination}.
+ * @param <T> The return type of the visit methods.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface ArchitectDestinationVisitor {
+public interface ArchitectDestinationVisitor<T> {
   /**
    * Visits a {@link ArchitectDestinationTile}.
    * @param host The visited class.
    */
-  void visit(ArchitectDestinationTile host);
+  T visit(ArchitectDestinationTile host);
   /**
    * Visits a {@link ArchitectDestinationPlayer}.
    * @param host The visited class.
    */
-  void visit(ArchitectDestinationPlayer host);
+  T visit(ArchitectDestinationPlayer host);
   /**
    * Visits a {@link ArchitectDestinationOffboardNeutral}.
    * @param host The visited class.
    */
-  void visit(ArchitectDestinationOffboardNeutral host);
+  T visit(ArchitectDestinationOffboardNeutral host);
 }

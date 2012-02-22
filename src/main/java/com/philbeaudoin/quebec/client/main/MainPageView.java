@@ -61,6 +61,10 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   private double time;
   private boolean isRefreshing;
 
+  // To track mouse
+  private double lastMouseX;
+  private double lastMouseY;
+
   // For performance info.
   private long lastTimeMs;
   private long fps;
@@ -116,9 +120,9 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
       @Override
       public void onMouseMove(MouseMoveEvent event) {
         double height = canvas.getOffsetHeight();
-        double x = event.getRelativeX(fullCanvas.getElement()) / height;
-        double y = event.getRelativeY(fullCanvas.getElement()) / height;
-        presenter.onMouseMove(x, y, time);
+        lastMouseX = event.getRelativeX(fullCanvas.getElement()) / height;
+        lastMouseY = event.getRelativeY(fullCanvas.getElement()) / height;
+        presenter.onMouseMove(lastMouseX, lastMouseY, time);
       }
     });
 
@@ -126,9 +130,9 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
       @Override
       public void onMouseDown(MouseDownEvent event) {
         double height = canvas.getOffsetHeight();
-        double x = event.getRelativeX(fullCanvas.getElement()) / height;
-        double y = event.getRelativeY(fullCanvas.getElement()) / height;
-        presenter.onMouseClick(x, y, time);
+        lastMouseX = event.getRelativeX(fullCanvas.getElement()) / height;
+        lastMouseY = event.getRelativeY(fullCanvas.getElement()) / height;
+        presenter.onMouseClick(lastMouseX, lastMouseY, time);
       }
     });
   }
@@ -170,6 +174,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
       } finally {
         staticLayerContext.restore();
       }
+      presenter.onMouseMove(lastMouseX, lastMouseY, time);
     }
   }
 

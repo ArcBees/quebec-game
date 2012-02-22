@@ -81,7 +81,8 @@ public abstract class BoardAction {
    * Return the list of all possible game actions that can be executed as a result of performing
    * this board action, or null if no action can be executed.
    * @param gameState The current game state.
+   * @param triggeringTile The tile that was used to trigger this board action.
    * @return The list of possible actions, or null.
    */
-  public abstract PossibleActions getPossibleActions(GameState gameState);
+  public abstract PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile);
 }
