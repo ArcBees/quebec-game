@@ -42,8 +42,8 @@ public class GameStateChangeScorePoints implements GameStateChange {
   }
 
   @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public <T> T accept(GameStateChangeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
   /**

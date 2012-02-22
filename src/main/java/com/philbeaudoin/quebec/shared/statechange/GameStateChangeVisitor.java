@@ -18,58 +18,74 @@ package com.philbeaudoin.quebec.shared.statechange;
 
 /**
  * Interface for a class that can visit a {@link GameStateChange}.
+ * @param <T> The return type of the visit methods.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameStateChangeVisitor {
+public interface GameStateChangeVisitor<T> {
   /**
    * Visits a {@link GameStateChangeComposite}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeComposite host);
+  T visit(GameStateChangeComposite host);
   /**
    * Visits a {@link GameStateChangeMoveCubes}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeMoveCubes host);
+  T visit(GameStateChangeMoveCubes host);
   /**
    * Visits a {@link GameStateChangeFlipTile}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeFlipTile host);
+  T visit(GameStateChangeFlipTile host);
   /**
    * Visits a {@link GameStateChangeIncreaseStarToken}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeIncreaseStarToken host);
+  T visit(GameStateChangeIncreaseStarToken host);
 
   /**
    * Visits a {@link GameStateChangeMoveArchitect}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeMoveArchitect host);
+  T visit(GameStateChangeMoveArchitect host);
   /**
    * Visits a {@link GameStateChangeNextPlayer}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeNextPlayer host);
+  T visit(GameStateChangeNextPlayer host);
   /**
    * Visits a {@link GameStateChangeMoveLeader}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeMoveLeader host);
+  T visit(GameStateChangeMoveLeader host);
   /**
    * Visits a {@link GameStateChangePrepareAction}.
    * @param host The visited class.
    */
-  void visit(GameStateChangePrepareAction host);
+  T visit(GameStateChangePrepareAction host);
   /**
    * Visits a {@link GameStateChangeQueuePossibleActions}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeQueuePossibleActions host);
+  T visit(GameStateChangeQueuePossibleActions host);
   /**
    * Visits a {@link GameStateChangeScorePoints}.
    * @param host The visited class.
    */
-  void visit(GameStateChangeScorePoints host);
+  T visit(GameStateChangeScorePoints host);
+  /**
+   * Visits a {@link GameStateChangeSetPlayer}.
+   * @param host The visited class.
+   */
+  T visit(GameStateChangeSetPlayer host);
+  /**
+   * Visits a {@link GameStateChangePrepareNextCentury}.
+   * @param host The visited class.
+   */
+  T visit(GameStateChangePrepareNextCentury host);
+  /**
+   * Visits a {@link GameStateChangeInstantaneousDecorator}.
+   * @param host The visited class.
+   */
+  T visit(GameStateChangeInstantaneousDecorator host);
 }

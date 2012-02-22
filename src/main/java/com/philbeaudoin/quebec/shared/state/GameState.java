@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * The state of the entire game.
@@ -146,11 +147,25 @@ public class GameState {
   /**
    * Get the state of the tile containing the given architect.
    * @param playerColor The color of the architect to look for, cannot be NONE.
-   * @return The state of that tile, {@code null} if this architect was not fount on any tile.
+   * @return The state of that tile, {@code null} if this architect was not found on any tile.
    */
   public TileState findTileUnderArchitect(PlayerColor playerColor) {
     for (TileState tileState : tileStates) {
       if (tileState.getArchitect() == playerColor) {
+        return tileState;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Get the state of the tile at a specific location the given architect.
+   * @param location The location at which to look for a tile.
+   * @return The state of that tile, {@code null} if no tile was found at that location.
+   */
+  public TileState findTileAtLocation(Vector2d location) {
+    for (TileState tileState : tileStates) {
+      if (tileState.getLocation().equals(location)) {
         return tileState;
       }
     }
@@ -218,14 +233,26 @@ public class GameState {
     this.possibleActions = possibleActions;
   }
 
+  /**
+   * Setup the initial game state for a given list of player.
+   * @param players The list of players.
+   */
   public void initGame(ArrayList<Player> players) {
     gameController.initGame(this, players);
   }
 
   /**
-   * Switch to the next player and setup the board for it.
+   * Prepare the beginning of the next century.
    */
-  public void nextPlayer() {
+  public void prepareNextCentury() {
+    gameController.prepareNextCentury(this);
+  }
+
+  /**
+   * Switch to the next player and setup the board for it.
+   * @param prepareActions True to prepare the possible actions, false to not prepare them.
+   */
+  public void nextPlayer(boolean prepareActions) {
     boolean lastWasActive = false;
     for (PlayerState playerState : playerStates) {
       if (lastWasActive) {
@@ -239,8 +266,17 @@ public class GameState {
     if (lastWasActive) {
       playerStates.get(0).setCurrentPlayer(true);
     }
-    // TODO: Check for end-of-round and score.
-    gameController.configuePossibleActions(this);
+    gameController.configurePossibleActions(this);
+  }
+
+  /**
+   * Set the current player to a given color.
+   * @param playerColor The player to set as active.
+   */
+  public void setCurrentPlayer(PlayerColor playerColor) {
+    for (PlayerState playerState : playerStates) {
+      playerState.setCurrentPlayer(playerState.getPlayer().getColor() == playerColor);
+    }
   }
 
   /**

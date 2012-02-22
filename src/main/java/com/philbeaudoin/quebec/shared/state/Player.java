@@ -26,13 +26,15 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
  */
 public class Player {
 
-  public final String name;
-  public final PlayerColor color;
+  private final String name;
+  private final PlayerColor color;
+  private final boolean robot;
 
-  public Player(PlayerColor color, String name) {
+  public Player(PlayerColor color, String name, boolean robot) {
     assert color.isNormalColor();
     this.name = name;
     this.color = color;
+    this.robot = robot;
   }
 
   public String getName() {
@@ -41,5 +43,9 @@ public class Player {
 
   public PlayerColor getColor() {
     return color;
+  }
+
+  public boolean isRobot() {
+    return robot;
   }
 }

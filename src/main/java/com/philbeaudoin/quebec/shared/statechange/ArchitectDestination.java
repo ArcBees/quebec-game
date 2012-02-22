@@ -46,5 +46,5 @@ public interface ArchitectDestination {
    * Accepts a visitor.
    * @param visitor The visitor.
    */
-  void accept(ArchitectDestinationVisitor visitor);
+  <T> T accept(ArchitectDestinationVisitor<T> visitor);
 }

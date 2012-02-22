@@ -77,11 +77,11 @@ public class MainPagePresenter extends
     gameState = gameStateProvider.get();
 
     ArrayList<Player> players = new ArrayList<Player>(5);
-    players.add(new Player(PlayerColor.BLACK, "Filou"));
-    players.add(new Player(PlayerColor.WHITE, "Emps"));
-    players.add(new Player(PlayerColor.ORANGE, "Jerome"));
-    players.add(new Player(PlayerColor.GREEN, "Claudiane"));
-    players.add(new Player(PlayerColor.PINK, "Bob"));
+    players.add(new Player(PlayerColor.BLACK, "Filou", false));
+    players.add(new Player(PlayerColor.WHITE, "Emps", true));
+    players.add(new Player(PlayerColor.ORANGE, "Jerome", true));
+    players.add(new Player(PlayerColor.GREEN, "Claudiane", true));
+    players.add(new Player(PlayerColor.PINK, "Bob", true));
 
     gameState.initGame(players);
     gameStateRenderer.render(gameState);

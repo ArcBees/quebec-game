@@ -27,8 +27,8 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveLeader GameStateChangeMoveLeader}
- * to a scene graph.
+ * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveLeader
+ * GameStateChangeMoveLeader} to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ChangeRendererMoveLeader implements ChangeRenderer {
@@ -52,18 +52,9 @@ public class ChangeRendererMoveLeader implements ChangeRenderer {
   }
 
   @Override
-  public void applyRemovals(GameStateRenderer renderer) {
+  public void applyAnimChanges(GameStateRenderer renderer) {
     from.removeFrom(renderer);
-  }
-
-  @Override
-  public void applyAdditions(GameStateRenderer renderer) {
     to.addTo(renderer);
-  }
-
-  @Override
-  public void undoRemovals(GameStateRenderer renderer) {
-    from.addTo(renderer);
   }
 
   @Override

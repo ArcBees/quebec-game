@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
+import java.util.ArrayList;
+
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -26,9 +28,12 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  */
 public class Board {
 
+  private static final int NB_LINES = 8;
+  private static final int NB_COLUMNS = 18;
+
   // Keeps the location of the action associated to each tile location.
   private static final BoardAction[] boardActions = new BoardAction[16];
-  private static final BoardAction[] locToAction = new BoardAction[18 * 8];
+  private static final BoardAction[] locToAction = new BoardAction[NB_COLUMNS * NB_LINES];
 
   /**
    * Checks if the given location is valid for holding a tile.
@@ -108,8 +113,32 @@ public class Board {
     return new Vector2d(-0.494 + column * 0.0451, -0.263 + line * 0.0780);
   }
 
+  /**
+   * Find all the neighboring locations for a given location.
+   * @param location The location for which to look for neighbors.
+   * @return All the neighboring locations.
+   */
+  public static ArrayList<Vector2d> neighborsForLocation(Vector2d location) {
+    ArrayList<Vector2d> result = new ArrayList<Vector2d>(6);
+    for (int dLine = -1; dLine <= 1; dLine++) {
+      int line = location.getLine() + dLine;
+      if (line < 0 || line >= NB_LINES) {
+        continue;
+      }
+      int dColOffset = (dLine == 0) ? 0 : 1;
+      for (int dCol = -2 + dColOffset; dCol <= 2; dCol++) {
+        int col = location.getColumn() + dCol;
+        if (col < 0 || col >= NB_COLUMNS) {
+          continue;
+        }
+        result.add(new Vector2d(col, line));
+      }
+    }
+    return result;
+  }
+
   private static int locToIndex(int column, int line) {
-    return line * 18 + column;
+    return line * NB_COLUMNS + column;
   }
 
   private static void initIfNeeded() {

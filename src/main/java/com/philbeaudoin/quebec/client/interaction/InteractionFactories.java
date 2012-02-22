@@ -20,8 +20,12 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
+import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
+import com.philbeaudoin.quebec.shared.action.ActionPerformScoringPhase;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
@@ -31,6 +35,7 @@ import com.philbeaudoin.quebec.shared.action.HasBoardAction;
 import com.philbeaudoin.quebec.shared.action.HasDestinationTile;
 import com.philbeaudoin.quebec.shared.action.HasInfluenceZone;
 import com.philbeaudoin.quebec.shared.action.HasLeaderCard;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -57,6 +62,15 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, GameActionOnBoardAction action);
   InteractionIncreaseStar createInteractionIncreaseStar(GameState gameState,
       GameStateRenderer gameStateRenderer, ActionIncreaseStar action);
+  InteractionMoveCubesFromZone createInteractionMoveCubesFromZone(GameState gameState,
+      GameStateRenderer gameStateRenderer, InfluenceType origin,
+      PossibleActions possibleDestinations);
+  InteractionMoveCubesToZone createInteractionMoveCubesToZone(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionMoveCubes action);
+  InteractionEmptyTileToZone createInteractionEmptyTileToZone(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionEmptyTileToZone action);
+  InteractionPerformScoringPhase createInteractionPerformScoringPhase(
+      GameState gameState, GameStateRenderer gameStateRenderer, ActionPerformScoringPhase action);
   InteractionText createInteractionText(GameState gameState, GameStateRenderer gameStateRenderer,
       MessageRenderer messageRenderer, SceneNode extras, Vector2d pos, GameAction action);
   InteractionTargetTile createInteractionTargetTile(
@@ -69,5 +83,4 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, HasBoardAction target);
   InteractionTargetText createInteractionTargetText(
       GameStateRenderer gameStateRenderer, MessageRenderer messageRenderer, Vector2d pos);
-
 }

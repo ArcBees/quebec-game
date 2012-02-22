@@ -35,8 +35,8 @@ public class GameStateChangeComposite implements GameStateChange {
   }
 
   @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public <T> T accept(GameStateChangeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
   /**
@@ -55,5 +55,21 @@ public class GameStateChangeComposite implements GameStateChange {
    */
   public void add(GameStateChange change) {
     changes.add(change);
+  }
+
+  /**
+   * Adds a change as the first element of this composite.
+   * @param change The change to add.
+   */
+  public void addToFront(GameStateChange change) {
+    changes.add(0, change);
+  }
+
+  /**
+   * Access the number of elements in this composite.
+   * @return The number of elements in this composite.
+   */
+  public int getNbGameStateChanges() {
+    return changes.size();
   }
 }

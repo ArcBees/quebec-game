@@ -17,7 +17,7 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.action.ActionSelectBoadAction;
+import com.philbeaudoin.quebec.shared.action.ActionSelectBoardAction;
 import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
@@ -31,11 +31,11 @@ public class BoardActionYellowAny extends BoardAction {
     super(16, 1, InfluenceType.ECONOMIC, 1, ActionType.YELLOW_ANY);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PossibleActions result = new PossibleActions(new Message.SelectAction());
-    result.add(new ActionSelectBoadAction(new BoardActionYellowActivateThree()));
-    result.add(new ActionSelectBoadAction(new BoardActionYellowFillOneSpot()));
-    result.add(new ActionSelectBoadAction(new BoardActionYellowMoveArchitect()));
+    result.add(new ActionSelectBoardAction(new BoardActionYellowActivateThree(), triggeringTile));
+    result.add(new ActionSelectBoardAction(new BoardActionYellowFillOneSpot(), triggeringTile));
+    result.add(new ActionSelectBoardAction(new BoardActionYellowMoveArchitect(), triggeringTile));
     result.add(new ActionSkip());
     return result;
   }

@@ -22,7 +22,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -40,13 +39,12 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
   private final SceneNodeList arrows;
 
   @Inject
-  public InteractionTakeLeaderCard(Scheduler scheduler, RendererFactories rendererFactories,
-      InteractionFactories interactionFactories, MessageRenderer messageRenderer,
-      @Assisted GameState gameState,
+  public InteractionTakeLeaderCard(Scheduler scheduler, InteractionFactories interactionFactories,
+      MessageRenderer messageRenderer,  @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionTakeLeaderCard action) {
-    super(scheduler, rendererFactories, gameState, gameStateRenderer,
+    super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetLeaderCard(gameStateRenderer, action),
-        createActionMessage(messageRenderer), action.execute(gameState));
+        createActionMessage(gameState, messageRenderer), action.execute(gameState));
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     arrows = new SceneNodeList();
@@ -77,8 +75,11 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
     arrows.setParent(null);
   }
 
-  private static MessageRenderer createActionMessage(MessageRenderer messageRenderer) {
-    new Message.TakeThisLeaderCard().accept(messageRenderer);
+  private static MessageRenderer createActionMessage(GameState gameState,
+      MessageRenderer messageRenderer) {
+    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    new Message.TakeThisLeaderCard(gameState.nbPlayerWithLeaders(),
+        playerColor).accept(messageRenderer);
     return messageRenderer;
   }
 }

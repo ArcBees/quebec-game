@@ -31,7 +31,7 @@ public class BoardActionRedTwoToCitadel extends BoardAction {
     super(1, 2, InfluenceType.POLITIC, 3, ActionType.RED_TWO_TO_CITADEL);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PlayerState playerState = gameState.getCurrentPlayer();
     int nbCubes = Math.min(2, playerState.getNbTotalCubes());
     PossibleActions result = new PossibleActions(

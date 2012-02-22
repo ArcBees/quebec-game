@@ -23,13 +23,32 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class GameStateChangeNextPlayer implements GameStateChange {
-  @Override
-  public void apply(GameState gameState) {
-    gameState.nextPlayer();
+
+  private final boolean prepareActions;
+
+  /**
+   * Switch to the next player and prepare the possible actions.
+   */
+  public GameStateChangeNextPlayer() {
+    this(true);
+  }
+
+  /**
+   * Switch to the next player and possibly prepare the possible actions.
+   * @param prepareActions True to prepare the actions, false if the possible actions are
+   *     prepared manually.
+   */
+  public GameStateChangeNextPlayer(boolean prepareActions) {
+    this.prepareActions = prepareActions;
   }
 
   @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public void apply(GameState gameState) {
+    gameState.nextPlayer(prepareActions);
+  }
+
+  @Override
+  public <T> T accept(GameStateChangeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 }

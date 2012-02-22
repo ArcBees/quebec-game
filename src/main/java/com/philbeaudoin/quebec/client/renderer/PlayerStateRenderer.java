@@ -112,7 +112,7 @@ public class PlayerStateRenderer {
   public void render(PlayerState playerState, SceneNodeList root,
       SceneNodeList boardRoot) {
     playerColor = playerState.getPlayer().getColor();
-    int paletteIndex = playerColor.ordinal() - 1;
+    int paletteIndex = playerColor.normalColorIndex();
 
     playerZone.clear();
     passiveCubes.clear();
@@ -163,7 +163,8 @@ public class PlayerStateRenderer {
    * Remove a given number of cubes from a given player's active or passive reserve and return the
    * global transforms of the removed cubes.
    * @param active True to remove the cubes from the active reserve, false for the passive.
-   * @param nbCubes The number of cubes to remove, must be more than what is in the reserve.
+   * @param nbCubes The number of cubes to remove, if it's more than what is in the reserve,
+   *     everything is removed.
    * @return The list of global transforms of the removed cubes.
    */
   public List<Transform> removeCubesFromPlayer(boolean active, int nbCubes) {
@@ -174,11 +175,11 @@ public class PlayerStateRenderer {
     }
     List<SceneNode> cubes = active ? activeCubeStack : passiveCubeStack;
     SceneNodeList parent = active ? activeCubes : passiveCubes;
-    assert cubes.size() >= nbCubes;
-    int newNbCubes = cubes.size() - nbCubes;
+    int cubesToRemove = Math.min(nbCubes, cubes.size());
+    int newNbCubes = cubes.size() - cubesToRemove;
 
     ConstantTransform parentTransform = parent.getTotalTransform(0);
-    for (int i = 0; i < nbCubes; ++i) {
+    for (int i = 0; i < cubesToRemove; ++i) {
       SceneNode cube = cubes.remove(newNbCubes);
       result.add(parentTransform.times(cube.getTransform()));
       cube.setParent(null);

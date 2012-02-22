@@ -34,7 +34,7 @@ public class BoardActionBlueAddStar extends BoardAction {
     super(16, 5, InfluenceType.CULTURAL, 3, ActionType.BLUE_ADD_STAR);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     ArrayList<TileState> tileStates = gameState.getTileStates();
 

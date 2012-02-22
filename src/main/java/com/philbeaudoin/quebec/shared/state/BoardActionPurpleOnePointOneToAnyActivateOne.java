@@ -37,7 +37,7 @@ public class BoardActionPurpleOnePointOneToAnyActivateOne extends BoardAction {
     super(14, 3, InfluenceType.RELIGIOUS, 2, ActionType.PURPLE_ONE_POINT_ONE_TO_ANY_ACTIVATE_ONE);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PlayerState playerState = gameState.getCurrentPlayer();
     PlayerColor playerColor = playerState.getPlayer().getColor();
     int totalCubes = playerState.getNbTotalCubes();
@@ -50,16 +50,21 @@ public class BoardActionPurpleOnePointOneToAnyActivateOne extends BoardAction {
     sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CULTURAL));
     sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL));
     sendAnywhere.add(new ActionSkip());
-    GameStateChange sendAnywhereFollowup = new GameStateChangeQueuePossibleActions(sendAnywhere);
 
-    PossibleActions activate = new PossibleActions();
-    activate.add(new ActionActivateCubes(1, sendAnywhereFollowup));
-    activate.add(new ActionSkip(sendAnywhereFollowup));
-    GameStateChange activateFollowup = new GameStateChangeQueuePossibleActions(activate);
+    PossibleActions activateOrSendAnywhere;
+    if (playerState.getNbPassiveCubes() > 0) {
+      GameStateChange activateFollowup = new GameStateChangeQueuePossibleActions(sendAnywhere);
+      activateOrSendAnywhere = new PossibleActions();
+      activateOrSendAnywhere.add(new ActionActivateCubes(1, activateFollowup));
+      activateOrSendAnywhere.add(new ActionSkip(activateFollowup));
+    } else {
+      activateOrSendAnywhere = sendAnywhere;
+    }
 
     PossibleActions result = new PossibleActions();
     if (totalCubes >= 1) {
-      result.add(new ActionScorePoints(1, activateFollowup));
+      result.add(new ActionScorePoints(1,
+          new GameStateChangeQueuePossibleActions(activateOrSendAnywhere)));
     } else {
       result.add(new ActionScorePoints(1));
     }

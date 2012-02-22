@@ -22,7 +22,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
@@ -52,18 +51,19 @@ public class InteractionSendWorkers extends InteractionWithAction {
 
   @Inject
   public InteractionSendWorkers(Scheduler scheduler, SpriteResources spriteResources,
-      RendererFactories rendererFactories, InteractionFactories interactionFactories,
+      InteractionFactories interactionFactories,
       SceneNodeAnimation.Factory sceneNodeAnimationFactory, MessageRenderer messageRenderer,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
       @Assisted ActionSendWorkers action) {
-    super(scheduler, rendererFactories, gameState, gameStateRenderer,
+    super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
         createActionMessage(messageRenderer, gameState, action), action.execute(gameState));
     PlayerState currentPlayer = gameState.getCurrentPlayer();
     PlayerColor playerColor = currentPlayer.getPlayer().getColor();
 
     arrows = new SceneNodeList();
-    Transform cubesFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, true);
+    Transform cubesFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor,
+        action.areCubesFromActive());
     Transform cubesTo = gameStateRenderer.getTileTransform(action.getDestinationTile());
 
     // Arrow to move cubes.

@@ -22,7 +22,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
@@ -36,11 +35,11 @@ public class InteractionText extends InteractionWithAction {
   private final SceneNode extras;
 
   @Inject
-  public InteractionText(Scheduler scheduler, RendererFactories rendererFactories,
-      InteractionFactories interactionFactories, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted MessageRenderer messageRenderer,
-      @Assisted SceneNode extras, @Assisted Vector2d pos, @Assisted GameAction action) {
-    super(scheduler, rendererFactories, gameState, gameStateRenderer,
+  public InteractionText(Scheduler scheduler, InteractionFactories interactionFactories,
+      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted MessageRenderer messageRenderer, @Assisted SceneNode extras, @Assisted Vector2d pos,
+      @Assisted GameAction action) {
+    super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetText(gameStateRenderer, messageRenderer, pos),
         action.execute(gameState));
     this.extras = extras;

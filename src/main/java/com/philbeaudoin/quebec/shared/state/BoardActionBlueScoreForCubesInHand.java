@@ -29,7 +29,7 @@ public class BoardActionBlueScoreForCubesInHand extends BoardAction {
     super(12, 1, InfluenceType.CULTURAL, 2, ActionType.BLUE_SCORE_FOR_CUBES_IN_HAND);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PlayerState playerState = gameState.getCurrentPlayer();
     int nbPoints = 0;
     int nbActiveCubes = playerState.getNbActiveCubes();

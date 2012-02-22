@@ -32,13 +32,14 @@ public class GameStateChangeQueuePossibleActions implements GameStateChange {
     assert possibleActions != null && possibleActions.getNbActions() > 0;
     this.possibleActions = possibleActions;
   }
+
   @Override
   public void apply(GameState gameState) {
     gameState.setPossibleActions(possibleActions);
   }
 
   @Override
-  public void accept(GameStateChangeVisitor visitor) {
-    visitor.visit(this);
+  public <T> T accept(GameStateChangeVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 }

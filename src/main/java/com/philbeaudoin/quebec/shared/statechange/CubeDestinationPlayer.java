@@ -80,8 +80,8 @@ public class CubeDestinationPlayer implements CubeDestination {
   }
 
   @Override
-  public void accept(CubeDestinationVisitor visitor) {
-    visitor.visit(this);
+  public <T> T accept(CubeDestinationVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 
   /**

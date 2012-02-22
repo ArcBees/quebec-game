@@ -47,5 +47,5 @@ public interface LeaderDestination {
    * Accepts a visitor.
    * @param visitor The visitor.
    */
-  void accept(LeaderDestinationVisitor visitor);
+  <T> T accept(LeaderDestinationVisitor<T> visitor);
 }

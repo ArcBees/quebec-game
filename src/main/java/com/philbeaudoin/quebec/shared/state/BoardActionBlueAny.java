@@ -17,7 +17,7 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.action.ActionSelectBoadAction;
+import com.philbeaudoin.quebec.shared.action.ActionSelectBoardAction;
 import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
@@ -31,11 +31,12 @@ public class BoardActionBlueAny extends BoardAction {
     super(3, 0, InfluenceType.CULTURAL, 1, ActionType.BLUE_ANY);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PossibleActions result = new PossibleActions(new Message.SelectAction());
-    result.add(new ActionSelectBoadAction(new BoardActionBlueAddStar()));
-    result.add(new ActionSelectBoadAction(new BoardActionBlueScoreForCubesInHand()));
-    result.add(new ActionSelectBoadAction(new BoardActionBlueScoreForZones()));
+    result.add(new ActionSelectBoardAction(new BoardActionBlueAddStar(), triggeringTile));
+    result.add(new ActionSelectBoardAction(new BoardActionBlueScoreForCubesInHand(),
+        triggeringTile));
+    result.add(new ActionSelectBoardAction(new BoardActionBlueScoreForZones(), triggeringTile));
     result.add(new ActionSkip());
     return result;
   }

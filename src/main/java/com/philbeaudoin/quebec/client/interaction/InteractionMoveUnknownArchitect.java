@@ -22,7 +22,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
@@ -46,13 +45,13 @@ public class InteractionMoveUnknownArchitect extends InteractionWithAction {
   private final SceneNodeList extras;
 
   @Inject
-  public InteractionMoveUnknownArchitect(Scheduler scheduler, RendererFactories rendererFactories,
+  public InteractionMoveUnknownArchitect(Scheduler scheduler,
       InteractionFactories interactionFactories, MessageRenderer messageRenderer,
       @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer,
       @Assisted("a") ActionMoveArchitect actionArchitectA,
       @Assisted("b") ActionMoveArchitect actionArchitectB) {
-    super(scheduler, rendererFactories, gameState, gameStateRenderer,
+    super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, actionArchitectA),
         createGameStateChange(gameState, actionArchitectA, actionArchitectB));
 

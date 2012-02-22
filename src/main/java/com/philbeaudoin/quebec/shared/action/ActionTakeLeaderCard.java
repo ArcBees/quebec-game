@@ -68,13 +68,12 @@ public class ActionTakeLeaderCard implements GameAction, HasLeaderCard {
             new CubeDestinationPlayer(activePlayer, false),
             new CubeDestinationInfluenceZone(InfluenceType.CITADEL, activePlayer)));
       }
-      int nbActiveCubes = playerState.getNbActiveCubes();
-      if (nbPassiveCubesMoved < 3 && nbActiveCubes > 0) {
+      int nbActiveCubesToMove = Math.min(playerState.getNbActiveCubes(), 3 - nbPassiveCubesMoved);
+      if (nbActiveCubesToMove > 0) {
         // TODO: Ask how many active cubes to move? If so, move gray leader action after cube
         //     activation block and proceed in two steps.
-        int nbActiveCubesMoved = Math.min(3 - nbPassiveCubesMoved, nbActiveCubes);
-        result.add(new GameStateChangeMoveCubes(nbActiveCubesMoved,
-            new CubeDestinationPlayer(activePlayer, false),
+        result.add(new GameStateChangeMoveCubes(nbActiveCubesToMove,
+            new CubeDestinationPlayer(activePlayer, true),
             new CubeDestinationInfluenceZone(InfluenceType.CITADEL, activePlayer)));
       }
       nbPassiveCubes -= nbPassiveCubesMoved;

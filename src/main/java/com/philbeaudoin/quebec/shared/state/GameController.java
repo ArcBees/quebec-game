@@ -21,6 +21,7 @@ import java.util.List;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionPerformScoringPhase;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
@@ -89,40 +90,56 @@ public class GameController {
       }
     }
 
-    configuePossibleActions(gameState);
+    configurePossibleActions(gameState);
   }
 
   /**
    * Configure the possible actions given the current game state.
    * @param gameState The state on which to configure possible actions.
    */
-  public void configuePossibleActions(GameState gameState) {
+  public void configurePossibleActions(GameState gameState) {
     int century = gameState.getCentury();
-    PossibleActions possibleActions = new PossibleActions();
-    gameState.setPossibleActions(possibleActions);
 
     PlayerState currentPlayer = gameState.getCurrentPlayer();
     int nbActiveCubes = currentPlayer.getNbActiveCubes();
 
-    // Mark moving architect or sending workers as a possible action.
+    if (currentPlayer.getNbTotalCubes() == 0) {
+      // Trigger the scoring right now.
+      PossibleActions possibleActions = new PossibleActions(new Message.ScoringPhaseBegins());
+      possibleActions.add(new ActionPerformScoringPhase());
+      gameState.setPossibleActions(possibleActions);
+      return;
+    }
+
+    PossibleActions possibleActions = new PossibleActions();
+    gameState.setPossibleActions(possibleActions);
+
+    // If the player holds his own architect and it's not the first century, then he must move it
+    // back to the board.
+    boolean mustMoveArchitect = century > 0 && currentPlayer.isHoldingArchitect();
+
+    // Mark moving architect actions.
+    getPossibleMoveArchitectActions(gameState, possibleActions);
+
+    // Mark sending workers as a possible action.
     for (TileState tileState : gameState.getTileStates()) {
-      addArchitectMoveActionIfPossible(century, possibleActions, currentPlayer, tileState);
-      if (tileState.getArchitect() != PlayerColor.NONE &&
+      if (!mustMoveArchitect &&
+          tileState.getArchitect().isArchitectColor() &&
           nbActiveCubes >= tileState.getCubesPerSpot() &&
           tileState.getColorInSpot(2) == PlayerColor.NONE) {
-        possibleActions.add(new ActionSendWorkers(tileState.getTile()));
+        possibleActions.add(new ActionSendWorkers(true, tileState.getTile()));
       }
     }
 
     // Mark moving one cube to influence zones as a possible action.
-    if (nbActiveCubes >= 1) {
+    if (!mustMoveArchitect && nbActiveCubes >= 1) {
       for (InfluenceType influenceZone : InfluenceType.values()) {
         possibleActions.add(new ActionSendCubesToZone(1, true, influenceZone));
       }
     }
 
     // Mark getting a leader card as a possible action.
-    if (currentPlayer.getLeaderCard() == null) {
+    if (!mustMoveArchitect && currentPlayer.getLeaderCard() == null) {
       for (LeaderCard leaderCard : gameState.getAvailableLeaderCards()) {
         possibleActions.add(new ActionTakeLeaderCard(leaderCard));
       }
@@ -132,27 +149,38 @@ public class GameController {
   /**
    * Retrieve the possible architect movement actions.
    * @param gameState The state to reset and initialize.
+   * @param possibleActions The possible actions into which to add architect movement actions.
    */
-  public PossibleActions getPossibleMoveArchitectActions(GameState gameState) {
-    return getPossibleMoveArchitectActions(gameState, null);
+  public void getPossibleMoveArchitectActions(GameState gameState,
+      PossibleActions possibleActions) {
+    PlayerState currentPlayer = gameState.getCurrentPlayer();
+    int century = gameState.getCentury();
+    boolean canMoveArchitect = false;
+    for (TileState tileState : gameState.getTileStates()) {
+      canMoveArchitect = addArchitectMoveActionIfPossible(century, possibleActions, currentPlayer,
+          tileState) || canMoveArchitect;
+    }
+
+    if (!canMoveArchitect) {
+      // No tile to move architect to, make it possible to end the round by moving the architect.
+      possibleActions.add(new ActionMoveArchitect(null, false));
+      // If the player has the yellow leader, he can also move the neutral architect.
+      if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC &&
+          !currentPlayer.isHoldingNeutralArchitect()) {
+        possibleActions.add(new ActionMoveArchitect(null, true));
+      }
+    }
   }
 
   /**
-   * Retrieve the possible architect movement actions.
-   * @param gameState The state to reset and initialize.
-   * @param message The message to associate with that list of action.
+   * Adds an action to move the architect to the specified tile, if possible.
+   * @param century The current century.
+   * @param possibleActions The list of possible actions to add to.
+   * @param currentPlayer The current player.
+   * @param tileState The tile on to which to send the architect, if possible.
+   * @return True if the architect can be moved to that tile, false otherwise.
    */
-  public PossibleActions getPossibleMoveArchitectActions(GameState gameState, Message message) {
-    PossibleActions possibleActions = new PossibleActions(message);
-    PlayerState currentPlayer = gameState.getCurrentPlayer();
-    int century = gameState.getCentury();
-    for (TileState tileState : gameState.getTileStates()) {
-      addArchitectMoveActionIfPossible(century, possibleActions, currentPlayer, tileState);
-    }
-    return possibleActions;
-  }
-
-  private void addArchitectMoveActionIfPossible(int century,
+  private boolean addArchitectMoveActionIfPossible(int century,
       PossibleActions possibleActions, PlayerState currentPlayer,
       TileState tileState) {
     if (tileState.getTile().getCentury() == century &&
@@ -163,6 +191,26 @@ public class GameController {
       if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC) {
         possibleActions.add(new ActionMoveArchitect(tileState.getTile(), true));
       }
+      return true;
     }
+    return false;
+  }
+
+  /**
+   * Prepare the game state for the next century. Leader cards are expected to be returned already.
+   * @param gameState The current game state.
+   */
+  public void prepareNextCentury(GameState gameState) {
+    int oldCentury = gameState.getCentury();
+    assert oldCentury < 3;
+    int newCentury = oldCentury + 1;
+    gameState.setCentury(newCentury);
+    for (TileState tileState : gameState.getTileStates()) {
+      if (!tileState.isBuildingFacing() && tileState.getArchitect() == PlayerColor.NONE &&
+          tileState.getTile().getCentury() == oldCentury) {
+        tileState.setBuildingFacing(true);
+      }
+    }
+    configurePossibleActions(gameState);
   }
 }

@@ -265,9 +265,7 @@ public class SpriteResources {
    * @return The information on that sprite.
    */
   public Info getCube(PlayerColor playerColor) {
-    int colorIndex = playerColor.ordinal();
-    assert colorIndex > 0;
-    Info imageInfo = cubeInfos[colorIndex - 1];
+    Info imageInfo = cubeInfos[playerColor.normalColorIndex()];
     lazilyInstantiateImageElement(imageInfo);
     return imageInfo;
   }
@@ -279,9 +277,7 @@ public class SpriteResources {
    * @return The information on that sprite.
    */
   public Info getPawn(PlayerColor playerColor) {
-    int colorIndex = playerColor.ordinal();
-    assert colorIndex > 0 && colorIndex <= 6;
-    Info imageInfo = pawnInfos[colorIndex - 1];
+    Info imageInfo = pawnInfos[playerColor.architectIndex()];
     lazilyInstantiateImageElement(imageInfo);
     return imageInfo;
   }
@@ -327,9 +323,8 @@ public class SpriteResources {
    * @return The information on that sprite.
    */
   public Info getStarToken(PlayerColor starTokenColor, int nbStars) {
-    assert starTokenColor.isNormalColor();
     assert nbStars > 0 && nbStars < 4;
-    Info imageInfo = starTokensInfo[starTokenColor.ordinal() - 1][nbStars - 1];
+    Info imageInfo = starTokensInfo[starTokenColor.normalColorIndex()][nbStars - 1];
     lazilyInstantiateImageElement(imageInfo);
     return imageInfo;
   }
@@ -372,11 +367,11 @@ public class SpriteResources {
   }
 
   private void setInfoForCube(PlayerColor playerColor, DataResource dataResource) {
-    cubeInfos[playerColor.ordinal() - 1] = new Info(dataResource.getSafeUri(), 0.000315);
+    cubeInfos[playerColor.normalColorIndex()] = new Info(dataResource.getSafeUri(), 0.000315);
   }
 
   private void setInfoForPawn(PlayerColor playerColor, DataResource dataResource) {
-    pawnInfos[playerColor.ordinal() - 1] = new Info(dataResource.getSafeUri(), 0.000355);
+    pawnInfos[playerColor.architectIndex()] = new Info(dataResource.getSafeUri(), 0.000355);
   }
 
   private void setInfoForLeader(LeaderCard leaderCard, DataResource dataResource) {
@@ -393,7 +388,7 @@ public class SpriteResources {
 
   private void setInfoForStarToken(PlayerColor starTokenColor, int nbStars,
       DataResource dataResource) {
-    starTokensInfo[starTokenColor.ordinal() - 1][nbStars - 1] =
+    starTokensInfo[starTokenColor.normalColorIndex()][nbStars - 1] =
         new Info(dataResource.getSafeUri(), 0.000403);
   }
 

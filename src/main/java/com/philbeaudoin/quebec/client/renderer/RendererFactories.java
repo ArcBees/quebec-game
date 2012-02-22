@@ -17,15 +17,8 @@
 package com.philbeaudoin.quebec.client.renderer;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationPlayer;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationTile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken;
-import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationBoard;
-import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationPlayer;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -40,8 +33,6 @@ public interface RendererFactories {
   PlayerStateRenderer createPlayerStateRenderer(Vector2d size, Transform transform,
       ScoreRenderer scoreRenderer);
 
-  ChangeRendererGenerator createChangeRendererGenerator();
-  ChangeRendererComposite createChangeRendererComposite();
   ChangeRendererMoveCubes createChangeRendererMoveCubes(int nbCubes,
       @Assisted("from") SceneCubeDestination from, @Assisted("to") SceneCubeDestination to);
   ChangeRendererMoveArchitect createChangeRendererMoveArchitect(
@@ -52,23 +43,4 @@ public interface RendererFactories {
   ChangeRendererFlipTile createChangeRendererFlipTile(GameStateChangeFlipTile host);
   ChangeRendererIncreaseStarToken createChangeRendererIncreaseStarToken(
       GameStateChangeIncreaseStarToken host);
-  ChangeRendererNull createChangeRendererNull();
-
-  SceneCubeDestinationGenerator createSceneCubeDestinationGenerator();
-  SceneCubeDestinationInfluenceZone createSceneCubeDestinationInfluenceZone(
-      CubeDestinationInfluenceZone cubeDestinationInfluenceZone);
-  SceneCubeDestinationPlayer createSceneCubeDestinationPlayer(
-      CubeDestinationPlayer cubeDestinationPlayer);
-  SceneCubeDestinationTile createSceneCubeDestinationTile(CubeDestinationTile cubeDestinationTile);
-
-  SceneArchitectDestinationGenerator createSceneArchitectDestinationGenerator();
-  SceneArchitectDestinationTile createSceneArchitectDestinationTile(
-      ArchitectDestinationTile architectDestinationTile);
-  SceneArchitectDestinationPlayer createSceneArchitectDestinationPlayer(
-      ArchitectDestinationPlayer architectDestinationPlayer);
-  SceneArchitectDestinationOffboardNeutral createSceneArchitectDestinationOffboardNeutral();
-
-  SceneLeaderDestinationGenerator createSceneLeaderDestinationGenerator();
-  SceneLeaderDestinationPlayer createSceneLeaderDestinationPlayer(LeaderDestinationPlayer host);
-  SceneLeaderDestinationBoard createSceneLeaderDestinationBoard(LeaderDestinationBoard host);
 }

@@ -17,7 +17,11 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
+import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 
 /**
  * Board action: yellow, 2 cubes to activate, fill one empty spot on a building for which
@@ -29,8 +33,23 @@ public class BoardActionYellowFillOneSpot extends BoardAction {
     super(11, 4, InfluenceType.ECONOMIC, 2, ActionType.YELLOW_FILL_ONE_SPOT);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState) {
-    // TODO(beaudoin): Fill-in.
-    return null;
+  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+
+    PossibleActions result = new PossibleActions(new Message.SelectSpotToFill());
+    result.add(new ActionSkip());
+
+    int nbCubes = gameState.getCurrentPlayer().getNbTotalCubes();
+
+    // Mark moving architect or sending workers as a possible action.
+    for (TileState tileState : gameState.getTileStates()) {
+      if (tileState.getTile() != triggeringTile &&
+          tileState.getArchitect().isArchitectColor() &&
+          nbCubes >= tileState.getCubesPerSpot() &&
+          tileState.getColorInSpot(2) == PlayerColor.NONE) {
+        result.add(new ActionSendWorkers(false, tileState.getTile()));
+      }
+    }
+
+    return result;
   }
 }

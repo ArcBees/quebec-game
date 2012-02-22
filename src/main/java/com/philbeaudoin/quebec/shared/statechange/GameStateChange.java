@@ -33,5 +33,5 @@ public interface GameStateChange {
    * Accepts a visitor.
    * @param visitor The visitor.
    */
-  void accept(GameStateChangeVisitor visitor);
+  <T> T accept(GameStateChangeVisitor<T> visitor);
 }

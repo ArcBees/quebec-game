@@ -22,7 +22,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -32,7 +31,7 @@ import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
- * This is an interaction with the game board for the action of sending one worker to an influence
+ * This is an interaction with the game board for the action of sending workers to an influence
  * zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
@@ -41,10 +40,9 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
   private final SceneNodeList arrows;
 
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      RendererFactories rendererFactories, MessageRenderer messageRenderer, GameState gameState,
-      GameStateRenderer gameStateRenderer, InteractionTargetInfluenceZone target,
-      ActionSendCubesToZone action) {
-    super(scheduler, rendererFactories, gameState, gameStateRenderer, target,
+      MessageRenderer messageRenderer, GameState gameState, GameStateRenderer gameStateRenderer,
+      InteractionTargetInfluenceZone target, ActionSendCubesToZone action) {
+    super(scheduler, gameState, gameStateRenderer, target,
         createActionMessage(messageRenderer, gameState, action),
         action.execute(gameState));
 
@@ -60,10 +58,9 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
 
   @Inject
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      RendererFactories rendererFactories, MessageRenderer messageRenderer,
-      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionSendCubesToZone action) {
-    this(scheduler, interactionFactories, rendererFactories, messageRenderer, gameState,
+      MessageRenderer messageRenderer, @Assisted GameState gameState,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionSendCubesToZone action) {
+    this(scheduler, interactionFactories, messageRenderer, gameState,
         gameStateRenderer, interactionFactories.createInteractionTargetInfluenceZone(
             gameStateRenderer, action), action);
   }
