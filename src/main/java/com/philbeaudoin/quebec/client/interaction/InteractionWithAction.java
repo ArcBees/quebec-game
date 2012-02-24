@@ -23,7 +23,6 @@ import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
-import com.philbeaudoin.quebec.shared.utils.Callback;
 import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -86,32 +85,8 @@ public abstract class InteractionWithAction implements Interaction {
           gameStateRenderer.removeAllHighlights();
         }
       });
-
-      gameStateRenderer.generateAnimFor(gameStateChange);
-
-      if (!gameStateRenderer.isAnimationCompleted(0.0)) {
-        animationCompletedRegistration = gameStateRenderer.addAnimationCompletedCallback(
-            new Callback() {
-              @Override public void execute() {
-                renderForNextMove(gameStateChange);
-                animationCompletedRegistration.unregister();
-              }
-            });
-      } else {
-        scheduler.scheduleDeferred(new ScheduledCommand() {
-          @Override
-          public void execute() {
-            renderForNextMove(gameStateChange);
-          }
-        });
-      }
+      gameStateRenderer.generateAnimFor(gameState, gameStateChange);
     }
-  }
-
-  private void renderForNextMove(final GameStateChange change) {
-    gameStateRenderer.clearAnimationGraph();
-    change.apply(gameState);
-    gameStateRenderer.render(gameState);
   }
 
   @Override

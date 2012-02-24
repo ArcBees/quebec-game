@@ -18,8 +18,8 @@ package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
@@ -52,7 +52,7 @@ public class ActionEmptyTileToZone implements GameActionOnInfluenceZone {
 
     GameStateChangeComposite result = new GameStateChangeComposite();
 
-    TileState originState = gameState.getTileState(origin);
+    TileState originState = gameState.findTileState(origin);
 
     int cubesPerSpot = originState.getCubesPerSpot();
     CubeDestinationInfluenceZone destination = new CubeDestinationInfluenceZone(to, activePlayer);

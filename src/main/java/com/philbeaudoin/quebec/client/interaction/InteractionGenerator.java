@@ -51,7 +51,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 /**
  * Use this class to generate the list of {@link Interaction} corresponding to a given
  * {@link com.philbeaudoin.quebec.shared.action.GameAction GameAction}. All the generated
- * interactions will be added to the provided{@link GameStateRenderer}.
+ * interactions will be added to the provided {@link GameStateRenderer}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class InteractionGenerator implements GameActionVisitor {
@@ -352,7 +352,7 @@ public class InteractionGenerator implements GameActionVisitor {
     emptyTileToZoneActions.add(host);
   }
 
-  private class PairedMoveArchitect {
+  private static class PairedMoveArchitect {
     final Tile destinationTile;
     final ActionMoveArchitect a1;
     ActionMoveArchitect a2;
@@ -365,7 +365,7 @@ public class InteractionGenerator implements GameActionVisitor {
     }
   }
 
-  private class GroupedMoveCubes {
+  private static class GroupedMoveCubes {
     final int nbCubes;
     final InfluenceType originZone;
     final ArrayList<ActionMoveCubes> actions = new ArrayList<ActionMoveCubes>();
@@ -376,7 +376,7 @@ public class InteractionGenerator implements GameActionVisitor {
     }
   }
 
-  private class TextInteraction {
+  private static class TextInteraction {
     final MessageRenderer messageRenderer;
     final SceneNode extras;
     final GameAction action;

@@ -42,7 +42,7 @@ public class ArchitectDestinationTile implements ArchitectDestination {
 
   @Override
   public void removeFrom(GameState gameState) {
-    TileState tileState = gameState.getTileState(tile);
+    TileState tileState = gameState.findTileState(tile);
     assert tileState != null;
     assert tileState.getArchitect() == architectColor;
     tileState.setArchitect(PlayerColor.NONE);
@@ -50,7 +50,7 @@ public class ArchitectDestinationTile implements ArchitectDestination {
 
   @Override
   public void addTo(GameState gameState) {
-    TileState tileState = gameState.getTileState(tile);
+    TileState tileState = gameState.findTileState(tile);
     assert tileState != null;
     assert tileState.getArchitect() == PlayerColor.NONE;
     tileState.setArchitect(architectColor);

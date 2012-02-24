@@ -88,4 +88,9 @@ public interface GameStateChangeVisitor<T> {
    * @param host The visited class.
    */
   T visit(GameStateChangeInstantaneousDecorator host);
+  /**
+   * Visits a {@link GameStateChangeReinit}.
+   * @param host The visited class.
+   */
+  T visit(GameStateChangeReinit host);
 }

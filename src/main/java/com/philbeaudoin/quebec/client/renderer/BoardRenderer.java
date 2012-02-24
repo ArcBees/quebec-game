@@ -172,11 +172,9 @@ public class BoardRenderer {
 
   private void renderInfluenceZones(GameState gameState) {
     for (InfluenceType influenceType : InfluenceType.values()) {
-      for (PlayerColor playerColor : PlayerColor.values()) {
-        if (playerColor.isNormalColor()) {
-          addCubesToInfluenceZone(influenceType, playerColor,
-              gameState.getPlayerCubesInInfluenceZone(influenceType, playerColor));
-        }
+      for (PlayerColor playerColor : PlayerColor.NORMAL) {
+        addCubesToInfluenceZone(influenceType, playerColor,
+            gameState.getPlayerCubesInInfluenceZone(influenceType, playerColor));
       }
     }
   }

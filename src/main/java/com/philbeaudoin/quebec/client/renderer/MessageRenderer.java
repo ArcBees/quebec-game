@@ -292,10 +292,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
 
     StringBuilder scoreDisplay = new StringBuilder();
     StringBuilder cascadeDisplay = new StringBuilder();
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (!playerColor.isNormalColor()) {
-        continue;
-      }
+    for (PlayerColor playerColor : PlayerColor.NORMAL) {
       // Placeholder 0 is for the zone logo.
       int placeholderIndexForPawn = playerColor.normalColorIndex() + 1;
       int placeholderIndexForCube = playerColor.normalColorIndex() + 6;  // 5 pawns
@@ -345,10 +342,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
     // Build sprite array, will be useful later.
     ComplexText.SpriteComponent[] sprites = new ComplexText.SpriteComponent[5];
     StringBuilder scoreDisplay = new StringBuilder();
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (!playerColor.isNormalColor()) {
-        continue;
-      }
+    for (PlayerColor playerColor : PlayerColor.NORMAL) {
       int placeholderIndexForPawn = playerColor.normalColorIndex();
       sprites[placeholderIndexForPawn] = newPawn(playerColor);
 
@@ -379,10 +373,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
     // Build sprite array, will be useful later.
     ComplexText.SpriteComponent[] sprites = new ComplexText.SpriteComponent[5];
     StringBuilder scoreDisplay = new StringBuilder();
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (!playerColor.isNormalColor()) {
-        continue;
-      }
+    for (PlayerColor playerColor : PlayerColor.NORMAL) {
       int placeholderIndexForPawn = playerColor.normalColorIndex();
       sprites[placeholderIndexForPawn] = newPawn(playerColor);
 
@@ -413,10 +404,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
     // Build sprite array, will be useful later.
     ComplexText.SpriteComponent[] sprites = new ComplexText.SpriteComponent[5];
     StringBuilder scoreDisplay = new StringBuilder();
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (!playerColor.isNormalColor()) {
-        continue;
-      }
+    for (PlayerColor playerColor : PlayerColor.NORMAL) {
       int placeholderIndexForPawn = playerColor.normalColorIndex();
       sprites[placeholderIndexForPawn] = newPawn(playerColor);
 

@@ -30,11 +30,11 @@ import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.ActionType;
 import com.philbeaudoin.quebec.shared.state.Board;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -70,7 +70,7 @@ public class InteractionSendWorkers extends InteractionWithAction {
     arrows.add(new Arrow(cubesFrom.getTranslation(0), cubesTo.getTranslation(0)));
 
     // If the action is triggered, make sure we highlight it when needed.
-    TileState tileState = gameState.getTileState(action.getDestinationTile());
+    TileState tileState = gameState.findTileState(action.getDestinationTile());
     if (action.canExecuteBoardAction(gameState)) {
       // TODO(beaudoin): Fancier detection of whether the action is triggered or not?
       Vector2d tileLocation = tileState.getLocation();
@@ -110,7 +110,7 @@ public class InteractionSendWorkers extends InteractionWithAction {
   private static MessageRenderer createActionMessage(MessageRenderer messageRenderer,
       GameState gameState, ActionSendWorkers action) {
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
-    TileState tileState = gameState.getTileState(action.getDestinationTile());
+    TileState tileState = gameState.findTileState(action.getDestinationTile());
     if (action.canExecuteBoardAction(gameState)) {
       ActionType actionType = Board.actionForTileLocation(tileState.getLocation().getColumn(),
           tileState.getLocation().getLine()).getActionType();

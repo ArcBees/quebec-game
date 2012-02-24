@@ -17,8 +17,8 @@
 package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;

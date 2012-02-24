@@ -31,6 +31,7 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareNextCentury;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeReinit;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeSetPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeVisitor;
@@ -134,5 +135,10 @@ public class ChangeRendererGenerator implements GameStateChangeVisitor<ChangeRen
   @Override
   public ChangeRenderer visit(GameStateChangeInstantaneousDecorator host) {
     return new ChangeRendererInstantaneousDecorator(host.getDecorated().accept(this));
+  }
+
+  @Override
+  public ChangeRenderer visit(GameStateChangeReinit host) {
+    return new ChangeRendererNull();
   }
 }

@@ -31,6 +31,12 @@ public enum PlayerColor {
   PINK,
   NEUTRAL;
 
+  public static final PlayerColor[] NORMAL =
+      new PlayerColor[]{BLACK, WHITE, ORANGE, GREEN, PINK};
+
+  public static final PlayerColor[] ARCHITECT =
+      new PlayerColor[]{BLACK, WHITE, ORANGE, GREEN, PINK, NEUTRAL};
+
   /**
    * Checks if the color is one of the 5 normal player colors.
    * @return True if it is, false if it's {@code NONE} or {@code NEUTRAL}.

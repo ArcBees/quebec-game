@@ -16,49 +16,29 @@
 
 package com.philbeaudoin.quebec.shared.statechange;
 
-import com.philbeaudoin.quebec.shared.PlayerColor;
+import java.util.ArrayList;
+
+import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
- * A change of the game state where a given player score points.
+ * A change of the game state obtained by entirely reinitializing the game state.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameStateChangeScorePoints implements GameStateChange {
-
-  private final PlayerColor scoringPlayer;
-  private final int nbPoints;
-
-  public GameStateChangeScorePoints(PlayerColor scoringPlayer, int nbPoints) {
-    assert scoringPlayer.isNormalColor();
-    this.scoringPlayer = scoringPlayer;
-    this.nbPoints = nbPoints;
-  }
+public class GameStateChangeReinit implements GameStateChange {
 
   @Override
   public void apply(GameState gameState) {
-    PlayerState playerState = gameState.getPlayerState(scoringPlayer);
-    playerState.setScore(playerState.getScore() + nbPoints);
+    ArrayList<Player> players = new ArrayList<Player>();
+    for (PlayerState playerState : gameState.getPlayerStates()) {
+      players.add(playerState.getPlayer());
+    }
+    gameState.initGame(players);
   }
 
   @Override
   public <T> T accept(GameStateChangeVisitor<T> visitor) {
     return visitor.visit(this);
-  }
-
-  /**
-   * Access the color of the player scoring points.
-   * @return The color of the player.
-   */
-  public PlayerColor getScoringPlayer() {
-    return scoringPlayer;
-  }
-
-  /**
-   * Access the number of points scored.
-   * @return The number of points scored.
-   */
-  public int getNbPoints() {
-    return nbPoints;
   }
 }

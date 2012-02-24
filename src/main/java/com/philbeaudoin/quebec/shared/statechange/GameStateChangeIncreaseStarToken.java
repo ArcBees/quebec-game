@@ -41,7 +41,7 @@ public class GameStateChangeIncreaseStarToken implements GameStateChange {
 
   @Override
   public void apply(GameState gameState) {
-    TileState tileState = gameState.getTileState(tile);
+    TileState tileState = gameState.findTileState(tile);
     tileState.setBuildingFacing(true);
     int nbStars = tileState.getNbStars();
     assert nbStars + 1 == nbStarsAfter;

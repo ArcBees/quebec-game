@@ -18,9 +18,9 @@ package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationOffboardNeutral;
 import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;

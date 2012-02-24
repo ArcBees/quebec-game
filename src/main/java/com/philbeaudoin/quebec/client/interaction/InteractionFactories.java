@@ -40,7 +40,7 @@ import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * Factory methods of the various renderer classes, used in assisted injection.
+ * Factory methods of the various interaction classes, used in assisted injection.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface InteractionFactories {

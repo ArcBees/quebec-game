@@ -18,8 +18,8 @@ package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.statechange.ArchitectDestination;
