@@ -61,10 +61,7 @@ public class InteractionPerformScoringPhase extends InteractionWithAction {
     Vector2d from = new InfluenceZoneInfo(scoringInformation.getZoneToScore()).getArrowCenter();
     int scoringZoneIndex = scoringInformation.getScoringZoneIndex();
     boolean needCascadeArrow = false;
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (!playerColor.isNormalColor()) {
-        continue;
-      }
+    for (PlayerColor playerColor : PlayerColor.NORMAL) {
       if (scoringInformation.getCubesToCascade(playerColor) > 0) {
         if (scoringZoneIndex == 4) {
           // Last scoring zone of century, cascade into active reserve.

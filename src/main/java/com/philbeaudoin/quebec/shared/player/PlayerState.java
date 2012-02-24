@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.state;
+package com.philbeaudoin.quebec.shared.player;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**
  * State of a player during the game.

@@ -91,4 +91,13 @@ public class PossibleActions {
   public Message getMessage() {
     return message;
   }
+
+  /**
+   * Access a given action.
+   * @param actionIndex The index of the action to access.
+   * @return The action
+   */
+  public GameAction getAction(int actionIndex) {
+    return gameActions.get(actionIndex);
+  }
 }

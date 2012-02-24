@@ -19,6 +19,7 @@ package com.philbeaudoin.quebec.shared.state;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 
 /**
  * Board action: blue, 2 cubes to activate, score based on the number of cubes in hand.

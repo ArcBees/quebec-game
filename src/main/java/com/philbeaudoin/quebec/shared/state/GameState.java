@@ -23,6 +23,8 @@ import javax.inject.Inject;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.player.Player;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -135,7 +137,7 @@ public class GameState {
    * @param tile The tile for which to get the state.
    * @return The state of that tile, {@code null} if not found.
    */
-  public TileState getTileState(Tile tile) {
+  public TileState findTileState(Tile tile) {
     for (TileState tileState : tileStates) {
       if (tileState.getTile() == tile) {
         return tileState;

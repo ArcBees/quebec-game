@@ -39,7 +39,7 @@ public class CubeDestinationTile implements CubeDestination {
 
   @Override
   public int getNbCubes(GameState gameState) {
-    TileState tileState = gameState.getTileState(tile);
+    TileState tileState = gameState.findTileState(tile);
     assert tileState != null;
     PlayerColor colorInSpot = tileState.getColorInSpot(spot);
     if (colorInSpot == PlayerColor.NONE) {
@@ -56,7 +56,7 @@ public class CubeDestinationTile implements CubeDestination {
 
   @Override
   public void removeFrom(int nbCubes, GameState gameState) {
-    TileState tileState = gameState.getTileState(tile);
+    TileState tileState = gameState.findTileState(tile);
     assert tileState != null;
     assert tileState.getColorInSpot(spot) == playerColor;
     assert tileState.getCubesPerSpot() == nbCubes;
@@ -65,7 +65,7 @@ public class CubeDestinationTile implements CubeDestination {
 
   @Override
   public void addTo(int nbCubes, GameState gameState) {
-    TileState tileState = gameState.getTileState(tile);
+    TileState tileState = gameState.findTileState(tile);
     assert tileState != null;
     assert tileState.getColorInSpot(spot) == PlayerColor.NONE;
     assert tileState.getCubesPerSpot() == nbCubes;

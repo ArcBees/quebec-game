@@ -27,6 +27,8 @@ import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.player.Player;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -83,10 +85,8 @@ public class GameController {
     }
 
     for (InfluenceType influenceType : InfluenceType.values()) {
-      for (PlayerColor playerColor : PlayerColor.values()) {
-        if (playerColor.isNormalColor()) {
-          gameState.setPlayerCubesInInfluenceZone(influenceType, playerColor, 0);
-        }
+      for (PlayerColor playerColor : PlayerColor.NORMAL) {
+        gameState.setPlayerCubesInInfluenceZone(influenceType, playerColor, 0);
       }
     }
 

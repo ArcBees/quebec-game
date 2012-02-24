@@ -33,6 +33,9 @@ public enum ScoringPhase {
   PREPARE_NEXT_CENTURY,
   INIT_SCORING;
 
+  public static final ScoringPhase[] ZONE_SCORING_PHASES =
+      new ScoringPhase[]{SCORE_ZONE_1, SCORE_ZONE_2, SCORE_ZONE_3, SCORE_ZONE_4, SCORE_ZONE_5};
+
   /**
    * Checks whether this scoring phase is an influence zone scoring phase.
    * @return True if it's an influence zone scoring phase, false otherwise.
@@ -60,12 +63,33 @@ public enum ScoringPhase {
    */
   public ScoringPhase nextScoringPhase(int century) {
     assert this != FINISH_GAME && this != PREPARE_NEXT_CENTURY;
-    if (this == INIT_SCORING) {
+    // TODO(beaudoin): Tried to use values()[ordinal() + 1] here but ran into GWT Issue 7607.
+    switch(this) {
+    case SCORE_ZONE_1:
+      return SCORE_ZONE_2;
+    case SCORE_ZONE_2:
+      return SCORE_ZONE_3;
+    case SCORE_ZONE_3:
+      return SCORE_ZONE_4;
+    case SCORE_ZONE_4:
+      return SCORE_ZONE_5;
+    case SCORE_ZONE_5:
+      if (century == 3) {
+        return SCORE_INCOMPLETE_BUILDINGS;
+      } else {
+        return PREPARE_NEXT_CENTURY;
+      }
+    case SCORE_INCOMPLETE_BUILDINGS:
+      return SCORE_ACTIVE_CUBES;
+    case SCORE_ACTIVE_CUBES:
+      return SCORE_BUILDINGS;
+    case SCORE_BUILDINGS:
+      return FINISH_GAME;
+    case INIT_SCORING:
       return SCORE_ZONE_1;
+    default:
+      assert false;
+      return null;
     }
-    if (this == SCORE_ZONE_5 && century < 3) {
-      return PREPARE_NEXT_CENTURY;
-    }
-    return values()[ordinal() + 1];
   }
 }

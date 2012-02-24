@@ -31,11 +31,14 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
-import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.player.AiBrainSimple;
+import com.philbeaudoin.quebec.shared.player.AiBrainSimple2;
+import com.philbeaudoin.quebec.shared.player.Player;
+import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
+import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.Player;
 
 /**
  * This is the presenter of the main application page.
@@ -65,11 +68,9 @@ public class MainPagePresenter extends
   public interface MyProxy extends ProxyPlace<MainPagePresenter> {
   }
 
-  // TODO Remove dependency on SpriteResources.
   @Inject
   public MainPagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-      final SpriteResources spriteResources, RendererFactories rendererFactories,
-      Provider<GameState> gameStateProvider) {
+      RendererFactories rendererFactories, Provider<GameState> gameStateProvider) {
     super(eventBus, view, proxy);
     view.setPresenter(this);
     gameStateRenderer = rendererFactories.createGameStateRenderer();
@@ -77,11 +78,11 @@ public class MainPagePresenter extends
     gameState = gameStateProvider.get();
 
     ArrayList<Player> players = new ArrayList<Player>(5);
-    players.add(new Player(PlayerColor.BLACK, "Filou", false));
-    players.add(new Player(PlayerColor.WHITE, "Emps", true));
-    players.add(new Player(PlayerColor.ORANGE, "Jerome", true));
-    players.add(new Player(PlayerColor.GREEN, "Claudiane", true));
-    players.add(new Player(PlayerColor.PINK, "Bob", true));
+    players.add(new PlayerLocalUser(PlayerColor.BLACK, "You"));
+    players.add(new PlayerLocalAi(PlayerColor.WHITE, "HAL", new AiBrainSimple()));
+    players.add(new PlayerLocalAi(PlayerColor.ORANGE, "Skynet", new AiBrainSimple2()));
+    players.add(new PlayerLocalAi(PlayerColor.GREEN, "WOPR", new AiBrainSimple()));
+    players.add(new PlayerLocalAi(PlayerColor.PINK, "The Matrix", new AiBrainSimple()));
 
     gameState.initGame(players);
     gameStateRenderer.render(gameState);

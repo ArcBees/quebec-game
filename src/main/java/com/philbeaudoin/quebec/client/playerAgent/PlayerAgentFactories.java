@@ -14,38 +14,16 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.state;
+package com.philbeaudoin.quebec.client.playerAgent;
 
-import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
+import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
 
 /**
- * Information about a player. This information never changes during the game. See also
- * {@link PlayerState}.
- *
+ * Factory methods of the various player agent classes, used in assisted injection.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class Player {
-
-  private final String name;
-  private final PlayerColor color;
-  private final boolean robot;
-
-  public Player(PlayerColor color, String name, boolean robot) {
-    assert color.isNormalColor();
-    this.name = name;
-    this.color = color;
-    this.robot = robot;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public PlayerColor getColor() {
-    return color;
-  }
-
-  public boolean isRobot() {
-    return robot;
-  }
+public interface PlayerAgentFactories {
+  PlayerAgentLocalUser createPlayerAgentLocalUser(PlayerLocalUser host);
+  PlayerAgentLocalAi createPlayerAgentLocalAi(PlayerLocalAi host);
 }

@@ -17,8 +17,8 @@
 package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
@@ -42,7 +42,7 @@ public class ActionIncreaseStar implements GameActionOnTile {
   public GameStateChange execute(GameState gameState) {
     PlayerState playerState = gameState.getCurrentPlayer();
     PlayerColor activePlayer = playerState.getPlayer().getColor();
-    TileState tileState = gameState.getTileState(tileToIncrease);
+    TileState tileState = gameState.findTileState(tileToIncrease);
     int nbStars = tileState.getNbStars();
     assert tileState.getStarTokenColor() == activePlayer;
     assert nbStars == 1 || nbStars == 2;

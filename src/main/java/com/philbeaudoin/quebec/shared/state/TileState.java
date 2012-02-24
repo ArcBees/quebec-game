@@ -178,4 +178,19 @@ public class TileState {
     this.nbStars = nbStars;
   }
 
+  /**
+   * Counts the number of spots that are filled on the tile.
+   * @return The number of filled spots.
+   */
+  public int countNbFilledSpots() {
+    // Move cubes out of the tile.
+    int nbFilledSpots = 0;
+    for (int spot = 0; spot < 3; ++spot) {
+      if (getColorInSpot(spot).isNormalColor()) {
+        nbFilledSpots++;
+      }
+    }
+    return nbFilledSpots;
+  }
+
 }

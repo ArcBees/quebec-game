@@ -21,6 +21,7 @@ import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSkip;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 
 /**
  * Board action: red, 2 cubes to activate, send two cubes to politic or cultural influence zone.

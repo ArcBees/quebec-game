@@ -16,20 +16,16 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.ScoringHelper;
 import com.philbeaudoin.quebec.shared.ScoringInformation;
 import com.philbeaudoin.quebec.shared.ScoringPhase;
 import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
 import com.philbeaudoin.quebec.shared.message.Message;
-import com.philbeaudoin.quebec.shared.state.Board;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.statechange.ArchitectDestination;
 import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationOffboardNeutral;
@@ -48,7 +44,6 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleAc
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
 import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationBoard;
 import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationPlayer;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * The action of performing a given scoring phase.
@@ -77,22 +72,23 @@ public class ActionPerformScoringPhase implements GameAction {
       finalResult = initScoring(gameState, result);
       break;
     case SCORE_INCOMPLETE_BUILDINGS:
-      addPlayerScore(result, computeIncompleteBuildingScoringInformation(gameState));
+      addPlayerScore(result, ScoringHelper.computeIncompleteBuildingScoringInformation(gameState));
       break;
     case SCORE_ACTIVE_CUBES:
-      addPlayerScore(result, computeActiveCubesScoringInformation(gameState));
+      addPlayerScore(result, ScoringHelper.computeActiveCubesScoringInformation(gameState));
       break;
     case SCORE_BUILDINGS:
-      addPlayerScore(result, computeBuildingsScoringInformation(gameState));
+      addPlayerScore(result, ScoringHelper.computeBuildingsScoringInformation(gameState));
       break;
     case FINISH_GAME:
+//      result.add(new GameStateChangeReinit());
       break;
     case PREPARE_NEXT_CENTURY:
       prepareNextCentury(gameState, result);
       break;
     default:
       assert scoringPhase.isZoneScoringPhase();
-      performZoneScoring(gameState, result);
+      ScoringHelper.performZoneScoring(scoringPhase, gameState, result);
     }
 
     if (scoringPhase != ScoringPhase.PREPARE_NEXT_CENTURY &&
@@ -108,24 +104,6 @@ public class ActionPerformScoringPhase implements GameAction {
     }
 
     return finalResult;
-  }
-
-  private void performZoneScoring(GameState gameState,
-      GameStateChangeComposite result) {
-    ZoneScoringInformation scoringInfo = computeZoneScoringInformation(gameState);
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (playerColor.isNormalColor()) {
-        int score = scoringInfo.getScore(playerColor);
-        if (score > 0) {
-          result.add(new GameStateChangeScorePoints(playerColor, score));
-        }
-        int cubesToCascade = scoringInfo.getCubesToCascade(playerColor);
-        if (cubesToCascade > 0) {
-          result.add(new GameStateChangeMoveCubes(cubesToCascade,
-              scoringInfo.getOrigin(playerColor), scoringInfo.getDestination(playerColor)));
-        }
-      }
-    }
   }
 
   private GameStateChange initScoring(GameState gameState, GameStateChangeComposite result) {
@@ -168,10 +146,7 @@ public class ActionPerformScoringPhase implements GameAction {
   private void prepareNextCentury(GameState gameState,
       GameStateChangeComposite result) {
     // Move all cubes back to passive.
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (!playerColor.isNormalColor()) {
-        continue;
-      }
+    for (PlayerColor playerColor : PlayerColor.NORMAL) {
       CubeDestination destination = new CubeDestinationPlayer(playerColor, false);
       for (InfluenceType zone : InfluenceType.values()) {
         int nbCubes = gameState.getPlayerCubesInInfluenceZone(zone, playerColor);
@@ -191,12 +166,10 @@ public class ActionPerformScoringPhase implements GameAction {
    */
   private void addPlayerScore(GameStateChangeComposite result,
       ScoringInformation scoringInfo) {
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (playerColor.isNormalColor()) {
-        int score = scoringInfo.getScore(playerColor);
-        if (score > 0) {
-          result.add(new GameStateChangeScorePoints(playerColor, score));
-        }
+    for (PlayerColor playerColor : PlayerColor.NORMAL) {
+      int score = scoringInfo.getScore(playerColor);
+      if (score > 0) {
+        result.add(new GameStateChangeScorePoints(playerColor, score));
       }
     }
   }
@@ -217,20 +190,21 @@ public class ActionPerformScoringPhase implements GameAction {
       return new Message.ScoringPhaseBegins();
     case SCORE_INCOMPLETE_BUILDINGS:
       return new Message.InformationOnIncompleteBuildingsScore(
-          computeIncompleteBuildingScoringInformation(gameState));
+          ScoringHelper.computeIncompleteBuildingScoringInformation(gameState));
     case SCORE_ACTIVE_CUBES:
       return new Message.InformationOnActiveCubesScore(
-          computeActiveCubesScoringInformation(gameState));
+          ScoringHelper.computeActiveCubesScoringInformation(gameState));
     case SCORE_BUILDINGS:
       return new Message.InformationOnBuildingsScore(
-          computeBuildingsScoringInformation(gameState));
+          ScoringHelper.computeBuildingsScoringInformation(gameState));
     case FINISH_GAME:
       return new Message.GameCompleted();
     case PREPARE_NEXT_CENTURY:
       return new Message.PrepareNextCentury();
     default:
       assert scoringPhase.isZoneScoringPhase();
-      return new Message.InformationOnZoneScore(computeZoneScoringInformation(gameState));
+      return new Message.InformationOnZoneScore(
+          ScoringHelper.computeZoneScoringInformation(scoringPhase, gameState));
     }
   }
 
@@ -244,157 +218,6 @@ public class ActionPerformScoringPhase implements GameAction {
     if (!scoringPhase.isZoneScoringPhase()) {
       return null;
     }
-    int century = gameState.getCentury();
-    int scoringZoneIndex = scoringPhase.scoringZoneIndex();
-    InfluenceType zoneToScore = InfluenceType.getScoringZoneForCentury(century, scoringZoneIndex);
-
-    ZoneScoringInformation result = new ZoneScoringInformation(scoringZoneIndex, zoneToScore);
-    int nbCubesOfLeaders = 0;
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (!playerColor.isNormalColor()) {
-        continue;
-      }
-      int nbCubes = gameState.getPlayerCubesInInfluenceZone(zoneToScore, playerColor);
-      result.setScore(playerColor, nbCubes);
-      if (nbCubes > nbCubesOfLeaders) {
-        nbCubesOfLeaders = nbCubes;
-      }
-    }
-
-    // Cascade if needed.
-    if (nbCubesOfLeaders > 0) {
-      int cubesToCascade = Math.min(5, nbCubesOfLeaders / 2);
-      for (PlayerColor playerColor : PlayerColor.values()) {
-        if (!playerColor.isNormalColor()) {
-          continue;
-        }
-        if (gameState.getPlayerCubesInInfluenceZone(zoneToScore, playerColor) ==
-            nbCubesOfLeaders) {
-          result.setCubesToCascade(playerColor, cubesToCascade);
-          result.setOrigin(playerColor, new CubeDestinationInfluenceZone(zoneToScore, playerColor));
-          if (scoringZoneIndex == 4) {
-            result.setDestination(playerColor, new CubeDestinationPlayer(playerColor, true));
-          } else {
-            result.setDestination(playerColor, new CubeDestinationInfluenceZone(
-                InfluenceType.getScoringZoneForCentury(
-                    century, scoringZoneIndex + 1), playerColor));
-          }
-        }
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Computes the scoring information for that action given a game state, provided it's currently
-   * scoring buildings.
-   * @param gameState The game state.
-   * @return The scoring information, or null if there is no scoring information for this phase.
-   */
-  private ScoringInformation computeIncompleteBuildingScoringInformation(GameState gameState) {
-    if (scoringPhase != ScoringPhase.SCORE_INCOMPLETE_BUILDINGS) {
-      return null;
-    }
-    ScoringInformation scoringInformation = new ScoringInformation();
-    for (TileState tileState : gameState.getTileStates()) {
-      if (tileState.getArchitect().isArchitectColor()) {
-        for (int spot = 0; spot < 3; ++spot) {
-          PlayerColor playerColor = tileState.getColorInSpot(spot);
-          if (playerColor.isNormalColor()) {
-            scoringInformation.addToScore(playerColor, tileState.getCubesPerSpot());
-          }
-        }
-      }
-    }
-    return scoringInformation;
-  }
-
-  /**
-   * Computes the scoring information for that action given a game state, provided it's currently
-   * scoring active cubes.
-   * @param gameState The game state.
-   * @return The scoring information, or null if there is no scoring information for this phase.
-   */
-  private ScoringInformation computeActiveCubesScoringInformation(GameState gameState) {
-    if (scoringPhase != ScoringPhase.SCORE_ACTIVE_CUBES) {
-      return null;
-    }
-    ScoringInformation scoringInformation = new ScoringInformation();
-    for (PlayerState playerState : gameState.getPlayerStates()) {
-      PlayerColor playerColor = playerState.getPlayer().getColor();
-      scoringInformation.addToScore(playerColor, playerState.getNbActiveCubes() / 2);
-    }
-    return scoringInformation;
-  }
-
-  /**
-   * Computes the scoring information for that action given a game state, provided it's currently
-   * scoring buildings.
-   * @param gameState The game state.
-   * @return The scoring information, or null if there is no scoring information for this phase.
-   */
-  private ScoringInformation computeBuildingsScoringInformation(GameState gameState) {
-    if (scoringPhase != ScoringPhase.SCORE_BUILDINGS) {
-      return null;
-    }
-    ScoringInformation result = new ScoringInformation();
-    for (PlayerColor playerColor : PlayerColor.values()) {
-      if (!playerColor.isNormalColor()) {
-        continue;
-      }
-      Set<TileState> visited = new HashSet<TileState>();
-      int totalScore = 0;
-      BuildingGroupScore largestGroup = null;
-      for (TileState tileState : gameState.getTileStates()) {
-        if (tileState.getStarTokenColor() == playerColor && !visited.contains(tileState)) {
-          BuildingGroupScore group = new BuildingGroupScore();
-          scoreGroup(gameState, playerColor, tileState, visited, group);
-          totalScore += group.starScore;
-          if (largestGroup == null || group.valueScore > largestGroup.valueScore) {
-            largestGroup = group;
-          }
-        }
-      }
-      if (largestGroup != null) {
-        // Remove the star score and add the value score of the largest group.
-        totalScore -= largestGroup.starScore;
-        totalScore += largestGroup.valueScore;
-      }
-      result.setScore(playerColor, totalScore);
-    }
-    return result;
-  }
-
-  private void scoreGroup(GameState gameState, PlayerColor playerColor, TileState tileState,
-      Set<TileState> visited, BuildingGroupScore group) {
-    assert tileState.getStarTokenColor() == playerColor;
-    int nbStars = tileState.getNbStars();
-    assert nbStars > 0 && nbStars <= 3;
-    int valueScore = nbStars * (nbStars + 1) / 2;
-    assert !visited.contains(tileState);
-
-    visited.add(tileState);
-    group.starScore += nbStars;
-    group.valueScore += valueScore;
-
-    // Find valid neighbors.
-    ArrayList<Vector2d> neighbors = Board.neighborsForLocation(tileState.getLocation());
-    for (Vector2d neighbor : neighbors) {
-      TileState neighborTileState = gameState.findTileAtLocation(neighbor);
-      if (neighborTileState != null && neighborTileState.getStarTokenColor() == playerColor &&
-          !visited.contains(neighborTileState)) {
-        scoreGroup(gameState, playerColor, neighborTileState, visited, group);
-      }
-    }
-  }
-
-  /**
-   * Keep tracks of the score, for a group of building, using either the number of stars or the
-   * larger value.
-   */
-  private class BuildingGroupScore {
-    int starScore;
-    int valueScore;
+    return ScoringHelper.computeZoneScoringInformation(scoringPhase, gameState);
   }
 }

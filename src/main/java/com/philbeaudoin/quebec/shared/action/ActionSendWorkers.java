@@ -17,11 +17,11 @@
 package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Board;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
@@ -55,7 +55,7 @@ public class ActionSendWorkers implements GameActionOnTile {
     PlayerState playerState = gameState.getCurrentPlayer();
     PlayerColor activePlayer = playerState.getPlayer().getColor();
 
-    TileState tileState = gameState.getTileState(destinationTile);
+    TileState tileState = gameState.findTileState(destinationTile);
     int destinationSpot = -1;
     for (int spot = 0; spot < 3; ++spot) {
       if (tileState.getColorInSpot(spot) == PlayerColor.NONE) {
@@ -122,7 +122,7 @@ public class ActionSendWorkers implements GameActionOnTile {
    */
   public boolean canExecuteBoardAction(GameState gameState) {
     return canExecuteBoardAction(gameState.getCurrentPlayer(),
-        gameState.getTileState(destinationTile));
+        gameState.findTileState(destinationTile));
   }
 
   private boolean canExecuteBoardAction(PlayerState playerState, TileState tileState) {

@@ -20,27 +20,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.philbeaudoin.quebec.client.interaction.Interaction;
-import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
-import com.philbeaudoin.quebec.client.interaction.InteractionGenerator;
-import com.philbeaudoin.quebec.client.scene.ComplexText;
+import com.philbeaudoin.quebec.client.playerAgent.PlayerAgent;
+import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentGenerator;
 import com.philbeaudoin.quebec.client.scene.Rectangle;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
-import com.philbeaudoin.quebec.shared.state.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.utils.Callback;
@@ -71,9 +67,8 @@ public class GameStateRenderer {
 
   private final Scheduler scheduler;
   private final RendererFactories factories;
-  private final InteractionFactories interactionFactories;
-  private final Provider<MessageRenderer> messageRendererProvider;
   private final ChangeRendererGenerator changeRendererGenerator;
+  private final PlayerAgentGenerator playerAgentGenerator;
   private final ScoreRenderer scoreRenderer;
   private final BoardRenderer boardRenderer;
   private final ArrayList<PlayerStateRenderer> playerStateRenderers =
@@ -86,15 +81,13 @@ public class GameStateRenderer {
 
   @Inject
   public GameStateRenderer(Scheduler scheduler, RendererFactories factories,
-      InteractionFactories interactionFactories,
       SpriteResources spriteResources,
-      Provider<MessageRenderer> messageRendererProvider,
-      ChangeRendererGenerator changeRendererGenerator) {
+      ChangeRendererGenerator changeRendererGenerator,
+      PlayerAgentGenerator playerAgentGenerator) {
     this.scheduler = scheduler;
     this.factories = factories;
-    this.interactionFactories = interactionFactories;
-    this.messageRendererProvider = messageRendererProvider;
     this.changeRendererGenerator = changeRendererGenerator;
+    this.playerAgentGenerator = playerAgentGenerator;
     scoreRenderer = factories.createScoreRenderer();
     boardRenderer = factories.createBoardRenderer(LEFT_COLUMN_WIDTH);
     staticRoot.add(backgroundRoot);
@@ -130,62 +123,11 @@ public class GameStateRenderer {
       index++;
     }
 
-    // TODO(beaudoin): This is a bit of an anti-pattern. The player should probably render the
-    //     interactions.
-    if (gameState.getCurrentPlayer().getPlayer().isRobot()) {
-      PossibleActions possibleActions = gameState.getPossibleActions();
-      if (possibleActions != null && possibleActions.getNbActions() > 0) {
-        int actionIndex = (int) (Math.random() * possibleActions.getNbActions());
-
-        // TODO(beaudoin): This is duplicate code from InteractionWithAction, extract somewhere.
-        final GameStateChange gameStateChange = possibleActions.execute(actionIndex, gameState);
-
-        generateAnimFor(gameStateChange);
-
-        scheduler.scheduleDeferred(new ScheduledCommand() {
-          @Override
-          public void execute() {
-            if (!isAnimationCompleted(0.0)) {
-              animationCompletedRegistration = addAnimationCompletedCallback(
-                  new Callback() {
-                    @Override public void execute() {
-                        animationCompletedRegistration.unregister();
-                        animationCompletedRegistration = null;
-                        renderForNextMove(gameStateChange, gameState);
-                    }
-                  });
-            } else {
-              renderForNextMove(gameStateChange, gameState);
-            }
-          }
-        });
-      }
-    } else {
-      // Render the possible actions.
-      PossibleActions possibleActions = gameState.getPossibleActions();
-      if (possibleActions != null) {
-        InteractionGenerator generator =
-            interactionFactories.createInteractionGenerator(gameState, this);
-        possibleActions.accept(generator);
-        generator.generateInteractions();
-        Message message = possibleActions.getMessage();
-        if (message != null) {
-          MessageRenderer messageRenderer = messageRendererProvider.get();
-          message.accept(messageRenderer);
-          addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
-              new ConstantTransform(new Vector2d(TEXT_CENTER, TEXT_LINE_1))));
-        }
-      }
-      for (Interaction interaction : interactions) {
-        interaction.highlight();
-      }
+    PlayerAgent playerAgent = gameState.getCurrentPlayer().getPlayer().accept(playerAgentGenerator);
+    playerAgent.renderInteractions(gameState, this);
+    for (Interaction interaction : interactions) {
+      interaction.highlight();
     }
-  }
-
-  private void renderForNextMove(GameStateChange gameStateChange, GameState gameState) {
-    clearAnimationGraph();
-    gameStateChange.apply(gameState);
-    render(gameState);
   }
 
   private void addOrClearGlassScreen() {
@@ -629,6 +571,10 @@ public class GameStateRenderer {
    * Clears the entire animation graph.
    */
   public void clearAnimationGraph() {
+    if (animationCompletedRegistration != null) {
+      animationCompletedRegistration.unregister();
+      animationCompletedRegistration = null;
+    }
     animationRoot.clear();
   }
 
@@ -709,13 +655,46 @@ public class GameStateRenderer {
   }
 
   /**
-   * Generates the animation corresponding to a given game state change.
-   * @param gameStateChange The game state change to animate.
+   * Generates the animation corresponding to a given game state change, after the animation the
+   * game state itself is updated and the board is completely rendered anew.
+   * @param gameState The game state to apply change to.
+   * @param gameStateChange The game state change to animate and then apply.
    */
-  public void generateAnimFor(GameStateChange gameStateChange) {
+  public void generateAnimFor(final GameState gameState, final GameStateChange gameStateChange) {
     ChangeRenderer changeRenderer = gameStateChange.accept(changeRendererGenerator);
     changeRenderer.generateAnim(this, 0.0);
     changeRenderer.undoAdditions(this);
+
+    scheduler.scheduleDeferred(new ScheduledCommand() {
+      @Override
+      public void execute() {
+        if (!isAnimationCompleted(0.0)) {
+          if (animationCompletedRegistration != null) {
+            animationCompletedRegistration.unregister();
+          }
+          animationCompletedRegistration = addAnimationCompletedCallback(
+              new Callback() {
+                @Override public void execute() {
+                  applyGameStateChangeAndRender(gameState, gameStateChange);
+                }
+              });
+        } else {
+          applyGameStateChangeAndRender(gameState, gameStateChange);
+        }
+      }
+    });
   }
+
+  /**
+   * Modify the game state and render the game state again after.
+   * @param gameState The current game state.
+   * @param change The change to apply.
+   */
+  private void applyGameStateChangeAndRender(GameState gameState, GameStateChange change) {
+    clearAnimationGraph();
+    change.apply(gameState);
+    render(gameState);
+  }
+
 }
 
