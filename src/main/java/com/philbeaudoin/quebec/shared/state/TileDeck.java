@@ -17,7 +17,6 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import com.google.gwt.user.client.Random;
 import com.philbeaudoin.quebec.shared.InfluenceType;
@@ -29,7 +28,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
  */
 public class TileDeck {
   // One deck for each influence type.
-  private final ArrayList<LinkedList<Tile>> decks = new ArrayList<LinkedList<Tile>>(4);
+  private final ArrayList<ArrayList<Tile>> decks = new ArrayList<ArrayList<Tile>>(4);
 
   /**
    * Create a tile deck and initialize it with the standard tiles of the game.
@@ -37,15 +36,15 @@ public class TileDeck {
   public TileDeck() {
     for (int influenceTypeIndex = 0; influenceTypeIndex < 4; ++influenceTypeIndex) {
       InfluenceType influenceType = InfluenceType.values()[influenceTypeIndex];
-      LinkedList<Tile> deck = new LinkedList<Tile>();
+      ArrayList<Tile> deck = new ArrayList<Tile>();
       decks.add(deck);
       for (int century = 0; century < 4; ++century) {
         int nbTiles = InfluenceType.getNbTilesForCentury(influenceType, century);
         for (int i = 0; i < nbTiles; ++i) {
-          int randomIndex = Random.nextInt(deck.size());
-          deck.add(randomIndex, new Tile(influenceType, century, i));
+          deck.add(new Tile(influenceType, century, i));
         }
       }
+      shuffle(deck);
     }
   }
 
@@ -56,10 +55,33 @@ public class TileDeck {
    * @return A tile, or {@code null} if no more tile of that influence type are available.
    */
   public Tile draw(InfluenceType influenceType) {
-    LinkedList<Tile> deck = decks.get(influenceType.ordinal());
+    ArrayList<Tile> deck = decks.get(influenceType.ordinal());
     if (deck.isEmpty()) {
       return null;
     }
-    return deck.remove(0);
+    return deck.remove(deck.size() - 1);
+  }
+
+  /**
+   * A Fisher-Yates shuffle inspired from the Java source code, restricted to small ArrayList.
+   * @param list The list to shuffle
+   */
+  public static void shuffle(ArrayList<?> list) {
+    int size = list.size();
+    for (int i=size; i>1; i--) {
+      swap(list, i-1, Random.nextInt(i));
+    }
+  }
+
+  /**
+   * Swap two elements from an array list.
+   * @param list The list.
+   * @param a The index of the first element to swap.
+   * @param b The index of the second element to swap.
+   */
+  private static <T> void swap(ArrayList<T> list, int a, int b) {
+    T t = list.get(a);
+    list.set(a, list.get(b));
+    list.set(b, t);
   }
 }
