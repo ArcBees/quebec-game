@@ -310,4 +310,12 @@ public class GameState {
   public boolean hasPossibleActionMessage() {
     return possibleActions != null && possibleActions.getMessage() != null;
   }
+
+  /**
+   * Returns the number of players in the game.
+   * @return The number of players.
+   */
+  public int getNbPlayers() {
+    return playerStates.size();
+  }
 }

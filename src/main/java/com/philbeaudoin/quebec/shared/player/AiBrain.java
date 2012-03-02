@@ -31,4 +31,10 @@ public interface AiBrain {
    * @return The move to make.
    */
   GameStateChange getMove(GameState gameState);
+
+  /**
+   * Gets a short name that can be used to identify that type of brain.
+   * @return The brain name, like "AI" or "AI 2".
+   */
+  String getSuffix();
 }

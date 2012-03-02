@@ -30,7 +30,7 @@ public class PlayerLocalAi extends PlayerBase {
   private final AiBrain aiBrain;
 
   public PlayerLocalAi(PlayerColor color, String name, AiBrain aiBrain) {
-    super(color, name + " AI");
+    super(color, name + " " + aiBrain.getSuffix());
     this.aiBrain = aiBrain;
   }
 

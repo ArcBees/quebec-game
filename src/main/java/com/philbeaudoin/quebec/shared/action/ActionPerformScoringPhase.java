@@ -81,7 +81,7 @@ public class ActionPerformScoringPhase implements GameAction {
       addPlayerScore(result, ScoringHelper.computeBuildingsScoringInformation(gameState));
       break;
     case FINISH_GAME:
-//      result.add(new GameStateChangeReinit());
+      // result.add(new GameStateChangeReinit());
       break;
     case PREPARE_NEXT_CENTURY:
       prepareNextCentury(gameState, result);

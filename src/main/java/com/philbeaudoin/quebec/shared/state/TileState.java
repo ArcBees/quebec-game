@@ -193,4 +193,15 @@ public class TileState {
     return nbFilledSpots;
   }
 
+  /**
+   * Checks whether or not the tile is available for an architect on a given century. Tiles
+   * available for the current century should be displayed with a round blue token.
+   * @param century The century to check.
+   * @return True if the tile is available on that century, false otherwise.
+   */
+  public boolean isAvailableForArchitect(int century) {
+    return !isBuildingFacing() && getArchitect() == PlayerColor.NONE &&
+        getTile().getCentury() == century;
+  }
+
 }

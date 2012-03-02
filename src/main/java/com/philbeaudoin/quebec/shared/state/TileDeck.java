@@ -22,7 +22,7 @@ import com.google.gwt.user.client.Random;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 
 /**
- * A randomized deck from which tile can be drawn.
+ * A randomized deck from which tiles can be drawn.
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
@@ -68,8 +68,8 @@ public class TileDeck {
    */
   public static void shuffle(ArrayList<?> list) {
     int size = list.size();
-    for (int i=size; i>1; i--) {
-      swap(list, i-1, Random.nextInt(i));
+    for (int i = size; i > 1; i--) {
+      swap(list, i - 1, Random.nextInt(i));
     }
   }
 

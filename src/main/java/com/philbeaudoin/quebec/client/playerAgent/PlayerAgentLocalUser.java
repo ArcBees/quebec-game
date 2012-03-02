@@ -20,8 +20,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
-import com.philbeaudoin.quebec.client.interaction.InteractionGenerator;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
@@ -39,14 +37,14 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  */
 public class PlayerAgentLocalUser implements PlayerAgent {
 
-  private final InteractionFactories interactionFactories;
+  private final PlayerAgentFactories playerAgentFactories;
   private final Provider<MessageRenderer> messageRendererProvider;
 
   @Inject
-  PlayerAgentLocalUser(InteractionFactories interactionFactories,
+  PlayerAgentLocalUser(PlayerAgentFactories playerAgentFactories,
       Provider<MessageRenderer> messageRendererProvider,
       @Assisted PlayerLocalUser playerLocalUser) {
-    this.interactionFactories = interactionFactories;
+    this.playerAgentFactories = playerAgentFactories;
     this.messageRendererProvider = messageRendererProvider;
   }
 
@@ -55,10 +53,11 @@ public class PlayerAgentLocalUser implements PlayerAgent {
     // Render the possible actions.
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
-      InteractionGenerator generator =
-          interactionFactories.createInteractionGenerator(gameState, gameStateRenderer);
+      LocalUserInteractionGenerator generator =
+          playerAgentFactories.createLocalUserInteractionGenerator(gameState, gameStateRenderer);
       possibleActions.accept(generator);
       generator.generateInteractions();
+      // TODO(beaudoin): Duplicated in PlayerAgentLocalAi, extract.
       Message message = possibleActions.getMessage();
       if (message != null) {
         MessageRenderer messageRenderer = messageRendererProvider.get();

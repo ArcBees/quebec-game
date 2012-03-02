@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.main;
+package com.philbeaudoin.quebec.client.menu;
 
 import java.util.ArrayList;
 
@@ -34,6 +34,7 @@ import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.player.AiBrainSimple;
+import com.philbeaudoin.quebec.shared.player.AiBrainSimple2;
 import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
@@ -44,8 +45,8 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class MainPagePresenter extends
-    Presenter<MainPagePresenter.MyView, MainPagePresenter.MyProxy> {
+public class MenuPresenter extends
+    Presenter<MenuPresenter.MyView, MenuPresenter.MyProxy> {
 
   public static final Object TYPE_RevealNewsContent = new Object();
 
@@ -56,7 +57,7 @@ public class MainPagePresenter extends
    * The presenter's view.
    */
   public interface MyView extends View {
-    void setPresenter(MainPagePresenter presenter);
+    void setPresenter(MenuPresenter presenter);
   }
 
   /**
@@ -64,11 +65,11 @@ public class MainPagePresenter extends
    */
   @ProxyStandard
   @NameToken(NameTokens.mainPage)
-  public interface MyProxy extends ProxyPlace<MainPagePresenter> {
+  public interface MyProxy extends ProxyPlace<MenuPresenter> {
   }
 
   @Inject
-  public MainPagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
+  public MenuPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
       RendererFactories rendererFactories, Provider<GameState> gameStateProvider) {
     super(eventBus, view, proxy);
     view.setPresenter(this);
@@ -78,9 +79,8 @@ public class MainPagePresenter extends
 
     ArrayList<Player> players = new ArrayList<Player>(5);
     players.add(new PlayerLocalUser(PlayerColor.BLACK, "You"));
-//    players.add(new PlayerLocalAi(PlayerColor.BLACK, "Johnny 5", new AiBrainSimple()));
     players.add(new PlayerLocalAi(PlayerColor.WHITE, "HAL", new AiBrainSimple()));
-    players.add(new PlayerLocalAi(PlayerColor.ORANGE, "Skynet", new AiBrainSimple()));
+    players.add(new PlayerLocalAi(PlayerColor.ORANGE, "Skynet", new AiBrainSimple2()));
     players.add(new PlayerLocalAi(PlayerColor.GREEN, "WOPR", new AiBrainSimple()));
     players.add(new PlayerLocalAi(PlayerColor.PINK, "The Matrix", new AiBrainSimple()));
 
