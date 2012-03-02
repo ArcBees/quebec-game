@@ -27,11 +27,14 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 public class CubeGrid {
   private static final double CUBE_SIZE_X = 0.01;
   private static final double CUBE_SIZE_Y = 0.01;
-  private static final double DEFAULT_DISTANCE_BETWEEN_LINES = 0.021;
+  private static final double DEFAULT_DISTANCE_BETWEEN_LINES = 0.031;
+
+  private static final double[] COLUMN_FOR_INDEX_IN_GROUP = {0, 1, 0.5, 2, 1.5};
 
   private final int columns;
   private final int lines;
   private final double distanceBetweenLines;
+  private final double halfSizeX;
 
   /**
    * Creates a cube grid with a specified number of columns and lines.
@@ -39,9 +42,7 @@ public class CubeGrid {
    * @param lines The number of lines in the grid.
    */
   public CubeGrid(int columns, int lines) {
-    this.columns = columns;
-    this.lines = lines;
-    distanceBetweenLines = DEFAULT_DISTANCE_BETWEEN_LINES;
+    this(columns, lines, DEFAULT_DISTANCE_BETWEEN_LINES);
   }
 
   /**
@@ -54,6 +55,10 @@ public class CubeGrid {
     this.columns = columns;
     this.lines = lines;
     this.distanceBetweenLines = distanceBetweenLines;
+    int group = (columns - 1) / 5;
+    int indexInGroup = (columns - 1) % 5;
+    int maxIndexInGroup = indexInGroup >= 3 ? 3 : (indexInGroup >= 1 ? 1 : 0);
+    this.halfSizeX = calculateX(group, maxIndexInGroup) / 2.0;
   }
 
   /**
@@ -61,8 +66,8 @@ public class CubeGrid {
    * left to right, this is to allow for a nicer overlapping of the cubes. The order is the
    * following:
    * <pre>
-   *  2 4 6
-   * 0 1 3 5
+   *  2 4    7 9
+   * 0 1 3  5 6 8
    * </pre>
    * @param column Index of the column, zero-based.
    * @param line Index of the line, zero-based.
@@ -71,18 +76,23 @@ public class CubeGrid {
   public Vector2d getPosition(int column, int line) {
     assert column >= 0 && column < columns;
     assert line >= 0 && line < lines;
+    int group = column / 5;
+    int indexInGroup = column % 5;
     double y = (line - (lines - 1) / 2.0) * distanceBetweenLines;
-    double x = ((column + 1) / 2 - (columns / 2) / 2.0) * CUBE_SIZE_X;
+    double x = calculateX(group, indexInGroup) - halfSizeX;
     if (columns > 2) {
-      if (column == 0 || column % 2 == 1) {
+      if (indexInGroup == 0 || indexInGroup % 2 == 1) {
         // Bottom line
         y += CUBE_SIZE_Y / 2.0;
       } else {
         // Top line
         y -= CUBE_SIZE_Y / 2.0;
-        x -= CUBE_SIZE_X / 2.0;
       }
     }
     return new Vector2d(x, y);
+  }
+
+  private double calculateX(int group, int indexInGroup) {
+    return (COLUMN_FOR_INDEX_IN_GROUP[indexInGroup] + 3.7 * group) * CUBE_SIZE_X;
   }
 }

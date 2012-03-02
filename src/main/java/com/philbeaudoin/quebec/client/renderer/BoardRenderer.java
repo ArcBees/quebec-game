@@ -111,7 +111,7 @@ public class BoardRenderer {
       if (influenceType == InfluenceType.CITADEL) {
         translation = new Vector2d(0.45, -0.05);
       } else {
-        translation = new Vector2d(0.51 * (((index + 1) % 4 / 2 == 0) ? 1 : -1),
+        translation = new Vector2d(0.49 * (((index + 1) % 4 / 2 == 0) ? 1 : -1),
                                    0.35 * ((index / 2 == 0) ? 1 : -1));
       }
       influenceZoneNode[index] = new SceneNodeList(new ConstantTransform(translation));
