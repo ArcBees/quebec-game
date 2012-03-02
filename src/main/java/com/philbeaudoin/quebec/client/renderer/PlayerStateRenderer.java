@@ -52,7 +52,7 @@ public class PlayerStateRenderer {
 
   private final SpriteResources spriteResources;
   private final SceneNodeList playerZone;
-  private final CubeGrid cubeGrid = new CubeGrid(9, 3);
+  private final CubeGrid cubeGrid = new CubeGrid(10, 3);
   private final PawnStack pawnStack = new PawnStack(2);
   private final double width;
   private final double height;
@@ -206,8 +206,8 @@ public class PlayerStateRenderer {
 
     ConstantTransform parentTransform = parent.getTotalTransform(0);
     for (int i = cubes.size(); i < newNbCubes; ++i) {
-      int column = i % 9;
-      int line = i / 9;
+      int column = i % 10;
+      int line = i / 10;
       ConstantTransform childTransform = new ConstantTransform(cubeGrid.getPosition(column, line));
       Sprite cube = new Sprite(spriteResources.getCube(playerColor), childTransform);
       parent.add(cube);
