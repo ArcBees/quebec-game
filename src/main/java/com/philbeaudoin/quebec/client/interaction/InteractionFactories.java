@@ -44,8 +44,6 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface InteractionFactories {
-  InteractionGenerator createInteractionGenerator(GameState gameState,
-      GameStateRenderer gameStateRenderer);
   InteractionMoveArchitect createInteractionMoveArchitect(GameState gameState,
       GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
   InteractionMoveUnknownArchitect createInteractionMoveUnknownArchitect(GameState gameState,

@@ -17,12 +17,19 @@
 package com.philbeaudoin.quebec.client.playerAgent;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
+import com.philbeaudoin.quebec.client.scene.ComplexText;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * The player agent of an Artificial Intelligence playing locally.
@@ -31,18 +38,43 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
  */
 public class PlayerAgentLocalAi implements PlayerAgent {
 
+  private final PlayerAgentFactories playerAgentFactories;
+  private final Provider<MessageRenderer> messageRendererProvider;
   private final PlayerLocalAi player;
 
   @Inject
-  PlayerAgentLocalAi(@Assisted PlayerLocalAi player) {
+  PlayerAgentLocalAi(PlayerAgentFactories playerAgentFactories,
+      Provider<MessageRenderer> messageRendererProvider, @Assisted PlayerLocalAi player) {
+    this.playerAgentFactories = playerAgentFactories;
+    this.messageRendererProvider = messageRendererProvider;
     this.player = player;
   }
 
   @Override
   public void renderInteractions(GameState gameState, GameStateRenderer gameStateRenderer) {
-    final GameStateChange gameStateChange = player.getMove(gameState);
-    if (gameStateChange != null) {
-      gameStateRenderer.generateAnimFor(gameState, gameStateChange);
+    // Render the possible actions.
+    PossibleActions possibleActions = gameState.getPossibleActions();
+    if (possibleActions != null) {
+      LocalAiInteractionGenerator generator =
+          playerAgentFactories.createLocalAiInteractionGenerator(gameState, gameStateRenderer);
+      possibleActions.accept(generator);
+      if (!generator.isManualMove()) {
+        // Move automatically.
+        final GameStateChange gameStateChange = player.getMove(gameState);
+        if (gameStateChange != null) {
+          gameStateRenderer.generateAnimFor(gameState, gameStateChange);
+        }
+      } else {
+        // TODO(beaudoin): Duplicated in PlayerAgentLocalUser, extract.
+        Message message = possibleActions.getMessage();
+        if (message != null) {
+          MessageRenderer messageRenderer = messageRendererProvider.get();
+          message.accept(messageRenderer);
+          gameStateRenderer.addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
+              new ConstantTransform(new Vector2d(
+                  GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1))));
+        }
+      }
     }
   }
 }

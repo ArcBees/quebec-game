@@ -183,9 +183,7 @@ public class GameController {
   private boolean addArchitectMoveActionIfPossible(int century,
       PossibleActions possibleActions, PlayerState currentPlayer,
       TileState tileState) {
-    if (tileState.getTile().getCentury() == century &&
-        tileState.getArchitect() == PlayerColor.NONE &&
-        !tileState.isBuildingFacing()) {
+    if (tileState.isAvailableForArchitect(century)) {
       possibleActions.add(new ActionMoveArchitect(tileState.getTile(), false));
       // If the player has the yellow leader, he can also move the neutral architect.
       if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC) {
@@ -206,8 +204,7 @@ public class GameController {
     int newCentury = oldCentury + 1;
     gameState.setCentury(newCentury);
     for (TileState tileState : gameState.getTileStates()) {
-      if (!tileState.isBuildingFacing() && tileState.getArchitect() == PlayerColor.NONE &&
-          tileState.getTile().getCentury() == oldCentury) {
+      if (tileState.isAvailableForArchitect(oldCentury)) {
         tileState.setBuildingFacing(true);
       }
     }

@@ -36,4 +36,9 @@ public class AiBrainRandom implements AiBrain {
     }
     return null;
   }
+
+  @Override
+  public String getSuffix() {
+    return "Random AI";
+  }
 }

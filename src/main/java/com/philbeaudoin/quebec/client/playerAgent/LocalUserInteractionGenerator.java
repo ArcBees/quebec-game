@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.interaction;
+package com.philbeaudoin.quebec.client.playerAgent;
 
 import java.util.ArrayList;
 
@@ -22,6 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
+import com.philbeaudoin.quebec.client.interaction.Helpers;
+import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
@@ -49,12 +51,13 @@ import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
- * Use this class to generate the list of {@link Interaction} corresponding to a given
- * {@link com.philbeaudoin.quebec.shared.action.GameAction GameAction}. All the generated
- * interactions will be added to the provided {@link GameStateRenderer}.
+ * Use this class to generate the list of
+ * {@link com.philbeaudoin.quebec.client.interaction.Interaction Interaction} corresponding to a
+ * given {@link com.philbeaudoin.quebec.shared.action.GameAction GameAction} for a local user. All
+ * the generated interactions will be added to the provided {@link GameStateRenderer}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionGenerator implements GameActionVisitor {
+public class LocalUserInteractionGenerator implements GameActionVisitor {
 
   // Constants to specify text interaction location
   private static final double TEXT_PADDING = 0.03;
@@ -86,7 +89,7 @@ public class InteractionGenerator implements GameActionVisitor {
   private final ArrayList<TextInteraction> textInteractions = new ArrayList<TextInteraction>();
 
   @Inject
-  InteractionGenerator(InteractionFactories factories,
+  LocalUserInteractionGenerator(InteractionFactories factories,
       Provider<MessageRenderer> messageRendererProvider,
       @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer) {

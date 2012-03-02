@@ -11,6 +11,9 @@
     xmlns:c='urn:import:com.philbeaudoin.quebec.client.widget'>
 
     <g:DockLayoutPanel unit="PX">
+        <g:north size="30">
+            <g:Label>This is the main page. Welcome!</g:Label>
+        </g:north>
         <g:center>
             <g:LayoutPanel ui:field="center">
               <g:layer>

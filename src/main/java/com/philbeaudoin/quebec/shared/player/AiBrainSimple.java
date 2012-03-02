@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.player;
 
+import java.util.List;
+
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringHelper;
@@ -40,6 +42,11 @@ public class AiBrainSimple implements AiBrain {
       return null;
     }
     return result.move;
+  }
+
+  @Override
+  public String getSuffix() {
+    return "AI";
   }
 
   /**
@@ -84,33 +91,94 @@ public class AiBrainSimple implements AiBrain {
   private double evaluate(GameState gameState, PlayerColor playerColor) {
     PlayerState playerState = gameState.getPlayerState(playerColor);
     addOrRemoveCubesToZonesFromTiles(gameState, true);
-    int result = ScoringHelper.calculateZoneScore(gameState).getScore(playerColor);
+    double result = ScoringHelper.calculateZoneScore(gameState).getScore(playerColor);
     addOrRemoveCubesToZonesFromTiles(gameState, false);
     result += playerState.getScore();
 
+    MoveCount movesUntilScoring = estimateMovesUntilScoring(gameState, playerColor);
+
     TileState[] modifiedTiles = new TileState[2];
-    int nbModifiedTiles = addFakeStarTokens(gameState, playerColor, playerState, modifiedTiles);
+    int nbModifiedTiles = addFakeStarTokens(gameState, playerColor, playerState, movesUntilScoring,
+        modifiedTiles);
     result += ScoringHelper.computeBuildingsScoringInformation(gameState).getScore(playerColor);
     removeFakeStarTokens(modifiedTiles, nbModifiedTiles);
 
     result += ScoringHelper.computeActiveCubesScoringInformation(gameState).getScore(playerColor);
+
+    result += calculateBonusForHoldingLeaders(gameState, playerState, movesUntilScoring);
+    return result;
+  }
+
+  private double calculateBonusForHoldingLeaders(GameState gameState, PlayerState playerState,
+      MoveCount movesUntilScoring) {
+    LeaderCard leaderCard = playerState.getLeaderCard();
+    if (leaderCard == null) {
+      return 0;
+    }
+    switch (leaderCard) {
+    case CITADEL:
+      // Already counted by other means.
+      return 0;
+    case RELIGIOUS:
+      // Can play on own tile, estimate each future move is worth 1.5 extra points.
+      return movesUntilScoring.moves * 1.5 / (double) gameState.getNbPlayers();
+    case POLITIC:
+      // Can send cubes to any zone, cubes on tiles and active cubes are worth an extra 0.4 points
+      // provided there are enough architect moves left.
+      double scale = movesUntilScoring.architectMoves / 10.0;
+      int cubesOnTiles = calculateCubesOnTiles(gameState, playerState.getPlayer().getColor());
+      return (cubesOnTiles * 1.0 + playerState.getNbActiveCubes() * 0.25) * scale;
+    case ECONOMIC:
+      // Can grab more tiles, each architect move is worth extra point, it's worth more in
+      // play than in hand.
+      return movesUntilScoring.architectMoves *
+          (playerState.isHoldingNeutralArchitect() ? 0.2 : 0.6);
+    case CULTURAL:
+      // Score with each move, each own architect move is worth 2 extra point.
+      // TODO(beaudoin): Make this depend on the number of players.
+      return movesUntilScoring.architectMoves * 2 / (double) gameState.getNbPlayers();
+    default:
+      return 0;
+    }
+  }
+
+  private int calculateCubesOnTiles(GameState gameState, PlayerColor playerColor) {
+    int result = 0;
+    for (TileState tileState : gameState.getTileStates()) {
+      if (tileState.getArchitect().isArchitectColor()) {
+        for (int spot = 0; spot < 3; ++spot) {
+          if (tileState.getColorInSpot(spot) == playerColor) {
+            result += tileState.getCubesPerSpot();
+          }
+        }
+      }
+    }
     return result;
   }
 
   private int addFakeStarTokens(GameState gameState, PlayerColor playerColor,
-      PlayerState playerState, TileState[] modifiedTiles) {
-    // TODO Special-case for end-of-game where this is not a good evaluation.
+      PlayerState playerState, MoveCount movesUntilScoring, TileState[] modifiedTiles) {
     int nbExtraFilledSpots = (playerState.getNbActiveCubes() + 1) / 2;
+    int nbExtraFilledSpotsNeutralArchitect = 0;
     if (playerState.getLeaderCard() == LeaderCard.ECONOMIC) {
       // The extra pawn makes it possible to wait until the end of the round.
-      // TODO(beaudoin): Take the number of moves until the end in consideration.
       nbExtraFilledSpots = 3;
+      // For the neutral architect it's slightly different.
+      nbExtraFilledSpotsNeutralArchitect = Math.min(3,
+          movesUntilScoring.moves / gameState.getNbPlayers());
     }
     int nbModifiedTiles = 0;
     for (TileState tileState : gameState.getTileStates()) {
-      if (playerState.ownsArchitect(tileState.getArchitect())) {
+      PlayerColor architect = tileState.getArchitect();
+      if (playerState.ownsArchitect(architect)) {
         modifiedTiles[nbModifiedTiles++] = tileState;
-        int nbFilledSpots = Math.min(3, tileState.countNbFilledSpots() + nbExtraFilledSpots);
+        int nbFilledSpots;
+        if (architect == PlayerColor.NEUTRAL) {
+          nbFilledSpots = Math.min(3, tileState.countNbFilledSpots() +
+              nbExtraFilledSpotsNeutralArchitect);
+        } else {
+          nbFilledSpots = Math.min(3, tileState.countNbFilledSpots() + nbExtraFilledSpots);
+        }
         if (nbFilledSpots > 0) {
           // TODO(beaudoin): Slightly hacky: we leave the architect on and set a star token. It works
           //     because this is supported by computeBuildingsScoringInformation and it makes it
@@ -150,6 +218,59 @@ public class AiBrainSimple implements AiBrain {
     }
   }
 
+  private MoveCount estimateMovesUntilScoring(GameState gameState, PlayerColor playerColor) {
+    List<PlayerState> playerStates = gameState.getPlayerStates();
+    int nbPlayers = playerStates.size();
+    double nbActives[] = new double[nbPlayers];
+    double nbPassives[] = new double[nbPlayers];
+    int nbUnusedTiles = 0;
+    int century = gameState.getCentury();
+    for (TileState tileState : gameState.getTileStates()) {
+      if (tileState.isAvailableForArchitect(century)) {
+        nbUnusedTiles++;
+      }
+    }
+
+    int scoringPlayerIndex = 0;
+    for (int i = 0; i < nbPlayers; ++i) {
+      PlayerState playerState = playerStates.get(i);
+      nbActives[i] = playerState.getNbActiveCubes();
+      nbPassives[i] = playerState.getNbPassiveCubes();
+      if (playerState.getPlayer().getColor() == playerColor) {
+        scoringPlayerIndex = i;
+      }
+    }
+
+    MoveCount result = new MoveCount();
+    int i = (scoringPlayerIndex + 1) % nbPlayers;
+    while (true) {
+      PlayerState playerState = playerStates.get(i);
+      result.moves++;
+      if (playerState.getPlayer().getColor() == playerColor) {
+        result.playerMoves++;
+      }
+      if (nbActives[i] == 0 && nbPassives[i] == 0) {
+        break;
+      }
+      if (nbActives[i] <= 1) {
+        // Move architect.
+        result.architectMoves++;
+        if (nbUnusedTiles == 0) {
+          break;
+        }
+        nbUnusedTiles--;
+        // Activate 3 cubes.
+        nbActives[i] += Math.min(3, nbPassives[i]);
+        nbPassives[i] -= Math.min(3, nbPassives[i]);
+      } else {
+        // Send 2 cubes from active and 1.25 cubes from passive.
+        nbActives[i] -= Math.min(2, nbActives[i]);
+        nbPassives[i] -= Math.min(1.25, nbPassives[i]);
+      }
+    }
+    return result;
+  }
+
   private static class ScoreAndMove {
     final double score;
     final GameStateChange move;
@@ -157,5 +278,11 @@ public class AiBrainSimple implements AiBrain {
       this.score = score;
       this.move = move;
     }
+  }
+
+  private static class MoveCount {
+    int moves;
+    int playerMoves;
+    int architectMoves;
   }
 }
