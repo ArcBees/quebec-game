@@ -25,5 +25,25 @@ public enum LeaderCard {
   POLITIC,
   ECONOMIC,
   CULTURAL,
-  CITADEL
+  CITADEL;
+
+  private static final int pointsForCultural[][] = {
+    {1, 2, 3},
+    {2, 3, 4}
+  };
+
+  /**
+   * Returns how many points the cultural leader yields when placing a given star token.
+   *
+   * @param nbPlayers The number of players in the game.
+   * @param nbStars The number of stars on the token.
+   * @return The score for placing that token.
+   */
+  public static int getPointsForCultural(int nbPlayers, int nbStars) {
+    assert nbPlayers >= 2 && nbPlayers <= 5 && nbStars >= 0 && nbStars <= 3;
+    if (nbStars == 0) {
+      return 0;
+    }
+    return pointsForCultural[(nbPlayers - 2) / 2][nbStars - 1];
+  }
 }

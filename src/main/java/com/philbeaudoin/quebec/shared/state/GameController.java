@@ -77,10 +77,12 @@ public class GameController {
       }
     }
 
-    // TODO: The specific cards available depend on the number of players.
     List<LeaderCard> availableLeaderCards = gameState.getAvailableLeaderCards();
     availableLeaderCards.clear();
     for (LeaderCard leaderCard : LeaderCard.values()) {
+      if (leaderCard == LeaderCard.RELIGIOUS && nbPlayers <= 3) {
+        continue;
+      }
       availableLeaderCards.add(leaderCard);
     }
 
