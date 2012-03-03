@@ -158,8 +158,6 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
 
     int width = canvas.getCoordinateSpaceWidth();
     int height = canvas.getCoordinateSpaceHeight();
-    context.setFillStyle("#fff");
-    context.fillRect(0, 0, width, height);
 
     if (presenter != null) {
       staticLayerCanvas.setPixelSize(width, height);
