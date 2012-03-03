@@ -84,7 +84,8 @@ public class MoveArchitectHelper {
 
     if (nbFilledSpots > 0 && playerState.getLeaderCard() == LeaderCard.CULTURAL) {
       // Cultural leader score points based on the number of filled spots.
-      result.add(new GameStateChangeScorePoints(playerColor, nbFilledSpots + 1));
+      result.add(new GameStateChangeScorePoints(playerColor, LeaderCard.getPointsForCultural(
+          gameState.getNbPlayers(), nbFilledSpots)));
     }
 
     // Prepend an out-of-turn action if the player with the red leader had cubes.

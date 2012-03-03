@@ -82,7 +82,7 @@ public class MainPagePresenter extends
     players.add(new PlayerLocalAi(PlayerColor.WHITE, "HAL", new AiBrainSimple()));
     players.add(new PlayerLocalAi(PlayerColor.ORANGE, "Skynet", new AiBrainSimple()));
     players.add(new PlayerLocalAi(PlayerColor.GREEN, "WOPR", new AiBrainSimple()));
-    players.add(new PlayerLocalAi(PlayerColor.PINK, "The Matrix", new AiBrainSimple()));
+//    players.add(new PlayerLocalAi(PlayerColor.PINK, "The Matrix", new AiBrainSimple()));
 
     gameState.initGame(players);
     gameStateRenderer.render(gameState);
