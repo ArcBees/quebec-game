@@ -102,7 +102,7 @@ public class SpriteResources {
   private final Info[][][] tileInfos = new Info[4][4][5];
   private final Info[] cubeInfos = new Info[5];
   private final Info[] pawnInfos = new Info[6];
-  private final Info[] leaderInfos = new Info[5];
+  private final Info[] leaderInfos = new Info[6];
   private final Info[] influenceZoneInfos = new Info[5];
   private final Info[] zoneLogoInfos = new Info[5];
   private final Info[][] starTokensInfo = new Info[5][3];
@@ -169,7 +169,8 @@ public class SpriteResources {
     setInfoForLeader(LeaderCard.RELIGIOUS, resources.leaderReligious());
     setInfoForLeader(LeaderCard.POLITIC, resources.leaderPolitic());
     setInfoForLeader(LeaderCard.ECONOMIC, resources.leaderEconomic());
-    setInfoForLeader(LeaderCard.CULTURAL, resources.leaderCultural());
+    setInfoForLeader(LeaderCard.CULTURAL_TWO_THREE, resources.leaderCulturalTwoThree());
+    setInfoForLeader(LeaderCard.CULTURAL_FOUR_FIVE, resources.leaderCulturalFourFive());
     setInfoForLeader(LeaderCard.CITADEL, resources.leaderCitadel());
 
     setInfoForInfluenceZone(InfluenceType.RELIGIOUS, resources.influenceZoneReligious());

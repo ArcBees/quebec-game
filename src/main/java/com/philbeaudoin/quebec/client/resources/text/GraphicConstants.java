@@ -60,4 +60,10 @@ public interface GraphicConstants extends Constants {
   String scoreBuildingsWithoutScore();
   String scoreBuildings();
   String gameCompleted();
+  String religiousLeaderDescription();
+  String politicLeaderDescription();
+  String economicLeaderDescription();
+  String cultural23LeaderDescription();
+  String cultural45LeaderDescription();
+  String citadelLeaderDescription();
 }

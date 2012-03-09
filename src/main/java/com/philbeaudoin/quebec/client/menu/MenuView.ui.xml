@@ -12,12 +12,16 @@
 
     <g:DockLayoutPanel unit="PX">
         <g:north size="30">
-            <g:Label>This is the main page. Welcome!</g:Label>
+            <g:Label>Quebec</g:Label>
         </g:north>
         <g:center>
             <g:LayoutPanel ui:field="center">
               <g:layer>
-                  <c:FullCanvas ui:field="fullCanvas" targetAspectRatio='1.7' />
+              <g:FlowPanel>
+              <g:Hyperlink targetHistoryToken="game;n=3">Quick solo 3 player game</g:Hyperlink>
+              <g:Hyperlink targetHistoryToken="game;n=4">Quick solo 4 player game</g:Hyperlink>
+              <g:Hyperlink targetHistoryToken="game;n=5">Quick solo 5 player game</g:Hyperlink>
+              </g:FlowPanel>
               </g:layer>
             </g:LayoutPanel>
         </g:center>

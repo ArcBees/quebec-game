@@ -16,20 +16,20 @@
 
 package com.philbeaudoin.quebec.client.renderer;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
 import com.philbeaudoin.quebec.client.resources.text.GraphicConstants;
 import com.philbeaudoin.quebec.client.resources.text.GraphicMessages;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
-import com.philbeaudoin.quebec.client.scene.ComplexText.Component;
+import com.philbeaudoin.quebec.client.scene.ComplexText.ComponentList;
+import com.philbeaudoin.quebec.client.scene.ComplexText.SizeInfo;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringInformation;
 import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.message.Message.LeaderDescription;
 import com.philbeaudoin.quebec.shared.state.ActionType;
 
 /**
@@ -41,8 +41,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
   private final GraphicConstants constants;
   private final GraphicMessages messages;
   private final SpriteResources spriteResources;
-  private final ArrayList<ComplexText.Component> components =
-      new ArrayList<ComplexText.Component>();
+  private final ComponentList components = new ComponentList();
 
   @Inject
   public MessageRenderer(GraphicConstants constants, GraphicMessages messages,
@@ -56,20 +55,24 @@ public class MessageRenderer implements Message.Visitor<Void> {
    * Obtain the components rendered by this renderer.
    * @return The components.
    */
-  public ArrayList<Component> getComponents() {
+  public ComponentList getComponents() {
     return components;
   }
 
   /**
-   * Calculates the approximate width of the series of components generated.
-   * @return The approximate width.
+   * Checks if this message has any content.
+   * @return True if it has content, false if not.
    */
-  public double calculateApproximateWidth() {
-    double total = 0;
-    for (ComplexText.Component component : components) {
-      total += component.getApproximateWidth();
-    }
-    return total;
+  public boolean hasContent() {
+    return !components.isEmpty();
+  }
+
+  /**
+   * Calculates the approximate size of the series of components generated.
+   * @return The approximate size.
+   */
+  public SizeInfo calculateApproximateSize() {
+    return components.calculateApproximateSize();
   }
 
   @Override
@@ -431,6 +434,33 @@ public class MessageRenderer implements Message.Visitor<Void> {
   @Override
   public Void visit(Message.GameCompleted host) {
     addText(constants.gameCompleted());
+    return null;
+  }
+
+  @Override
+  public Void visit(LeaderDescription host) {
+    switch (host.getLeaderCard()) {
+    case RELIGIOUS:
+      components.addFromMultilineText(constants.religiousLeaderDescription());
+      break;
+    case POLITIC:
+      components.addFromMultilineText(constants.politicLeaderDescription());
+      break;
+    case ECONOMIC:
+      components.addFromMultilineText(constants.economicLeaderDescription());
+      break;
+    case CULTURAL_TWO_THREE:
+      components.addFromMultilineText(constants.cultural23LeaderDescription());
+      break;
+    case CULTURAL_FOUR_FIVE:
+      components.addFromMultilineText(constants.cultural45LeaderDescription());
+      break;
+    case CITADEL:
+      components.addFromMultilineText(constants.citadelLeaderDescription());
+      break;
+    default:
+      assert false;
+    }
     return null;
   }
 

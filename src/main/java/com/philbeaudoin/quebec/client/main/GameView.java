@@ -43,9 +43,9 @@ import com.philbeaudoin.quebec.client.widget.FullCanvas;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
+public class GameView extends ViewImpl implements GamePresenter.MyView {
 
-  interface Binder extends UiBinder<Widget, MainPageView> { }
+  interface Binder extends UiBinder<Widget, GameView> { }
   protected static final Binder binder = GWT.create(Binder.class);
 
   // Timer refresh rate, in milliseconds.
@@ -73,7 +73,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   @UiField
   FullCanvas fullCanvas;
 
-  private MainPagePresenter presenter;
+  private GamePresenter presenter;
 
   // Setup refresh timer.
   final Timer refreshTimer = new Timer() {
@@ -85,7 +85,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   };
 
   @Inject
-  public MainPageView() {
+  public GameView() {
     widget = binder.createAndBindUi(this);
     canvas = fullCanvas.asCanvas();
     context = canvas.getContext2d();
@@ -143,7 +143,7 @@ public class MainPageView extends ViewImpl implements MainPagePresenter.MyView {
   }
 
   @Override
-  public void setPresenter(MainPagePresenter presenter) {
+  public void setPresenter(GamePresenter presenter) {
     this.presenter = presenter;
   }
 

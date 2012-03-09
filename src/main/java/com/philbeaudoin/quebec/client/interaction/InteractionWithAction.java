@@ -59,7 +59,7 @@ public abstract class InteractionWithAction implements Interaction {
     this.gameStateChange = gameStateChange;
     this.target = target;
 
-    if (messageRenderer != null && messageRenderer.getComponents().size() > 0 &&
+    if (messageRenderer != null && messageRenderer.hasContent() &&
         !gameState.hasPossibleActionMessage()) {
       this.actionText = new ComplexText(messageRenderer.getComponents(),
           new ConstantTransform(new Vector2d(GameStateRenderer.TEXT_CENTER,

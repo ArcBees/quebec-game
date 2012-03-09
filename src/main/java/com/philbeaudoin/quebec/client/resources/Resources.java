@@ -178,8 +178,10 @@ public interface Resources extends ClientBundle {
   DataResource leaderPolitic();
   @Source("leader_economic.png")
   DataResource leaderEconomic();
-  @Source("leader_cultural.png")
-  DataResource leaderCultural();
+  @Source("leader_cultural_23.png")
+  DataResource leaderCulturalTwoThree();
+  @Source("leader_cultural_45.png")
+  DataResource leaderCulturalFourFive();
   @Source("leader_citadel.png")
   DataResource leaderCitadel();
   @Source("purple_zone.png")

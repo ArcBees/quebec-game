@@ -26,8 +26,10 @@ import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.philbeaudoin.quebec.client.PlaceManager;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
-import com.philbeaudoin.quebec.client.main.MainPagePresenter;
-import com.philbeaudoin.quebec.client.main.MainPageView;
+import com.philbeaudoin.quebec.client.main.GamePresenter;
+import com.philbeaudoin.quebec.client.main.GameView;
+import com.philbeaudoin.quebec.client.menu.MenuPresenter;
+import com.philbeaudoin.quebec.client.menu.MenuView;
 import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentFactories;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
@@ -53,8 +55,10 @@ public class QuebecClientModule extends AbstractPresenterModule {
 
     bind(GameController.class).in(Singleton.class);
 
-    bindPresenter(MainPagePresenter.class, MainPagePresenter.MyView.class, MainPageView.class,
-        MainPagePresenter.MyProxy.class);
+    bindPresenter(GamePresenter.class, GamePresenter.MyView.class, GameView.class,
+        GamePresenter.MyProxy.class);
+    bindPresenter(MenuPresenter.class, MenuPresenter.MyView.class, MenuView.class,
+        MenuPresenter.MyProxy.class);
   }
 
   @Provides
