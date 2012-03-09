@@ -31,8 +31,12 @@ package com.philbeaudoin.quebec.shared;
  */
 public class NameTokens {
 
-  public static final String mainPage = "!main";
-  public static String getMainPage() {
-    return mainPage;
+  public static final String gamePage = "game";
+  public static String getGamePage() {
+    return gamePage;
+  }
+  public static final String menuPage = "!menu";
+  public static String getMenuPage() {
+    return menuPage;
   }
 }

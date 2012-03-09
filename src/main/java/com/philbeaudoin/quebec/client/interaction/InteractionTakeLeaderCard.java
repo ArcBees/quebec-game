@@ -17,18 +17,22 @@
 package com.philbeaudoin.quebec.client.interaction;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
+import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * This is an interaction with the game board for the action of taking a leader card.
@@ -36,43 +40,53 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
  */
 public class InteractionTakeLeaderCard extends InteractionWithAction {
 
-  private final SceneNodeList arrows;
+  private final SceneNodeList extras;
 
   @Inject
   public InteractionTakeLeaderCard(Scheduler scheduler, InteractionFactories interactionFactories,
-      MessageRenderer messageRenderer,  @Assisted GameState gameState,
+      Provider<MessageRenderer> messageRendererProvider,  @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionTakeLeaderCard action) {
     super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetLeaderCard(gameStateRenderer, action),
-        createActionMessage(gameState, messageRenderer), action.execute(gameState));
+        createActionMessage(gameState, messageRendererProvider.get()), action.execute(gameState));
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
-    arrows = new SceneNodeList();
+    extras = new SceneNodeList();
 
     // Arrow to move card.
     Transform cardFrom = gameStateRenderer.getLeaderCardOnBoardTransform(action.getLeaderCard());
     Transform cardTo = gameStateRenderer.getLeaderCardOnPlayerTransform(playerColor);
-    arrows.add(new Arrow(cardFrom.getTranslation(0), cardTo.getTranslation(0)));
+    extras.add(new Arrow(cardFrom.getTranslation(0), cardTo.getTranslation(0)));
 
     // Arrow to move passive cubes to active, if needed.
     if (gameState.nbPlayerWithLeaders() > 0 &&
         gameState.getCurrentPlayer().getNbPassiveCubes() > 0) {
       Transform cubeFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, false);
       Transform cubeTo = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, true);
-      arrows.add(new Arrow(cubeFrom.getTranslation(0), cubeTo.getTranslation(0)));
+      extras.add(new Arrow(cubeFrom.getTranslation(0), cubeTo.getTranslation(0)));
     }
+
+    // Text describing the card.
+    MessageRenderer messageRenderer = messageRendererProvider.get();
+    new Message.LeaderDescription(action.getLeaderCard()).accept(messageRenderer);
+    Vector2d textPos = new Vector2d(cardFrom.getTranslation(0).getX(),
+        cardFrom.getTranslation(0).getY() +
+        messageRenderer.getComponents().calculateApproximateSize().getHeight() / 2.0 + 0.066);
+    ComplexText text = new ComplexText(messageRenderer.getComponents(),
+        new ConstantTransform(textPos));
+    extras.add(text);
   }
 
   @Override
   protected void doMouseEnter(double x, double y, double time) {
     super.doMouseEnter(x, y, time);
-    gameStateRenderer.addToAnimationGraph(arrows);
+    gameStateRenderer.addToAnimationGraph(extras);
   }
 
   @Override
   protected void doMouseLeave(double x, double y, double time) {
     super.doMouseLeave(x, y, time);
-    arrows.setParent(null);
+    extras.setParent(null);
   }
 
   private static MessageRenderer createActionMessage(GameState gameState,

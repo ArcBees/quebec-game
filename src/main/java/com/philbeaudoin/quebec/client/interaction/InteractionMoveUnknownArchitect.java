@@ -63,7 +63,7 @@ public class InteractionMoveUnknownArchitect extends InteractionWithAction {
     // Text at the top
     new Message.MoveEitherArchitect(playerColor, PlayerColor.NEUTRAL).accept(messageRenderer);
     extras.add(new ComplexText(messageRenderer.getComponents(),
-        new ConstantTransform(new Vector2d(0.8, 0.19))));
+        new ConstantTransform(new Vector2d(0.8, 0.18))));
 
     // Arrow to move architect.
     Transform to = gameStateRenderer.getArchitectSlotOnTileTransform(

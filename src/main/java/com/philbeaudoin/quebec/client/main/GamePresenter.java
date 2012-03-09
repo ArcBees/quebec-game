@@ -27,6 +27,7 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
@@ -40,49 +41,68 @@ import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
- * This is the presenter of the main application page.
+ * This is the presenter of the game itself.
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class MainPagePresenter extends
-    Presenter<MainPagePresenter.MyView, MainPagePresenter.MyProxy> {
+public class GamePresenter extends
+    Presenter<GamePresenter.MyView, GamePresenter.MyProxy> {
+
+  private static final AiInfo[] AI_INFOS = {
+    new AiInfo(PlayerColor.BLACK, "The Matrix"),
+    new AiInfo(PlayerColor.PINK, "Johnny 5"),
+    new AiInfo(PlayerColor.WHITE, "HAL"),
+    new AiInfo(PlayerColor.ORANGE, "Skynet"),
+    new AiInfo(PlayerColor.GREEN, "WOPR")
+  };
 
   public static final Object TYPE_RevealNewsContent = new Object();
 
   private final GameStateRenderer gameStateRenderer;
-  private final GameState gameState;
+  private final Provider<GameState> gameStateProvider;
+
+  private int nbPlayers = 4;
 
   /**
    * The presenter's view.
    */
   public interface MyView extends View {
-    void setPresenter(MainPagePresenter presenter);
+    void setPresenter(GamePresenter presenter);
   }
 
   /**
    * The presenter's proxy.
    */
   @ProxyStandard
-  @NameToken(NameTokens.mainPage)
-  public interface MyProxy extends ProxyPlace<MainPagePresenter> {
+  @NameToken(NameTokens.gamePage)
+  public interface MyProxy extends ProxyPlace<GamePresenter> {
   }
 
   @Inject
-  public MainPagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
+  public GamePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
       RendererFactories rendererFactories, Provider<GameState> gameStateProvider) {
     super(eventBus, view, proxy);
     view.setPresenter(this);
     gameStateRenderer = rendererFactories.createGameStateRenderer();
+    this.gameStateProvider = gameStateProvider;
+  }
 
-    gameState = gameStateProvider.get();
+  @Override
+  protected void onReveal() {
+    super.onReveal();
+    GameState gameState = gameStateProvider.get();
 
-    ArrayList<Player> players = new ArrayList<Player>(5);
+    if (nbPlayers < 3) {
+      nbPlayers = 3;
+    } else if (nbPlayers > 5) {
+      nbPlayers = 5;
+    }
+    ArrayList<Player> players = new ArrayList<Player>(nbPlayers);
+
     players.add(new PlayerLocalUser(PlayerColor.BLACK, "You"));
-//    players.add(new PlayerLocalAi(PlayerColor.BLACK, "Johnny 5", new AiBrainSimple()));
-    players.add(new PlayerLocalAi(PlayerColor.WHITE, "HAL", new AiBrainSimple()));
-    players.add(new PlayerLocalAi(PlayerColor.ORANGE, "Skynet", new AiBrainSimple()));
-    players.add(new PlayerLocalAi(PlayerColor.GREEN, "WOPR", new AiBrainSimple()));
-//    players.add(new PlayerLocalAi(PlayerColor.PINK, "The Matrix", new AiBrainSimple()));
+    for (int i = 1; i < nbPlayers; i++) {
+      players.add(new PlayerLocalAi(AI_INFOS[i].color, AI_INFOS[i].name, new AiBrainSimple()));
+    }
 
     gameState.initGame(players);
     gameStateRenderer.render(gameState);
@@ -91,6 +111,15 @@ public class MainPagePresenter extends
   @Override
   protected void revealInParent() {
     RevealRootLayoutContentEvent.fire(this, this);
+  }
+
+  @Override
+  public void prepareFromRequest(PlaceRequest request) {
+    try {
+      nbPlayers = Integer.parseInt(request.getParameter("n", "4"));
+    } catch (NumberFormatException e) {
+      nbPlayers = 4;
+    }
   }
 
   /**
@@ -136,4 +165,17 @@ public class MainPagePresenter extends
   public boolean isRefreshNeeded() {
     return gameStateRenderer.isRefreshNeeded();
   }
+
+  /**
+   * To keep a list of AIs to instantiate.
+   */
+  private static class AiInfo {
+    final PlayerColor color;
+    final String name;
+    AiInfo(PlayerColor color, String name) {
+      this.color = color;
+      this.name = name;
+    }
+  }
 }
+

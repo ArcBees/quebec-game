@@ -39,6 +39,6 @@ public class PlaceManager extends PlaceManagerImpl {
     // Using false as a second parameter ensures that the URL in the browser bar
     // is not updated, so the user is able to leave the application using the
     // browser's back navigation button.
-    revealPlace(new PlaceRequest(NameTokens.getMainPage()), false);
+    revealPlace(new PlaceRequest(NameTokens.getMenuPage()), false);
   }
 }

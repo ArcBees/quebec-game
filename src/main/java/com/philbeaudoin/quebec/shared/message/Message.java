@@ -21,6 +21,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringInformation;
 import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
 import com.philbeaudoin.quebec.shared.state.ActionType;
+import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**
  * Interface for messages. These messages can be rendered in various ways by a custom
@@ -74,6 +75,7 @@ public interface Message {
     T visit(InformationOnActiveCubesScore host);
     T visit(InformationOnBuildingsScore host);
     T visit(GameCompleted host);
+    T visit(LeaderDescription host);
   }
 
   /**
@@ -526,4 +528,22 @@ public interface Message {
       return visitor.visit(this);
     }
   }
+
+  /**
+   * Text describing a leader card. Depends on the specific leader.
+   */
+  public class LeaderDescription implements Message {
+    private final LeaderCard leaderCard;
+    public LeaderDescription(LeaderCard leaderCard) {
+      this.leaderCard = leaderCard;
+    }
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+      return visitor.visit(this);
+    }
+    public LeaderCard getLeaderCard() {
+      return leaderCard;
+    }
+  }
+
 }

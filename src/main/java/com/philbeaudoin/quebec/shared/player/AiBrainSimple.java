@@ -16,8 +16,10 @@
 
 package com.philbeaudoin.quebec.shared.player;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.user.client.Random;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringHelper;
@@ -34,10 +36,14 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
  */
 public class AiBrainSimple implements AiBrain {
 
+  private static final double LEVEL = 1.0;  // Level of the AI player. 1.0 for the best player.
+
   @Override
   public GameStateChange getMove(GameState gameState) {
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
-    ScoreAndMove result = scoreForBestMove(gameState, playerColor);
+    // TODO(beaudoin): AIs with a level < 1 play too much architect moves.
+    double percentile = 1.0 - Random.nextDouble() * (0.1 * (1.0 - LEVEL));
+    ScoreAndMove result = scoreForBestMove(gameState, playerColor, percentile);
     if (result == null) {
       return null;
     }
@@ -55,9 +61,11 @@ public class AiBrainSimple implements AiBrain {
    * any mini-max here.
    * @param gameState The current game state.
    * @param playerState The player for which to find the best possible move.
+   * @param percent The percentile of the move to take, 1.0 is going to take the best move.
    * @return The best possible move and its score, or null.
    */
-  private ScoreAndMove scoreForBestMove(GameState gameState, PlayerColor playerColor) {
+  private ScoreAndMove scoreForBestMove(GameState gameState, PlayerColor playerColor,
+      double percent) {
     if (playerColor != gameState.getCurrentPlayer().getPlayer().getColor()) {
       return null;
     }
@@ -68,12 +76,12 @@ public class AiBrainSimple implements AiBrain {
     }
 
     double bestScore = -1;
-    GameStateChange bestMove = null;
+    ArrayList<ScoreAndMove> moves = new ArrayList<ScoreAndMove>(possibleActions.getNbActions());
     for (int actionIndex = 0; actionIndex < possibleActions.getNbActions(); ++actionIndex) {
       GameState gameStateCopy = new GameState(gameState);
       GameStateChange gameStateChange = possibleActions.execute(actionIndex, gameStateCopy);
       gameStateChange.apply(gameStateCopy);
-      ScoreAndMove scoreAndMove = scoreForBestMove(gameStateCopy, playerColor);
+      ScoreAndMove scoreAndMove = scoreForBestMove(gameStateCopy, playerColor, 1.0);
       double score = -10000;
       if (scoreAndMove == null) {
         score = evaluate(gameStateCopy, playerColor);
@@ -82,10 +90,19 @@ public class AiBrainSimple implements AiBrain {
       }
       if (score > bestScore) {
         bestScore = score;
-        bestMove = gameStateChange;
+        moves.add(new ScoreAndMove(score, gameStateChange));
       }
     }
-    return new ScoreAndMove(bestScore, bestMove);
+
+    double targetScore = percent * bestScore;
+    ScoreAndMove selectedMove = null;
+    for (ScoreAndMove move : moves) {
+      if (move.score >= targetScore && (selectedMove == null || move.score <= selectedMove.score)) {
+        selectedMove = move;
+      }
+    }
+
+    return selectedMove;
   }
 
   private double evaluate(GameState gameState, PlayerColor playerColor) {
@@ -115,13 +132,14 @@ public class AiBrainSimple implements AiBrain {
     if (leaderCard == null) {
       return 0;
     }
+    // TODO(beaudoin): Many constants here, extract them out.
     switch (leaderCard) {
     case CITADEL:
       // Already counted by other means.
       return 0;
     case RELIGIOUS:
-      // Can play on own tile, estimate each future move is worth 1.5 extra points.
-      return movesUntilScoring.moves * 1.5 / (double) gameState.getNbPlayers();
+      // Can play on own tile, estimate each future move is worth 1.25 extra points.
+      return movesUntilScoring.moves * 1.06 / (double) gameState.getNbPlayers();
     case POLITIC:
       // Can send cubes to any zone, cubes on tiles and active cubes are worth an extra 0.4 points
       // provided there are enough architect moves left.
@@ -133,10 +151,12 @@ public class AiBrainSimple implements AiBrain {
       // play than in hand.
       return movesUntilScoring.architectMoves *
           (playerState.isHoldingNeutralArchitect() ? 0.2 : 0.6);
-    case CULTURAL:
+    case CULTURAL_TWO_THREE:
+    case CULTURAL_FOUR_FIVE:
       // Score with each move, each own architect move is worth 2 extra point.
       int nbPlayers = gameState.getNbPlayers();
-      return movesUntilScoring.architectMoves * ((nbPlayers <= 3) ? 1.5 : 2.0) / nbPlayers;
+      return movesUntilScoring.architectMoves *
+          (LeaderCard.getPointsForCultural(leaderCard, 1) + 0.5) / nbPlayers;
     default:
       return 0;
     }
@@ -244,11 +264,11 @@ public class AiBrainSimple implements AiBrain {
     MoveCount result = new MoveCount();
     int i = (scoringPlayerIndex + 1) % nbPlayers;
     while (true) {
-      PlayerState playerState = playerStates.get(i);
       result.moves++;
-      if (playerState.getPlayer().getColor() == playerColor) {
-        result.playerMoves++;
-      }
+      // TODO(beaudoin): The following should work here, but it doesn't.
+      // if (playerState.getPlayer().getColor() == playerColor) {
+      //   result.playerMoves++;
+      // }
       if (nbActives[i] == 0 && nbPassives[i] == 0) {
         break;
       }
@@ -282,7 +302,6 @@ public class AiBrainSimple implements AiBrain {
 
   private static class MoveCount {
     int moves;
-    int playerMoves;
     int architectMoves;
   }
 }

@@ -555,7 +555,7 @@ public class BoardRenderer {
    * @param leaderCard The leader card to highlight.
    */
   public void highlightLeaderCard(SceneNodeList foregroundRoot, LeaderCard leaderCard) {
-    SceneNode node = leaderCardNode[leaderCard.ordinal()];
+    SceneNode node = leaderCardNode[leaderCard.getPositionIndex()];
     assert node != null;
     Transform globalTransform = node.getTotalTransform(0);
     SceneNode highlightedCard = node.deepClone();
@@ -579,7 +579,7 @@ public class BoardRenderer {
    * @return A copied scene node corresponding to that leader card.
    */
   public SceneNode copyLeaderCard(LeaderCard leaderCard) {
-    SceneNode node = leaderCardNode[leaderCard.ordinal()];
+    SceneNode node = leaderCardNode[leaderCard.getPositionIndex()];
     assert node != null;
     return node.deepClone();
   }
@@ -610,7 +610,7 @@ public class BoardRenderer {
    * @return The global transforms of the removed leader card.
    */
   public Transform removeLeaderCard(LeaderCard leaderCard) {
-    int index = leaderCard.ordinal();
+    int index = leaderCard.getPositionIndex();
     assert leaderCardNode[index] != null;
     Transform result = leaderCardNode[index].getTotalTransform(0);
     leaderCardNode[index].setParent(null);
@@ -624,7 +624,7 @@ public class BoardRenderer {
    * @return The global transforms of the added leader card.
    */
   public Transform addLeaderCard(LeaderCard leaderCard) {
-    int index = leaderCard.ordinal();
+    int index = leaderCard.getPositionIndex();
     assert leaderCardNode[index] == null;
     leaderCardNode[index] = new Sprite(spriteResources.getLeader(leaderCard),
         getLeaderCardTransform(index));
@@ -638,7 +638,7 @@ public class BoardRenderer {
    * @return The global transforms of the leader card location.
    */
   public Transform getLeaderCardTransform(LeaderCard leaderCard) {
-    int index = leaderCard.ordinal();
+    int index = leaderCard.getPositionIndex();
     return backgroundBoardRoot.getTotalTransform(0).times(getLeaderCardTransform(index));
   }
 

@@ -135,10 +135,11 @@ public class AiBrainSimple2 implements AiBrain {
       // play than in hand.
       return movesUntilScoring.architectMoves *
           (playerState.isHoldingNeutralArchitect() ? 0.2 : 0.4);
-    case CULTURAL:
+    case CULTURAL_TWO_THREE:
+    case CULTURAL_FOUR_FIVE:
       // Score with each move, each own architect move is worth 2.5 extra point.
-      // TODO(beaudoin): Make this depend on the number of players.
-      return movesUntilScoring.playerArchitectMoves * 2.5;
+      return movesUntilScoring.playerArchitectMoves *
+          (LeaderCard.getPointsForCultural(leaderCard, 1) + 0.5);
     default:
       return 0;
     }

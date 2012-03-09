@@ -61,8 +61,8 @@ public class GameStateRenderer {
   public static final double LEFT_COLUMN_WIDTH = 0.38209;
 
   public static final double TEXT_CENTER = 1.05;
-  public static final double TEXT_LINE_1 = 0.095;
-  public static final double TEXT_LINE_2 = 0.136;
+  public static final double TEXT_LINE_1 = 0.085;
+  public static final double TEXT_LINE_2 = 0.126;
 
   private final SceneNodeList staticRoot = new SceneNodeList();
   private final SceneNodeList dynamicRoot = new SceneNodeList();

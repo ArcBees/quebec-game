@@ -79,10 +79,11 @@ public class GameController {
 
     List<LeaderCard> availableLeaderCards = gameState.getAvailableLeaderCards();
     availableLeaderCards.clear();
-    for (LeaderCard leaderCard : LeaderCard.values()) {
-      if (leaderCard == LeaderCard.RELIGIOUS && nbPlayers <= 3) {
-        continue;
-      }
+    LeaderCard[] leaderCards = LeaderCard.FOUR_FIVE_PLAYERS;
+    if (nbPlayers == 3) {
+      leaderCards = LeaderCard.THREE_PLAYERS;
+    }
+    for (LeaderCard leaderCard : leaderCards) {
       availableLeaderCards.add(leaderCard);
     }
 
