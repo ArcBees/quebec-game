@@ -16,38 +16,50 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 
 /**
- * The action of skipping a move.
+ * An explicit action represented by a message and a sequence of game state changes. The user
+ * generally triggers that action by clicking a button displaying the message.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionSkip implements GameAction {
+public class ActionExplicit implements GameAction {
 
-  private final GameStateChange followup;
-
-  public ActionSkip() {
-    this(new GameStateChangeNextPlayer());
+  public static ActionExplicit createSkipAction() {
+    return new ActionExplicit(new Message.Skip(), new GameStateChangeNextPlayer());
   }
 
-  public ActionSkip(GameStateChange followup) {
-    assert followup != null;
-    this.followup = followup;
+  private final Message message;
+  private final GameStateChange action;
+
+  public ActionExplicit(Message message, GameStateChange action) {
+    assert action != null;
+    this.message = message;
+    this.action = action;
   }
 
   @Override
   public GameStateChange execute(GameState gameState) {
     GameStateChangeComposite result = new GameStateChangeComposite();
     // Move to next player.
-    result.add(followup);
+    result.add(action);
     return result;
   }
 
   @Override
   public void accept(GameActionVisitor visitor) {
     visitor.visit(this);
+  }
+
+  /**
+   * Access the message that should be displayed in the button representing that action.
+   * @return The message.
+   */
+  public Message getMessage() {
+    return message;
   }
 }

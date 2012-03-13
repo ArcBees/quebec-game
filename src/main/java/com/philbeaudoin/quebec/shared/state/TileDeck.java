@@ -32,8 +32,9 @@ public class TileDeck {
 
   /**
    * Create a tile deck and initialize it with the standard tiles of the game.
+   * @param shuffle True to shuffle the deck, false to use the pre-canned shuffle.
    */
-  public TileDeck() {
+  public TileDeck(boolean shuffle) {
     for (int influenceTypeIndex = 0; influenceTypeIndex < 4; ++influenceTypeIndex) {
       InfluenceType influenceType = InfluenceType.values()[influenceTypeIndex];
       ArrayList<Tile> deck = new ArrayList<Tile>();
@@ -44,7 +45,11 @@ public class TileDeck {
           deck.add(new Tile(influenceType, century, i));
         }
       }
-      shuffle(deck);
+      if (shuffle) {
+        shuffle(deck);
+      } else {
+        cannedShuffle(deck, influenceTypeIndex);
+      }
     }
   }
 
@@ -70,6 +75,18 @@ public class TileDeck {
     int size = list.size();
     for (int i = size; i > 1; i--) {
       swap(list, i - 1, Random.nextInt(i));
+    }
+  }
+
+  /**
+   * A Fisher-Yates shuffle using a canned random number generator for predictability.
+   * @param list The list to shuffle
+   * @param seed The seed to use.
+   */
+  public static void cannedShuffle(ArrayList<?> list, int seed) {
+    int size = list.size();
+    for (int i = size; i > 1; i--) {
+      swap(list, i - 1, ((i + 3) * (seed + 7) * 137) % i);
     }
   }
 

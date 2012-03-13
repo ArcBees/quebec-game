@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
+import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -40,7 +41,7 @@ import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.ActionSelectBoardAction;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.GameActionVisitor;
@@ -48,6 +49,7 @@ import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -87,6 +89,8 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
       new ArrayList<ActionPerformScoringPhase>();
   private final ArrayList<ActionMoveCubes> moveCubesActions = new ArrayList<ActionMoveCubes>();
   private final ArrayList<TextInteraction> textInteractions = new ArrayList<TextInteraction>();
+
+  private PossibleActions generatingActions;
 
   @Inject
   LocalUserInteractionGenerator(InteractionFactories factories,
@@ -146,6 +150,18 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
 
     // Generate text interactions last, since other interactions may create them.
     generateTextInteractions();
+
+    // Generate the message associated with the possible actions, if any.
+    // TODO(beaudoin): Extract to a common class, duplicate in LocalAiInteractionGenerator.
+    assert generatingActions != null;
+    Message message = generatingActions.getMessage();
+    if (message != null) {
+      MessageRenderer messageRenderer = messageRendererProvider.get();
+      message.accept(messageRenderer);
+      gameStateRenderer.addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
+          new ConstantTransform(new Vector2d(
+              GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1))));
+    }
   }
 
   private void generateMoveArchitectInteractions() {
@@ -284,6 +300,12 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
   }
 
   @Override
+  public void setPossibleActions(PossibleActions generatingActions) {
+    assert this.generatingActions == null;
+    this.generatingActions = generatingActions;
+  }
+
+  @Override
   public void visit(ActionMoveArchitect host) {
     moveArchitectActions.add(host);
   }
@@ -326,9 +348,9 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
   }
 
   @Override
-  public void visit(ActionSkip host) {
+  public void visit(ActionExplicit host) {
     MessageRenderer messageRenderer = messageRendererProvider.get();
-    new Message.Skip().accept(messageRenderer);
+    host.getMessage().accept(messageRenderer);
     textInteractions.add(new TextInteraction(messageRenderer, null, host));
   }
 
