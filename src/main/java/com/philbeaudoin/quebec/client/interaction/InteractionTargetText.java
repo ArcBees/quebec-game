@@ -22,7 +22,6 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
-import com.philbeaudoin.quebec.client.scene.ComplexText.SizeInfo;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -44,7 +43,7 @@ public class InteractionTargetText implements InteractionTarget {
       @Assisted GameStateRenderer gameStateRenderer, @Assisted MessageRenderer messageRenderer,
       @Assisted Vector2d pos) {
     this.gameStateRenderer = gameStateRenderer;
-    SizeInfo sizeInfo = messageRenderer.calculateApproximateSize();
+    Vector2d sizeInfo = messageRenderer.calculateApproximateSize();
     Transform fromTransform = new ConstantTransform(pos);
     Transform toTransform = new ConstantTransform(pos, 1.08, 0);
 
@@ -54,7 +53,7 @@ public class InteractionTargetText implements InteractionTarget {
     textAnimation = sceneNodeAnimationFactory.create(gameStateRenderer, fromTransform, toTransform,
         textNode);
 
-    this.trigger = new RectangleTrigger(pos, sizeInfo.getWidth(), sizeInfo.getHeight());
+    this.trigger = new RectangleTrigger(pos, sizeInfo.getX(), sizeInfo.getY());
   }
 
   @Override

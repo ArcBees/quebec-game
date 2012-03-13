@@ -22,7 +22,6 @@ import com.philbeaudoin.quebec.client.resources.text.GraphicConstants;
 import com.philbeaudoin.quebec.client.resources.text.GraphicMessages;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.ComplexText.ComponentList;
-import com.philbeaudoin.quebec.client.scene.ComplexText.SizeInfo;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -31,6 +30,7 @@ import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.Message.LeaderDescription;
 import com.philbeaudoin.quebec.shared.state.ActionType;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * A message visitor used to render messages into complex text components.
@@ -71,7 +71,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
    * Calculates the approximate size of the series of components generated.
    * @return The approximate size.
    */
-  public SizeInfo calculateApproximateSize() {
+  public Vector2d calculateApproximateSize() {
     return components.calculateApproximateSize();
   }
 
@@ -461,6 +461,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
     default:
       assert false;
     }
+    components.breakLongLines(0.45);
     return null;
   }
 
