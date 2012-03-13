@@ -82,7 +82,8 @@ public class MoveArchitectHelper {
     PlayerColor starTokenColor = nbFilledSpots == 0 ? PlayerColor.NONE : playerColor;
     result.add(new GameStateChangeFlipTile(origin, starTokenColor, nbFilledSpots));
 
-    if (nbFilledSpots > 0 && playerState.getLeaderCard().isCultural()) {
+    if (nbFilledSpots > 0 && playerState.getLeaderCard() != null &&
+        playerState.getLeaderCard().isCultural()) {
       // Cultural leader score points based on the number of filled spots.
       result.add(new GameStateChangeScorePoints(playerColor, LeaderCard.getPointsForCultural(
           playerState.getLeaderCard(), nbFilledSpots)));

@@ -110,6 +110,6 @@ public class Arrow extends SceneNodeImpl {
 
   @Override
   public SceneNode deepClone() {
-    return new Arrow(from, to);
+    return new Arrow(from, to, isVisible());
   }
 }

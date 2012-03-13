@@ -24,6 +24,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
+import com.philbeaudoin.quebec.client.scene.Callout;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -71,7 +72,9 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
     new Message.LeaderDescription(action.getLeaderCard()).accept(messageRenderer);
     Vector2d textPos = new Vector2d(cardFrom.getTranslation(0).getX(),
         cardFrom.getTranslation(0).getY() +
-        messageRenderer.getComponents().calculateApproximateSize().getHeight() / 2.0 + 0.066);
+        messageRenderer.getComponents().calculateApproximateSize().getY() / 2.0 + 0.072);
+    extras.add(new Callout(textPos, new Vector2d(cardFrom.getTranslation(0).getX(),
+        cardFrom.getTranslation(0).getY() + 0.052)));
     ComplexText text = new ComplexText(messageRenderer.getComponents(),
         new ConstantTransform(textPos));
     extras.add(text);

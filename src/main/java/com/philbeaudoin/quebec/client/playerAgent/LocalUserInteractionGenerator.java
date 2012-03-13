@@ -266,13 +266,13 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
     // add one to many in the loop.
     double totalWidth = -TEXT_PADDING;
     for (TextInteraction textInteraction : textInteractions) {
-      totalWidth += textInteraction.messageRenderer.calculateApproximateSize().getWidth() +
+      totalWidth += textInteraction.messageRenderer.calculateApproximateSize().getX() +
           TEXT_PADDING;
     }
 
     double x = TEXT_CENTER_X - totalWidth / 2.0;
     for (TextInteraction textInteraction : textInteractions) {
-      double width = textInteraction.messageRenderer.calculateApproximateSize().getWidth();
+      double width = textInteraction.messageRenderer.calculateApproximateSize().getX();
       Vector2d pos = new Vector2d(x + width / 2.0, TEXT_CENTER_Y);
       gameStateRenderer.addInteraction(factories.createInteractionText(gameState,
         gameStateRenderer, textInteraction.messageRenderer, textInteraction.extras, pos,
