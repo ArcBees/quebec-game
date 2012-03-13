@@ -17,10 +17,13 @@
 package com.philbeaudoin.quebec.client.playerAgent;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
+import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
@@ -31,10 +34,14 @@ import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.ActionSelectBoardAction;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.action.GameActionVisitor;
+import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * Use this class to generate the list of
@@ -46,18 +53,42 @@ import com.philbeaudoin.quebec.shared.state.GameState;
 public class LocalAiInteractionGenerator implements GameActionVisitor {
 
   private final InteractionFactories factories;
+  private final Provider<MessageRenderer> messageRendererProvider;
   private final GameState gameState;
   private final GameStateRenderer gameStateRenderer;
 
-  private boolean manualMove;
+  private PossibleActions generatingActions;
+  private ActionPerformScoringPhase manualAction;
 
   @Inject
   LocalAiInteractionGenerator(InteractionFactories factories,
+      Provider<MessageRenderer> messageRendererProvider,
       @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer) {
     this.factories = factories;
+    this.messageRendererProvider = messageRendererProvider;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
+  }
+
+  /**
+   * Generates all the interactions that correspond to the visited actions. The method should be
+   * called exactly once after the possible actions have been visited.
+   */
+  public void generateInteractions() {
+    gameStateRenderer.addInteraction(factories.createInteractionPerformScoringPhase(gameState,
+        gameStateRenderer, manualAction));
+
+    // TODO(beaudoin): Extract to a common class, duplicate in LocalAiInteractionGenerator.
+    assert generatingActions != null;
+    Message message = generatingActions.getMessage();
+    if (message != null) {
+      MessageRenderer messageRenderer = messageRendererProvider.get();
+      message.accept(messageRenderer);
+      gameStateRenderer.addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
+          new ConstantTransform(new Vector2d(
+              GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1))));
+    }
   }
 
   /**
@@ -65,14 +96,19 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
    * @return true if it's a manual move, false otherwise.
    */
   public boolean isManualMove() {
-    return manualMove;
+    return manualAction != null;
+  }
+
+  @Override
+  public void setPossibleActions(PossibleActions generatingActions) {
+    assert this.generatingActions == null;
+    this.generatingActions  = generatingActions;
   }
 
   @Override
   public void visit(ActionPerformScoringPhase host) {
-    manualMove = true;
-    gameStateRenderer.addInteraction(factories.createInteractionPerformScoringPhase(gameState,
-        gameStateRenderer, host));
+    assert manualAction == null;
+    manualAction = host;
   }
 
   @Override
@@ -100,7 +136,7 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
   }
 
   @Override
-  public void visit(ActionSkip host) {
+  public void visit(ActionExplicit host) {
   }
 
   @Override

@@ -18,6 +18,7 @@
             <g:LayoutPanel ui:field="center">
               <g:layer>
               <g:FlowPanel>
+              <g:Hyperlink targetHistoryToken="game;t=1">Tutorial</g:Hyperlink>
               <g:Hyperlink targetHistoryToken="game;n=3">Quick solo 3 player game</g:Hyperlink>
               <g:Hyperlink targetHistoryToken="game;n=4">Quick solo 4 player game</g:Hyperlink>
               <g:Hyperlink targetHistoryToken="game;n=5">Quick solo 5 player game</g:Hyperlink>

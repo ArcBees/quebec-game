@@ -18,7 +18,7 @@ package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.ActionSelectBoardAction;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 
@@ -36,7 +36,7 @@ public class BoardActionYellowAny extends BoardAction {
     result.add(new ActionSelectBoardAction(new BoardActionYellowActivateThree(), triggeringTile));
     result.add(new ActionSelectBoardAction(new BoardActionYellowFillOneSpot(), triggeringTile));
     result.add(new ActionSelectBoardAction(new BoardActionYellowMoveArchitect(), triggeringTile));
-    result.add(new ActionSkip());
+    result.add(ActionExplicit.createSkipAction());
     return result;
   }
 }

@@ -18,7 +18,7 @@ package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
@@ -40,7 +40,7 @@ public class BoardActionRedTwoToPurpleOrYellow extends BoardAction {
             InfluenceType.RELIGIOUS, InfluenceType.ECONOMIC));
     result.add(new ActionSendCubesToZone(nbCubes, false, InfluenceType.RELIGIOUS));
     result.add(new ActionSendCubesToZone(nbCubes, false, InfluenceType.ECONOMIC));
-    result.add(new ActionSkip());
+    result.add(ActionExplicit.createSkipAction());
     return result;
   }
 }

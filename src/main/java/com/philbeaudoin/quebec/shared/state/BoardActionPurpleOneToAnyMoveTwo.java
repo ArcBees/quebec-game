@@ -22,7 +22,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
@@ -59,7 +59,8 @@ public class BoardActionPurpleOneToAnyMoveTwo extends BoardAction {
           computeFollowupMoveActions(gameState, InfluenceType.CULTURAL)));
       sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL,
           computeFollowupMoveActions(gameState, InfluenceType.CITADEL)));
-      sendAnywhere.add(new ActionSkip(computeFollowupMoveActions(gameState, null)));
+      sendAnywhere.add(new ActionExplicit(new Message.Skip(),
+          computeFollowupMoveActions(gameState, null)));
       return sendAnywhere;
     } else {
       return computeMoveActions(gameState, null);
@@ -120,7 +121,7 @@ public class BoardActionPurpleOneToAnyMoveTwo extends BoardAction {
         }
       }
     }
-    moveActions.add(new ActionSkip());
+    moveActions.add(ActionExplicit.createSkipAction());
     return moveActions;
   }
 

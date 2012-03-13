@@ -18,8 +18,6 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.ArrayList;
 
-import javax.inject.Inject;
-
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
@@ -42,9 +40,9 @@ public class GameState {
 
   private int century;
 
+  private int moveNumber;
   private PossibleActions possibleActions;
 
-  @Inject
   public GameState(GameController gameController) {
     this.gameController = gameController;
     playerStates = new ArrayList<PlayerState>();
@@ -54,6 +52,7 @@ public class GameState {
       influenceZoneState[i] = new InfluenceZoneState();
     }
     century = 0;
+    moveNumber = 0;
   }
 
   /**
@@ -97,6 +96,15 @@ public class GameState {
    */
   public void setCentury(int century) {
     this.century = century;
+  }
+
+  /**
+   * Access the current move number. The move number increments each time the current player
+   * changes.
+   * @returns The current move number.
+   */
+  public int getMoveNumber() {
+    return moveNumber;
   }
 
   /**
@@ -268,6 +276,7 @@ public class GameState {
     if (lastWasActive) {
       playerStates.get(0).setCurrentPlayer(true);
     }
+    moveNumber++;
     gameController.configurePossibleActions(this);
   }
 

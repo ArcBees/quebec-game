@@ -18,8 +18,6 @@ package com.philbeaudoin.quebec.client.main;
 
 import java.util.ArrayList;
 
-import javax.inject.Provider;
-
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -38,6 +36,8 @@ import com.philbeaudoin.quebec.shared.player.AiBrainSimple;
 import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
+import com.philbeaudoin.quebec.shared.state.GameControllerStandard;
+import com.philbeaudoin.quebec.shared.state.GameControllerTutorial;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -59,8 +59,8 @@ public class GamePresenter extends
   public static final Object TYPE_RevealNewsContent = new Object();
 
   private final GameStateRenderer gameStateRenderer;
-  private final Provider<GameState> gameStateProvider;
 
+  private boolean isTutorial;
   private int nbPlayers = 4;
 
   /**
@@ -80,17 +80,17 @@ public class GamePresenter extends
 
   @Inject
   public GamePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-      RendererFactories rendererFactories, Provider<GameState> gameStateProvider) {
+      RendererFactories rendererFactories) {
     super(eventBus, view, proxy);
     view.setPresenter(this);
     gameStateRenderer = rendererFactories.createGameStateRenderer();
-    this.gameStateProvider = gameStateProvider;
   }
 
   @Override
   protected void onReveal() {
     super.onReveal();
-    GameState gameState = gameStateProvider.get();
+    GameState gameState = new GameState(
+        isTutorial ? new GameControllerTutorial() : new GameControllerStandard());
 
     if (nbPlayers < 3) {
       nbPlayers = 3;
@@ -116,7 +116,12 @@ public class GamePresenter extends
   @Override
   public void prepareFromRequest(PlaceRequest request) {
     try {
-      nbPlayers = Integer.parseInt(request.getParameter("n", "4"));
+      isTutorial = !request.getParameter("t", "0").equals("0");
+      if (isTutorial) {
+        nbPlayers = 4;
+      } else {
+        nbPlayers = Integer.parseInt(request.getParameter("n", "4"));
+      }
     } catch (NumberFormatException e) {
       nbPlayers = 4;
     }

@@ -16,8 +16,6 @@
 
 package com.philbeaudoin.quebec.client.gin;
 
-import javax.inject.Singleton;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.inject.Provides;
@@ -34,7 +32,6 @@ import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentFactories;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
 import com.philbeaudoin.quebec.shared.Constants;
-import com.philbeaudoin.quebec.shared.state.GameController;
 
 /**
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
@@ -52,8 +49,6 @@ public class QuebecClientModule extends AbstractPresenterModule {
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);
 
     install(new DefaultModule(PlaceManager.class));
-
-    bind(GameController.class).in(Singleton.class);
 
     bindPresenter(GamePresenter.class, GamePresenter.MyView.class, GameView.class,
         GamePresenter.MyProxy.class);

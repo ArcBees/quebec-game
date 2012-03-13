@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 
@@ -45,7 +45,7 @@ public class BoardActionBlueAddStar extends BoardAction {
         result.add(new ActionIncreaseStar(tileState.getTile()));
       }
     }
-    result.add(new ActionSkip());
+    result.add(ActionExplicit.createSkipAction());
     return result;
   }
 }

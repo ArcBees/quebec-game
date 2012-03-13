@@ -71,6 +71,7 @@ public class PossibleActions {
    * @param visitor The visitor.
    */
   public void accept(GameActionVisitor visitor) {
+    visitor.setPossibleActions(this);
     for (GameAction gameAction : gameActions) {
       gameAction.accept(visitor);
     }

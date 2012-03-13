@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.shared.state;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
@@ -47,19 +47,19 @@ public class BoardActionPurpleOneToCitadelOneToAny extends BoardAction {
     sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.POLITIC));
     sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.ECONOMIC));
     sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CULTURAL));
-    sendAnywhere.add(new ActionSkip());
+    sendAnywhere.add(ActionExplicit.createSkipAction());
 
     GameStateChange sendAnywhereFollowup = new GameStateChangeQueuePossibleActions(sendAnywhere);
     PossibleActions result = new PossibleActions(new Message.SendPassiveCubesToZone(1,
         playerColor, InfluenceType.CITADEL));
     if (totalCubes >= 2) {
       result.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL, sendAnywhereFollowup));
-      result.add(new ActionSkip(sendAnywhereFollowup));
+      result.add(new ActionExplicit(new Message.Skip(), sendAnywhereFollowup));
     } else if (totalCubes >= 1) {
       result.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL));
-      result.add(new ActionSkip(sendAnywhereFollowup));
+      result.add(new ActionExplicit(new Message.Skip(), sendAnywhereFollowup));
     } else {
-      result.add(new ActionSkip());
+      result.add(ActionExplicit.createSkipAction());
     }
     return result;
   }

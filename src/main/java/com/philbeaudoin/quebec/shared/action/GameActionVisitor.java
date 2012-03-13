@@ -22,6 +22,12 @@ package com.philbeaudoin.quebec.shared.action;
  */
 public interface GameActionVisitor {
   /**
+   * Sets the {@link PossibleActions} that is using this visitor.
+   * @param possibleActions The possible actions using this visitor.
+   */
+  void setPossibleActions(PossibleActions possibleActions);
+
+  /**
    * Visits a {@link ActionSendWorkers}.
    * @param host The visited class.
    */
@@ -58,10 +64,10 @@ public interface GameActionVisitor {
   void visit(ActionMoveArchitect host);
 
   /**
-   * Visits a {@link ActionSkip}.
+   * Visits a {@link ActionExplicit}.
    * @param host The visited class.
    */
-  void visit(ActionSkip host);
+  void visit(ActionExplicit host);
 
   /**
    * Visits a {@link ActionActivateCubes}.

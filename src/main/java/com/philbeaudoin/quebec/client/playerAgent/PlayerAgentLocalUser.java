@@ -17,18 +17,12 @@
 package com.philbeaudoin.quebec.client.playerAgent;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * The player agent of a user playing locally.
@@ -38,14 +32,11 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 public class PlayerAgentLocalUser implements PlayerAgent {
 
   private final PlayerAgentFactories playerAgentFactories;
-  private final Provider<MessageRenderer> messageRendererProvider;
 
   @Inject
   PlayerAgentLocalUser(PlayerAgentFactories playerAgentFactories,
-      Provider<MessageRenderer> messageRendererProvider,
       @Assisted PlayerLocalUser playerLocalUser) {
     this.playerAgentFactories = playerAgentFactories;
-    this.messageRendererProvider = messageRendererProvider;
   }
 
   @Override
@@ -57,15 +48,6 @@ public class PlayerAgentLocalUser implements PlayerAgent {
           playerAgentFactories.createLocalUserInteractionGenerator(gameState, gameStateRenderer);
       possibleActions.accept(generator);
       generator.generateInteractions();
-      // TODO(beaudoin): Duplicated in PlayerAgentLocalAi, extract.
-      Message message = possibleActions.getMessage();
-      if (message != null) {
-        MessageRenderer messageRenderer = messageRendererProvider.get();
-        message.accept(messageRenderer);
-        gameStateRenderer.addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
-            new ConstantTransform(new Vector2d(
-                GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1))));
-      }
     }
   }
 }

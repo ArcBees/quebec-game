@@ -21,7 +21,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
@@ -50,14 +50,14 @@ public class BoardActionPurpleOnePointOneToAnyActivateOne extends BoardAction {
     sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.ECONOMIC));
     sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CULTURAL));
     sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL));
-    sendAnywhere.add(new ActionSkip());
+    sendAnywhere.add(ActionExplicit.createSkipAction());
 
     PossibleActions activateOrSendAnywhere;
     if (playerState.getNbPassiveCubes() > 0) {
       GameStateChange activateFollowup = new GameStateChangeQueuePossibleActions(sendAnywhere);
       activateOrSendAnywhere = new PossibleActions();
       activateOrSendAnywhere.add(new ActionActivateCubes(1, activateFollowup));
-      activateOrSendAnywhere.add(new ActionSkip(activateFollowup));
+      activateOrSendAnywhere.add(new ActionExplicit(new Message.Skip(), activateFollowup));
     } else {
       activateOrSendAnywhere = sendAnywhere;
     }

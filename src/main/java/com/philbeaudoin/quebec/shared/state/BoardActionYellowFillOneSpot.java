@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.shared.state;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 
@@ -36,7 +36,7 @@ public class BoardActionYellowFillOneSpot extends BoardAction {
   public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
 
     PossibleActions result = new PossibleActions(new Message.SelectSpotToFill());
-    result.add(new ActionSkip());
+    result.add(ActionExplicit.createSkipAction());
 
     int nbCubes = gameState.getCurrentPlayer().getNbTotalCubes();
 

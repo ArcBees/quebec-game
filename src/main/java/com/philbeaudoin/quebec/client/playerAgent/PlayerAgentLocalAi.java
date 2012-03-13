@@ -17,19 +17,13 @@
 package com.philbeaudoin.quebec.client.playerAgent;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
-import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * The player agent of an Artificial Intelligence playing locally.
@@ -39,14 +33,11 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 public class PlayerAgentLocalAi implements PlayerAgent {
 
   private final PlayerAgentFactories playerAgentFactories;
-  private final Provider<MessageRenderer> messageRendererProvider;
   private final PlayerLocalAi player;
 
   @Inject
-  PlayerAgentLocalAi(PlayerAgentFactories playerAgentFactories,
-      Provider<MessageRenderer> messageRendererProvider, @Assisted PlayerLocalAi player) {
+  PlayerAgentLocalAi(PlayerAgentFactories playerAgentFactories, @Assisted PlayerLocalAi player) {
     this.playerAgentFactories = playerAgentFactories;
-    this.messageRendererProvider = messageRendererProvider;
     this.player = player;
   }
 
@@ -65,15 +56,7 @@ public class PlayerAgentLocalAi implements PlayerAgent {
           gameStateRenderer.generateAnimFor(gameState, gameStateChange);
         }
       } else {
-        // TODO(beaudoin): Duplicated in PlayerAgentLocalUser, extract.
-        Message message = possibleActions.getMessage();
-        if (message != null) {
-          MessageRenderer messageRenderer = messageRendererProvider.get();
-          message.accept(messageRenderer);
-          gameStateRenderer.addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
-              new ConstantTransform(new Vector2d(
-                  GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1))));
-        }
+        generator.generateInteractions();
       }
     }
   }

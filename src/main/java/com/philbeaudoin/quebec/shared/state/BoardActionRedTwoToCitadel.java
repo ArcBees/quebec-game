@@ -18,7 +18,7 @@ package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
@@ -39,7 +39,7 @@ public class BoardActionRedTwoToCitadel extends BoardAction {
         new Message.SendPassiveCubesToZone(2, playerState.getPlayer().getColor(),
         InfluenceType.CITADEL));
     result.add(new ActionSendCubesToZone(nbCubes, false, InfluenceType.CITADEL));
-    result.add(new ActionSkip());
+    result.add(ActionExplicit.createSkipAction());
     return result;
   }
 }

@@ -17,7 +17,7 @@
 package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.action.ActionSkip;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 
@@ -33,7 +33,7 @@ public class BoardActionYellowMoveArchitect extends BoardAction {
   public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
     PossibleActions result = new PossibleActions(new Message.MoveYourArchitect());
     gameState.getController().getPossibleMoveArchitectActions(gameState, result);
-    result.add(new ActionSkip());
+    result.add(ActionExplicit.createSkipAction());
     return result;
   }
 }
