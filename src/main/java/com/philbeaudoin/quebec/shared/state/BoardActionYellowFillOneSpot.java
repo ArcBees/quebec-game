@@ -35,7 +35,7 @@ public class BoardActionYellowFillOneSpot extends BoardAction {
 
   public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
 
-    PossibleActions result = new PossibleActions(new Message.SelectSpotToFill());
+    PossibleActions result = new PossibleActions(new Message.Text("selectSpotToFill"));
     result.add(ActionExplicit.createSkipAction());
 
     int nbCubes = gameState.getCurrentPlayer().getNbTotalCubes();

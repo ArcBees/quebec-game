@@ -21,7 +21,9 @@ import java.util.List;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.BoardLocation;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
@@ -44,9 +46,10 @@ public class GameControllerTutorial implements GameController {
   public void configurePossibleActions(GameState gameState) {
     assert gameState.getMoveNumber() == 0;
 
-    PossibleActions possibleActions = new PossibleActions(new Message.GameCompleted());
+    PossibleActions possibleActions = new PossibleActions(
+        new TextBoxInfo(new Message.MultilineText("tutorialIntro", 0.9), BoardLocation.CENTER));
     gameState.setPossibleActions(possibleActions);
-    possibleActions.add(new ActionExplicit(new Message.Continue(),
+    possibleActions.add(new ActionExplicit(new Message.Text("continueMsg"),
         new GameStateChangeNextPlayer()));
   }
 

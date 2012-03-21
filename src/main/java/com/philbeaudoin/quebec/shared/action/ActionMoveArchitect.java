@@ -101,7 +101,7 @@ public class ActionMoveArchitect implements GameActionOnTile {
         result.add(new GameStateChangeMoveArchitect(architectOrigin,
             new ArchitectDestinationPlayer(activePlayer, neutralArchitect)));
       }
-      PossibleActions scoring = new PossibleActions(new Message.ScoringPhaseBegins());
+      PossibleActions scoring = new PossibleActions(new Message.Text("scoringPhaseBegins"));
       scoring.add(new ActionPerformScoringPhase());
       result.add(new GameStateChangeQueuePossibleActions(scoring));
     }

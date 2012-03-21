@@ -187,7 +187,7 @@ public class ActionPerformScoringPhase implements GameAction {
   public Message getMessage(GameState gameState) {
     switch (scoringPhase) {
     case INIT_SCORING:
-      return new Message.ScoringPhaseBegins();
+      return new Message.Text("scoringPhaseBegins");
     case SCORE_INCOMPLETE_BUILDINGS:
       return new Message.InformationOnIncompleteBuildingsScore(
           ScoringHelper.computeIncompleteBuildingScoringInformation(gameState));
@@ -198,9 +198,9 @@ public class ActionPerformScoringPhase implements GameAction {
       return new Message.InformationOnBuildingsScore(
           ScoringHelper.computeBuildingsScoringInformation(gameState));
     case FINISH_GAME:
-      return new Message.GameCompleted();
+      return new Message.Text("gameCompleted");
     case PREPARE_NEXT_CENTURY:
-      return new Message.PrepareNextCentury();
+      return new Message.Text("prepareNextCentury");
     default:
       assert scoringPhase.isZoneScoringPhase();
       return new Message.InformationOnZoneScore(

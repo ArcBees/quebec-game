@@ -21,7 +21,6 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringInformation;
 import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
 import com.philbeaudoin.quebec.shared.state.ActionType;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**
  * Interface for messages. These messages can be rendered in various ways by a custom
@@ -42,14 +41,8 @@ public interface Message {
   * @param <T> The return type of the visitor method.
   */
   public interface Visitor<T> {
-    T visit(MoveYourArchitect host);
-    T visit(MoveYourArchitectToThisTile host);
-    T visit(Skip host);
-    T visit(Continue host);
-    T visit(SelectStarTokenToIncrease host);
-    T visit(SelectSpotToFill selectSpotToFill);
-    T visit(ScoringPhaseBegins host);
-    T visit(PrepareNextCentury host);
+    T visit(Text host);
+    T visit(MultilineText host);
     T visit(TakeThisLeaderCard host);
     T visit(MoveEitherArchitect host);
     T visit(MoveArchitect host);
@@ -57,7 +50,6 @@ public interface Message {
     T visit(SendActiveCubesToOneOfTwoZones host);
     T visit(SendPassiveCubesToZone host);
     T visit(SendActiveCubesToZone host);
-    T visit(SelectAction host);
     T visit(SendPassiveCubesToAnyZone host);
     T visit(SendPassiveCubesToAnyZoneOrCitadel host);
     T visit(SendPassiveCubesToThisTile host);
@@ -74,87 +66,49 @@ public interface Message {
     T visit(InformationOnIncompleteBuildingsScore host);
     T visit(InformationOnActiveCubesScore host);
     T visit(InformationOnBuildingsScore host);
-    T visit(GameCompleted host);
-    T visit(LeaderDescription host);
   }
 
   /**
-   * Select a tile to move your architect.
+   * Generic message containing only text, no extra parameters, no graphics.
    */
-  public class MoveYourArchitect implements Message {
+  public class Text implements Message {
+    private final String methodName;
+    public Text(String methodName) {
+      this.methodName = methodName;
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
     }
-  }
-
-  /**
-   * Move your architect to this tile.
-   */
-  public class MoveYourArchitectToThisTile implements Message {
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
+    public String getMethodName() {
+      return methodName;
     }
   }
 
   /**
-   * Skip.
+   * Generic message containing only text, no extra parameters, no graphics. This text is broken
+   * automatically in multiple lines.
    */
-  public class Skip implements Message {
+  public class MultilineText implements Message {
+    private final String methodName;
+    private final double maxWidth;
+    public MultilineText(String methodName) {
+      this.methodName = methodName;
+      this.maxWidth = 0.45;
+    }
+    public MultilineText(String methodName, double maxWidth) {
+      this.methodName = methodName;
+      this.maxWidth = maxWidth;
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
     }
-  }
-
-  /**
-   * Continue.
-   */
-  public class Continue implements Message {
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
+    public String getMethodName() {
+      return methodName;
     }
-  }
-
-  /**
-   * Select star token to increase.
-   */
-  public class SelectStarTokenToIncrease implements Message {
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
-    }
-  }
-
-  /**
-   * Select spot to fill.
-   */
-  public class SelectSpotToFill implements Message {
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
-    }
-  }
-
-  /**
-   * Scoring phase begins, returning all leader cards.
-   */
-  public class ScoringPhaseBegins implements Message {
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
-    }
-  }
-
-  /**
-   * Cubes return to passive reserve, new buildings are available.
-   */
-  public class PrepareNextCentury implements Message {
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
+    public double getMaxWidth() {
+      return maxWidth;
     }
   }
 
@@ -251,16 +205,6 @@ public interface Message {
     public SendActiveCubesToZone(int nbCubes, PlayerColor playerColor, InfluenceType zone) {
       super(nbCubes, array(playerColor), array(zone));
     }
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
-    }
-  }
-
-  /**
-   * Select action to execute.
-   */
-  public class SelectAction implements Message {
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -518,32 +462,4 @@ public interface Message {
       return scoringInformation;
     }
   }
-
-  /**
-   * TODO(beaudoin) Should state the final score and winner.
-   */
-  public class GameCompleted implements Message {
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
-    }
-  }
-
-  /**
-   * Text describing a leader card. Depends on the specific leader.
-   */
-  public class LeaderDescription implements Message {
-    private final LeaderCard leaderCard;
-    public LeaderDescription(LeaderCard leaderCard) {
-      this.leaderCard = leaderCard;
-    }
-    @Override
-    public <T> T accept(Visitor<T> visitor) {
-      return visitor.visit(this);
-    }
-    public LeaderCard getLeaderCard() {
-      return leaderCard;
-    }
-  }
-
 }

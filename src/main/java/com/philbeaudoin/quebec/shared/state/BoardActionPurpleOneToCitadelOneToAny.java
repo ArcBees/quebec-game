@@ -54,10 +54,10 @@ public class BoardActionPurpleOneToCitadelOneToAny extends BoardAction {
         playerColor, InfluenceType.CITADEL));
     if (totalCubes >= 2) {
       result.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL, sendAnywhereFollowup));
-      result.add(new ActionExplicit(new Message.Skip(), sendAnywhereFollowup));
+      result.add(new ActionExplicit(new Message.Text("skip"), sendAnywhereFollowup));
     } else if (totalCubes >= 1) {
       result.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL));
-      result.add(new ActionExplicit(new Message.Skip(), sendAnywhereFollowup));
+      result.add(new ActionExplicit(new Message.Text("skip"), sendAnywhereFollowup));
     } else {
       result.add(ActionExplicit.createSkipAction());
     }

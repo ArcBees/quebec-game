@@ -32,7 +32,7 @@ public class BoardActionBlueAny extends BoardAction {
   }
 
   public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
-    PossibleActions result = new PossibleActions(new Message.SelectAction());
+    PossibleActions result = new PossibleActions(new Message.Text("selectActionToExecute"));
     result.add(new ActionSelectBoardAction(new BoardActionBlueAddStar(), triggeringTile));
     result.add(new ActionSelectBoardAction(new BoardActionBlueScoreForCubesInHand(),
         triggeringTile));

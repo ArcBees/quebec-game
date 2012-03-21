@@ -30,7 +30,7 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 public class ActionExplicit implements GameAction {
 
   public static ActionExplicit createSkipAction() {
-    return new ActionExplicit(new Message.Skip(), new GameStateChangeNextPlayer());
+    return new ActionExplicit(new Message.Text("skip"), new GameStateChangeNextPlayer());
   }
 
   private final Message message;
