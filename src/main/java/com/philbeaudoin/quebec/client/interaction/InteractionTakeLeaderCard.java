@@ -69,7 +69,30 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
 
     // Text describing the card.
     MessageRenderer messageRenderer = messageRendererProvider.get();
-    new Message.LeaderDescription(action.getLeaderCard()).accept(messageRenderer);
+    String methodName = null;
+    switch (action.getLeaderCard()) {
+    case RELIGIOUS:
+      methodName = "religiousLeaderDescription";
+      break;
+    case POLITIC:
+      methodName = "politicLeaderDescription";
+      break;
+    case ECONOMIC:
+      methodName = "economicLeaderDescription";
+      break;
+    case CULTURAL_TWO_THREE:
+      methodName = "cultural23LeaderDescription";
+      break;
+    case CULTURAL_FOUR_FIVE:
+      methodName = "cultural45LeaderDescription";
+      break;
+    case CITADEL:
+      methodName = "citadelLeaderDescription";
+      break;
+    default:
+      assert false;
+    }
+    new Message.MultilineText(methodName).accept(messageRenderer);
     Vector2d textPos = new Vector2d(cardFrom.getTranslation(0).getX(),
         cardFrom.getTranslation(0).getY() +
         messageRenderer.getComponents().calculateApproximateSize().getY() / 2.0 + 0.072);

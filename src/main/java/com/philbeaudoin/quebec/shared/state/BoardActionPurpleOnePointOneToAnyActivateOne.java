@@ -57,7 +57,7 @@ public class BoardActionPurpleOnePointOneToAnyActivateOne extends BoardAction {
       GameStateChange activateFollowup = new GameStateChangeQueuePossibleActions(sendAnywhere);
       activateOrSendAnywhere = new PossibleActions();
       activateOrSendAnywhere.add(new ActionActivateCubes(1, activateFollowup));
-      activateOrSendAnywhere.add(new ActionExplicit(new Message.Skip(), activateFollowup));
+      activateOrSendAnywhere.add(new ActionExplicit(new Message.Text("skip"), activateFollowup));
     } else {
       activateOrSendAnywhere = sendAnywhere;
     }

@@ -19,17 +19,11 @@ package com.philbeaudoin.quebec.client.resources.text;
 import com.google.gwt.i18n.client.Constants;
 
 /**
- * Methods to generate internationalized constants from a property file.
+ * Methods to generate internationalized constants from a property file. These messages generally
+ * contain images or are used in parameterized messages. For simple non-parameterized text only
+ * messages use {@link GraphicConstantsWithLookup}.
  */
 public interface GraphicConstants extends Constants {
-  String moveYourArchitect();
-  String moveYourArchitectToThisTile();
-  String skip();
-  String continueMsg();
-  String selectStarTokenToIncrease();
-  String selectSpotToFill();
-  String scoringPhaseBegins();
-  String prepareNextCentury();
   String takeThisLeaderCard();
   String takeThisLeaderCardAndActivateCubes();
   String moveEitherArchitect();
@@ -38,7 +32,6 @@ public interface GraphicConstants extends Constants {
   String sendActiveCubesToOneOfTwoZones();
   String sendPassiveCubesToZone();
   String sendActiveCubesToZone();
-  String selectActionToExecute();
   String sendPassiveCubesToAnyZone();
   String sendPassiveCubesToAnyZoneOrCitadel();
   String sendPassiveCubesToThisTile();
@@ -59,11 +52,4 @@ public interface GraphicConstants extends Constants {
   String scoreActiveCubes();
   String scoreBuildingsWithoutScore();
   String scoreBuildings();
-  String gameCompleted();
-  String religiousLeaderDescription();
-  String politicLeaderDescription();
-  String economicLeaderDescription();
-  String cultural23LeaderDescription();
-  String cultural45LeaderDescription();
-  String citadelLeaderDescription();
 }

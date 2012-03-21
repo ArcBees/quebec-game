@@ -59,7 +59,7 @@ public class BoardActionPurpleOneToAnyMoveTwo extends BoardAction {
           computeFollowupMoveActions(gameState, InfluenceType.CULTURAL)));
       sendAnywhere.add(new ActionSendCubesToZone(1, false, InfluenceType.CITADEL,
           computeFollowupMoveActions(gameState, InfluenceType.CITADEL)));
-      sendAnywhere.add(new ActionExplicit(new Message.Skip(),
+      sendAnywhere.add(new ActionExplicit(new Message.Text("skip"),
           computeFollowupMoveActions(gameState, null)));
       return sendAnywhere;
     } else {

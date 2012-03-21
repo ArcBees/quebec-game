@@ -317,7 +317,7 @@ public class GameState {
    * @return True if there is a global possible action message, false otherwise.
    */
   public boolean hasPossibleActionMessage() {
-    return possibleActions != null && possibleActions.getMessage() != null;
+    return possibleActions != null && possibleActions.getTextBoxInfo() != null;
   }
 
   /**

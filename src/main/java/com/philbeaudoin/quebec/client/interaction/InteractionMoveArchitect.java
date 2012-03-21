@@ -73,7 +73,7 @@ public class InteractionMoveArchitect extends
   }
 
   private static MessageRenderer createActionMessage(MessageRenderer messageRenderer) {
-    new Message.MoveYourArchitectToThisTile().accept(messageRenderer);
+    new Message.Text("moveYourArchitectToThisTile").accept(messageRenderer);
     return messageRenderer;
   }
 }

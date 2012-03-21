@@ -19,6 +19,7 @@ package com.philbeaudoin.quebec.shared.action;
 import java.util.ArrayList;
 
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
@@ -28,21 +29,30 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
  */
 public class PossibleActions {
 
-  private final Message message;
+  private final TextBoxInfo textBoxInfo;
   private final ArrayList<GameAction> gameActions = new ArrayList<GameAction>();
 
   /**
    * Creates a list of possible actions without an information message.
    */
   public PossibleActions() {
-    message = null;
+    textBoxInfo = null;
   }
 
   /**
    * Creates a list of possible actions with an information message.
+   * @oaran textBoxInfo Information on the text box to display while the user selects the action.
+   */
+  public PossibleActions(TextBoxInfo textBoxInfo) {
+    this.textBoxInfo = textBoxInfo;
+  }
+
+  /**
+   * Creates a list of possible actions with an information message.
+   * @oaran message The message to display at the top while the user selects the action.
    */
   public PossibleActions(Message message) {
-    this.message = message;
+    this.textBoxInfo = new TextBoxInfo(message);
   }
 
   /**
@@ -89,8 +99,8 @@ public class PossibleActions {
    * Returns the message associated with this list of possible actions, or null if none.
    * @return The message, or null.
    */
-  public Message getMessage() {
-    return message;
+  public TextBoxInfo getTextBoxInfo() {
+    return textBoxInfo;
   }
 
   /**

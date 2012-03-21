@@ -17,15 +17,14 @@
 package com.philbeaudoin.quebec.client.playerAgent;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.scene.ComplexText;
+import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
+import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
@@ -34,14 +33,10 @@ import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.ActionSelectBoardAction;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
-import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.action.GameActionVisitor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * Use this class to generate the list of
@@ -53,7 +48,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 public class LocalAiInteractionGenerator implements GameActionVisitor {
 
   private final InteractionFactories factories;
-  private final Provider<MessageRenderer> messageRendererProvider;
+  private final TextBoxRenderer textBoxRenderer;
   private final GameState gameState;
   private final GameStateRenderer gameStateRenderer;
 
@@ -62,11 +57,11 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
 
   @Inject
   LocalAiInteractionGenerator(InteractionFactories factories,
-      Provider<MessageRenderer> messageRendererProvider,
+      TextBoxRenderer textBoxRenderer,
       @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer) {
     this.factories = factories;
-    this.messageRendererProvider = messageRendererProvider;
+    this.textBoxRenderer = textBoxRenderer;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
   }
@@ -79,16 +74,8 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
     gameStateRenderer.addInteraction(factories.createInteractionPerformScoringPhase(gameState,
         gameStateRenderer, manualAction));
 
-    // TODO(beaudoin): Extract to a common class, duplicate in LocalAiInteractionGenerator.
     assert generatingActions != null;
-    Message message = generatingActions.getMessage();
-    if (message != null) {
-      MessageRenderer messageRenderer = messageRendererProvider.get();
-      message.accept(messageRenderer);
-      gameStateRenderer.addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
-          new ConstantTransform(new Vector2d(
-              GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1))));
-    }
+    textBoxRenderer.render(generatingActions.getTextBoxInfo(), gameStateRenderer);
   }
 
   /**

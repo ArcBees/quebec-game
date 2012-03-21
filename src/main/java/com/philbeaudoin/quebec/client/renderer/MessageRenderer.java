@@ -19,6 +19,7 @@ package com.philbeaudoin.quebec.client.renderer;
 import javax.inject.Inject;
 
 import com.philbeaudoin.quebec.client.resources.text.GraphicConstants;
+import com.philbeaudoin.quebec.client.resources.text.GraphicConstantsWithLookup;
 import com.philbeaudoin.quebec.client.resources.text.GraphicMessages;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.ComplexText.ComponentList;
@@ -28,7 +29,6 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringInformation;
 import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
 import com.philbeaudoin.quebec.shared.message.Message;
-import com.philbeaudoin.quebec.shared.message.Message.LeaderDescription;
 import com.philbeaudoin.quebec.shared.state.ActionType;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -39,14 +39,16 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 public class MessageRenderer implements Message.Visitor<Void> {
 
   private final GraphicConstants constants;
+  private final GraphicConstantsWithLookup constantsWithLookup;
   private final GraphicMessages messages;
   private final SpriteResources spriteResources;
   private final ComponentList components = new ComponentList();
 
   @Inject
-  public MessageRenderer(GraphicConstants constants, GraphicMessages messages,
-      SpriteResources spriteResources) {
+  public MessageRenderer(GraphicConstants constants, GraphicConstantsWithLookup constantsWithLookup,
+      GraphicMessages messages, SpriteResources spriteResources) {
     this.constants = constants;
+    this.constantsWithLookup = constantsWithLookup;
     this.messages = messages;
     this.spriteResources = spriteResources;
   }
@@ -76,50 +78,15 @@ public class MessageRenderer implements Message.Visitor<Void> {
   }
 
   @Override
-  public Void visit(Message.MoveYourArchitect host) {
-    addText(constants.moveYourArchitect());
+  public Void visit(Message.Text host) {
+    addText(constantsWithLookup.getString(host.getMethodName()));
     return null;
   }
 
   @Override
-  public Void visit(Message.MoveYourArchitectToThisTile host) {
-    addText(constants.moveYourArchitectToThisTile());
-    return null;
-  }
-
-  @Override
-  public Void visit(Message.Skip host) {
-    addText(constants.skip());
-    return null;
-  }
-
-  @Override
-  public Void visit(Message.Continue host) {
-    addText(constants.continueMsg());
-    return null;
-  }
-
-  @Override
-  public Void visit(Message.SelectStarTokenToIncrease host) {
-    addText(constants.selectStarTokenToIncrease());
-    return null;
-  }
-
-  @Override
-  public Void visit(Message.SelectSpotToFill host) {
-    addText(constants.selectSpotToFill());
-    return null;
-  }
-
-  @Override
-  public Void visit(Message.ScoringPhaseBegins host) {
-    addText(constants.scoringPhaseBegins());
-    return null;
-  }
-
-  @Override
-  public Void visit(Message.PrepareNextCentury host) {
-    addText(constants.prepareNextCentury());
+  public Void visit(Message.MultilineText host) {
+    components.addFromMultilineText(constantsWithLookup.getString(host.getMethodName()));
+    components.breakLongLines(host.getMaxWidth());
     return null;
   }
 
@@ -180,12 +147,6 @@ public class MessageRenderer implements Message.Visitor<Void> {
     fillInPlaceholders(repeatPlaceholder(constants.sendPassiveCubesToZone(), 0, host.getCount()),
         newCube(host.getColor(0)),
         newZoneIcon(host.getZone(0)));
-    return null;
-  }
-
-  @Override
-  public Void visit(Message.SelectAction host) {
-    addText(constants.selectActionToExecute());
     return null;
   }
 
@@ -428,40 +389,6 @@ public class MessageRenderer implements Message.Visitor<Void> {
           scoreDisplay.toString());
       fillInPlaceholders(message, sprites);
     }
-    return null;
-  }
-
-  @Override
-  public Void visit(Message.GameCompleted host) {
-    addText(constants.gameCompleted());
-    return null;
-  }
-
-  @Override
-  public Void visit(LeaderDescription host) {
-    switch (host.getLeaderCard()) {
-    case RELIGIOUS:
-      components.addFromMultilineText(constants.religiousLeaderDescription());
-      break;
-    case POLITIC:
-      components.addFromMultilineText(constants.politicLeaderDescription());
-      break;
-    case ECONOMIC:
-      components.addFromMultilineText(constants.economicLeaderDescription());
-      break;
-    case CULTURAL_TWO_THREE:
-      components.addFromMultilineText(constants.cultural23LeaderDescription());
-      break;
-    case CULTURAL_FOUR_FIVE:
-      components.addFromMultilineText(constants.cultural45LeaderDescription());
-      break;
-    case CITADEL:
-      components.addFromMultilineText(constants.citadelLeaderDescription());
-      break;
-    default:
-      assert false;
-    }
-    components.breakLongLines(0.45);
     return null;
   }
 

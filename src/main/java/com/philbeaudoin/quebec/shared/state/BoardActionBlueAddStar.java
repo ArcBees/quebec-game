@@ -38,7 +38,7 @@ public class BoardActionBlueAddStar extends BoardAction {
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     ArrayList<TileState> tileStates = gameState.getTileStates();
 
-    PossibleActions result = new PossibleActions(new Message.SelectStarTokenToIncrease());
+    PossibleActions result = new PossibleActions(new Message.Text("selectStarTokenToIncrease"));
     for (TileState tileState : tileStates) {
       if (tileState.getStarTokenColor() == playerColor && tileState.getNbStars() > 0 &&
           tileState.getNbStars() < 3) {

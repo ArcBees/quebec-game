@@ -53,7 +53,7 @@ public class GameControllerStandard implements GameController {
 
     if (currentPlayer.getNbTotalCubes() == 0) {
       // Trigger the scoring right now.
-      PossibleActions possibleActions = new PossibleActions(new Message.ScoringPhaseBegins());
+      PossibleActions possibleActions = new PossibleActions(new Message.Text("scoringPhaseBegins"));
       possibleActions.add(new ActionPerformScoringPhase());
       gameState.setPossibleActions(possibleActions);
       return;
