@@ -85,7 +85,7 @@ public class InteractionPerformScoringPhase extends InteractionWithAction {
   private static MessageRenderer createContinueMessageRenderer(
       Provider<MessageRenderer> messageRendererProvider) {
     MessageRenderer messageRenderer = messageRendererProvider.get();
-    new Message.Text("continue").accept(messageRenderer);
+    new Message.Text("continueMsg").accept(messageRenderer);
     return messageRenderer;
   }
 

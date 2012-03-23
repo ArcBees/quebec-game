@@ -19,7 +19,9 @@ package com.philbeaudoin.quebec.client.renderer;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.philbeaudoin.quebec.client.scene.Callout;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
+import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.message.BoardLocation;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
@@ -49,18 +51,39 @@ public class TextBoxRenderer {
       Message message = textBoxInfo.getMessage();
       MessageRenderer messageRenderer = messageRendererProvider.get();
       message.accept(messageRenderer);
-      Vector2d anchor = computeAnchor(textBoxInfo.getAnchor());
+      Vector2d anchor = computeBoardLocation(textBoxInfo.getAnchor(), gameStateRenderer);
+      BoardLocation pointTo = textBoxInfo.getPointTo();
+      if (pointTo != BoardLocation.NONE) {
+        gameStateRenderer.addToAnimationGraph(new Callout(anchor, computeBoardLocation(pointTo,
+            gameStateRenderer)));
+      }
       gameStateRenderer.addToAnimationGraph(new ComplexText(messageRenderer.getComponents(),
           new ConstantTransform(anchor)));
     }
   }
 
-  private Vector2d computeAnchor(BoardLocation anchor) {
-    switch (anchor) {
+  private Vector2d computeBoardLocation(BoardLocation location,
+      GameStateRenderer gameStateRenderer) {
+    switch (location) {
     case CENTER:
       return new Vector2d(GameStateRenderer.TEXT_CENTER, 0.4);
     case TOP_CENTER:
       return new Vector2d(GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1);
+    case PLAYER_AREAS_TEXT:
+      return new Vector2d(0.8, 0.3);
+    case PLAYER_AREAS:
+      return new Vector2d(0.38, 0.3);
+    case SCORE:
+      return new Vector2d(1.65, 0.95);
+    case BLACK_ARCHITECT_ON_PLAYER_AREA:
+      return gameStateRenderer.getArchitectOnPlayerTransform(
+          PlayerColor.BLACK, false).getTranslation(0);
+    case BLACK_PASSIVE_CUBES:
+      return gameStateRenderer.getPlayerCubeZoneTransform(
+          PlayerColor.BLACK, false).getTranslation(0);
+    case BLACK_ACTIVE_CUBES:
+      return gameStateRenderer.getPlayerCubeZoneTransform(
+          PlayerColor.BLACK, true).getTranslation(0);
     default:
       assert false;
     }

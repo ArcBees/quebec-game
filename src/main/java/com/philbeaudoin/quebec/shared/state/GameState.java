@@ -40,7 +40,6 @@ public class GameState {
 
   private int century;
 
-  private int moveNumber;
   private PossibleActions possibleActions;
 
   public GameState(GameController gameController) {
@@ -52,7 +51,6 @@ public class GameState {
       influenceZoneState[i] = new InfluenceZoneState();
     }
     century = 0;
-    moveNumber = 0;
   }
 
   /**
@@ -96,15 +94,6 @@ public class GameState {
    */
   public void setCentury(int century) {
     this.century = century;
-  }
-
-  /**
-   * Access the current move number. The move number increments each time the current player
-   * changes.
-   * @returns The current move number.
-   */
-  public int getMoveNumber() {
-    return moveNumber;
   }
 
   /**
@@ -276,8 +265,9 @@ public class GameState {
     if (lastWasActive) {
       playerStates.get(0).setCurrentPlayer(true);
     }
-    moveNumber++;
-    gameController.configurePossibleActions(this);
+    if (prepareActions) {
+      gameController.configurePossibleActions(this);
+    }
   }
 
   /**

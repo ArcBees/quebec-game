@@ -24,5 +24,11 @@ package com.philbeaudoin.quebec.shared.message;
 public enum BoardLocation {
   NONE,
   TOP_CENTER,
-  CENTER
+  CENTER,
+  PLAYER_AREAS_TEXT,
+  PLAYER_AREAS,
+  SCORE,
+  BLACK_ARCHITECT_ON_PLAYER_AREA,
+  BLACK_PASSIVE_CUBES,
+  BLACK_ACTIVE_CUBES,
 }
