@@ -41,4 +41,10 @@ public interface GraphicConstantsWithLookup extends ConstantsWithLookup {
   String cultural45LeaderDescription();
   String citadelLeaderDescription();
   String tutorialIntro();
+  String tutorialPlayers();
+  String tutorialGoal();
+  String tutorialArchitect();
+  String tutorialPassiveCubes();
+  String tutorialActiveCubes();
+  String tutorialFirstMove();
 }

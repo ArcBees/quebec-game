@@ -18,15 +18,16 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.List;
 
-import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
+import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.BoardLocation;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.player.Player;
-import com.philbeaudoin.quebec.shared.player.PlayerState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeReinit;
 
 /**
  * A controller to manipulate the state of a game for the tutorial.
@@ -34,6 +35,8 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class GameControllerTutorial implements GameController {
+
+  private PossibleActions startingActions;
 
   @Override
   public void initGame(GameState gameState, List<Player> players) {
@@ -44,70 +47,74 @@ public class GameControllerTutorial implements GameController {
 
   @Override
   public void configurePossibleActions(GameState gameState) {
-    assert gameState.getMoveNumber() == 0;
-
-    PossibleActions possibleActions = new PossibleActions(
-        new TextBoxInfo(new Message.MultilineText("tutorialIntro", 0.9), BoardLocation.CENTER));
-    gameState.setPossibleActions(possibleActions);
-    possibleActions.add(new ActionExplicit(new Message.Text("continueMsg"),
-        new GameStateChangeNextPlayer()));
+    // List of all steps in reverse order.
+    prependStep("tutorialFirstMove");
+    prependStep("tutorialActiveCubes", BoardLocation.PLAYER_AREAS_TEXT,
+        BoardLocation.BLACK_ACTIVE_CUBES);
+    prependStep("tutorialPassiveCubes", BoardLocation.PLAYER_AREAS_TEXT,
+        BoardLocation.BLACK_PASSIVE_CUBES);
+    prependStep("tutorialArchitect", BoardLocation.PLAYER_AREAS_TEXT,
+        BoardLocation.BLACK_ARCHITECT_ON_PLAYER_AREA);
+    prependStep("tutorialGoal", BoardLocation.CENTER, BoardLocation.SCORE);
+    prependStep("tutorialPlayers", BoardLocation.PLAYER_AREAS_TEXT, BoardLocation.PLAYER_AREAS);
+    prependStep("tutorialIntro");
+    gameState.setPossibleActions(startingActions);
   }
 
   @Override
   public void getPossibleMoveArchitectActions(GameState gameState,
       PossibleActions possibleActions) {
-    PlayerState currentPlayer = gameState.getCurrentPlayer();
-    int century = gameState.getCentury();
-    boolean canMoveArchitect = false;
-    for (TileState tileState : gameState.getTileStates()) {
-      canMoveArchitect = addArchitectMoveActionIfPossible(century, possibleActions, currentPlayer,
-          tileState) || canMoveArchitect;
-    }
-
-    if (!canMoveArchitect) {
-      // No tile to move architect to, make it possible to end the round by moving the architect.
-      possibleActions.add(new ActionMoveArchitect(null, false));
-      // If the player has the yellow leader, he can also move the neutral architect.
-      if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC &&
-          !currentPlayer.isHoldingNeutralArchitect()) {
-        possibleActions.add(new ActionMoveArchitect(null, true));
-      }
-    }
-  }
-
-  /**
-   * Adds an action to move the architect to the specified tile, if possible.
-   * @param century The current century.
-   * @param possibleActions The list of possible actions to add to.
-   * @param currentPlayer The current player.
-   * @param tileState The tile on to which to send the architect, if possible.
-   * @return True if the architect can be moved to that tile, false otherwise.
-   */
-  private boolean addArchitectMoveActionIfPossible(int century,
-      PossibleActions possibleActions, PlayerState currentPlayer,
-      TileState tileState) {
-    if (tileState.isAvailableForArchitect(century)) {
-      possibleActions.add(new ActionMoveArchitect(tileState.getTile(), false));
-      // If the player has the yellow leader, he can also move the neutral architect.
-      if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC) {
-        possibleActions.add(new ActionMoveArchitect(tileState.getTile(), true));
-      }
-      return true;
-    }
-    return false;
+    assert false;
   }
 
   @Override
   public void prepareNextCentury(GameState gameState) {
-    int oldCentury = gameState.getCentury();
-    assert oldCentury < 3;
-    int newCentury = oldCentury + 1;
-    gameState.setCentury(newCentury);
-    for (TileState tileState : gameState.getTileStates()) {
-      if (tileState.isAvailableForArchitect(oldCentury)) {
-        tileState.setBuildingFacing(true);
-      }
+    assert false;
+  }
+
+  /**
+   * Prepends a simple scenario step with only a centered message and a continue button. This step
+   * will take place before any other that have been added.
+   * @param messageMethodName The method name of the message to display.
+   */
+  private void prependStep(String messageMethodName) {
+    prependStep(messageMethodName, BoardLocation.CENTER, BoardLocation.NONE);
+  }
+
+  /**
+   * Prepends a simple scenario step with a text box, a pointer and a continue button. This step
+   * will take place before any other that have been added.
+   * @param messageMethodName The method name of the message to display.
+   * @param anchor The location where the text box is anchored.
+   * @param pointTo The direction the text box points to.
+   */
+  private void prependStep(String messageMethodName, BoardLocation anchor, BoardLocation pointTo) {
+    prependStep(new TextBoxInfo(new Message.MultilineText(messageMethodName, 0.9), anchor, pointTo),
+        new ActionExplicit(new Message.Text("continueMsg"), nextStep()));
+  }
+
+  /**
+   * Prepends a complex scenario step. You must make sure that the last item of the
+   * {@link GameStateChange} associated with {@code gameAction} is the one returned by
+   * {@link #nextStep()}. This step will take place before any other that have been added.
+   * @param textBoxInfo Information on the text box to display.
+   * @param gameAction The game action to execute when the step is performed.
+   */
+  private void prependStep(TextBoxInfo textBoxInfo, GameAction gameAction) {
+    startingActions = new PossibleActions(textBoxInfo);
+    startingActions.add(gameAction);
+  }
+
+  /**
+   * Creates a game state change that initiates the next step in the scenario.
+   * @return The game state change.
+   */
+  private GameStateChange nextStep() {
+    if (startingActions != null) {
+      return new GameStateChangeQueuePossibleActions(startingActions);
+    } else {
+      // TODO(beaudoin): This should go back to the menu.
+      return new GameStateChangeReinit();
     }
-    configurePossibleActions(gameState);
   }
 }

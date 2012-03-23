@@ -25,7 +25,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Callout extends SceneNodeImpl {
-  private static final double BASE_SIZE = 0.03;
+  private static final double BASE_SIZE = 0.08;
 
   private final Vector2d from;
   private final Vector2d to;
@@ -46,7 +46,7 @@ public class Callout extends SceneNodeImpl {
     this.from = from;
     this.to = to;
     double px = to.getY() - from.getY();
-    double py = to.getX() - from.getX();
+    double py = from.getX() - to.getX();
     double factor = 0.5 * BASE_SIZE / Math.sqrt(px * px + py * py);
     px *= factor;
     py *= factor;
