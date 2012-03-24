@@ -16,8 +16,6 @@
 
 package com.philbeaudoin.quebec.shared.message;
 
-import com.philbeaudoin.quebec.shared.message.Message.MultilineText;
-
 /**
  * Information about a text box, including the message, the logical location where it should be
  * anchored as well as the object it should be pointing to if any.
@@ -34,7 +32,7 @@ public class TextBoxInfo {
     this.anchor = anchor;
     this.pointTo = pointTo;
   }
-  public TextBoxInfo(MultilineText message, BoardLocation anchor) {
+  public TextBoxInfo(Message message, BoardLocation anchor) {
     assert message != null && anchor != BoardLocation.NONE;
     this.message = message;
     this.anchor = anchor;

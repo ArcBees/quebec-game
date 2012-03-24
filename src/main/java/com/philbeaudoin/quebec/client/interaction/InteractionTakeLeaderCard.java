@@ -17,23 +17,20 @@
 package com.philbeaudoin.quebec.client.interaction;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
+import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
-import com.philbeaudoin.quebec.client.scene.Callout;
-import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
+import com.philbeaudoin.quebec.shared.message.BoardLocation;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * This is an interaction with the game board for the action of taking a leader card.
@@ -45,11 +42,11 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
 
   @Inject
   public InteractionTakeLeaderCard(Scheduler scheduler, InteractionFactories interactionFactories,
-      Provider<MessageRenderer> messageRendererProvider,  @Assisted GameState gameState,
+      TextBoxRenderer textBoxRenderer, @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionTakeLeaderCard action) {
-    super(scheduler, gameState, gameStateRenderer,
+    super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetLeaderCard(gameStateRenderer, action),
-        createActionMessage(gameState, messageRendererProvider.get()), action.execute(gameState));
+        createActionMessage(gameState), action.execute(gameState));
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     extras = new SceneNodeList();
@@ -68,39 +65,39 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
     }
 
     // Text describing the card.
-    MessageRenderer messageRenderer = messageRendererProvider.get();
     String methodName = null;
+    BoardLocation leaderLocation = null;
     switch (action.getLeaderCard()) {
     case RELIGIOUS:
       methodName = "religiousLeaderDescription";
+      leaderLocation = BoardLocation.RELIGIOUS_LEADER;
       break;
     case POLITIC:
       methodName = "politicLeaderDescription";
+      leaderLocation = BoardLocation.POLITIC_LEADER;
       break;
     case ECONOMIC:
       methodName = "economicLeaderDescription";
+      leaderLocation = BoardLocation.ECONOMIC_LEADER;
       break;
     case CULTURAL_TWO_THREE:
       methodName = "cultural23LeaderDescription";
+      leaderLocation = BoardLocation.CULTURAL_TWO_THREE_LEADER;
       break;
     case CULTURAL_FOUR_FIVE:
       methodName = "cultural45LeaderDescription";
+      leaderLocation = BoardLocation.CULTURAL_FOUR_FIVE_LEADER;
       break;
     case CITADEL:
       methodName = "citadelLeaderDescription";
+      leaderLocation = BoardLocation.CITADEL_LEADER;
       break;
     default:
       assert false;
     }
-    new Message.MultilineText(methodName).accept(messageRenderer);
-    Vector2d textPos = new Vector2d(cardFrom.getTranslation(0).getX(),
-        cardFrom.getTranslation(0).getY() +
-        messageRenderer.getComponents().calculateApproximateSize().getY() / 2.0 + 0.072);
-    extras.add(new Callout(textPos, new Vector2d(cardFrom.getTranslation(0).getX(),
-        cardFrom.getTranslation(0).getY() + 0.052)));
-    ComplexText text = new ComplexText(messageRenderer.getComponents(),
-        new ConstantTransform(textPos));
-    extras.add(text);
+    TextBoxInfo textBoxInfo = new TextBoxInfo(new Message.MultilineText(methodName),
+        BoardLocation.BOTTOM_OF_TARGET_NEAR, leaderLocation);
+    extras.add(textBoxRenderer.render(textBoxInfo, gameStateRenderer));
   }
 
   @Override
@@ -115,11 +112,9 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
     extras.setParent(null);
   }
 
-  private static MessageRenderer createActionMessage(GameState gameState,
-      MessageRenderer messageRenderer) {
+  private static Message createActionMessage(GameState gameState) {
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
-    new Message.TakeThisLeaderCard(gameState.nbPlayerWithLeaders(),
-        playerColor).accept(messageRenderer);
-    return messageRenderer;
+    return new Message.TakeThisLeaderCard(gameState.nbPlayerWithLeaders(),
+        playerColor);
   }
 }

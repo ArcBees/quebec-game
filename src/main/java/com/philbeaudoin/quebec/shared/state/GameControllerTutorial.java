@@ -49,14 +49,14 @@ public class GameControllerTutorial implements GameController {
   public void configurePossibleActions(GameState gameState) {
     // List of all steps in reverse order.
     prependStep("tutorialFirstMove");
-    prependStep("tutorialActiveCubes", BoardLocation.PLAYER_AREAS_TEXT,
+    prependStep("tutorialActiveCubes", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
         BoardLocation.BLACK_ACTIVE_CUBES);
-    prependStep("tutorialPassiveCubes", BoardLocation.PLAYER_AREAS_TEXT,
+    prependStep("tutorialPassiveCubes", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
         BoardLocation.BLACK_PASSIVE_CUBES);
-    prependStep("tutorialArchitect", BoardLocation.PLAYER_AREAS_TEXT,
+    prependStep("tutorialArchitect", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
         BoardLocation.BLACK_ARCHITECT_ON_PLAYER_AREA);
-    prependStep("tutorialGoal", BoardLocation.CENTER, BoardLocation.SCORE);
-    prependStep("tutorialPlayers", BoardLocation.PLAYER_AREAS_TEXT, BoardLocation.PLAYER_AREAS);
+    prependStep("tutorialGoal", BoardLocation.TOP_LEFT_OF_TARGET, BoardLocation.SCORE);
+    prependStep("tutorialPlayers", BoardLocation.RIGHT_OF_TARGET, BoardLocation.PLAYER_AREAS);
     prependStep("tutorialIntro");
     gameState.setPossibleActions(startingActions);
   }
