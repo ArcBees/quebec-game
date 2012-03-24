@@ -19,13 +19,14 @@ package com.philbeaudoin.quebec.client.interaction;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
-import com.philbeaudoin.quebec.client.scene.ComplexText;
+import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
+import com.philbeaudoin.quebec.client.scene.SceneNodeList;
+import com.philbeaudoin.quebec.shared.message.BoardLocation;
+import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
-import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
-import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * This is the basic implementation of an interaction for which a click results in executing an
@@ -37,7 +38,7 @@ public abstract class InteractionWithAction implements Interaction {
   protected final Scheduler scheduler;
   protected final GameState gameState;
   protected final GameStateRenderer gameStateRenderer;
-  private final ComplexText actionText;
+  private final SceneNodeList actionText;
   protected final GameStateChange gameStateChange;
   private final InteractionTarget target;
 
@@ -47,23 +48,22 @@ public abstract class InteractionWithAction implements Interaction {
   protected InteractionWithAction(Scheduler scheduler, GameState gameState,
       GameStateRenderer gameStateRenderer, InteractionTarget target,
       GameStateChange gameStateChange) {
-    this(scheduler, gameState, gameStateRenderer, target, null, gameStateChange);
+    this(scheduler, null, gameState, gameStateRenderer, target, null, gameStateChange);
   }
 
-  protected InteractionWithAction(Scheduler scheduler, GameState gameState,
-      GameStateRenderer gameStateRenderer, InteractionTarget target,
-      MessageRenderer messageRenderer, GameStateChange gameStateChange) {
+  protected InteractionWithAction(Scheduler scheduler, TextBoxRenderer textBoxRenderer,
+      GameState gameState, GameStateRenderer gameStateRenderer,
+      InteractionTarget target, Message message, GameStateChange gameStateChange) {
+    assert (message == null) || (textBoxRenderer != null);
     this.scheduler = scheduler;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
     this.gameStateChange = gameStateChange;
     this.target = target;
 
-    if (messageRenderer != null && messageRenderer.hasContent() &&
-        !gameState.hasPossibleActionMessage()) {
-      this.actionText = new ComplexText(messageRenderer.getComponents(),
-          new ConstantTransform(new Vector2d(GameStateRenderer.TEXT_CENTER,
-              GameStateRenderer.TEXT_LINE_1)));
+    if (message != null && !gameState.hasPossibleActionMessage()) {
+      actionText = textBoxRenderer.render(
+          new TextBoxInfo(message, BoardLocation.TOP_CENTER), gameStateRenderer);
     } else {
       this.actionText = null;
     }

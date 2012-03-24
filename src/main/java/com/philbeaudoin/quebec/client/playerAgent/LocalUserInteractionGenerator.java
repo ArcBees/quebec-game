@@ -155,7 +155,8 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
 
     // Generate the message associated with the possible actions, if any.
     assert generatingActions != null;
-    textBoxRenderer.render(generatingActions.getTextBoxInfo(), gameStateRenderer);
+    gameStateRenderer.addToAnimationGraph(
+        textBoxRenderer.render(generatingActions.getTextBoxInfo(), gameStateRenderer));
   }
 
   private void generateMoveArchitectInteractions() {

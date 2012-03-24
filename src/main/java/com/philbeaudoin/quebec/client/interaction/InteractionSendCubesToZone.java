@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
+import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -40,11 +40,10 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
   private final SceneNodeList arrows;
 
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      MessageRenderer messageRenderer, GameState gameState, GameStateRenderer gameStateRenderer,
+      TextBoxRenderer textBoxRenderer, GameState gameState, GameStateRenderer gameStateRenderer,
       InteractionTargetInfluenceZone target, ActionSendCubesToZone action) {
-    super(scheduler, gameState, gameStateRenderer, target,
-        createActionMessage(messageRenderer, gameState, action),
-        action.execute(gameState));
+    super(scheduler, textBoxRenderer, gameState, gameStateRenderer, target,
+        createActionMessage(gameState, action), action.execute(gameState));
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     arrows = new SceneNodeList();
@@ -58,9 +57,9 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
 
   @Inject
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      MessageRenderer messageRenderer, @Assisted GameState gameState,
+      TextBoxRenderer textBoxRenderer, @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionSendCubesToZone action) {
-    this(scheduler, interactionFactories, messageRenderer, gameState,
+    this(scheduler, interactionFactories, textBoxRenderer, gameState,
         gameStateRenderer, interactionFactories.createInteractionTargetInfluenceZone(
             gameStateRenderer, action), action);
   }
@@ -77,16 +76,15 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
     arrows.setParent(null);
   }
 
-  private static MessageRenderer createActionMessage(MessageRenderer messageRenderer,
-      GameState gameState, ActionSendCubesToZone action) {
+  private static Message createActionMessage(GameState gameState,
+      ActionSendCubesToZone action) {
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     if (action.areCubesFromActive()) {
-      new Message.SendActiveCubesToZone(action.getNbCubes(), playerColor,
-          action.getInfluenceZone()).accept(messageRenderer);
+      return new Message.SendActiveCubesToZone(action.getNbCubes(), playerColor,
+          action.getInfluenceZone());
     } else {
-      new Message.SendPassiveCubesToZone(action.getNbCubes(), playerColor,
-          action.getInfluenceZone()).accept(messageRenderer);
+      return new Message.SendPassiveCubesToZone(action.getNbCubes(), playerColor,
+          action.getInfluenceZone());
     }
-    return messageRenderer;
   }
 }

@@ -75,4 +75,12 @@ public class Vector2d {
     double dy = to.y - y;
     return Math.sqrt(dx * dx + dy * dy);
   }
+
+  public Vector2d add(double dx, double dy) {
+    return new Vector2d(x + dx, y + dy);
+  }
+
+  public Vector2d add(Vector2d d) {
+    return new Vector2d(x + d.x, y + d.y);
+  }
 }

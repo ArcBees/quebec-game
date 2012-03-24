@@ -75,7 +75,8 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
         gameStateRenderer, manualAction));
 
     assert generatingActions != null;
-    textBoxRenderer.render(generatingActions.getTextBoxInfo(), gameStateRenderer);
+    gameStateRenderer.addToAnimationGraph(
+        textBoxRenderer.render(generatingActions.getTextBoxInfo(), gameStateRenderer));
   }
 
   /**

@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
+import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -41,11 +41,11 @@ public class InteractionMoveArchitect extends
 
   @Inject
   public InteractionMoveArchitect(Scheduler scheduler, InteractionFactories interactionFactories,
-      MessageRenderer messageRenderer, @Assisted GameState gameState,
+      TextBoxRenderer textBoxRenderer, @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionMoveArchitect action) {
-    super(scheduler, gameState, gameStateRenderer,
+    super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
-        createActionMessage(messageRenderer), action.execute(gameState));
+        new Message.Text("moveYourArchitectToThisTile"), action.execute(gameState));
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
 
@@ -70,10 +70,5 @@ public class InteractionMoveArchitect extends
   protected void doMouseLeave(double x, double y, double time) {
     super.doMouseLeave(x, y, time);
     arrows.setParent(null);
-  }
-
-  private static MessageRenderer createActionMessage(MessageRenderer messageRenderer) {
-    new Message.Text("moveYourArchitectToThisTile").accept(messageRenderer);
-    return messageRenderer;
   }
 }

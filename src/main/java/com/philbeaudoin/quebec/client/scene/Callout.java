@@ -25,7 +25,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Callout extends SceneNodeImpl {
-  private static final double BASE_SIZE = 0.08;
+  private static final double BASE_SIZE = 0.065;
 
   private final Vector2d from;
   private final Vector2d to;

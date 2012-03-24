@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
+import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
@@ -52,12 +52,12 @@ public class InteractionSendWorkers extends InteractionWithAction {
   @Inject
   public InteractionSendWorkers(Scheduler scheduler, SpriteResources spriteResources,
       InteractionFactories interactionFactories,
-      SceneNodeAnimation.Factory sceneNodeAnimationFactory, MessageRenderer messageRenderer,
+      SceneNodeAnimation.Factory sceneNodeAnimationFactory, TextBoxRenderer textBoxRenderer,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
       @Assisted ActionSendWorkers action) {
-    super(scheduler, gameState, gameStateRenderer,
+    super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
-        createActionMessage(messageRenderer, gameState, action), action.execute(gameState));
+        createActionMessage(gameState, action), action.execute(gameState));
     PlayerState currentPlayer = gameState.getCurrentPlayer();
     PlayerColor playerColor = currentPlayer.getPlayer().getColor();
 
@@ -107,19 +107,16 @@ public class InteractionSendWorkers extends InteractionWithAction {
     arrows.setParent(null);
   }
 
-  private static MessageRenderer createActionMessage(MessageRenderer messageRenderer,
-      GameState gameState, ActionSendWorkers action) {
+  private static Message createActionMessage(GameState gameState, ActionSendWorkers action) {
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     TileState tileState = gameState.findTileState(action.getDestinationTile());
     if (action.canExecuteBoardAction(gameState)) {
       ActionType actionType = Board.actionForTileLocation(tileState.getLocation().getColumn(),
           tileState.getLocation().getLine()).getActionType();
-      new Message.SendActiveCubesToThisTileAndExecuteAction(tileState.getCubesPerSpot(),
-          playerColor, actionType).accept(messageRenderer);
+      return new Message.SendActiveCubesToThisTileAndExecuteAction(tileState.getCubesPerSpot(),
+          playerColor, actionType);
     } else {
-      new Message.SendActiveCubesToThisTile(tileState.getCubesPerSpot(), playerColor).accept(
-          messageRenderer);
+      return new Message.SendActiveCubesToThisTile(tileState.getCubesPerSpot(), playerColor);
     }
-    return messageRenderer;
   }
 }
