@@ -77,5 +77,4 @@ public class Helpers {
     }
     return new Arrow(architectFrom, architectTo);
   }
-
 }

@@ -89,21 +89,33 @@ public class GamePresenter extends
   @Override
   protected void onReveal() {
     super.onReveal();
-    GameState gameState = new GameState(
-        isTutorial ? new GameControllerTutorial() : new GameControllerStandard());
+    GameState gameState;
+    ArrayList<Player> players;
+    if (isTutorial) {
+      assert nbPlayers == 4;
+      gameState = new GameState(new GameControllerTutorial());
+      players = new ArrayList<Player>(nbPlayers);
 
-    if (nbPlayers < 3) {
-      nbPlayers = 3;
-    } else if (nbPlayers > 5) {
-      nbPlayers = 5;
+      players.add(new PlayerLocalUser(PlayerColor.BLACK, "You"));
+      for (int i = 1; i < nbPlayers; i++) {
+        players.add(new PlayerLocalUser(AI_INFOS[i].color, "Opponent " + i));
+      }
+
+    } else {
+      gameState = new GameState(new GameControllerStandard());
+
+      if (nbPlayers < 3) {
+        nbPlayers = 3;
+      } else if (nbPlayers > 5) {
+        nbPlayers = 5;
+      }
+      players = new ArrayList<Player>(nbPlayers);
+
+      players.add(new PlayerLocalUser(PlayerColor.BLACK, "You"));
+      for (int i = 1; i < nbPlayers; i++) {
+        players.add(new PlayerLocalAi(AI_INFOS[i].color, AI_INFOS[i].name, new AiBrainSimple()));
+      }
     }
-    ArrayList<Player> players = new ArrayList<Player>(nbPlayers);
-
-    players.add(new PlayerLocalUser(PlayerColor.BLACK, "You"));
-    for (int i = 1; i < nbPlayers; i++) {
-      players.add(new PlayerLocalAi(AI_INFOS[i].color, AI_INFOS[i].name, new AiBrainSimple()));
-    }
-
     gameState.initGame(players);
     gameStateRenderer.render(gameState);
   }

@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.interaction;
+package com.philbeaudoin.quebec.shared.action;
+
+import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
 /**
- * A target element that can be selected during an interaction.
+ * An explicit action represented by a message and a sequence of game state changes. The user
+ * generally triggers that action by clicking a button displaying the message.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface InteractionTarget extends Highlighter {
-  /**
-   * Call this when the mouse enters the target.
-   * @param time The time at which the mouse entered the target.
-   */
-  void onMouseEnter(double time);
+public class ActionExplicitHighlightActiveTiles extends ActionExplicit {
 
-  /**
-   * Call this when the mouse exits the target.
-   * @param time The time at which the mouse exited the target.
-   */
-  void onMouseLeave(double time);
+  public ActionExplicitHighlightActiveTiles(Message message, GameStateChange action) {
+    super(message, action);
+  }
 
-  /**
-   * Returns the trigger associated with this interaction target.
-   * @return The trigger.
-   */
-  Trigger getTrigger();
+  @Override
+  public void accept(GameActionVisitor visitor) {
+    visitor.visit(this);
+  }
 }

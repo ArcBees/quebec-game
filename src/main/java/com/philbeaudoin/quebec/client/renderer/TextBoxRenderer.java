@@ -76,10 +76,12 @@ public class TextBoxRenderer {
 
     // Check regular locations.
     switch (location) {
-    case CENTER:
-      return new Vector2d(GameStateRenderer.TEXT_CENTER, 0.4);
     case TOP_CENTER:
       return new Vector2d(GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1);
+    case CENTER:
+      return new Vector2d(GameStateRenderer.TEXT_CENTER, 0.4);
+    case BOTTOM_CENTER:
+      return new Vector2d(GameStateRenderer.TEXT_CENTER, 0.9);
     case PLAYER_AREAS:
       return new Vector2d(0.38, 0.3);
     case SCORE:

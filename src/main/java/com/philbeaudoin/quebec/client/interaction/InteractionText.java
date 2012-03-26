@@ -32,17 +32,27 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class InteractionText extends InteractionWithAction {
+  private final Highlighter highlighter;
   private final SceneNode extras;
 
   @Inject
   public InteractionText(Scheduler scheduler, InteractionFactories interactionFactories,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted MessageRenderer messageRenderer, @Assisted SceneNode extras, @Assisted Vector2d pos,
-      @Assisted GameAction action) {
+      @Assisted MessageRenderer messageRenderer, @Assisted Highlighter highlighter,
+      @Assisted SceneNode extras, @Assisted Vector2d pos, @Assisted GameAction action) {
     super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetText(gameStateRenderer, messageRenderer, pos),
         action.execute(gameState));
+    this.highlighter = highlighter;
     this.extras = extras;
+  }
+
+  @Override
+  public void highlight() {
+    super.highlight();
+    if (highlighter != null) {
+      highlighter.highlight();
+    }
   }
 
   @Override

@@ -70,7 +70,8 @@ public interface InteractionFactories {
   InteractionPerformScoringPhase createInteractionPerformScoringPhase(
       GameState gameState, GameStateRenderer gameStateRenderer, ActionPerformScoringPhase action);
   InteractionText createInteractionText(GameState gameState, GameStateRenderer gameStateRenderer,
-      MessageRenderer messageRenderer, SceneNode extras, Vector2d pos, GameAction action);
+      MessageRenderer messageRenderer, Highlighter highlighter, SceneNode extras, Vector2d pos,
+      GameAction action);
   InteractionTargetTile createInteractionTargetTile(
       GameStateRenderer gameStateRenderer, HasDestinationTile target);
   InteractionTargetInfluenceZone createInteractionTargetInfluenceZone(

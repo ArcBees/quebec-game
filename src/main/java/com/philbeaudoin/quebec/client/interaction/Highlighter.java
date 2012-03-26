@@ -17,25 +17,13 @@
 package com.philbeaudoin.quebec.client.interaction;
 
 /**
- * A target element that can be selected during an interaction.
+ * A class that can highlight one or more objects.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface InteractionTarget extends Highlighter {
-  /**
-   * Call this when the mouse enters the target.
-   * @param time The time at which the mouse entered the target.
-   */
-  void onMouseEnter(double time);
+public interface Highlighter {
 
   /**
-   * Call this when the mouse exits the target.
-   * @param time The time at which the mouse exited the target.
+   * Highlights the object(s).
    */
-  void onMouseLeave(double time);
-
-  /**
-   * Returns the trigger associated with this interaction target.
-   * @return The trigger.
-   */
-  Trigger getTrigger();
+  void highlight();
 }

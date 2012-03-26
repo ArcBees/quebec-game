@@ -47,4 +47,7 @@ public interface GraphicConstantsWithLookup extends ConstantsWithLookup {
   String tutorialPassiveCubes();
   String tutorialActiveCubes();
   String tutorialFirstMove();
+  String tutorialWhereToMoveArchitect();
+  String tutorialPerformMoveArchitect();
+  String tutorialActivateAfterMove();
 }

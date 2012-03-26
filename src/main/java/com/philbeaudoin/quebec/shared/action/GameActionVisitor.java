@@ -70,6 +70,12 @@ public interface GameActionVisitor {
   void visit(ActionExplicit host);
 
   /**
+   * Visits a {@link ActionExplicitHighlightActiveTiles}.
+   * @param host The visited class.
+   */
+  void visit(ActionExplicitHighlightActiveTiles host);
+
+  /**
    * Visits a {@link ActionActivateCubes}.
    * @param host The visited class.
    */

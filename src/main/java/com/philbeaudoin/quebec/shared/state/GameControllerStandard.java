@@ -107,11 +107,11 @@ public class GameControllerStandard implements GameController {
 
     if (!canMoveArchitect) {
       // No tile to move architect to, make it possible to end the round by moving the architect.
-      possibleActions.add(new ActionMoveArchitect(null, false));
+      possibleActions.add(new ActionMoveArchitect(null, false, 0));
       // If the player has the yellow leader, he can also move the neutral architect.
       if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC &&
           !currentPlayer.isHoldingNeutralArchitect()) {
-        possibleActions.add(new ActionMoveArchitect(null, true));
+        possibleActions.add(new ActionMoveArchitect(null, true, 0));
       }
     }
   }
@@ -128,10 +128,11 @@ public class GameControllerStandard implements GameController {
       PossibleActions possibleActions, PlayerState currentPlayer,
       TileState tileState) {
     if (tileState.isAvailableForArchitect(century)) {
-      possibleActions.add(new ActionMoveArchitect(tileState.getTile(), false));
+      int cubesToActivate = Math.min(3, currentPlayer.getNbPassiveCubes());
+      possibleActions.add(new ActionMoveArchitect(tileState.getTile(), false, cubesToActivate));
       // If the player has the yellow leader, he can also move the neutral architect.
       if (currentPlayer.getLeaderCard() == LeaderCard.ECONOMIC) {
-        possibleActions.add(new ActionMoveArchitect(tileState.getTile(), true));
+        possibleActions.add(new ActionMoveArchitect(tileState.getTile(), true, cubesToActivate));
       }
       return true;
     }

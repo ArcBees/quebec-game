@@ -42,15 +42,33 @@ public class ActionMoveArchitect implements GameActionOnTile {
 
   private final Tile destinationTile;
   private final boolean neutralArchitect;
+  private final int cubesToActivate;
+  private final GameStateChange followup;
 
   /**
    * Create an action to move the architect.
    * @param destinationTile The tile to move the architect to, or null to move it out of the board.
    * @param neutralArchitect True to indicate that it's the neutral architect moving.
+   * @param cubesToActivate the number of cubes to move from passive to active.
    */
-  public ActionMoveArchitect(Tile destinationTile, boolean neutralArchitect) {
+  public ActionMoveArchitect(Tile destinationTile, boolean neutralArchitect, int cubesToActivate) {
+    this(destinationTile, neutralArchitect, cubesToActivate, null);
+  }
+
+  /**
+   * Create an action to move the architect, overriding the action action performed.
+   * @param destinationTile The tile to move the architect to, or null to move it out of the board.
+   * @param neutralArchitect True to indicate that it's the neutral architect moving.
+   * @param cubesToActivate the number of cubes to move from passive to active.
+   * @param followup The action to execute following this one, use null to followup with the default
+   *     action.
+   */
+  public ActionMoveArchitect(Tile destinationTile, boolean neutralArchitect, int cubesToActivate,
+      GameStateChange followup) {
     this.destinationTile = destinationTile;
     this.neutralArchitect = neutralArchitect;
+    this.cubesToActivate = cubesToActivate;
+    this.followup = followup;
   }
 
   @Override
@@ -82,13 +100,17 @@ public class ActionMoveArchitect implements GameActionOnTile {
           new ArchitectDestinationTile(destinationTile, architectColor)));
 
       // Activate 3 cubes (or less if the player doesn't have enough).
-      int nbCubesToActivate = Math.min(3, playerState.getNbPassiveCubes());
-      result.add(new GameStateChangeMoveCubes(nbCubesToActivate,
+      assert cubesToActivate <= playerState.getNbPassiveCubes();
+      result.add(new GameStateChangeMoveCubes(cubesToActivate,
           new CubeDestinationPlayer(activePlayer, false),
           new CubeDestinationPlayer(activePlayer, true)));
 
-      // Move to next player.
-      result.add(new GameStateChangeNextPlayer());
+      if (followup != null) {
+        result.add(followup);
+      } else {
+        // Move to next player.
+        result.add(new GameStateChangeNextPlayer());
+      }
     } else {
       // Move the architect out of the board, trigger scoring.
       if (neutralArchitect) {
@@ -101,9 +123,14 @@ public class ActionMoveArchitect implements GameActionOnTile {
         result.add(new GameStateChangeMoveArchitect(architectOrigin,
             new ArchitectDestinationPlayer(activePlayer, neutralArchitect)));
       }
-      PossibleActions scoring = new PossibleActions(new Message.Text("scoringPhaseBegins"));
-      scoring.add(new ActionPerformScoringPhase());
-      result.add(new GameStateChangeQueuePossibleActions(scoring));
+      if (followup != null) {
+        result.add(followup);
+      } else {
+        // Followup with scoring.
+        PossibleActions scoring = new PossibleActions(new Message.Text("scoringPhaseBegins"));
+        scoring.add(new ActionPerformScoringPhase());
+        result.add(new GameStateChangeQueuePossibleActions(scoring));
+      }
     }
 
     return finalResult;
@@ -125,5 +152,13 @@ public class ActionMoveArchitect implements GameActionOnTile {
    */
   public boolean isNeutralArchitect() {
     return neutralArchitect;
+  }
+
+  /**
+   * Returns the number of cubes activated after the architect is moved.
+   * @return The number of activated cubes.
+   */
+  public int getCubesToActivate() {
+    return cubesToActivate;
   }
 }
