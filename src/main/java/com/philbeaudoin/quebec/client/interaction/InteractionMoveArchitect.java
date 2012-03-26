@@ -53,7 +53,7 @@ public class InteractionMoveArchitect extends
     arrows.add(Helpers.createArchitectArrow(gameState, gameStateRenderer, action));
 
     // Arrow to move passive cubes to active, if needed.
-    if (gameState.getCurrentPlayer().getNbPassiveCubes() > 0) {
+    if (action.getCubesToActivate() > 0) {
       Transform cubeFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, false);
       Transform cubeTo = gameStateRenderer.getPlayerCubeZoneTransform(playerColor, true);
       arrows.add(new Arrow(cubeFrom.getTranslation(0), cubeTo.getTranslation(0)));

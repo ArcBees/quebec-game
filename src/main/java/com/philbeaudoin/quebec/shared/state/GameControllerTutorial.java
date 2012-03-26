@@ -18,7 +18,10 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.List;
 
+import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
+import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightActiveTiles;
+import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.BoardLocation;
@@ -28,6 +31,7 @@ import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeReinit;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * A controller to manipulate the state of a game for the tutorial.
@@ -48,6 +52,14 @@ public class GameControllerTutorial implements GameController {
   @Override
   public void configurePossibleActions(GameState gameState) {
     // List of all steps in reverse order.
+    prependStep("tutorialActivateAfterMove", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
+        BoardLocation.BLACK_ACTIVE_CUBES,
+        new ActionActivateCubes(3, nextStep()));
+    Tile tileForMove1 = findTileForMove1(gameState);
+    prependStep("tutorialPerformMoveArchitect", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
+        new ActionMoveArchitect(tileForMove1, false, 0, nextStep()));
+    prependStep("tutorialWhereToMoveArchitect", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
+        new ActionExplicitHighlightActiveTiles(new Message.Text("continueMsg"), nextStep()));
     prependStep("tutorialFirstMove");
     prependStep("tutorialActiveCubes", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
         BoardLocation.BLACK_ACTIVE_CUBES);
@@ -89,8 +101,23 @@ public class GameControllerTutorial implements GameController {
    * @param pointTo The direction the text box points to.
    */
   private void prependStep(String messageMethodName, BoardLocation anchor, BoardLocation pointTo) {
-    prependStep(new TextBoxInfo(new Message.MultilineText(messageMethodName, 0.9), anchor, pointTo),
+    prependStep(messageMethodName, anchor, pointTo,
         new ActionExplicit(new Message.Text("continueMsg"), nextStep()));
+  }
+
+  /**
+   * Prepends a complex scenario step with a text box. You must make sure that the last item of the
+   * {@link GameStateChange} associated with {@code gameAction} is the one returned by
+   * {@link #nextStep()}. This step will take place before any other that have been added.
+   * @param messageMethodName The method name of the message to display.
+   * @param anchor The location where the text box is anchored.
+   * @param pointTo The direction the text box points to.
+   * @param gameAction The game action to execute when the step is performed.
+   */
+  private void prependStep(String messageMethodName, BoardLocation anchor, BoardLocation pointTo,
+      GameAction gameAction) {
+    prependStep(new TextBoxInfo(new Message.MultilineText(messageMethodName, 0.9), anchor, pointTo),
+        gameAction);
   }
 
   /**
@@ -117,4 +144,21 @@ public class GameControllerTutorial implements GameController {
       return new GameStateChangeReinit();
     }
   }
+
+  /**
+   * Find the tile on which the user should send his architect for the first move.
+   * @param gameState The current game state.
+   * @return The tile where the user should send his architect.
+   */
+  private Tile findTileForMove1(GameState gameState) {
+    Vector2d location = new Vector2d(6, 5);
+    for (TileState tileState : gameState.getTileStates()) {
+      if (tileState.getLocation().equals(location)) {
+        assert tileState.isAvailableForArchitect(0);
+        return tileState.getTile();
+      }
+    }
+    return null;
+  }
+
 }

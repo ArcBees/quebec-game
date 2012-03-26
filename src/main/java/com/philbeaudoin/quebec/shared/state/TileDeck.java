@@ -86,7 +86,7 @@ public class TileDeck {
   public static void cannedShuffle(ArrayList<?> list, int seed) {
     int size = list.size();
     for (int i = size; i > 1; i--) {
-      swap(list, i - 1, ((i + 3) * (seed + 7) * 137) % i);
+      swap(list, i - 1, ((i + 7) * (seed + 5) * 119) % i);
     }
   }
 

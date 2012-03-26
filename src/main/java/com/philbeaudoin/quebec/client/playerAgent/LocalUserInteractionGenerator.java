@@ -22,7 +22,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
+import com.philbeaudoin.quebec.client.interaction.ActiveTilesHighlighter;
 import com.philbeaudoin.quebec.client.interaction.Helpers;
+import com.philbeaudoin.quebec.client.interaction.Highlighter;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
@@ -34,6 +36,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
+import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightActiveTiles;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
@@ -197,10 +200,10 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
         new Message.MoveArchitectOut(currentPlayer).accept(pair.a1.isNeutralArchitect() ?
             messageRendererA2 : messageRendererA1);
       }
-      textInteractions.add(new TextInteraction(messageRendererA1,
+      textInteractions.add(new TextInteraction(messageRendererA1, null,
           Helpers.createArchitectArrow(gameState, gameStateRenderer, pair.a1),
           pair.a1));
-      textInteractions.add(new TextInteraction(messageRendererA2,
+      textInteractions.add(new TextInteraction(messageRendererA2, null,
           Helpers.createArchitectArrow(gameState, gameStateRenderer, pair.a2),
           pair.a2));
     } else {
@@ -221,7 +224,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
             // Destination is outside the board.
             MessageRenderer messageRenderer = messageRendererProvider.get();
             new Message.MoveArchitectOut(currentPlayer).accept(messageRenderer);
-            textInteractions.add(new TextInteraction(messageRenderer,
+            textInteractions.add(new TextInteraction(messageRenderer, null,
                 Helpers.createArchitectArrow(gameState, gameStateRenderer, pair.a1),
                 pair.a1));
           }
@@ -231,7 +234,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
   }
 
   private void generateMoveCubeInteractions() {
-    // Look at move cubhe action and group them together when they start from the same location.
+    // Look at move cube action and group them together when they start from the same location.
     ArrayList<GroupedMoveCubes> groupedMoveCubes = new ArrayList<GroupedMoveCubes>();
 
     for (ActionMoveCubes action : moveCubesActions) {
@@ -286,7 +289,8 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
       double width = textInteraction.messageRenderer.calculateApproximateSize().getX();
       Vector2d pos = new Vector2d(x + width / 2.0, TEXT_CENTER_Y);
       gameStateRenderer.addInteraction(factories.createInteractionText(gameState,
-        gameStateRenderer, textInteraction.messageRenderer, textInteraction.extras, pos,
+        gameStateRenderer, textInteraction.messageRenderer, textInteraction.highlighter,
+        textInteraction.extras, pos,
         textInteraction.action));
       x += width + TEXT_PADDING;
     }
@@ -339,14 +343,22 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
   public void visit(ActionScorePoints host) {
     MessageRenderer messageRenderer = messageRendererProvider.get();
     new Message.ScorePoints(host.getNbPoints()).accept(messageRenderer);
-    textInteractions.add(new TextInteraction(messageRenderer, null, host));
+    textInteractions.add(new TextInteraction(messageRenderer, null, null, host));
   }
 
   @Override
   public void visit(ActionExplicit host) {
     MessageRenderer messageRenderer = messageRendererProvider.get();
     host.getMessage().accept(messageRenderer);
-    textInteractions.add(new TextInteraction(messageRenderer, null, host));
+    textInteractions.add(new TextInteraction(messageRenderer, null, null, host));
+  }
+
+  @Override
+  public void visit(ActionExplicitHighlightActiveTiles host) {
+    MessageRenderer messageRenderer = messageRendererProvider.get();
+    host.getMessage().accept(messageRenderer);
+    textInteractions.add(new TextInteraction(messageRenderer,
+        new ActiveTilesHighlighter(gameStateRenderer, gameState), null, host));
   }
 
   @Override
@@ -365,7 +377,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
     MessageRenderer messageRenderer = messageRendererProvider.get();
     new Message.ActivateCubes(host.getNbCubes(),
         gameState.getCurrentPlayer().getPlayer().getColor()).accept(messageRenderer);
-    textInteractions.add(new TextInteraction(messageRenderer, new Arrow(from, to), host));
+    textInteractions.add(new TextInteraction(messageRenderer, null, new Arrow(from, to), host));
   }
 
   @Override
@@ -399,10 +411,13 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
 
   private static class TextInteraction {
     final MessageRenderer messageRenderer;
+    final Highlighter highlighter;
     final SceneNode extras;
     final GameAction action;
-    TextInteraction(MessageRenderer messageRenderer, SceneNode extras, GameAction action) {
+    TextInteraction(MessageRenderer messageRenderer, Highlighter highlighter,
+        SceneNode extras, GameAction action) {
       this.messageRenderer = messageRenderer;
+      this.highlighter = highlighter;
       this.extras = extras;
       this.action = action;
     }
