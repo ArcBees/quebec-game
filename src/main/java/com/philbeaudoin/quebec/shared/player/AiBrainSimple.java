@@ -179,6 +179,10 @@ public class AiBrainSimple implements AiBrain {
   private int addFakeStarTokens(GameState gameState, PlayerColor playerColor,
       PlayerState playerState, MoveCount movesUntilScoring, TileState[] modifiedTiles) {
     int nbExtraFilledSpots = (playerState.getNbActiveCubes() + 1) / 2;
+    if (playerState.getLeaderCard() == null) {
+      // No cards, can hold on a bit more.
+      nbExtraFilledSpots++;
+    }
     int nbExtraFilledSpotsNeutralArchitect = 0;
     if (playerState.getLeaderCard() == LeaderCard.ECONOMIC) {
       // The extra pawn makes it possible to wait until the end of the round.
