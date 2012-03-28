@@ -18,9 +18,11 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.List;
 
+import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightActiveTiles;
+import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightArchitectTiles;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
@@ -28,7 +30,14 @@ import com.philbeaudoin.quebec.shared.message.BoardLocation;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.player.Player;
+import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationPlayer;
+import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
+import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeReinit;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -52,12 +61,24 @@ public class GameControllerTutorial implements GameController {
   @Override
   public void configurePossibleActions(GameState gameState) {
     // List of all steps in reverse order.
+    prependStep("tutorialThreeSpotsPerTile", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
+        new ActionExplicitHighlightArchitectTiles(new Message.Text("continueMsg"), nextStep()));
+    prependStep("tutorialWhereToSendWorkers", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
+        new ActionExplicitHighlightArchitectTiles(new Message.Text("continueMsg"), nextStep()));
+    prependStep("tutorialSendActiveWorkers");
+    prependStep("tutorialFourthPlayerFirstMove", BoardLocation.CENTER, BoardLocation.NONE,
+        new GameStateChangeNextPlayer(false));
+    prependStep("tutorialThirdPlayerFirstMove", BoardLocation.CENTER, BoardLocation.NONE,
+        generateFirstMove(gameState, PlayerColor.ORANGE, 8, 3));
+    prependStep("tutorialSecondPlayerFirstMove", BoardLocation.CENTER, BoardLocation.NONE,
+        generateFirstMove(gameState, PlayerColor.WHITE, 15, 6));
+    prependStep("tutorialGoToSecondPlayerFirstMove", BoardLocation.CENTER, BoardLocation.NONE,
+        generateFirstMove(gameState, PlayerColor.PINK, 13, 4));
     prependStep("tutorialActivateAfterMove", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
         BoardLocation.BLACK_ACTIVE_CUBES,
         new ActionActivateCubes(3, nextStep()));
-    Tile tileForMove1 = findTileForMove1(gameState);
     prependStep("tutorialPerformMoveArchitect", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
-        new ActionMoveArchitect(tileForMove1, false, 0, nextStep()));
+        new ActionMoveArchitect(findTile(gameState, 6, 5), false, 0, nextStep()));
     prependStep("tutorialWhereToMoveArchitect", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
         new ActionExplicitHighlightActiveTiles(new Message.Text("continueMsg"), nextStep()));
     prependStep("tutorialFirstMove");
@@ -106,6 +127,23 @@ public class GameControllerTutorial implements GameController {
   }
 
   /**
+   * Prepends a simple scenario step with a text box, a pointer and a continue button. This step
+   * will take place before any other that have been added.
+   * @param messageMethodName The method name of the message to display.
+   * @param anchor The location where the text box is anchored.
+   * @param pointTo The direction the text box points to.
+   * @param gameStateChange The game state change to apply once the move is executed.
+   */
+  private void prependStep(String messageMethodName, BoardLocation anchor, BoardLocation pointTo,
+      GameStateChange gameStateChange) {
+    GameStateChangeComposite totalGameStateChange = new GameStateChangeComposite();
+    totalGameStateChange.add(gameStateChange);
+    totalGameStateChange.add(nextStep());
+    prependStep(messageMethodName, anchor, pointTo,
+        new ActionExplicit(new Message.Text("continueMsg"), totalGameStateChange));
+  }
+
+  /**
    * Prepends a complex scenario step with a text box. You must make sure that the last item of the
    * {@link GameStateChange} associated with {@code gameAction} is the one returned by
    * {@link #nextStep()}. This step will take place before any other that have been added.
@@ -146,12 +184,14 @@ public class GameControllerTutorial implements GameController {
   }
 
   /**
-   * Find the tile on which the user should send his architect for the first move.
+   * Find the tile at a given position on the board.
    * @param gameState The current game state.
+   * @param x The x position.
+   * @param y The y position.
    * @return The tile where the user should send his architect.
    */
-  private Tile findTileForMove1(GameState gameState) {
-    Vector2d location = new Vector2d(6, 5);
+  private Tile findTile(GameState gameState, int x, int y) {
+    Vector2d location = new Vector2d(x, y);
     for (TileState tileState : gameState.getTileStates()) {
       if (tileState.getLocation().equals(location)) {
         assert tileState.isAvailableForArchitect(0);
@@ -159,6 +199,26 @@ public class GameControllerTutorial implements GameController {
       }
     }
     return null;
+  }
+
+  /**
+   * Switch to the next player and execute his move.
+   * @param gameState The current game state.
+   * @param color The player to which we're switching.
+   * @param x The x coordinate of the tile on which he sends his architect.
+   * @param y The y coordinate of the tile on which he sends his architect.
+   * @return A game state change corresponding to the move.
+   */
+  private GameStateChange generateFirstMove(GameState gameState, PlayerColor color, int x, int y) {
+    GameStateChangeComposite result = new GameStateChangeComposite();
+    result.add(new GameStateChangeNextPlayer(false));
+    result.add(new GameStateChangeMoveArchitect(
+        new ArchitectDestinationPlayer(color, false),
+        new ArchitectDestinationTile(findTile(gameState, x, y), color)));
+    result.add(new GameStateChangeMoveCubes(3,
+        new CubeDestinationPlayer(color, false),
+        new CubeDestinationPlayer(color, true)));
+    return result;
   }
 
 }
