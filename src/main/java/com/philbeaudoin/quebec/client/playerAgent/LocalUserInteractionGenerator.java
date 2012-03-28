@@ -23,6 +23,7 @@ import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.interaction.ActiveTilesHighlighter;
+import com.philbeaudoin.quebec.client.interaction.ArchitectTilesHighlighter;
 import com.philbeaudoin.quebec.client.interaction.Helpers;
 import com.philbeaudoin.quebec.client.interaction.Highlighter;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
@@ -37,6 +38,7 @@ import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightActiveTiles;
+import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightArchitectTiles;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
@@ -359,6 +361,14 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
     host.getMessage().accept(messageRenderer);
     textInteractions.add(new TextInteraction(messageRenderer,
         new ActiveTilesHighlighter(gameStateRenderer, gameState), null, host));
+  }
+
+  @Override
+  public void visit(ActionExplicitHighlightArchitectTiles host) {
+    MessageRenderer messageRenderer = messageRendererProvider.get();
+    host.getMessage().accept(messageRenderer);
+    textInteractions.add(new TextInteraction(messageRenderer,
+        new ArchitectTilesHighlighter(gameStateRenderer, gameState), null, host));
   }
 
   @Override

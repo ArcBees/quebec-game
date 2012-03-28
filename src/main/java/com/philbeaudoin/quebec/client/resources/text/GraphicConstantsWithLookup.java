@@ -50,4 +50,11 @@ public interface GraphicConstantsWithLookup extends ConstantsWithLookup {
   String tutorialWhereToMoveArchitect();
   String tutorialPerformMoveArchitect();
   String tutorialActivateAfterMove();
+  String tutorialGoToSecondPlayerFirstMove();
+  String tutorialSecondPlayerFirstMove();
+  String tutorialThirdPlayerFirstMove();
+  String tutorialFourthPlayerFirstMove();
+  String tutorialSendActiveWorkers();
+  String tutorialWhereToSendWorkers();
+  String tutorialThreeSpotsPerTile();
 }
