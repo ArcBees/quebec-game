@@ -14,46 +14,40 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.location;
 
-import java.util.List;
-
+import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**
- * A leader card destination corresponding to the game board.
+ * An architect destination corresponding to the neutral leader when it's offboard.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class LeaderDestinationBoard implements LeaderDestination {
+public class ArchitectDestinationOffboardNeutral implements ArchitectDestination {
 
-  private final LeaderCard leaderCard;
-
-  public LeaderDestinationBoard(LeaderCard leaderCard) {
-    this.leaderCard = leaderCard;
+  public ArchitectDestinationOffboardNeutral() {
   }
 
   @Override
-  public LeaderCard getLeaderCard() {
-    return leaderCard;
+  public PlayerColor getArchitectColor() {
+    return PlayerColor.NEUTRAL;
   }
 
   @Override
   public void removeFrom(GameState gameState) {
-    List<LeaderCard> leaderCards = gameState.getAvailableLeaderCards();
-    boolean removed = leaderCards.remove(leaderCard);
-    assert removed;
   }
 
   @Override
   public void addTo(GameState gameState) {
-    List<LeaderCard> leaderCards = gameState.getAvailableLeaderCards();
-    assert !leaderCards.contains(leaderCard);
-    leaderCards.add(leaderCard);
   }
 
   @Override
-  public <T> T accept(LeaderDestinationVisitor<T> visitor) {
+  public <T> T accept(ArchitectDestinationVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
+
+  @Override
+  public <T> T accept(LocationVisitor<T> visitor) {
     return visitor.visit(this);
   }
 }

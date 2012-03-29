@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.location;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.state.GameState;
@@ -58,6 +58,11 @@ public class ArchitectDestinationTile implements ArchitectDestination {
 
   @Override
   public <T> T accept(ArchitectDestinationVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
+
+  @Override
+  public <T> T accept(LocationVisitor<T> visitor) {
     return visitor.visit(this);
   }
 

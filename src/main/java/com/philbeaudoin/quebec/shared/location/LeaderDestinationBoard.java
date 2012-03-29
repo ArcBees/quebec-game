@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.location;
 
-import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.player.PlayerState;
+import java.util.List;
+
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**
- * A leader card destination corresponding to a player zone.
+ * A leader card destination corresponding to the game board.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class LeaderDestinationPlayer implements LeaderDestination {
+public class LeaderDestinationBoard implements LeaderDestination {
 
   private final LeaderCard leaderCard;
-  private final PlayerColor playerColor;
 
-  public LeaderDestinationPlayer(LeaderCard leaderCard, PlayerColor playerColor) {
+  public LeaderDestinationBoard(LeaderCard leaderCard) {
     this.leaderCard = leaderCard;
-    this.playerColor = playerColor;
   }
 
   @Override
@@ -42,20 +40,16 @@ public class LeaderDestinationPlayer implements LeaderDestination {
 
   @Override
   public void removeFrom(GameState gameState) {
-    PlayerState playerState = gameState.getPlayerState(playerColor);
-    assert playerState != null;
-    assert leaderCard != null;
-    assert playerState.getLeaderCard() == leaderCard;
-    playerState.setLeaderCard(null);
+    List<LeaderCard> leaderCards = gameState.getAvailableLeaderCards();
+    boolean removed = leaderCards.remove(leaderCard);
+    assert removed;
   }
 
   @Override
   public void addTo(GameState gameState) {
-    PlayerState playerState = gameState.getPlayerState(playerColor);
-    assert playerState != null;
-    assert leaderCard != null;
-    assert playerState.getLeaderCard() == null;
-    playerState.setLeaderCard(leaderCard);
+    List<LeaderCard> leaderCards = gameState.getAvailableLeaderCards();
+    assert !leaderCards.contains(leaderCard);
+    leaderCards.add(leaderCard);
   }
 
   @Override
@@ -63,11 +57,8 @@ public class LeaderDestinationPlayer implements LeaderDestination {
     return visitor.visit(this);
   }
 
-  /**
-   * Access the color of the player zone corresponding to that destination.
-   * @return The color of the player zone.
-   */
-  public PlayerColor getPlayerColor() {
-    return playerColor;
+  @Override
+  public <T> T accept(LocationVisitor<T> visitor) {
+    return visitor.visit(this);
   }
 }

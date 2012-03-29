@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationInfluenceZone;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**

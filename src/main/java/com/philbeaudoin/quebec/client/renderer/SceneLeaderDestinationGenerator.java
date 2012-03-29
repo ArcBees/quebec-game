@@ -16,13 +16,13 @@
 
 package com.philbeaudoin.quebec.client.renderer;
 
-import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationBoard;
-import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationPlayer;
-import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationVisitor;
+import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
+import com.philbeaudoin.quebec.shared.location.LeaderDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.LeaderDestinationVisitor;
 
 /**
  * Use this class to generate the {@link SceneLeaderDestination} corresponding to a given
- * {@link com.philbeaudoin.quebec.shared.statechange.LeaderDestination LeaderDestination}.
+ * {@link com.philbeaudoin.quebec.shared.location.LeaderDestination LeaderDestination}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class SceneLeaderDestinationGenerator

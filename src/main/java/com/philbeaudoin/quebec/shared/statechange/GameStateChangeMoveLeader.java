@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.statechange;
 
+import com.philbeaudoin.quebec.shared.location.LeaderDestination;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**

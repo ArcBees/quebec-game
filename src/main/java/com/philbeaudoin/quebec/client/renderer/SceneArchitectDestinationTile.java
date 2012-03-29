@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationTile;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**

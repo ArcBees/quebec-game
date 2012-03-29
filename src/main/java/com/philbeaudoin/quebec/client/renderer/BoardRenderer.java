@@ -463,6 +463,17 @@ public class BoardRenderer {
   }
 
   /**
+   * Gets the transform of the cube spot on a given tile.
+   * @param tile The tile at which to get the transform.
+   * @param spot The spot index.
+   * @return The global transforms of the cubes on that spot.
+   */
+  public Transform getCubesOnTileTransform(Tile tile, int spot) {
+    TileInfo tileInfo = findTileInfo(tile);
+    return tileInfo.root.getTotalTransform(0).times(getCubesParentTransform(tileInfo, spot));
+  }
+
+  /**
    * Gets the global transform of a given tile.
    * @param tile The tile for which to get the transform.
    * @return The global transforms of the tile.
@@ -490,10 +501,7 @@ public class BoardRenderer {
     List<Transform> result = new ArrayList<Transform>(nbCubes);
     assert tileInfo != null;
     // Add the node to hold these cubes.
-    double x = -0.0225 + spot * 0.0225;
-    double y = spot == 1 ? 0.0225 : 0;
-    SceneNodeList cubesNode = new SceneNodeList(new ConstantTransform(new Vector2d(x, y), 1.0,
-        -tileInfo.rotation));
+    SceneNodeList cubesNode = new SceneNodeList(getCubesParentTransform(tileInfo, spot));
     tileInfo.root.add(cubesNode);
     tileInfo.root.sendToBack(cubesNode);
     tileInfo.root.sendToBack(tileInfo.tileSprite);
@@ -509,6 +517,12 @@ public class BoardRenderer {
       cubesNode.add(cubeSprite);
     }
     return result;
+  }
+
+  private ConstantTransform getCubesParentTransform(TileInfo tileInfo, int spot) {
+    double x = -0.0225 + spot * 0.0225;
+    double y = spot == 1 ? 0.0225 : 0;
+    return new ConstantTransform(new Vector2d(x, y), 1.0, -tileInfo.rotation);
   }
 
   private Transform addArchitectToTile(TileInfo tileInfo, PlayerColor architectColor) {

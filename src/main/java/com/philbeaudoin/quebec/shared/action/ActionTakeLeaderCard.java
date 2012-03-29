@@ -18,21 +18,21 @@ package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationOffboardNeutral;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationInfluenceZone;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
+import com.philbeaudoin.quebec.shared.location.LeaderDestinationPlayer;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationOffboardNeutral;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationPlayer;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationInfluenceZone;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveLeader;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
-import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationBoard;
-import com.philbeaudoin.quebec.shared.statechange.LeaderDestinationPlayer;
 
 /**
  * The action of taking a leader card from an influence zone.

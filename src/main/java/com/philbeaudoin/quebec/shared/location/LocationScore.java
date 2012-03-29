@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.location;
 
 /**
- * Interface for a class that can visit a {@link LeaderDestination}.
- * @param <T> The return type of the visit methods.
+ * Identifies a location corresponding to a spot on the scoring track.
+ *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface LeaderDestinationVisitor<T> {
+public class LocationScore implements Location {
+  private final int score;
+
   /**
-   * Visits a {@link LeaderDestinationBoard}.
-   * @param host The visited class.
+   * Creates a location pointing at a given spot on the scoring track.
+   * @param score The score of the spot to point to.
    */
-  T visit(LeaderDestinationBoard host);
-  /**
-   * Visits a {@link LeaderDestinationPlayer}.
-   * @param host The visited class.
-   */
-  T visit(LeaderDestinationPlayer host);
+  public LocationScore(int score) {
+    this.score = score;
+  }
+
+  @Override
+  public <T> T accept(LocationVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
+
+  public int getScore() {
+    return score;
+  }
 }

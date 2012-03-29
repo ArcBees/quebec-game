@@ -22,7 +22,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 /**
  * A valid place to take or send leader cards within a scene graph. The destination implies a leader
  * card. The render-side equivalent of
- * {@link com.philbeaudoin.quebec.shared.statechange.LeaderDestination LeaderDestination}.
+ * {@link com.philbeaudoin.quebec.shared.location.LeaderDestination LeaderDestination}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface SceneLeaderDestination {

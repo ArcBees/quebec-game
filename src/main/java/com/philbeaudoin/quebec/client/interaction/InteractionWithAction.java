@@ -21,7 +21,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
-import com.philbeaudoin.quebec.shared.message.BoardLocation;
+import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.state.GameState;
@@ -63,7 +63,7 @@ public abstract class InteractionWithAction implements Interaction {
 
     if (message != null && !gameState.hasPossibleActionMessage()) {
       actionText = textBoxRenderer.render(
-          new TextBoxInfo(message, BoardLocation.TOP_CENTER), gameStateRenderer);
+          new TextBoxInfo(message, new LocationTopCenter()), gameStateRenderer);
     } else {
       this.actionText = null;
     }

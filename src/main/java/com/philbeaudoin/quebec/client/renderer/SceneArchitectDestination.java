@@ -22,7 +22,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 /**
  * A valid place to take or send an architect within a scene graph. The destination implies a color
  * of architect. The render-side equivalent of
- * {@link com.philbeaudoin.quebec.shared.statechange.ArchitectDestination ArchitectDestination}.
+ * {@link com.philbeaudoin.quebec.shared.location.ArchitectDestination ArchitectDestination}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface SceneArchitectDestination {

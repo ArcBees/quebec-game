@@ -16,7 +16,7 @@
 
 package com.philbeaudoin.quebec.shared;
 
-import com.philbeaudoin.quebec.shared.statechange.CubeDestination;
+import com.philbeaudoin.quebec.shared.location.CubeDestination;
 
 /**
  * Information on a specific zone scoring and cascade for a given zone, for each player.

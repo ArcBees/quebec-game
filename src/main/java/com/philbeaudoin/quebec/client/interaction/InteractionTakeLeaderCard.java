@@ -26,11 +26,13 @@ import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
-import com.philbeaudoin.quebec.shared.message.BoardLocation;
+import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
+import com.philbeaudoin.quebec.shared.location.LocationRelative;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Transform;
+import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * This is an interaction with the game board for the action of taking a leader card.
@@ -66,37 +68,31 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
 
     // Text describing the card.
     String methodName = null;
-    BoardLocation leaderLocation = null;
     switch (action.getLeaderCard()) {
     case RELIGIOUS:
       methodName = "religiousLeaderDescription";
-      leaderLocation = BoardLocation.RELIGIOUS_LEADER;
       break;
     case POLITIC:
       methodName = "politicLeaderDescription";
-      leaderLocation = BoardLocation.POLITIC_LEADER;
       break;
     case ECONOMIC:
       methodName = "economicLeaderDescription";
-      leaderLocation = BoardLocation.ECONOMIC_LEADER;
       break;
     case CULTURAL_TWO_THREE:
       methodName = "cultural23LeaderDescription";
-      leaderLocation = BoardLocation.CULTURAL_TWO_THREE_LEADER;
       break;
     case CULTURAL_FOUR_FIVE:
       methodName = "cultural45LeaderDescription";
-      leaderLocation = BoardLocation.CULTURAL_FOUR_FIVE_LEADER;
       break;
     case CITADEL:
       methodName = "citadelLeaderDescription";
-      leaderLocation = BoardLocation.CITADEL_LEADER;
       break;
     default:
       assert false;
     }
+    LeaderDestinationBoard location = new LeaderDestinationBoard(action.getLeaderCard());
     TextBoxInfo textBoxInfo = new TextBoxInfo(new Message.MultilineText(methodName),
-        BoardLocation.BOTTOM_OF_TARGET_NEAR, leaderLocation);
+        new LocationRelative(location, new Vector2d(0, 1)), location);
     extras.add(textBoxRenderer.render(textBoxInfo, gameStateRenderer));
   }
 

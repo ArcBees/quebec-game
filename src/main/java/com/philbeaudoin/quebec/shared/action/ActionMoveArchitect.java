@@ -17,16 +17,16 @@
 package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestination;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationOffboardNeutral;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationTile;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.state.TileState;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestination;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationOffboardNeutral;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationPlayer;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;

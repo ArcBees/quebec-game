@@ -26,13 +26,19 @@ import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightArchitectTil
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.message.BoardLocation;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationTile;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationTile;
+import com.philbeaudoin.quebec.shared.location.Location;
+import com.philbeaudoin.quebec.shared.location.LocationBottomCenter;
+import com.philbeaudoin.quebec.shared.location.LocationCenter;
+import com.philbeaudoin.quebec.shared.location.LocationPlayerAreas;
+import com.philbeaudoin.quebec.shared.location.LocationRelative;
+import com.philbeaudoin.quebec.shared.location.LocationScore;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.player.Player;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationPlayer;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;
@@ -49,6 +55,8 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  */
 public class GameControllerTutorial implements GameController {
 
+  private static final Location CENTER = new LocationCenter();
+  private static final Location BOTTOM_CENTER = new LocationBottomCenter();
   private PossibleActions startingActions;
 
   @Override
@@ -61,37 +69,46 @@ public class GameControllerTutorial implements GameController {
   @Override
   public void configurePossibleActions(GameState gameState) {
     // List of all steps in reverse order.
-    prependStep("tutorialThreeSpotsPerTile", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
+    Location target;
+
+    target = new CubeDestinationTile(findTile(gameState, 6, 5), PlayerColor.BLACK, 0);
+    prependStep("tutorialThreeSpotsPerTile", relativeToTarget(target, 0, 2), target,
         new ActionExplicitHighlightArchitectTiles(new Message.Text("continueMsg"), nextStep()));
-    prependStep("tutorialWhereToSendWorkers", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
+    prependStep("tutorialWhereToSendWorkers", BOTTOM_CENTER, null,
         new ActionExplicitHighlightArchitectTiles(new Message.Text("continueMsg"), nextStep()));
     prependStep("tutorialSendActiveWorkers");
-    prependStep("tutorialFourthPlayerFirstMove", BoardLocation.CENTER, BoardLocation.NONE,
+    prependStep("tutorialFourthPlayerFirstMove", CENTER, null,
         new GameStateChangeNextPlayer(false));
-    prependStep("tutorialThirdPlayerFirstMove", BoardLocation.CENTER, BoardLocation.NONE,
+    prependStep("tutorialThirdPlayerFirstMove", CENTER, null,
         generateFirstMove(gameState, PlayerColor.ORANGE, 8, 3));
-    prependStep("tutorialSecondPlayerFirstMove", BoardLocation.CENTER, BoardLocation.NONE,
+    prependStep("tutorialSecondPlayerFirstMove", CENTER, null,
         generateFirstMove(gameState, PlayerColor.WHITE, 15, 6));
-    prependStep("tutorialGoToSecondPlayerFirstMove", BoardLocation.CENTER, BoardLocation.NONE,
+    prependStep("tutorialGoToSecondPlayerFirstMove", CENTER, null,
         generateFirstMove(gameState, PlayerColor.PINK, 13, 4));
-    prependStep("tutorialActivateAfterMove", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
-        BoardLocation.BLACK_ACTIVE_CUBES,
+    target = new CubeDestinationPlayer(PlayerColor.BLACK, true);
+    prependStep("tutorialActivateAfterMove", relativeToTarget(target, 2, 2), target,
         new ActionActivateCubes(3, nextStep()));
-    prependStep("tutorialPerformMoveArchitect", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
+    prependStep("tutorialPerformMoveArchitect", BOTTOM_CENTER, null,
         new ActionMoveArchitect(findTile(gameState, 6, 5), false, 0, nextStep()));
-    prependStep("tutorialWhereToMoveArchitect", BoardLocation.BOTTOM_CENTER, BoardLocation.NONE,
+    prependStep("tutorialWhereToMoveArchitect", BOTTOM_CENTER, null,
         new ActionExplicitHighlightActiveTiles(new Message.Text("continueMsg"), nextStep()));
     prependStep("tutorialFirstMove");
-    prependStep("tutorialActiveCubes", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
-        BoardLocation.BLACK_ACTIVE_CUBES);
-    prependStep("tutorialPassiveCubes", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
-        BoardLocation.BLACK_PASSIVE_CUBES);
-    prependStep("tutorialArchitect", BoardLocation.BOTTOM_RIGHT_OF_TARGET,
-        BoardLocation.BLACK_ARCHITECT_ON_PLAYER_AREA);
-    prependStep("tutorialGoal", BoardLocation.TOP_LEFT_OF_TARGET, BoardLocation.SCORE);
-    prependStep("tutorialPlayers", BoardLocation.RIGHT_OF_TARGET, BoardLocation.PLAYER_AREAS);
+    target = new CubeDestinationPlayer(PlayerColor.BLACK, true);
+    prependStep("tutorialActiveCubes", relativeToTarget(target, 2, 2), target);
+    target = new CubeDestinationPlayer(PlayerColor.BLACK, false);
+    prependStep("tutorialPassiveCubes", relativeToTarget(target, 2, 2), target);
+    target = new ArchitectDestinationPlayer(PlayerColor.BLACK, false);
+    prependStep("tutorialArchitect", relativeToTarget(target, 2, 2), target);
+    target = new LocationScore(0);
+    prependStep("tutorialGoal", relativeToTarget(target, -2, -2), target);
+    target = new LocationPlayerAreas();
+    prependStep("tutorialPlayers", relativeToTarget(target, 2, 0), target);
     prependStep("tutorialIntro");
     gameState.setPossibleActions(startingActions);
+  }
+
+  private Location relativeToTarget(Location target, double x, double y) {
+    return new LocationRelative(target, new Vector2d(x, y));
   }
 
   @Override
@@ -111,7 +128,7 @@ public class GameControllerTutorial implements GameController {
    * @param messageMethodName The method name of the message to display.
    */
   private void prependStep(String messageMethodName) {
-    prependStep(messageMethodName, BoardLocation.CENTER, BoardLocation.NONE);
+    prependStep(messageMethodName, CENTER, null);
   }
 
   /**
@@ -121,7 +138,7 @@ public class GameControllerTutorial implements GameController {
    * @param anchor The location where the text box is anchored.
    * @param pointTo The direction the text box points to.
    */
-  private void prependStep(String messageMethodName, BoardLocation anchor, BoardLocation pointTo) {
+  private void prependStep(String messageMethodName, Location anchor, Location pointTo) {
     prependStep(messageMethodName, anchor, pointTo,
         new ActionExplicit(new Message.Text("continueMsg"), nextStep()));
   }
@@ -134,7 +151,7 @@ public class GameControllerTutorial implements GameController {
    * @param pointTo The direction the text box points to.
    * @param gameStateChange The game state change to apply once the move is executed.
    */
-  private void prependStep(String messageMethodName, BoardLocation anchor, BoardLocation pointTo,
+  private void prependStep(String messageMethodName, Location anchor, Location pointTo,
       GameStateChange gameStateChange) {
     GameStateChangeComposite totalGameStateChange = new GameStateChangeComposite();
     totalGameStateChange.add(gameStateChange);
@@ -152,7 +169,7 @@ public class GameControllerTutorial implements GameController {
    * @param pointTo The direction the text box points to.
    * @param gameAction The game action to execute when the step is performed.
    */
-  private void prependStep(String messageMethodName, BoardLocation anchor, BoardLocation pointTo,
+  private void prependStep(String messageMethodName, Location anchor, Location pointTo,
       GameAction gameAction) {
     prependStep(new TextBoxInfo(new Message.MultilineText(messageMethodName, 0.9), anchor, pointTo),
         gameAction);
