@@ -14,35 +14,16 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
-
-import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.state.GameState;
+package com.philbeaudoin.quebec.shared.location;
 
 /**
- * An architect destination corresponding to the neutral leader when it's offboard.
+ * Identifies a location at the top center of the screen.
+ *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ArchitectDestinationOffboardNeutral implements ArchitectDestination {
-
-  public ArchitectDestinationOffboardNeutral() {
-  }
-
+public class LocationTopCenter implements Location {
   @Override
-  public PlayerColor getArchitectColor() {
-    return PlayerColor.NEUTRAL;
-  }
-
-  @Override
-  public void removeFrom(GameState gameState) {
-  }
-
-  @Override
-  public void addTo(GameState gameState) {
-  }
-
-  @Override
-  public <T> T accept(ArchitectDestinationVisitor<T> visitor) {
+  public <T> T accept(LocationVisitor<T> visitor) {
     return visitor.visit(this);
   }
 }

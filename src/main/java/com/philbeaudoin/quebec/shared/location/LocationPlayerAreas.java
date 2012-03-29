@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.location;
 
 /**
- * Interface for a class that can visit a {@link CubeDestination}.
- * @param <T> The type returned by the visit method.
+ * Identifies a location corresponding to the global player are.
+ *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface CubeDestinationVisitor<T> {
-  /**
-   * Visits a {@link CubeDestinationInfluenceZone}.
-   * @param host The visited class.
-   */
-  T visit(CubeDestinationInfluenceZone host);
-  /**
-   * Visits a {@link CubeDestinationPlayer}.
-   * @param host The visited class.
-   */
-  T visit(CubeDestinationPlayer host);
-  /**
-   * Visits a {@link CubeDestinationTile}.
-   * @param host The visited class.
-   */
-  T visit(CubeDestinationTile host);
+public class LocationPlayerAreas implements Location {
+  @Override
+  public <T> T accept(LocationVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
 }

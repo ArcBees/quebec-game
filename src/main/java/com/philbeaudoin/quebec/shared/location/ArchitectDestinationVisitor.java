@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.location;
 
 /**
  * Interface for a class that can visit an {@link ArchitectDestination}.

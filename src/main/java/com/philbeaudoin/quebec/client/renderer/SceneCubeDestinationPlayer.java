@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.client.renderer;
 import java.util.List;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.statechange.CubeDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**

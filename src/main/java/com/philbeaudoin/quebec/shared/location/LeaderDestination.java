@@ -14,31 +14,32 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.location;
 
-import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**
- * A valid place to take or send an architect. The destination implies a color of architect.
+ * A valid place to take or send leader cards. A destination implies a leader card.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface ArchitectDestination {
+public interface LeaderDestination extends Location {
 
   /**
-   * @return The color of the architect at that destination.
+   * Access the leader card implied by that destination.
+   * @return The leader card implied by that destination.
    */
-  PlayerColor getArchitectColor();
+  LeaderCard getLeaderCard();
 
   /**
-   * Remove the architect from that specific destination in the provided game state.
-   * @param gameState The game state from which to remove the architect.
+   * Remove leader card from that specific destination in the provided game state.
+   * @param gameState The game state from which to remove cubes.
    */
   void removeFrom(GameState gameState);
 
   /**
-   * Add the architect to this specific destination in the provided game state.
-   * @param gameState The game state onto which to add the architect.
+   * Add leader card to this specific destination in the provided game state.
+   * @param gameState The game state onto which to add cubes.
    */
   void addTo(GameState gameState);
 
@@ -46,5 +47,5 @@ public interface ArchitectDestination {
    * Accepts a visitor.
    * @param visitor The visitor.
    */
-  <T> T accept(ArchitectDestinationVisitor<T> visitor);
+  <T> T accept(LeaderDestinationVisitor<T> visitor);
 }

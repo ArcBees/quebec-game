@@ -22,11 +22,24 @@ import javax.inject.Provider;
 import com.philbeaudoin.quebec.client.scene.Callout;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
-import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.message.BoardLocation;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationOffboardNeutral;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationTile;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationInfluenceZone;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.CubeDestinationTile;
+import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
+import com.philbeaudoin.quebec.shared.location.LeaderDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.Location;
+import com.philbeaudoin.quebec.shared.location.LocationBottomCenter;
+import com.philbeaudoin.quebec.shared.location.LocationCenter;
+import com.philbeaudoin.quebec.shared.location.LocationPlayerAreas;
+import com.philbeaudoin.quebec.shared.location.LocationScore;
+import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
+import com.philbeaudoin.quebec.shared.location.LocationVisitor;
+import com.philbeaudoin.quebec.shared.location.LocationRelative;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -55,13 +68,10 @@ public class TextBoxRenderer {
       Message message = textBoxInfo.getMessage();
       MessageRenderer messageRenderer = messageRendererProvider.get();
       message.accept(messageRenderer);
-      BoardLocation pointToLocation = textBoxInfo.getPointTo();
-      Vector2d pointTo = null;
-      if (pointToLocation != BoardLocation.NONE) {
-        pointTo = computeBoardLocation(pointToLocation, gameStateRenderer, null, null);
-      }
       Vector2d anchor = computeBoardLocation(textBoxInfo.getAnchor(), gameStateRenderer,
-          pointTo, messageRenderer.calculateApproximateSize());
+          messageRenderer.calculateApproximateSize());
+      Vector2d pointTo = computeBoardLocation(textBoxInfo.getPointTo(), gameStateRenderer,
+          messageRenderer.calculateApproximateSize());
       if (pointTo != null) {
         result.add(new Callout(anchor, pointTo));
       }
@@ -71,99 +81,106 @@ public class TextBoxRenderer {
     return result;
   }
 
-  private Vector2d computeBoardLocation(BoardLocation location,
-      GameStateRenderer gameStateRenderer, Vector2d pointTo, Vector2d size) {
+  private Vector2d computeBoardLocation(Location location, GameStateRenderer gameStateRenderer,
+      Vector2d size) {
+    if (location == null) {
+      return null;
+    }
+    return location.accept(new Positioner(gameStateRenderer, size));
+  }
 
-    // Check regular locations.
-    switch (location) {
-    case TOP_CENTER:
-      return new Vector2d(GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1);
-    case CENTER:
-      return new Vector2d(GameStateRenderer.TEXT_CENTER, 0.4);
-    case BOTTOM_CENTER:
-      return new Vector2d(GameStateRenderer.TEXT_CENTER, 0.9);
-    case PLAYER_AREAS:
-      return new Vector2d(0.38, 0.3);
-    case SCORE:
-      return new Vector2d(1.65, 0.95);
-    case BLACK_ARCHITECT_ON_PLAYER_AREA:
+  private class Positioner implements LocationVisitor<Vector2d> {
+
+    private static final double SCALE_FACTOR = 0.06;
+    private final GameStateRenderer gameStateRenderer;
+    private final Vector2d size;
+
+    Positioner(GameStateRenderer gameStateRenderer, Vector2d size) {
+      this.gameStateRenderer = gameStateRenderer;
+      this.size = size;
+    }
+
+    @Override
+    public Vector2d visit(ArchitectDestinationOffboardNeutral host) {
+      return new Vector2d(0, 0.5);
+    }
+
+    @Override
+    public Vector2d visit(ArchitectDestinationPlayer host) {
       return gameStateRenderer.getArchitectOnPlayerTransform(
-          PlayerColor.BLACK, false).getTranslation(0);
-    case BLACK_PASSIVE_CUBES:
-      return gameStateRenderer.getPlayerCubeZoneTransform(
-          PlayerColor.BLACK, false).getTranslation(0);
-    case BLACK_ACTIVE_CUBES:
-      return gameStateRenderer.getPlayerCubeZoneTransform(
-          PlayerColor.BLACK, true).getTranslation(0);
-    case RELIGIOUS_LEADER:
-      return gameStateRenderer.getLeaderCardOnBoardTransform(
-          LeaderCard.RELIGIOUS).getTranslation(0).add(0, 0.052);
-    case POLITIC_LEADER:
-      return gameStateRenderer.getLeaderCardOnBoardTransform(
-          LeaderCard.POLITIC).getTranslation(0).add(0, 0.052);
-    case ECONOMIC_LEADER:
-      return gameStateRenderer.getLeaderCardOnBoardTransform(
-          LeaderCard.ECONOMIC).getTranslation(0).add(0, 0.052);
-    case CULTURAL_TWO_THREE_LEADER:
-      return gameStateRenderer.getLeaderCardOnBoardTransform(
-          LeaderCard.CULTURAL_TWO_THREE).getTranslation(0).add(0, 0.052);
-    case CULTURAL_FOUR_FIVE_LEADER:
-      return gameStateRenderer.getLeaderCardOnBoardTransform(
-          LeaderCard.CULTURAL_FOUR_FIVE).getTranslation(0).add(0, 0.052);
-    case CITADEL_LEADER:
-      return gameStateRenderer.getLeaderCardOnBoardTransform(
-          LeaderCard.CITADEL).getTranslation(0).add(0, 0.052);
-    default:
-      // Not a regular locations, relative locations need a pointTo and a size.
-      assert pointTo != null && size != null;
-      break;
+          host.getArchitectColor(), host.isNeutralArchitect()).getTranslation(0);
     }
 
-    // Check relative locations.
-    double deltaX = size.getX() / 2.0 + 0.1;
-    double deltaY = size.getY() / 2.0 + 0.1;
-    double deltaXNear = size.getX() / 2.0 + 0.02;
-    double deltaYNear = size.getY() / 2.0 + 0.02;
-
-    switch (location) {
-    case TOP_OF_TARGET_NEAR:
-      return pointTo.add(0, -deltaYNear);
-    case TOP_RIGHT_OF_TARGET_NEAR:
-      return pointTo.add(deltaXNear, -deltaYNear);
-    case RIGHT_OF_TARGET_NEAR:
-      return pointTo.add(deltaXNear, 0);
-    case BOTTOM_RIGHT_OF_TARGET_NEAR:
-      return pointTo.add(deltaXNear, deltaYNear);
-    case BOTTOM_OF_TARGET_NEAR:
-      return pointTo.add(0, deltaYNear);
-    case BOTTOM_LEFT_OF_TARGET_NEAR:
-      return pointTo.add(-deltaXNear, deltaYNear);
-    case LEFT_OF_TARGET_NEAR:
-      return pointTo.add(-deltaXNear, 0);
-    case TOP_LEFT_OF_TARGET_NEAR:
-      return pointTo.add(-deltaXNear, -deltaYNear);
-
-    case TOP_OF_TARGET:
-      return pointTo.add(0, -deltaY);
-    case TOP_RIGHT_OF_TARGET:
-      return pointTo.add(deltaX, -deltaY);
-    case RIGHT_OF_TARGET:
-      return pointTo.add(deltaX, 0);
-    case BOTTOM_RIGHT_OF_TARGET:
-      return pointTo.add(deltaX, deltaY);
-    case BOTTOM_OF_TARGET:
-      return pointTo.add(0, deltaY);
-    case BOTTOM_LEFT_OF_TARGET:
-      return pointTo.add(-deltaX, deltaY);
-    case LEFT_OF_TARGET:
-      return pointTo.add(-deltaX, 0);
-    case TOP_LEFT_OF_TARGET:
-      return pointTo.add(-deltaX, -deltaY);
-
-    default:
-      assert false;
+    @Override
+    public Vector2d visit(ArchitectDestinationTile host) {
+      return gameStateRenderer.getArchitectOnTileTransform(host.getTile()).getTranslation(0);
     }
-    assert false;
-    return null;
+
+    @Override
+    public Vector2d visit(CubeDestinationInfluenceZone host) {
+      return gameStateRenderer.getInfluenceZoneNode(
+          host.getInfluenceType()).getTotalTransform(0).getTranslation();
+    }
+
+    @Override
+    public Vector2d visit(CubeDestinationPlayer host) {
+      return gameStateRenderer.getPlayerCubeZoneTransform(host.getPlayerColor(),
+          host.isActive()).getTranslation(0);
+    }
+
+    @Override
+    public Vector2d visit(CubeDestinationTile host) {
+      return gameStateRenderer.getCubesOnTileTransform(host.getTile(),
+          host.getSpot()).getTranslation(0);
+    }
+
+    @Override
+    public Vector2d visit(LeaderDestinationBoard host) {
+      return gameStateRenderer.getLeaderCardOnBoardTransform(
+          host.getLeaderCard()).getTranslation(0).add(0, 0.052);
+    }
+
+    @Override
+    public Vector2d visit(LeaderDestinationPlayer host) {
+      return gameStateRenderer.getLeaderCardOnPlayerTransform(
+          host.getPlayerColor()).getTranslation(0).add(0, 0.052);
+    }
+
+    @Override
+    public Vector2d visit(LocationRelative host) {
+      // Check relative locations.
+      Vector2d targetLocation = host.getTarget().accept(new Positioner(gameStateRenderer, size));
+      Vector2d pos = host.getRelativePosition();
+      double deltaX = Math.signum(pos.getX()) * (size.getX() / 2.0 +
+          Math.max(0, Math.abs(pos.getX()) - 1) * SCALE_FACTOR + 0.02);
+      double deltaY = Math.signum(pos.getY()) * (size.getY() / 2.0 +
+          Math.max(0, Math.abs(pos.getY()) - 1) * SCALE_FACTOR + 0.02);
+      return targetLocation.add(deltaX, deltaY);
+    }
+
+    @Override
+    public Vector2d visit(LocationTopCenter host) {
+      return new Vector2d(GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_1);
+    }
+
+    @Override
+    public Vector2d visit(LocationCenter host) {
+      return new Vector2d(GameStateRenderer.TEXT_CENTER, 0.4);
+    }
+
+    @Override
+    public Vector2d visit(LocationBottomCenter host) {
+      return new Vector2d(GameStateRenderer.TEXT_CENTER, 0.9);
+    }
+
+    @Override
+    public Vector2d visit(LocationPlayerAreas host) {
+      return new Vector2d(0.38, 0.3);
+    }
+
+    @Override
+    public Vector2d visit(LocationScore host) {
+      return gameStateRenderer.getScoreSpotTransform(host.getScore()).getTranslation(0);
+    }
   }
 }

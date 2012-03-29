@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.location;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
@@ -81,6 +81,11 @@ public class CubeDestinationPlayer implements CubeDestination {
 
   @Override
   public <T> T accept(CubeDestinationVisitor<T> visitor) {
+    return visitor.visit(this);
+  }
+
+  @Override
+  public <T> T accept(LocationVisitor<T> visitor) {
     return visitor.visit(this);
   }
 

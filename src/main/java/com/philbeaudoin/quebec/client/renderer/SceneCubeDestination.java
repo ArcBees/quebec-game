@@ -24,7 +24,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 /**
  * A valid place to take or send cubes within a scene graph. The destination implies a color of
  * cubes. The render-side equivalent of
- * {@link com.philbeaudoin.quebec.shared.statechange.CubeDestination CubeDestination}.
+ * {@link com.philbeaudoin.quebec.shared.location.CubeDestination CubeDestination}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface SceneCubeDestination {

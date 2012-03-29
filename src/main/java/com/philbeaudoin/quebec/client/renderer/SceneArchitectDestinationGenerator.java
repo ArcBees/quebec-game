@@ -16,14 +16,14 @@
 
 package com.philbeaudoin.quebec.client.renderer;
 
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationOffboardNeutral;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationPlayer;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationTile;
-import com.philbeaudoin.quebec.shared.statechange.ArchitectDestinationVisitor;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationOffboardNeutral;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationPlayer;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationTile;
+import com.philbeaudoin.quebec.shared.location.ArchitectDestinationVisitor;
 
 /**
  * Use this class to generate the {@link SceneArchitectDestination} corresponding to a given
- * {@link com.philbeaudoin.quebec.shared.statechange.ArchitectDestination ArchitectDestination}.
+ * {@link com.philbeaudoin.quebec.shared.location.ArchitectDestination ArchitectDestination}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class SceneArchitectDestinationGenerator

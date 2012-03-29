@@ -29,6 +29,7 @@ import com.philbeaudoin.quebec.client.utils.PawnStack;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
+import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -50,8 +51,18 @@ public class ScoreRenderer {
   }
 
   /**
+   * Gets the global transform of a given spot on the scoring track.
+   * @param score The score for which to get the global transform.
+   * @param boardRoot The root scene node of the board.
+   * @return The global transforms of the score spot.
+   */
+  public Transform getScoreSpotTransform(int score, SceneNodeList boardRoot) {
+    return boardRoot.getTotalTransform(0).times(getScoreTransform(score));
+  }
+
+  /**
    * Renders the pawn of the given player according to its state.
-   * @param playerState The state of the player to initialize.
+   * @param playerState The state of the player to render.
    * @param boardRoot The root scene node of the board.
    */
   void renderPlayer(PlayerState playerState, SceneNodeList boardRoot) {
@@ -64,7 +75,7 @@ public class ScoreRenderer {
     int score = playerState.getScore() % 100;
     SceneNodeList parent = nodeForScore.get(score);
     if (parent == null) {
-      parent = new SceneNodeList(new ConstantTransform(getScorePosition(score)));
+      parent = new SceneNodeList(getScoreTransform(score));
       nodeForScore.put(score, parent);
     }
     // Ensures the parent is in the tree.
@@ -89,7 +100,7 @@ public class ScoreRenderer {
     }
   }
 
-  private Vector2d getScorePosition(int score) {
+  private ConstantTransform getScoreTransform(int score) {
     int moduloScore = score % 50;
     double x = 0.614 - (Math.min(28, moduloScore)) * 0.0439;
     double y = 0.442 - (Math.max(0, moduloScore - 28)) * 0.0416;
@@ -99,6 +110,6 @@ public class ScoreRenderer {
       x -= 0.001;
       y -= 0.03;
     }
-    return new Vector2d(x, y);
+    return new ConstantTransform(new Vector2d(x, y));
   }
 }

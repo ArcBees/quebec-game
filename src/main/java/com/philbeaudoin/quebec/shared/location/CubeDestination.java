@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.statechange;
+package com.philbeaudoin.quebec.shared.location;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.state.GameState;
@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  * A valid place to take or send cubes. The destination implies a color of cubes.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface CubeDestination {
+public interface CubeDestination extends Location {
 
   /**
    * @return The number of cubes available in that destination.

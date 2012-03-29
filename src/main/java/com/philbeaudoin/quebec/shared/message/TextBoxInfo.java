@@ -16,6 +16,9 @@
 
 package com.philbeaudoin.quebec.shared.message;
 
+import com.philbeaudoin.quebec.shared.location.Location;
+import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
+
 /**
  * Information about a text box, including the message, the logical location where it should be
  * anchored as well as the object it should be pointing to if any.
@@ -24,33 +27,33 @@ package com.philbeaudoin.quebec.shared.message;
  */
 public class TextBoxInfo {
   private final Message message;
-  private final BoardLocation anchor;
-  private final BoardLocation pointTo;
-  public TextBoxInfo(Message message, BoardLocation anchor, BoardLocation pointTo) {
-    assert message != null && anchor != BoardLocation.NONE;
+  private final Location anchor;
+  private final Location pointTo;
+  public TextBoxInfo(Message message, Location anchor, Location pointTo) {
+    assert message != null && anchor != null;
     this.message = message;
     this.anchor = anchor;
     this.pointTo = pointTo;
   }
-  public TextBoxInfo(Message message, BoardLocation anchor) {
-    assert message != null && anchor != BoardLocation.NONE;
+  public TextBoxInfo(Message message, Location anchor) {
+    assert message != null && anchor != null;
     this.message = message;
     this.anchor = anchor;
-    this.pointTo = BoardLocation.NONE;
+    this.pointTo = null;
   }
   public TextBoxInfo(Message message) {
     assert message != null;
     this.message = message;
-    this.anchor = BoardLocation.TOP_CENTER;
-    this.pointTo = BoardLocation.NONE;
+    this.anchor = new LocationTopCenter();
+    this.pointTo = null;
   }
   public Message getMessage() {
     return message;
   }
-  public BoardLocation getAnchor() {
+  public Location getAnchor() {
     return anchor;
   }
-  public BoardLocation getPointTo() {
+  public Location getPointTo() {
     return pointTo;
   }
 }
