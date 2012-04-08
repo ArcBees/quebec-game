@@ -92,4 +92,9 @@ public interface LocationVisitor<T> {
    * @param host The visited class.
    */
   T visit(LocationScore host);
+  /**
+   * Visits a {@link LocationBoardAction}.
+   * @param host The visited class.
+   */
+  T visit(LocationBoardAction host);
 }

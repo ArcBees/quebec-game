@@ -31,6 +31,7 @@ import com.philbeaudoin.quebec.shared.location.CubeDestinationTile;
 import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
 import com.philbeaudoin.quebec.shared.location.LeaderDestinationPlayer;
 import com.philbeaudoin.quebec.shared.location.Location;
+import com.philbeaudoin.quebec.shared.location.LocationBoardAction;
 import com.philbeaudoin.quebec.shared.location.LocationBottomCenter;
 import com.philbeaudoin.quebec.shared.location.LocationCenter;
 import com.philbeaudoin.quebec.shared.location.LocationPlayerAreas;
@@ -71,7 +72,7 @@ public class TextBoxRenderer {
       Vector2d anchor = computeBoardLocation(textBoxInfo.getAnchor(), gameStateRenderer,
           messageRenderer.calculateApproximateSize());
       Vector2d pointTo = computeBoardLocation(textBoxInfo.getPointTo(), gameStateRenderer,
-          messageRenderer.calculateApproximateSize());
+          new Vector2d(0, 0));
       if (pointTo != null) {
         result.add(new Callout(anchor, pointTo));
       }
@@ -181,6 +182,11 @@ public class TextBoxRenderer {
     @Override
     public Vector2d visit(LocationScore host) {
       return gameStateRenderer.getScoreSpotTransform(host.getScore()).getTranslation(0);
+    }
+
+    @Override
+    public Vector2d visit(LocationBoardAction host) {
+      return gameStateRenderer.getActionTransform(host.getBoardAction()).getTranslation(0);
     }
   }
 }

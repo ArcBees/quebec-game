@@ -48,4 +48,9 @@ public class BoardActionBlueAddStar extends BoardAction {
     result.add(ActionExplicit.createSkipAction());
     return result;
   }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionBlue4", 0.7);
+  }
 }

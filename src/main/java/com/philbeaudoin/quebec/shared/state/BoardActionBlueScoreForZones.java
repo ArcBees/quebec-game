@@ -20,6 +20,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 
 /**
  * Board action: blue, 2 cubes to activate, score based on the number of influence zones in which
@@ -50,5 +51,10 @@ public class BoardActionBlueScoreForZones extends BoardAction {
     PossibleActions result = new PossibleActions();
     result.add(new ActionScorePoints(nbPoints));
     return result;
+  }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionBlue3", 0.7);
   }
 }

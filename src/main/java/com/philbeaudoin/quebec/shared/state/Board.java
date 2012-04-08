@@ -58,6 +58,15 @@ public class Board {
     return locToAction[locToIndex(column, line)];
   }
 
+  /**
+   * Returns all the board actions.
+   * @return An array with all the board actions.
+   */
+  public static BoardAction[] getAllActions() {
+    initIfNeeded();
+    return boardActions;
+  }
+
   private static final double PI_OVER_3 = 1.04719755;
   private static final double PI_OVER_2 = 1.57079633;
   private static final double PI_3_OVER_2 = 4.71238898;

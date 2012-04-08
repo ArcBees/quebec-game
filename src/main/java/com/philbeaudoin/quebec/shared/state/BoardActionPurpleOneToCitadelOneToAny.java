@@ -63,4 +63,9 @@ public class BoardActionPurpleOneToCitadelOneToAny extends BoardAction {
     }
     return result;
   }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionPurple2", 0.7);
+  }
 }

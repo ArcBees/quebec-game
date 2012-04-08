@@ -71,4 +71,9 @@ public class BoardActionPurpleOnePointOneToAnyActivateOne extends BoardAction {
     }
     return result;
   }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionPurple3", 0.7);
+  }
 }

@@ -19,6 +19,7 @@ package com.philbeaudoin.quebec.shared.state;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 
 /**
@@ -44,5 +45,10 @@ public class BoardActionBlueScoreForCubesInHand extends BoardAction {
     PossibleActions result = new PossibleActions();
     result.add(new ActionScorePoints(nbPoints));
     return result;
+  }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionBlue2", 0.7);
   }
 }

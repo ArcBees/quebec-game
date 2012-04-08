@@ -25,7 +25,9 @@ import javax.inject.Inject;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.philbeaudoin.quebec.client.interaction.ActionDescriptionInteraction;
 import com.philbeaudoin.quebec.client.interaction.Interaction;
+import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.playerAgent.PlayerAgent;
 import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentGenerator;
 import com.philbeaudoin.quebec.client.scene.Rectangle;
@@ -73,13 +75,15 @@ public class GameStateRenderer {
 
   private final Scheduler scheduler;
   private final RendererFactories factories;
+  private final InteractionFactories interactionFactories;
   private final ChangeRendererGenerator changeRendererGenerator;
   private final PlayerAgentGenerator playerAgentGenerator;
   private final ScoreRenderer scoreRenderer;
   private final BoardRenderer boardRenderer;
-  private final ArrayList<PlayerStateRenderer> playerStateRenderers = new ArrayList<PlayerStateRenderer>(
-      5);
+  private final ArrayList<PlayerStateRenderer> playerStateRenderers =
+      new ArrayList<PlayerStateRenderer>(5);
 
+  private ActionDescriptionInteraction actionDescriptionInteraction;
   private boolean forceGlassScreen;
   private boolean refreshNeeded = true;
 
@@ -87,11 +91,13 @@ public class GameStateRenderer {
 
   @Inject
   public GameStateRenderer(Scheduler scheduler, RendererFactories factories,
+      InteractionFactories interactionFactories,
       SpriteResources spriteResources,
       ChangeRendererGenerator changeRendererGenerator,
       PlayerAgentGenerator playerAgentGenerator) {
     this.scheduler = scheduler;
     this.factories = factories;
+    this.interactionFactories = interactionFactories;
     this.changeRendererGenerator = changeRendererGenerator;
     this.playerAgentGenerator = playerAgentGenerator;
     scoreRenderer = factories.createScoreRenderer();
@@ -136,6 +142,8 @@ public class GameStateRenderer {
     for (Interaction interaction : interactions) {
       interaction.highlight();
     }
+
+    actionDescriptionInteraction = interactionFactories.createActionDescriptionInteraction(this);
   }
 
   private void addOrClearGlassScreen() {
@@ -573,6 +581,9 @@ public class GameStateRenderer {
   public void onMouseMove(double x, double y, double time) {
     for (Interaction interaction : interactions) {
       interaction.onMouseMove(x, y, time);
+    }
+    if (actionDescriptionInteraction != null) {
+      actionDescriptionInteraction.onMouseMove(x, y);
     }
   }
 
