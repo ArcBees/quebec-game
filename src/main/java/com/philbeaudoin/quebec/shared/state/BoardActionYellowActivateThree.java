@@ -20,6 +20,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 
 /**
@@ -40,5 +41,10 @@ public class BoardActionYellowActivateThree extends BoardAction {
     }
     result.add(ActionExplicit.createSkipAction());
     return result;
+  }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionYellow4", 0.7);
   }
 }

@@ -87,7 +87,8 @@ public interface Message {
 
   /**
    * Generic message containing only text, no extra parameters, no graphics. This text is broken
-   * automatically in multiple lines.
+   * automatically in multiple lines. The method name must refer to a method in
+   * {@link com.philbeaudoin.quebec.client.resources.text.GraphicConstantsWithLookup}.
    */
   public class MultilineText implements Message {
     private final String methodName;

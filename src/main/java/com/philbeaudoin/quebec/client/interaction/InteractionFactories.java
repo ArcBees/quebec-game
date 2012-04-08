@@ -82,4 +82,6 @@ public interface InteractionFactories {
       GameStateRenderer gameStateRenderer, HasBoardAction target);
   InteractionTargetText createInteractionTargetText(
       GameStateRenderer gameStateRenderer, MessageRenderer messageRenderer, Vector2d pos);
+  ActionDescriptionInteraction createActionDescriptionInteraction(
+      GameStateRenderer gameStateRenderer);
 }

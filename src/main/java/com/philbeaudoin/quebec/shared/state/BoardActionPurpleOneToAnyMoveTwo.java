@@ -131,4 +131,9 @@ public class BoardActionPurpleOneToAnyMoveTwo extends BoardAction {
         (zone == zoneIntoWhichToAddACube ? 1 : 0);
     return Math.min(nbCubesInZone, NB_CUBES_TO_MOVE);
   }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionPurple4", 0.7);
+  }
 }

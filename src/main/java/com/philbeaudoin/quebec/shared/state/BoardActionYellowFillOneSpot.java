@@ -52,4 +52,9 @@ public class BoardActionYellowFillOneSpot extends BoardAction {
 
     return result;
   }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionYellow2", 0.7);
+  }
 }

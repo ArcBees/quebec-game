@@ -39,4 +39,9 @@ public class BoardActionYellowAny extends BoardAction {
     result.add(ActionExplicit.createSkipAction());
     return result;
   }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionYellow1", 0.7);
+  }
 }

@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.shared.state;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -85,4 +86,10 @@ public abstract class BoardAction {
    * @return The list of possible actions, or null.
    */
   public abstract PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile);
+
+  /**
+   * Returns a text describing this board action.
+   * @return The description message.
+   */
+  public abstract Message getDescription();
 }

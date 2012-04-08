@@ -43,4 +43,9 @@ public class BoardActionRedTwoToRedOrBlue extends BoardAction {
     result.add(ActionExplicit.createSkipAction());
     return result;
   }
+
+  @Override
+  public Message getDescription() {
+    return new Message.MultilineText("actionRed2", 0.7);
+  }
 }
