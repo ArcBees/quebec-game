@@ -20,9 +20,11 @@ import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
 import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
 /**
  * The player agent of a user playing locally.
@@ -47,6 +49,17 @@ public class PlayerAgentLocalUser implements PlayerAgent {
       LocalUserInteractionGenerator generator =
           playerAgentFactories.createLocalUserInteractionGenerator(gameState, gameStateRenderer);
       possibleActions.accept(generator);
+      gameStateRenderer.setShowActionDescriptionOnHover(possibleActions.getCanSelectBoardAction());
+      GameAction automaticAction = generator.getAutomaticAction();
+      if (automaticAction != null) {
+        // Move automatically.
+        final GameStateChange gameStateChange = automaticAction.execute(gameState);
+        if (gameStateChange != null) {
+          gameStateRenderer.generateAnimFor(gameState, gameStateChange);
+        }
+      } else {
+        generator.generateInteractions();
+      }
       generator.generateInteractions();
     }
   }

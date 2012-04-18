@@ -33,6 +33,13 @@ public interface GameAction {
   GameStateChange execute(GameState gameState);
 
   /**
+   * Return true if the action should be executed automatically, without use intervention. If an
+   * action is automatic then it should be the only action in a group.
+   * @return True if the action is automatic, false otherwise.
+   */
+  boolean isAutomatic();
+
+  /**
    * Accepts a visitor.
    * @param visitor The visitor to accept.
    */

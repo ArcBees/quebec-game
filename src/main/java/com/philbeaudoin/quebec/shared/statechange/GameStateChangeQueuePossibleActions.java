@@ -29,7 +29,7 @@ public class GameStateChangeQueuePossibleActions implements GameStateChange {
   private final PossibleActions possibleActions;
 
   public GameStateChangeQueuePossibleActions(PossibleActions possibleActions) {
-    assert possibleActions != null && possibleActions.getNbActions() > 0;
+    assert possibleActions != null;
     this.possibleActions = possibleActions;
   }
 

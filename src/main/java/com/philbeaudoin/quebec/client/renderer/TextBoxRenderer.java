@@ -150,7 +150,8 @@ public class TextBoxRenderer {
     @Override
     public Vector2d visit(LocationRelative host) {
       // Check relative locations.
-      Vector2d targetLocation = host.getTarget().accept(new Positioner(gameStateRenderer, size));
+      Vector2d targetLocation = host.getTarget().accept(
+          new Positioner(gameStateRenderer, new Vector2d()));
       Vector2d pos = host.getRelativePosition();
       double deltaX = Math.signum(pos.getX()) * (size.getX() / 2.0 +
           Math.max(0, Math.abs(pos.getX()) - 1) * SCALE_FACTOR + 0.02);

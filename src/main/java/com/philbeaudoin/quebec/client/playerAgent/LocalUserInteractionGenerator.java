@@ -24,6 +24,7 @@ import javax.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.interaction.ActiveTilesHighlighter;
 import com.philbeaudoin.quebec.client.interaction.ArchitectTilesHighlighter;
+import com.philbeaudoin.quebec.client.interaction.BoardActionsHighlighter;
 import com.philbeaudoin.quebec.client.interaction.Helpers;
 import com.philbeaudoin.quebec.client.interaction.Highlighter;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
@@ -39,6 +40,7 @@ import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightActiveTiles;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightArchitectTiles;
+import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightBoardActions;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
@@ -96,6 +98,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
   private final ArrayList<TextInteraction> textInteractions = new ArrayList<TextInteraction>();
 
   private PossibleActions generatingActions;
+  private GameAction automaticAction;
 
   @Inject
   LocalUserInteractionGenerator(InteractionFactories factories,
@@ -308,41 +311,49 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
 
   @Override
   public void visit(ActionMoveArchitect host) {
+    checkIfAutomatic(host);
     moveArchitectActions.add(host);
   }
 
   @Override
   public void visit(ActionSendWorkers host) {
+    checkIfAutomatic(host);
     sendWorkersActions.add(host);
   }
 
   @Override
   public void visit(ActionTakeLeaderCard host) {
+    checkIfAutomatic(host);
     takeLeaderCardActions.add(host);
   }
 
   @Override
   public void visit(ActionSendCubesToZone host) {
+    checkIfAutomatic(host);
     sendCubesToZoneActions.add(host);
   }
 
   @Override
   public void visit(ActionSelectBoardAction host) {
+    checkIfAutomatic(host);
     selectBoardActionActions.add(host);
   }
 
   @Override
   public void visit(ActionIncreaseStar host) {
+    checkIfAutomatic(host);
     increaseStarActions.add(host);
   }
 
   @Override
   public void visit(ActionMoveCubes host) {
+    checkIfAutomatic(host);
     moveCubesActions.add(host);
   }
 
   @Override
   public void visit(ActionScorePoints host) {
+    checkIfAutomatic(host);
     MessageRenderer messageRenderer = messageRendererProvider.get();
     new Message.ScorePoints(host.getNbPoints()).accept(messageRenderer);
     textInteractions.add(new TextInteraction(messageRenderer, null, null, host));
@@ -350,13 +361,21 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
 
   @Override
   public void visit(ActionExplicit host) {
-    MessageRenderer messageRenderer = messageRendererProvider.get();
-    host.getMessage().accept(messageRenderer);
-    textInteractions.add(new TextInteraction(messageRenderer, null, null, host));
+    checkIfAutomatic(host);
+    Message message = host.getMessage();
+    if (message != null) {
+      MessageRenderer messageRenderer = messageRendererProvider.get();
+      message.accept(messageRenderer);
+      textInteractions.add(new TextInteraction(messageRenderer, null, null, host));
+    } else {
+      // No message, it must be automatic.
+      assert host.isAutomatic();
+    }
   }
 
   @Override
   public void visit(ActionExplicitHighlightActiveTiles host) {
+    checkIfAutomatic(host);
     MessageRenderer messageRenderer = messageRendererProvider.get();
     host.getMessage().accept(messageRenderer);
     textInteractions.add(new TextInteraction(messageRenderer,
@@ -365,6 +384,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
 
   @Override
   public void visit(ActionExplicitHighlightArchitectTiles host) {
+    checkIfAutomatic(host);
     MessageRenderer messageRenderer = messageRendererProvider.get();
     host.getMessage().accept(messageRenderer);
     textInteractions.add(new TextInteraction(messageRenderer,
@@ -372,12 +392,23 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
   }
 
   @Override
+  public void visit(ActionExplicitHighlightBoardActions host) {
+    checkIfAutomatic(host);
+    MessageRenderer messageRenderer = messageRendererProvider.get();
+    host.getMessage().accept(messageRenderer);
+    textInteractions.add(new TextInteraction(messageRenderer,
+        new BoardActionsHighlighter(gameStateRenderer), null, host));
+  }
+
+  @Override
   public void visit(ActionPerformScoringPhase host) {
+    checkIfAutomatic(host);
     performScoringPhaseActions.add(host);
   }
 
   @Override
   public void visit(ActionActivateCubes host) {
+    checkIfAutomatic(host);
     PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
     Vector2d from = gameStateRenderer.getPlayerCubeZoneTransform(
         playerColor, false).getTranslation(0);
@@ -392,6 +423,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
 
   @Override
   public void visit(ActionEmptyTileToZone host) {
+    checkIfAutomatic(host);
     emptyTileToZoneActions.add(host);
   }
 
@@ -431,5 +463,16 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
       this.extras = extras;
       this.action = action;
     }
+  }
+
+  private void checkIfAutomatic(GameAction gameAction) {
+    if (gameAction.isAutomatic()) {
+      assert generatingActions != null && generatingActions.getNbActions() == 1;
+      automaticAction = gameAction;
+    }
+  }
+
+  public GameAction getAutomaticAction() {
+    return automaticAction;
   }
 }
