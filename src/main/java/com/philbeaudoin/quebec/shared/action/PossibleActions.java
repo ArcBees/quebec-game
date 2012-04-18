@@ -31,28 +31,43 @@ public class PossibleActions {
 
   private final TextBoxInfo textBoxInfo;
   private final ArrayList<GameAction> gameActions = new ArrayList<GameAction>();
+  private final boolean canSelectBoardAction;
 
   /**
-   * Creates a list of possible actions without an information message.
+   * Creates a list of possible actions without an information message. Assumes the user can select
+   * a board action, so the renderer should display a tooltip on the board action on hover.
    */
   public PossibleActions() {
-    textBoxInfo = null;
+    this((TextBoxInfo) null);
   }
 
   /**
    * Creates a list of possible actions with an information message.
-   * @oaran textBoxInfo Information on the text box to display while the user selects the action.
+   * @param textBoxInfo Information on the text box to display while the user selects the action.
+   * @param canSelectBoardAction True if among the possible actions the user can select a board
+   *     action. In this case, the renderer should display a tooltip on the board action on hover.
+   */
+  public PossibleActions(TextBoxInfo textBoxInfo, boolean canSelectBoardAction) {
+    this.textBoxInfo = textBoxInfo;
+    this.canSelectBoardAction = canSelectBoardAction;
+  }
+
+  /**
+   * Creates a list of possible actions with an information message. Assumes the user can select
+   * a board action, so the renderer should display a tooltip on the board action on hover.
+   * @param textBoxInfo Information on the text box to display while the user selects the action.
    */
   public PossibleActions(TextBoxInfo textBoxInfo) {
-    this.textBoxInfo = textBoxInfo;
+    this(textBoxInfo, true);
   }
 
   /**
-   * Creates a list of possible actions with an information message.
-   * @oaran message The message to display at the top while the user selects the action.
+   * Creates a list of possible actions with an information message. Assumes the user can select
+   * a board action, so the renderer should display a tooltip on the board action on hover.
+   * @param message The message to display at the top while the user selects the action.
    */
   public PossibleActions(Message message) {
-    this.textBoxInfo = new TextBoxInfo(message);
+    this(new TextBoxInfo(message));
   }
 
   /**
@@ -110,5 +125,9 @@ public class PossibleActions {
    */
   public GameAction getAction(int actionIndex) {
     return gameActions.get(actionIndex);
+  }
+
+  public boolean getCanSelectBoardAction() {
+    return canSelectBoardAction;
   }
 }

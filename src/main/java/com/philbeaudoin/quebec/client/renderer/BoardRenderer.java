@@ -566,6 +566,7 @@ public class BoardRenderer {
 
   /**
    * Highlight a specific leader card on the board.
+   * @param foregroundRoot The root of the objects in front of the glass screen.
    * @param leaderCard The leader card to highlight.
    */
   public void highlightLeaderCard(SceneNodeList foregroundRoot, LeaderCard leaderCard) {
@@ -575,6 +576,17 @@ public class BoardRenderer {
     SceneNode highlightedCard = node.deepClone();
     highlightedCard.setParent(foregroundRoot);
     highlightedCard.setTransform(globalTransform);
+  }
+
+  /**
+   * Highlight a specific board action on the board.
+   * @param foregroundRoot The root of the objects in front of the glass screen.
+   * @param boardAction The board action to highlight.
+   */
+  public void highlightBoardAction(SceneNodeList foregroundRoot, BoardAction boardAction) {
+    Sprite highlightedBoardAction = new Sprite(
+        spriteResources.getAction(boardAction.getActionType()), getActionTransform(boardAction));
+    highlightedBoardAction.setParent(foregroundRoot);
   }
 
   /**

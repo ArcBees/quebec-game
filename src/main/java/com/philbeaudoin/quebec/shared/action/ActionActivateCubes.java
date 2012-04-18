@@ -62,6 +62,11 @@ public class ActionActivateCubes implements GameAction {
   }
 
   @Override
+  public boolean isAutomatic() {
+    return false;
+  }
+
+  @Override
   public void accept(GameActionVisitor visitor) {
     visitor.visit(this);
   }

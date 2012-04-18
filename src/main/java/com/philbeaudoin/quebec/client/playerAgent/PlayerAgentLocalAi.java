@@ -49,6 +49,7 @@ public class PlayerAgentLocalAi implements PlayerAgent {
       LocalAiInteractionGenerator generator =
           playerAgentFactories.createLocalAiInteractionGenerator(gameState, gameStateRenderer);
       possibleActions.accept(generator);
+      gameStateRenderer.setShowActionDescriptionOnHover(false);
       if (!generator.isManualMove()) {
         // Move automatically.
         final GameStateChange gameStateChange = player.getMove(gameState);

@@ -86,6 +86,7 @@ public class GameStateRenderer {
   private ActionDescriptionInteraction actionDescriptionInteraction;
   private boolean forceGlassScreen;
   private boolean refreshNeeded = true;
+  private boolean showActionDescriptionOnHover;
 
   private CallbackRegistration animationCompletedRegistration;
 
@@ -532,6 +533,16 @@ public class GameStateRenderer {
   }
 
   /**
+   * Highlight a specific board action on the board.
+   * @param boardAction The board action to highlight.
+   */
+  public void highlightBoardAction(BoardAction boardAction) {
+    refreshNeeded = true;
+    boardRenderer.highlightBoardAction(foregroundRoot, boardAction);
+    addOrClearGlassScreen();
+  }
+
+  /**
    * Forces the glass screen to be shown so tiles drawn in the animation layer
    * appear highlighted.
    */
@@ -582,7 +593,7 @@ public class GameStateRenderer {
     for (Interaction interaction : interactions) {
       interaction.onMouseMove(x, y, time);
     }
-    if (actionDescriptionInteraction != null) {
+    if (showActionDescriptionOnHover && actionDescriptionInteraction != null) {
       actionDescriptionInteraction.onMouseMove(x, y);
     }
   }
@@ -818,5 +829,13 @@ public class GameStateRenderer {
     clearAnimationGraph();
     change.apply(gameState);
     render(gameState);
+  }
+
+  public boolean getShowActionDescriptionOnHover() {
+    return showActionDescriptionOnHover;
+  }
+
+  public void setShowActionDescriptionOnHover(boolean showActionDescriptionOnHover) {
+    this.showActionDescriptionOnHover = showActionDescriptionOnHover;
   }
 }

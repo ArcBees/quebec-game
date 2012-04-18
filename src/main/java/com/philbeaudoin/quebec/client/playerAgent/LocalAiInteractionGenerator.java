@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightActiveTiles;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightArchitectTiles;
+import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightBoardActions;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
@@ -135,6 +136,10 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
 
   @Override
   public void visit(ActionExplicitHighlightArchitectTiles host) {
+  }
+
+  @Override
+  public void visit(ActionExplicitHighlightBoardActions host) {
   }
 
   @Override

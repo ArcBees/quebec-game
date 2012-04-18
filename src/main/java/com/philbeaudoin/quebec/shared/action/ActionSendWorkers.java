@@ -43,10 +43,17 @@ public class ActionSendWorkers implements GameActionOnTile {
 
   private final boolean fromActive;
   private final Tile destinationTile;
+  private final GameStateChange followup;
 
   public ActionSendWorkers(boolean fromActive, Tile destinationTile) {
+    this(fromActive, destinationTile, null);
+  }
+
+  public ActionSendWorkers(boolean fromActive, Tile destinationTile,
+      GameStateChange followup) {
     this.fromActive = fromActive;
     this.destinationTile = destinationTile;
+    this.followup = followup;
   }
 
   @Override
@@ -92,7 +99,9 @@ public class ActionSendWorkers implements GameActionOnTile {
     }
 
     // Check if the action should be executed.
-    if (canExecuteBoardAction(playerState, tileState)) {
+    if (followup != null) {
+      result.add(followup);
+    } else if (canExecuteBoardAction(playerState, tileState)) {
       Vector2d tileLocation = tileState.getLocation();
       BoardAction action = Board.actionForTileLocation(tileLocation.getColumn(),
           tileLocation.getLine());
@@ -103,6 +112,11 @@ public class ActionSendWorkers implements GameActionOnTile {
     }
 
     return result;
+  }
+
+  @Override
+  public boolean isAutomatic() {
+    return false;
   }
 
   @Override
@@ -126,7 +140,8 @@ public class ActionSendWorkers implements GameActionOnTile {
   }
 
   private boolean canExecuteBoardAction(PlayerState playerState, TileState tileState) {
-    return fromActive && (!playerState.ownsArchitect(tileState.getArchitect()) ||
+    return fromActive &&
+        (!playerState.ownsArchitect(tileState.getArchitect()) ||
         playerState.getLeaderCard() == LeaderCard.RELIGIOUS);
   }
 

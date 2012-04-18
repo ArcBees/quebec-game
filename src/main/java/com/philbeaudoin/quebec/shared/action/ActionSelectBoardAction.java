@@ -42,6 +42,11 @@ public class ActionSelectBoardAction implements GameActionOnBoardAction {
   }
 
   @Override
+  public boolean isAutomatic() {
+    return false;
+  }
+
+  @Override
   public void accept(GameActionVisitor visitor) {
     visitor.visit(this);
   }

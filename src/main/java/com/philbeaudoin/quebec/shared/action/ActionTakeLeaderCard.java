@@ -41,9 +41,19 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
 public class ActionTakeLeaderCard implements GameAction, HasLeaderCard {
 
   private final LeaderCard leaderCard;
+  private final GameStateChange followup;
 
   public ActionTakeLeaderCard(LeaderCard leaderCard) {
+    this(leaderCard, null);
+  }
+
+  public ActionTakeLeaderCard(LeaderCard leaderCard, GameStateChange followup) {
     this.leaderCard = leaderCard;
+    if (followup == null) {
+      this.followup = new GameStateChangeNextPlayer();
+    } else {
+      this.followup = followup;
+    }
   }
 
   @Override
@@ -94,10 +104,15 @@ public class ActionTakeLeaderCard implements GameAction, HasLeaderCard {
           new ArchitectDestinationPlayer(activePlayer, true)));
     }
 
-    // Move to next player.
-    result.add(new GameStateChangeNextPlayer());
+    // Move to next player or perform followup action.
+    result.add(followup);
 
     return result;
+  }
+
+  @Override
+  public boolean isAutomatic() {
+    return false;
   }
 
   @Override

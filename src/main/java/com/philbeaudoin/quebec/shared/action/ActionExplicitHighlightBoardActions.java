@@ -22,12 +22,12 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 /**
  * An explicit action represented by a message and a sequence of game state changes. The user
  * generally triggers that action by clicking a button displaying the message. When rendered, this
- * specific action should highlight all the tiles containing an architect.
+ * specific action should highlight all the board actions.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionExplicitHighlightArchitectTiles extends ActionExplicit {
+public class ActionExplicitHighlightBoardActions extends ActionExplicit {
 
-  public ActionExplicitHighlightArchitectTiles(Message message, GameStateChange action) {
+  public ActionExplicitHighlightBoardActions(Message message, GameStateChange action) {
     super(message, action);
   }
 

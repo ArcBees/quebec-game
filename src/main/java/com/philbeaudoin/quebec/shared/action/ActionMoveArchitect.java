@@ -44,6 +44,7 @@ public class ActionMoveArchitect implements GameActionOnTile {
   private final boolean neutralArchitect;
   private final int cubesToActivate;
   private final GameStateChange followup;
+  private final boolean automatic;
 
   /**
    * Create an action to move the architect.
@@ -65,10 +66,25 @@ public class ActionMoveArchitect implements GameActionOnTile {
    */
   public ActionMoveArchitect(Tile destinationTile, boolean neutralArchitect, int cubesToActivate,
       GameStateChange followup) {
+    this(destinationTile, neutralArchitect, cubesToActivate, followup, false);
+  }
+
+  /**
+   * Create an action to move the architect, overriding the action action performed.
+   * @param destinationTile The tile to move the architect to, or null to move it out of the board.
+   * @param neutralArchitect True to indicate that it's the neutral architect moving.
+   * @param cubesToActivate the number of cubes to move from passive to active.
+   * @param followup The action to execute following this one, use null to followup with the default
+   *     action.
+   * @param automatic True if the action should be executed automatically, false if not.
+   */
+  public ActionMoveArchitect(Tile destinationTile, boolean neutralArchitect, int cubesToActivate,
+      GameStateChange followup, boolean automatic) {
     this.destinationTile = destinationTile;
     this.neutralArchitect = neutralArchitect;
     this.cubesToActivate = cubesToActivate;
     this.followup = followup;
+    this.automatic = automatic;
   }
 
   @Override
@@ -134,6 +150,11 @@ public class ActionMoveArchitect implements GameActionOnTile {
     }
 
     return finalResult;
+  }
+
+  @Override
+  public boolean isAutomatic() {
+    return automatic;
   }
 
   @Override

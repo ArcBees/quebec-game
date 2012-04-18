@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared;
+package com.philbeaudoin.quebec.client.interaction;
+
+import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.shared.state.Board;
+import com.philbeaudoin.quebec.shared.state.BoardAction;
 
 /**
- * Keeps track of values that can be modified by the user.
- *
+ * Highlights all the board actions.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class UserPreferences {
-  public double getAnimDuration() {
-//    return 1.0;
-    return 0.1;
+public class BoardActionsHighlighter implements Highlighter {
+
+  private final GameStateRenderer gameStateRenderer;
+
+  public BoardActionsHighlighter(GameStateRenderer gameStateRenderer) {
+    this.gameStateRenderer = gameStateRenderer;
+  }
+
+  @Override
+  public void highlight() {
+    for (BoardAction boardAction : Board.getAllActions()) {
+      gameStateRenderer.highlightBoardAction(boardAction);
+    }
   }
 }

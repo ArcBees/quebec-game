@@ -35,19 +35,29 @@ public class ActionExplicit implements GameAction {
 
   private final Message message;
   private final GameStateChange action;
+  private final boolean automatic;
 
   public ActionExplicit(Message message, GameStateChange action) {
+    this(message, action, false);
+  }
+
+  public ActionExplicit(Message message, GameStateChange action, boolean automatic) {
     assert action != null;
     this.message = message;
     this.action = action;
+    this.automatic = automatic;
   }
 
   @Override
   public GameStateChange execute(GameState gameState) {
     GameStateChangeComposite result = new GameStateChangeComposite();
-    // Move to next player.
     result.add(action);
     return result;
+  }
+
+  @Override
+  public boolean isAutomatic() {
+    return automatic;
   }
 
   @Override
