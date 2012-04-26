@@ -52,13 +52,23 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
 public class ActionPerformScoringPhase implements GameAction {
 
   private final ScoringPhase scoringPhase;
+  private final GameStateChange followup;
 
   public ActionPerformScoringPhase() {
     this(ScoringPhase.INIT_SCORING);
   }
 
+  public static ActionPerformScoringPhase prepareNextCenturyAction(GameStateChange followup) {
+    return new ActionPerformScoringPhase(ScoringPhase.PREPARE_NEXT_CENTURY, followup);
+  }
+
   private ActionPerformScoringPhase(ScoringPhase scoringPhase) {
+    this(scoringPhase, null);
+  }
+
+  private ActionPerformScoringPhase(ScoringPhase scoringPhase, GameStateChange followup) {
     this.scoringPhase = scoringPhase;
+    this.followup = followup;
   }
 
   @Override
@@ -101,6 +111,10 @@ public class ActionPerformScoringPhase implements GameAction {
       PossibleActions possibleActions = new PossibleActions(nextAction.getMessage(nextGameState));
       possibleActions.add(nextAction);
       result.add(new GameStateChangeQueuePossibleActions(possibleActions));
+    }
+
+    if (followup != null) {
+      result.add(followup);
     }
 
     return finalResult;
