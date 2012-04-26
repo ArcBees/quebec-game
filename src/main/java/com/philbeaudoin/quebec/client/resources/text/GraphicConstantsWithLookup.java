@@ -102,4 +102,12 @@ public interface GraphicConstantsWithLookup extends ConstantsWithLookup {
   String tutorialScoringEconomic();
   String tutorialScoringCultural();
   String tutorialSecondCenturyBegins();
+  String tutorialJumpToFinalScoring();
+  String tutorialIntroToFinalScoring();
+  String tutorialLargestBlackGroup();
+  String tutorialSmallBlackGroups();
+  String tutorialOthersScoreStarTokens();
+  String tutorialScoreCubesOnBuildings();
+  String tutorialScoreActiveCubes();
+  String tutorialGameComplete();
 }

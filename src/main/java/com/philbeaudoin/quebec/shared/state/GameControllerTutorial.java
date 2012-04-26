@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightActiveTiles;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightArchitectTiles;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightBoardActions;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.action.ActionPerformScoringPhase;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
@@ -85,12 +86,24 @@ public class GameControllerTutorial implements GameController {
   public void configurePossibleActions(GameState gameState) {
     // List of all steps in reverse order.
     Location target;
-    prependStep("tutorialSecondCenturyBegins");
+    prependStep("tutorialGameComplete", BOTTOM_CENTER, null);
+    prependStep("tutorialScoreActiveCubes", CENTER, null,
+        scorePoints(0, 0, 1, 2, null));
+    prependStep("tutorialScoreCubesOnBuildings", BOTTOM_CENTER, null,
+        scorePoints(2, 2, 0, 4, null));
+    prependStep("tutorialOthersScoreStarTokens", BOTTOM_CENTER, null,
+        scorePoints(0, 26, 21, 20, null));
+    prependStep("tutorialSmallBlackGroups", BOTTOM_CENTER, null, scorePoints(8, 0, 0, 0, null));
+    prependStep("tutorialLargestBlackGroup", BOTTOM_CENTER, null, scorePoints(25, 0, 0, 0, null));
+    prependStep("tutorialIntroToFinalScoring", BOTTOM_CENTER, null);
+    prependStep("tutorialJumpToFinalScoring", BOTTOM_CENTER, null, jumpToFinalScoring(gameState));
+    prependStep("tutorialSecondCenturyBegins", CENTER, null,
+        ActionPerformScoringPhase.prepareNextCenturyAction(nextStep()));
     target = relativeToTarget(
         new CubeDestinationInfluenceZone(InfluenceType.CULTURAL, PlayerColor.BLACK), -2.5, 1);
     prependStep("tutorialScoringCultural", relativeToTarget(target, -1, 1), target,
-        scorePoints(2, 3, 5, 9,
-          new GameStateChangeMoveCubes(4,
+        scorePoints(2, 3, 4, 5,
+          new GameStateChangeMoveCubes(2,
               new CubeDestinationInfluenceZone(InfluenceType.CULTURAL, PlayerColor.ORANGE),
               new CubeDestinationPlayer(PlayerColor.ORANGE, true))));
     target = relativeToTarget(
@@ -220,7 +233,15 @@ public class GameControllerTutorial implements GameController {
 
   @Override
   public void prepareNextCentury(GameState gameState) {
-    assert false;
+    int oldCentury = gameState.getCentury();
+    assert oldCentury < 3;
+    int newCentury = oldCentury + 1;
+    gameState.setCentury(newCentury);
+    for (TileState tileState : gameState.getTileStates()) {
+      if (tileState.isAvailableForArchitect(oldCentury)) {
+        tileState.setBuildingFacing(true);
+      }
+    }
   }
 
   /**
@@ -539,6 +560,170 @@ public class GameControllerTutorial implements GameController {
   }
 
   /**
+   * Generates a composite game state change jumping ahead until the final scoring.
+   * @param gameState The game state at the beginning of the game.
+   * @return The game state change
+   */
+  private GameStateChange jumpToFinalScoring(GameState gameState) {
+    GameStateChangeComposite result = new GameStateChangeComposite();
+
+    // Make orange active
+    result.add(new GameStateChangeNextPlayer(false));
+    result.add(new GameStateChangeNextPlayer(false));
+
+    // Move architects to 4th century buildings.
+    result.add(new GameStateChangeMoveArchitect(
+        new ArchitectDestinationTile(findTile(gameState, 13, 2), PlayerColor.BLACK),
+        new ArchitectDestinationTile(findTile(gameState, 11, 0), PlayerColor.BLACK)));  // 2 cubes.
+    result.add(new GameStateChangeMoveArchitect(
+        new ArchitectDestinationTile(findTile(gameState, 1, 4), PlayerColor.PINK),
+        new ArchitectDestinationTile(findTile(gameState, 9, 4), PlayerColor.PINK)));  // 2 cubes.
+    result.add(new GameStateChangeMoveArchitect(
+        new ArchitectDestinationTile(findTile(gameState, 14, 5), PlayerColor.WHITE),
+        new ArchitectDestinationTile(findTile(gameState, 2, 1), PlayerColor.WHITE)));  // 1 cube.
+    result.add(new GameStateChangeMoveArchitect(
+        new ArchitectDestinationTile(findTile(gameState, 8, 7), PlayerColor.ORANGE),
+        new ArchitectDestinationTile(findTile(gameState, 4, 3), PlayerColor.ORANGE)));  // 2 cubes.
+
+    // Move cubes to active buildings.
+    result.add(new GameStateChangeMoveCubes(2,
+        new CubeDestinationTile(findTile(gameState, 1, 4), PlayerColor.ORANGE, 0),
+        new CubeDestinationTile(findTile(gameState, 11, 0), PlayerColor.ORANGE, 0)));
+    result.add(new GameStateChangeMoveCubes(2,
+        new CubeDestinationTile(findTile(gameState, 1, 4), PlayerColor.BLACK, 1),
+        new CubeDestinationTile(findTile(gameState, 9, 4), PlayerColor.BLACK, 1)));
+    result.add(new GameStateChangeMoveCubes(2,
+        new CubeDestinationTile(findTile(gameState, 13, 2), PlayerColor.ORANGE, 0),
+        new CubeDestinationTile(findTile(gameState, 11, 0), PlayerColor.ORANGE, 1)));
+    result.add(new GameStateChangeMoveCubes(2,
+        new CubeDestinationTile(findTile(gameState, 13, 2), PlayerColor.PINK, 1),
+        new CubeDestinationTile(findTile(gameState, 4, 3), PlayerColor.PINK, 0)));
+
+    // Move cubes to influence zones.
+    result.add(new GameStateChangeMoveCubes(3,
+        new CubeDestinationTile(findTile(gameState, 14, 5), PlayerColor.PINK, 0),
+        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.PINK)));
+    result.add(new GameStateChangeMoveCubes(3,
+        new CubeDestinationTile(findTile(gameState, 8, 7), PlayerColor.BLACK, 0),
+        new CubeDestinationInfluenceZone(InfluenceType.POLITIC, PlayerColor.BLACK)));
+
+    result.add(new GameStateChangeMoveCubes(1,
+        new CubeDestinationPlayer(PlayerColor.BLACK, false),
+        new CubeDestinationInfluenceZone(InfluenceType.CITADEL, PlayerColor.BLACK)));
+    result.add(new GameStateChangeMoveCubes(4,
+        new CubeDestinationPlayer(PlayerColor.BLACK, false),
+        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.BLACK)));
+    result.add(new GameStateChangeMoveCubes(6,
+        new CubeDestinationPlayer(PlayerColor.BLACK, false),
+        new CubeDestinationInfluenceZone(InfluenceType.ECONOMIC, PlayerColor.BLACK)));
+    result.add(new GameStateChangeMoveCubes(4,
+        new CubeDestinationPlayer(PlayerColor.BLACK, false),
+        new CubeDestinationInfluenceZone(InfluenceType.CULTURAL, PlayerColor.BLACK)));
+
+    result.add(new GameStateChangeMoveCubes(3,
+        new CubeDestinationPlayer(PlayerColor.PINK, false),
+        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.PINK)));
+    result.add(new GameStateChangeMoveCubes(4,
+        new CubeDestinationPlayer(PlayerColor.PINK, false),
+        new CubeDestinationInfluenceZone(InfluenceType.POLITIC, PlayerColor.PINK)));
+    result.add(new GameStateChangeMoveCubes(5,
+        new CubeDestinationPlayer(PlayerColor.PINK, false),
+        new CubeDestinationInfluenceZone(InfluenceType.ECONOMIC, PlayerColor.PINK)));
+    result.add(new GameStateChangeMoveCubes(3,
+        new CubeDestinationPlayer(PlayerColor.PINK, false),
+        new CubeDestinationInfluenceZone(InfluenceType.CULTURAL, PlayerColor.PINK)));
+
+    result.add(new GameStateChangeMoveCubes(2,
+        new CubeDestinationPlayer(PlayerColor.WHITE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.CITADEL, PlayerColor.WHITE)));
+    result.add(new GameStateChangeMoveCubes(3,
+        new CubeDestinationPlayer(PlayerColor.WHITE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.WHITE)));
+    result.add(new GameStateChangeMoveCubes(5,
+        new CubeDestinationPlayer(PlayerColor.WHITE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.POLITIC, PlayerColor.WHITE)));
+    result.add(new GameStateChangeMoveCubes(4,
+        new CubeDestinationPlayer(PlayerColor.WHITE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.ECONOMIC, PlayerColor.WHITE)));
+    result.add(new GameStateChangeMoveCubes(6,
+        new CubeDestinationPlayer(PlayerColor.WHITE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.CULTURAL, PlayerColor.WHITE)));
+
+    result.add(new GameStateChangeMoveCubes(1,
+        new CubeDestinationPlayer(PlayerColor.ORANGE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.CITADEL, PlayerColor.ORANGE)));
+    result.add(new GameStateChangeMoveCubes(3,
+        new CubeDestinationPlayer(PlayerColor.ORANGE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.RELIGIOUS, PlayerColor.ORANGE)));
+    result.add(new GameStateChangeMoveCubes(5,
+        new CubeDestinationPlayer(PlayerColor.ORANGE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.POLITIC, PlayerColor.ORANGE)));
+    result.add(new GameStateChangeMoveCubes(5,
+        new CubeDestinationPlayer(PlayerColor.ORANGE, false),
+        new CubeDestinationInfluenceZone(InfluenceType.ECONOMIC, PlayerColor.ORANGE)));
+
+    // Make some active cubes
+    result.add(new GameStateChangeMoveCubes(1,
+        new CubeDestinationPlayer(PlayerColor.PINK, false),
+        new CubeDestinationPlayer(PlayerColor.PINK, true)));
+    result.add(new GameStateChangeMoveCubes(2,
+        new CubeDestinationPlayer(PlayerColor.WHITE, false),
+        new CubeDestinationPlayer(PlayerColor.WHITE, true)));
+    result.add(new GameStateChangeMoveCubes(2,
+        new CubeDestinationPlayer(PlayerColor.ORANGE, false),
+        new CubeDestinationPlayer(PlayerColor.ORANGE, true)));
+
+    // Flip some tiles and add some stars.
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 13, 2), PlayerColor.BLACK, 2));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 1, 4), PlayerColor.PINK, 3));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 14, 5), PlayerColor.WHITE, 2));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 8, 7), PlayerColor.ORANGE, 1));
+
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 4, 1), PlayerColor.BLACK, 3));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 6, 1), PlayerColor.BLACK, 1));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 7, 2), PlayerColor.BLACK, 3));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 10, 1), PlayerColor.BLACK, 2));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 10, 5), PlayerColor.BLACK, 3));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 9, 6), PlayerColor.BLACK, 3));
+
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 0, 3), PlayerColor.PINK, 1));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 11, 2), PlayerColor.PINK, 2));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 10, 3), PlayerColor.PINK, 3));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 12, 3), PlayerColor.PINK, 1));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 7, 4), PlayerColor.PINK, 3));
+
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 3, 2), PlayerColor.WHITE, 2));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 11, 6), PlayerColor.WHITE, 1));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 13, 6), PlayerColor.WHITE, 3));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 17, 4), PlayerColor.WHITE, 3));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 16, 3), PlayerColor.WHITE, 1));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 15, 2), PlayerColor.WHITE, 2));
+
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 2, 3), PlayerColor.ORANGE, 1));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 17, 2), PlayerColor.ORANGE, 3));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 14, 1), PlayerColor.ORANGE, 3));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 3, 6), PlayerColor.ORANGE, 2));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 4, 5), PlayerColor.ORANGE, 1));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 0, 5), PlayerColor.ORANGE, 3));
+
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 9, 0), PlayerColor.NONE, 0));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 5, 2), PlayerColor.NONE, 0));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 15, 4), PlayerColor.NONE, 0));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 15, 4), PlayerColor.NONE, 0));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 6, 7), PlayerColor.NONE, 0));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 2, 5), PlayerColor.NONE, 0));
+    result.add(new GameStateChangeFlipTile(findTile(gameState, 5, 4), PlayerColor.NONE, 0));
+
+    // Add some points.
+    result.add(new GameStateChangeScorePoints(PlayerColor.BLACK, 72));
+    result.add(new GameStateChangeScorePoints(PlayerColor.PINK, 78));
+    result.add(new GameStateChangeScorePoints(PlayerColor.WHITE, 81));
+    result.add(new GameStateChangeScorePoints(PlayerColor.ORANGE, 77));
+
+    return result;
+  }
+
+  /**
    * Generates a composite game state change where each player scores points.
    * @param black The number of points scored by the black player.
    * @param pink The number of points scored by the pink player.
@@ -727,7 +912,7 @@ public class GameControllerTutorial implements GameController {
       // In blue zone.
       //  0/2 black + 2/0
       //  0 pink + 3
-      //  0 white + 5
+      //  0 white + 4
       //  0 orange
       if (gameState.getPlayerCubesInInfluenceZone(InfluenceType.CULTURAL, PlayerColor.BLACK) == 0) {
         result.add(new GameStateChangeMoveCubes(2,
@@ -737,13 +922,13 @@ public class GameControllerTutorial implements GameController {
       result.add(new GameStateChangeMoveCubes(3,
           new CubeDestinationPlayer(PlayerColor.PINK, false),
           new CubeDestinationInfluenceZone(InfluenceType.CULTURAL, PlayerColor.PINK)));
-      result.add(new GameStateChangeMoveCubes(5,
+      result.add(new GameStateChangeMoveCubes(4,
           new CubeDestinationPlayer(PlayerColor.WHITE, false),
           new CubeDestinationInfluenceZone(InfluenceType.CULTURAL, PlayerColor.WHITE)));
 
       // Black = 5/1
       // Pink = 5/0
-      // White = 4/1
+      // White = 5/1
       // Orange = 5/0
 
       // Move architect and set star tokens.
