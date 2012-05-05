@@ -16,23 +16,34 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
+import java.util.ArrayList;
+
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
 /**
  * An explicit action represented by a message and a sequence of game state changes. The user
- * generally triggers that action by clicking a button displaying the message. When rendered, this
- * specific action should highlight all the tiles containing an architect.
+ * generally triggers that action by clicking a button displaying the message. This specialized
+ * version should highlight a number of tiles in the standard renderer.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ActionExplicitHighlightArchitectTiles extends ActionExplicit {
+public class ActionExplicitHighlightTiles extends ActionExplicit {
 
-  public ActionExplicitHighlightArchitectTiles(Message message, GameStateChange action) {
+  private final ArrayList<Tile> tiles;
+
+  public ActionExplicitHighlightTiles(Message message, ArrayList<Tile> tiles,
+      GameStateChange action) {
     super(message, action);
+    this.tiles = tiles;
   }
 
   @Override
   public void accept(GameActionVisitor visitor) {
     visitor.visit(this);
+  }
+
+  public ArrayList<Tile> getTiles() {
+    return tiles;
   }
 }

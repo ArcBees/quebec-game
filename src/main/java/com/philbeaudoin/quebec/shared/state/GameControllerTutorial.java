@@ -23,9 +23,8 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
-import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightActiveTiles;
-import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightArchitectTiles;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightBoardActions;
+import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightTiles;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionPerformScoringPhase;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
@@ -93,8 +92,12 @@ public class GameControllerTutorial implements GameController {
         scorePoints(2, 2, 0, 4, null));
     prependStep("tutorialOthersScoreStarTokens", BOTTOM_CENTER, null,
         scorePoints(0, 26, 21, 20, null));
-    prependStep("tutorialSmallBlackGroups", BOTTOM_CENTER, null, scorePoints(8, 0, 0, 0, null));
-    prependStep("tutorialLargestBlackGroup", BOTTOM_CENTER, null, scorePoints(25, 0, 0, 0, null));
+    prependStep("tutorialSmallBlackGroups", BOTTOM_CENTER, null,
+        new ActionExplicitHighlightTiles(new Message.Text("continueMsg"),
+            getSmallGroupsTiles(gameState), nextStep(scorePoints(8, 0, 0, 0, null))));
+    prependStep("tutorialLargestBlackGroup", BOTTOM_CENTER, null,
+        new ActionExplicitHighlightTiles(new Message.Text("continueMsg"),
+            getMainGroupTiles(gameState), nextStep(scorePoints(25, 0, 0, 0, null))));
     prependStep("tutorialIntroToFinalScoring", BOTTOM_CENTER, null);
     prependStep("tutorialJumpToFinalScoring", BOTTOM_CENTER, null, jumpToFinalScoring(gameState));
     prependStep("tutorialSecondCenturyBegins", CENTER, null,
@@ -185,12 +188,15 @@ public class GameControllerTutorial implements GameController {
         new ActionSendWorkers(true, findTile(gameState, 6, 5), nextStep()));
     target = relativeToTarget(new LocationBoardAction(Board.actionForTileLocation(6, 5)), 0, -1);
     prependStep("tutorialCostOfAContribution", relativeToTarget(target, 0, 2), target,
-        new ActionExplicitHighlightArchitectTiles(new Message.Text("continueMsg"), nextStep()));
+        new ActionExplicitHighlightTiles(new Message.Text("continueMsg"), 
+            getArchitectTiles(gameState), nextStep()));
     target = new CubeDestinationTile(findTile(gameState, 6, 5), PlayerColor.BLACK, 0);
     prependStep("tutorialThreeSpotsPerTile", relativeToTarget(target, 0, 2), target,
-        new ActionExplicitHighlightArchitectTiles(new Message.Text("continueMsg"), nextStep()));
+        new ActionExplicitHighlightTiles(new Message.Text("continueMsg"), 
+            getArchitectTiles(gameState), nextStep()));
     prependStep("tutorialWhereToSendWorkers", BOTTOM_CENTER, null,
-        new ActionExplicitHighlightArchitectTiles(new Message.Text("continueMsg"), nextStep()));
+        new ActionExplicitHighlightTiles(new Message.Text("continueMsg"), 
+            getArchitectTiles(gameState), nextStep()));
     prependStep("tutorialSendActiveWorkers");
     prependStep("tutorialFourthPlayerFirstMove", CENTER, null);
     prependStep("tutorialThirdPlayerFirstMove", CENTER, null,
@@ -205,7 +211,8 @@ public class GameControllerTutorial implements GameController {
     prependStep("tutorialPerformMoveArchitect", BOTTOM_CENTER, null,
         new ActionMoveArchitect(findTile(gameState, 8, 3), false, 0, nextStep()));
     prependStep("tutorialWhereToMoveArchitect", BOTTOM_CENTER, null,
-        new ActionExplicitHighlightActiveTiles(new Message.Text("continueMsg"), nextStep()));
+        new ActionExplicitHighlightTiles(new Message.Text("continueMsg"), 
+            findActiveTiles(gameState), nextStep()));
     prependStep("tutorialFirstMove");
     target = new CubeDestinationPlayer(PlayerColor.BLACK, true);
     prependStep("tutorialActiveCubes", relativeToTarget(target, 2, 2), target);
@@ -374,6 +381,65 @@ public class GameControllerTutorial implements GameController {
       }
     }
     return null;
+  }
+
+  /**
+   * Find all the active tiles for a given game state.
+   * @param gameState The current game state.
+   * @return All the currently active tiles.
+   */
+  private ArrayList<Tile> findActiveTiles(GameState gameState) {
+    ArrayList<Tile> tiles = new ArrayList<Tile>();
+    int century = gameState.getCentury();
+    for (TileState tileState : gameState.getTileStates()) {
+      if (tileState.isAvailableForArchitect(century)) {
+        tiles.add(tileState.getTile());
+      }
+    }
+    return tiles;
+  }
+
+  /**
+   * Returns the tiles of the 4 architects that should be highlighted on the fist "send workers"
+   * action.
+   * @param gameState The current game state.
+   * @return The four architect tiles.
+   */
+  private ArrayList<Tile> getArchitectTiles(GameState gameState) {
+    ArrayList<Tile> tiles = new ArrayList<Tile>();
+    tiles.add(findTile(gameState, 6, 5));
+    tiles.add(findTile(gameState, 15, 6));
+    tiles.add(findTile(gameState, 13, 4));
+    tiles.add(findTile(gameState, 8, 3));
+    return tiles;
+  }
+
+  /**
+   * Returns the tiles of the main black group during the final scoring
+   * @param gameState The current game state.
+   * @return All the tiles of the main group.
+   */
+  private ArrayList<Tile> getMainGroupTiles(GameState gameState) {
+    ArrayList<Tile> tiles = new ArrayList<Tile>();
+    tiles.add(findTile(gameState, 4, 1));
+    tiles.add(findTile(gameState, 6, 1));
+    tiles.add(findTile(gameState, 8, 1));
+    tiles.add(findTile(gameState, 10, 1));
+    tiles.add(findTile(gameState, 7, 2));
+    tiles.add(findTile(gameState, 8, 3));
+    return tiles;
+  }
+  /**
+   * Returns the tiles of the small black groups during the final scoring
+   * @param gameState The current game state.
+   * @return All the tiles of the small groups.
+   */
+  private ArrayList<Tile> getSmallGroupsTiles(GameState gameState) {
+    ArrayList<Tile> tiles = new ArrayList<Tile>();
+    tiles.add(findTile(gameState, 13, 2));
+    tiles.add(findTile(gameState, 10, 5));
+    tiles.add(findTile(gameState, 9, 6));
+    return tiles;
   }
 
   /**
