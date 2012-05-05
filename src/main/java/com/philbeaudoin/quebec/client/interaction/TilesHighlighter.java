@@ -19,26 +19,20 @@ package com.philbeaudoin.quebec.client.interaction;
 import java.util.ArrayList;
 
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
-import com.philbeaudoin.quebec.shared.state.TileState;
 
 /**
- * Highlights all the tiles on which an architect stands in a game state.
+ * Highlights all the active tiles in a game state.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ArchitectTilesHighlighter implements Highlighter {
+public class TilesHighlighter implements Highlighter {
 
   private final GameStateRenderer gameStateRenderer;
-  private final ArrayList<Tile> tiles = new ArrayList<Tile>();
+  private final ArrayList<Tile> tiles;
 
-  public ArchitectTilesHighlighter(GameStateRenderer gameStateRenderer, GameState gameState) {
+  public TilesHighlighter(GameStateRenderer gameStateRenderer, ArrayList<Tile> tiles) {
     this.gameStateRenderer = gameStateRenderer;
-    for (TileState tileState : gameState.getTileStates()) {
-      if (tileState.getArchitect() != null && tileState.getArchitect().isArchitectColor()) {
-        tiles.add(tileState.getTile());
-      }
-    }
+    this.tiles = tiles;
   }
 
   @Override

@@ -22,12 +22,11 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.client.interaction.ActiveTilesHighlighter;
-import com.philbeaudoin.quebec.client.interaction.ArchitectTilesHighlighter;
 import com.philbeaudoin.quebec.client.interaction.BoardActionsHighlighter;
 import com.philbeaudoin.quebec.client.interaction.Helpers;
 import com.philbeaudoin.quebec.client.interaction.Highlighter;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
+import com.philbeaudoin.quebec.client.interaction.TilesHighlighter;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
@@ -38,9 +37,8 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.action.ActionExplicit;
-import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightActiveTiles;
-import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightArchitectTiles;
 import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightBoardActions;
+import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightTiles;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
@@ -374,21 +372,12 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
   }
 
   @Override
-  public void visit(ActionExplicitHighlightActiveTiles host) {
+  public void visit(ActionExplicitHighlightTiles host) {
     checkIfAutomatic(host);
     MessageRenderer messageRenderer = messageRendererProvider.get();
     host.getMessage().accept(messageRenderer);
     textInteractions.add(new TextInteraction(messageRenderer,
-        new ActiveTilesHighlighter(gameStateRenderer, gameState), null, host));
-  }
-
-  @Override
-  public void visit(ActionExplicitHighlightArchitectTiles host) {
-    checkIfAutomatic(host);
-    MessageRenderer messageRenderer = messageRendererProvider.get();
-    host.getMessage().accept(messageRenderer);
-    textInteractions.add(new TextInteraction(messageRenderer,
-        new ArchitectTilesHighlighter(gameStateRenderer, gameState), null, host));
+        new TilesHighlighter(gameStateRenderer, host.getTiles()), null, host));
   }
 
   @Override
