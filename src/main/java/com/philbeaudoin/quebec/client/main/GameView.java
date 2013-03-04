@@ -33,6 +33,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
+import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.client.widget.FullCanvas;
 
 /**
@@ -47,6 +48,12 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
 
   interface Binder extends UiBinder<Widget, GameView> { }
   protected static final Binder binder = GWT.create(Binder.class);
+
+  // Ensure we always wait until resources are loaded.
+  private final SpriteResources spriteResources;
+
+  // Forces a complete refresh whenever the canvas is resized.
+  private boolean forceRefresh = false;
 
   // Timer refresh rate, in milliseconds.
   static final int refreshRate = 15;
@@ -85,7 +92,8 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
   };
 
   @Inject
-  public GameView() {
+  public GameView(SpriteResources spriteResources) {
+    this.spriteResources = spriteResources;
     widget = binder.createAndBindUi(this);
     canvas = fullCanvas.asCanvas();
     context = canvas.getContext2d();
@@ -103,7 +111,7 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
         context.rect(0, 0, width, height);
         context.fill();
         context.stroke();
-        refreshStaticLayer(650);
+        forceRefresh = true;
       }
     });
 
@@ -149,6 +157,7 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
 
   void refreshStaticLayer(int delayMs) {
     isRefreshing = true;
+    forceRefresh = false;
     refreshTimer.cancel();
     refreshTimer.schedule(delayMs);
   }
@@ -177,11 +186,11 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
   }
 
   void doUpdate() {
-    if (isRefreshing) {
+    if (isRefreshing || spriteResources.isLoading()) {
       return;
     }
-    if (presenter.isRefreshNeeded()) {
-      refreshStaticLayer(50);
+    if (forceRefresh || presenter.isRefreshNeeded()) {
+      refreshStaticLayer(5);
       return;
     }
     cnt++;
