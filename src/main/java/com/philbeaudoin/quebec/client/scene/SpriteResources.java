@@ -23,9 +23,15 @@ import java.util.Collections;
 import javax.inject.Singleton;
 
 import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.event.dom.client.HasLoadHandlers;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.safehtml.shared.SafeUri;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
 import com.philbeaudoin.quebec.client.resources.Resources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
@@ -98,6 +104,9 @@ public class SpriteResources {
     }
   }
 
+  // Counts the number of resources currently loading.
+  private int loadingCount = 0;
+
   private final ArrayList<Info> imageInfos = new ArrayList<Info>(Type.values().length);
   private final Info[][][] tileInfos = new Info[4][4][5];
   private final Info[] cubeInfos = new Info[5];
@@ -107,6 +116,9 @@ public class SpriteResources {
   private final Info[] zoneLogoInfos = new Info[5];
   private final Info[][] starTokensInfo = new Info[5][3];
   private final Info[] actionInfos = new Info[16];
+
+  // A panel that we create and add to the DOM, just for loading images.
+  private FlowPanel hiddenPanel;
 
   @Inject
   SpriteResources(Resources resources) {
@@ -217,6 +229,10 @@ public class SpriteResources {
     setInfoForAction(ActionType.BLUE_SCORE_FOR_CUBES_IN_HAND, resources.actionBlue2());
     setInfoForAction(ActionType.BLUE_SCORE_FOR_ZONES, resources.actionBlue3());
     setInfoForAction(ActionType.BLUE_ADD_STAR, resources.actionBlue4());
+  }
+
+  public boolean isLoading() {
+    return loadingCount != 0;
   }
 
   /**
@@ -348,7 +364,15 @@ public class SpriteResources {
   private void lazilyInstantiateImageElement(Info imageInfo) {
     if (imageInfo.element == null) {
       Image image = new Image(imageInfo.safeUri);
+      new AutoreleaseLoadHandler(image);
       imageInfo.element = (ImageElement) image.getElement().cast();
+      // Add the image to an invisible element in the DOM so it gets loaded.
+      if (hiddenPanel == null) {
+        hiddenPanel = new FlowPanel();
+        RootPanel.get().add(hiddenPanel);
+        hiddenPanel.setVisible(false);
+      }
+      hiddenPanel.add(image);
     }
   }
 
@@ -397,4 +421,20 @@ public class SpriteResources {
     actionInfos[actionType.ordinal()] = new Info(dataResource.getSafeUri(), 0.000303);
   }
 
+  /**
+   * A load handler that increments loading count when constructed and releases it when load has
+   * completed.
+   */
+  private class AutoreleaseLoadHandler implements LoadHandler {
+    HandlerRegistration registration;
+    AutoreleaseLoadHandler(HasLoadHandlers hasLoadHandlers) {
+      loadingCount++;
+      registration = hasLoadHandlers.addLoadHandler(this);
+    }
+    @Override
+    public void onLoad(LoadEvent event) {
+      loadingCount--;
+      registration.removeHandler();
+    }
+  }
 }
