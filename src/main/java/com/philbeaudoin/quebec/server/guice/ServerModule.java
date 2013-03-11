@@ -17,6 +17,16 @@
 package com.philbeaudoin.quebec.server.guice;
 
 import com.gwtplatform.dispatch.server.guice.HandlerModule;
+import com.philbeaudoin.quebec.server.handlers.ChangeAdminSettingsHandler;
+import com.philbeaudoin.quebec.server.handlers.GetSessionHandler;
+import com.philbeaudoin.quebec.server.handlers.AuthenticateWithAdminPasswordHandler;
+import com.philbeaudoin.quebec.server.handlers.AuthenticateWithGoogleAuthorizationCodeHandler;
+import com.philbeaudoin.quebec.server.handlers.SignOutAdminHandler;
+import com.philbeaudoin.quebec.shared.serveractions.ChangeAdminSettingsAction;
+import com.philbeaudoin.quebec.shared.serveractions.GetSessionAction;
+import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithAdminPasswordAction;
+import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithGoogleAuthorizationCodeAction;
+import com.philbeaudoin.quebec.shared.serveractions.SignOutAdminAction;
 
 /**
  * Module which binds the handlers and configurations.
@@ -27,5 +37,10 @@ public class ServerModule extends HandlerModule {
 
   @Override
   protected void configureHandlers() {
+    bindHandler(ChangeAdminSettingsAction.class, ChangeAdminSettingsHandler.class);
+    bindHandler(GetSessionAction.class, GetSessionHandler.class);
+    bindHandler(AuthenticateWithAdminPasswordAction.class, AuthenticateWithAdminPasswordHandler.class);
+    bindHandler(AuthenticateWithGoogleAuthorizationCodeAction.class, AuthenticateWithGoogleAuthorizationCodeHandler.class);
+    bindHandler(SignOutAdminAction.class, SignOutAdminHandler.class);
   }
 }

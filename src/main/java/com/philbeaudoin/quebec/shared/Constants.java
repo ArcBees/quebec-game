@@ -23,4 +23,5 @@ package com.philbeaudoin.quebec.shared;
  */
 public class Constants {
   public static final String securityCookieName = "QGSC";
+  public static final String sessionCookieName = "SESSION";
 }

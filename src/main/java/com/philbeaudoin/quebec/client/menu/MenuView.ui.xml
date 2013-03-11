@@ -22,6 +22,16 @@
               <g:Hyperlink targetHistoryToken="game;n=3">Quick solo 3 player game</g:Hyperlink>
               <g:Hyperlink targetHistoryToken="game;n=4">Quick solo 4 player game</g:Hyperlink>
               <g:Hyperlink targetHistoryToken="game;n=5">Quick solo 5 player game</g:Hyperlink>
+              <g:HTMLPanel ui:field="googleButton">
+                  <span class="g-signin"
+                    data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me"
+                    data-clientid="161973045206.apps.googleusercontent.com"
+                    data-redirecturi="postmessage"
+                    data-accesstype="offline"
+                    data-cookiepolicy="single_host_origin"
+                    data-callback="signInCallback">
+                  </span>
+              </g:HTMLPanel>
               </g:FlowPanel>
               </g:layer>
             </g:LayoutPanel>

@@ -1,0 +1,39 @@
+<!-- Copyright 2013 Philippe Beaudoin Licensed under the Apache License, 
+    Version 2.0 (the "License"); you may not use this file except in compliance 
+    with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+    Unless required by applicable law or agreed to in writing, software distributed 
+    under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+    OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+    the specific language governing permissions and limitations under the License. -->
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+    xmlns:g='urn:import:com.google.gwt.user.client.ui'
+    xmlns:c='urn:import:com.philbeaudoin.quebec.client.widget'>
+
+    <g:DockLayoutPanel unit="PX">
+        <g:center>
+            <g:FlowPanel>
+            <g:Label>Successfully signed in!</g:Label>
+            <g:Button ui:field="signOutButton">Sign out of admin mode</g:Button>
+            <g:Label>Administration page. Any field left blank will not be modified.</g:Label>
+            <g:Label>Enter new password</g:Label>
+            <g:PasswordTextBox ui:field="password1"></g:PasswordTextBox>
+            <g:Label>Re-enter new password</g:Label>
+            <g:PasswordTextBox ui:field="password2"></g:PasswordTextBox>
+            <g:Label>Enter the new salt. WARNING! Everything could blow up, you should only
+            do that during the initial setup. You must change the password if you change the salt
+            (but you can change the password without changing the salt).
+            </g:Label>
+            <g:TextBox ui:field="salt"></g:TextBox>
+            <g:CheckBox ui:field="changeSaltCheckBox">Check this to indicate you really want to
+            change the salt</g:CheckBox>
+            <g:HTML>Enter the <a href="https://developers.google.com/+/api/oauth">Google OAuth 2.0
+            client secret</a>.</g:HTML>
+            <g:TextBox ui:field="googleOAuthClientSecret"></g:TextBox>
+            <g:Button ui:field="changeSettingsButton">Change settings</g:Button>
+            <g:Label ui:field="messageLabel"></g:Label>
+            </g:FlowPanel>
+        </g:center>
+    </g:DockLayoutPanel>
+
+</ui:UiBinder>
