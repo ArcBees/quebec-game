@@ -18,6 +18,9 @@ package com.philbeaudoin.quebec.client.menu;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
@@ -37,13 +40,60 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
 
   private final Widget widget;
 
+  @UiField
+  HTMLPanel googleButton;
+
+  private MenuPresenter presenter;
+
   @Inject
   public MenuView() {
     widget = binder.createAndBindUi(this);
+    setup();
   }
 
   @Override
   public Widget asWidget() {
     return widget;
   }
+
+  @Override
+  public void setPresenter(MenuPresenter presenter) {
+    this.presenter = presenter;
+  }
+
+  @Override
+  public void hideGoogleButton() {
+    googleButton.setVisible(false);
+  }
+
+  @Override
+  public void displayError(String string) {
+    Window.alert(string);
+  }
+
+  // This method
+  private void authorized(String code) {
+    // Successfully authorized.
+    // Hide the sign-in button now that the user is authorized, for example:
+    presenter.googleAuthorize(code);
+  }
+
+  private void notAuthorized(String error) {
+    presenter.errorGoogleAuthorize(error);
+  }
+
+  // Setup the native JS callback method (named "signInCallback") used by the Google+ sign-in
+  // process. This method defers all treatment to the above
+  public native void setup() /*-{
+    var obj = this;
+    $wnd.signInCallback = function(authResult) {
+      if (authResult['code']) {
+        obj.@com.philbeaudoin.quebec.client.menu.MenuView::authorized(Ljava/lang/String;)(
+            authResult['code']);
+      } else if (authResult['error']) {
+        obj.@com.philbeaudoin.quebec.client.menu.MenuView::notAuthorized(Ljava/lang/String;)(
+            authResult['error']);
+      }
+    }
+  }-*/;
 }

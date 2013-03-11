@@ -39,4 +39,12 @@ public class NameTokens {
   public static String getMenuPage() {
     return menuPage;
   }
+  public static final String adminSignInPage = "!adminin";
+  public static String getAdminSignInPage() {
+    return adminSignInPage;
+  }
+  public static final String adminPage = "!admin";
+  public static String getAdminPage() {
+    return adminPage;
+  }
 }

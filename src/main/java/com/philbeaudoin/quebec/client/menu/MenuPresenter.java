@@ -24,6 +24,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAuthorizationCode;
 import com.philbeaudoin.quebec.shared.NameTokens;
 
 /**
@@ -40,6 +41,9 @@ public class MenuPresenter extends
    * The presenter's view.
    */
   public interface MyView extends View {
+    void setPresenter(MenuPresenter presenter);
+    void hideGoogleButton();
+    void displayError(String string);
   }
 
   /**
@@ -53,10 +57,21 @@ public class MenuPresenter extends
   @Inject
   public MenuPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy) {
     super(eventBus, view, proxy);
+    view.setPresenter(this);
   }
 
   @Override
   protected void revealInParent() {
     RevealRootLayoutContentEvent.fire(this, this);
+  }
+
+  public void googleAuthorize(String code) {
+    getView().hideGoogleButton();
+    getEventBus().fireEventFromSource(new AuthenticateWithGoogleAuthorizationCode.Event(code), this);
+  }
+
+  public void errorGoogleAuthorize(String error) {
+    // TODO Auto-generated method stub
+    
   }
 }

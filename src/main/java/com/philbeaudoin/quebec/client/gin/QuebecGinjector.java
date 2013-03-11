@@ -23,6 +23,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.dispatch.client.gin.DispatchAsyncModule;
 import com.gwtplatform.dispatch.shared.DispatchAsync;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.philbeaudoin.quebec.client.admin.AdminPresenter;
+import com.philbeaudoin.quebec.client.admin.AdminSignInPresenter;
 import com.philbeaudoin.quebec.client.main.GamePresenter;
 import com.philbeaudoin.quebec.client.menu.MenuPresenter;
 import com.philbeaudoin.quebec.client.resources.Resources;
@@ -39,4 +41,6 @@ public interface QuebecGinjector extends Ginjector {
 
   Provider<GamePresenter> getGamePresenter();
   Provider<MenuPresenter> getMenuPresenter();
+  Provider<AdminSignInPresenter> getAdminSignInPresenter();
+  Provider<AdminPresenter> getAdminPresenter();
 }

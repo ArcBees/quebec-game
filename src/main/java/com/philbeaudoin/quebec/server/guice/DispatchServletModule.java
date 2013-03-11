@@ -16,13 +16,23 @@
 
 package com.philbeaudoin.quebec.server.guice;
 
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
-import com.googlecode.objectify.ObjectifyFactory;
+import com.googlecode.objectify.ObjectifyFilter;
 import com.gwtplatform.dispatch.server.guice.DispatchServiceImpl;
 import com.gwtplatform.dispatch.server.guice.HttpSessionSecurityCookieFilter;
 import com.gwtplatform.dispatch.shared.ActionImpl;
 import com.gwtplatform.dispatch.shared.SecurityCookie;
+import com.philbeaudoin.quebec.server.database.ObjectifyServiceWrapper;
+import com.philbeaudoin.quebec.server.database.ObjectifyServiceWrapperImpl;
+import com.philbeaudoin.quebec.server.oauth.OAuthManager;
+import com.philbeaudoin.quebec.server.oauth.OAuthManagerImpl;
+import com.philbeaudoin.quebec.server.session.ServerSessionManager;
+import com.philbeaudoin.quebec.server.session.ServerSessionManagerImpl;
 import com.philbeaudoin.quebec.shared.Constants;
 
 /**
@@ -34,12 +44,16 @@ public class DispatchServletModule extends ServletModule {
   public void configureServlets() {
 
     // Model object managers
-    bind(ObjectifyFactory.class).in(Singleton.class);
+    bind(HttpTransport.class).to(NetHttpTransport.class);
+    bind(JsonFactory.class).to(JacksonFactory.class);
+    bind(ObjectifyFilter.class).in(Singleton.class);
+    bind(ObjectifyServiceWrapper.class).to(ObjectifyServiceWrapperImpl.class);
+    bind(ServerSessionManager.class).to(ServerSessionManagerImpl.class);
+    bind(OAuthManager.class).to(OAuthManagerImpl.class);
 
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);
 
-    // TODO philippe.beaudoin@gmail.com
-    // Uncomment when http://code.google.com/p/puzzlebazar/issues/detail?id=27 is unblocked.
+    filter("/*").through(ObjectifyFilter.class);
     filter("*").through(HttpSessionSecurityCookieFilter.class);
     serve("/" + ActionImpl.DEFAULT_SERVICE_NAME).with(DispatchServiceImpl.class);
   }

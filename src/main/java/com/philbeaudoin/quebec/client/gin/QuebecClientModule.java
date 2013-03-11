@@ -23,6 +23,10 @@ import com.gwtplatform.dispatch.shared.SecurityCookie;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.philbeaudoin.quebec.client.PlaceManager;
+import com.philbeaudoin.quebec.client.admin.AdminPresenter;
+import com.philbeaudoin.quebec.client.admin.AdminSignInPresenter;
+import com.philbeaudoin.quebec.client.admin.AdminSignInView;
+import com.philbeaudoin.quebec.client.admin.AdminView;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.main.GamePresenter;
 import com.philbeaudoin.quebec.client.main.GameView;
@@ -31,6 +35,8 @@ import com.philbeaudoin.quebec.client.menu.MenuView;
 import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentFactories;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
+import com.philbeaudoin.quebec.client.session.ClientSessionManager;
+import com.philbeaudoin.quebec.client.session.ClientSessionManagerImpl;
 import com.philbeaudoin.quebec.shared.Constants;
 
 /**
@@ -54,6 +60,13 @@ public class QuebecClientModule extends AbstractPresenterModule {
         GamePresenter.MyProxy.class);
     bindPresenter(MenuPresenter.class, MenuPresenter.MyView.class, MenuView.class,
         MenuPresenter.MyProxy.class);
+    bindPresenter(AdminSignInPresenter.class, AdminSignInPresenter.MyView.class,
+        AdminSignInView.class, AdminSignInPresenter.MyProxy.class);
+    bindPresenter(AdminPresenter.class, AdminPresenter.MyView.class, AdminView.class,
+        AdminPresenter.MyProxy.class);
+
+    bind(ClientSessionManagerImpl.class).asEagerSingleton();
+    bind(ClientSessionManager.class).to(ClientSessionManagerImpl.class);
   }
 
   @Provides
