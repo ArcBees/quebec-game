@@ -16,8 +16,8 @@
 
 package com.philbeaudoin.quebec.client.main;
 
-import java.util.Date;
-
+import com.google.gwt.animation.client.AnimationScheduler;
+import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.GWT;
@@ -49,14 +49,13 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
   interface Binder extends UiBinder<Widget, GameView> { }
   protected static final Binder binder = GWT.create(Binder.class);
 
+  private final AnimationScheduler animationScheduler;
+
   // Ensure we always wait until resources are loaded.
   private final SpriteResources spriteResources;
 
   // Forces a complete refresh whenever the canvas is resized.
   private boolean forceRefresh = false;
-
-  // Timer refresh rate, in milliseconds.
-  static final int refreshRate = 15;
 
   private final Widget widget;
   private final Canvas canvas;
@@ -66,6 +65,7 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
 
   // For animations
   private double time;
+  private double prevTimeMs;
   private boolean isRefreshing;
 
   // To track mouse
@@ -73,8 +73,8 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
   private double lastMouseY;
 
   // For performance info.
-  private long lastTimeMs;
-  private long fps;
+  private double lastFrameTimeMs;
+  private double fps;
   private int cnt;
 
   @UiField
@@ -86,13 +86,12 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
   final Timer refreshTimer = new Timer() {
     @Override
     public void run() {
-      doRenderStaticLayer();
-      isRefreshing = false;
     }
   };
 
   @Inject
-  public GameView(SpriteResources spriteResources) {
+  public GameView(AnimationScheduler animationScheduler, SpriteResources spriteResources) {
+    this.animationScheduler = animationScheduler;
     this.spriteResources = spriteResources;
     widget = binder.createAndBindUi(this);
     canvas = fullCanvas.asCanvas();
@@ -115,14 +114,14 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
       }
     });
 
-    // Setup animation timer.
-    final Timer animTimer = new Timer() {
+    final AnimationCallback animationCallback = new AnimationCallback() {
       @Override
-      public void run() {
-        doUpdate();
+      public void execute(double timestamp) {
+        GameView.this.animationScheduler.requestAnimationFrame(this, canvas.getElement());
+        doUpdate(timestamp);
       }
     };
-    animTimer.scheduleRepeating(refreshRate);
+    animationScheduler.requestAnimationFrame(animationCallback, canvas.getElement());
 
     fullCanvas.addMouseMoveHandler(new MouseMoveHandler() {
       @Override
@@ -155,15 +154,9 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
     this.presenter = presenter;
   }
 
-  void refreshStaticLayer(int delayMs) {
-    isRefreshing = true;
-    forceRefresh = false;
-    refreshTimer.cancel();
-    refreshTimer.schedule(delayMs);
-  }
-
   void doRenderStaticLayer() {
     time = 0;
+    prevTimeMs = 0;
 
     int width = canvas.getCoordinateSpaceWidth();
     int height = canvas.getCoordinateSpaceHeight();
@@ -185,27 +178,32 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
     }
   }
 
-  void doUpdate() {
+  void doUpdate(double timestamp) {
     if (isRefreshing || spriteResources.isLoading()) {
       return;
     }
     if (forceRefresh || presenter.isRefreshNeeded()) {
-      refreshStaticLayer(5);
+      forceRefresh = false;
+      isRefreshing = true;
+      doRenderStaticLayer();
+      isRefreshing = false;
       return;
     }
     cnt++;
     if (cnt == 60) {
       cnt = 0;
-      long timeMs = new Date().getTime();
-      if (lastTimeMs > 0) {
-        long msFor60Frames = timeMs - lastTimeMs;
+      if (lastFrameTimeMs > 0) {
+        double msFor60Frames = timestamp - lastFrameTimeMs;
         if (msFor60Frames > 0) {
           fps = 60000 / msFor60Frames;
         }
       }
-      lastTimeMs = timeMs;
+      lastFrameTimeMs = timestamp;
     }
-    time += refreshRate / 1000.0;
+    if (prevTimeMs != 0) {
+      time += (timestamp - prevTimeMs) / 1000.0;
+    }
+    prevTimeMs = timestamp;
     if (presenter != null) {
       int height = canvas.getCoordinateSpaceHeight();
       context.save();

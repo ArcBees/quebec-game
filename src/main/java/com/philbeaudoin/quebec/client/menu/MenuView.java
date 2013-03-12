@@ -17,6 +17,8 @@
 package com.philbeaudoin.quebec.client.menu;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -26,10 +28,7 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
- * Main view, containing the board and the player information bars. The canvas is automatically
- * scaled to fill the entire window. It is mapped to a virtual coordinate space with range:
- *   (0, 1.7) x (0, 1)
- * This horizontal range is determined by the aspect ratio specified in MainPageView.ui.xml.
+ * View of the main menu.
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
@@ -62,13 +61,39 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
   }
 
   @Override
-  public void hideGoogleButton() {
-    googleButton.setVisible(false);
+  public void setGoogleButtonVisibile(boolean visible) {
+    googleButton.setVisible(visible);
+    if (visible) {
+      // If initially rendered invisible, Google+ sets the width and height of sub-elements at 1px.
+      // Remove that nonsense.
+      removeSizeOfChildren(googleButton.getElement());
+    }
+  }
+
+  /**
+   * Remove the width and height style of all the children of a node, recursively.
+   * @param element The node for which to remove width and height.
+   */
+  private void removeSizeOfChildren(Element element) {
+    for (int i = 0; i < element.getChildCount(); ++i) {
+      Node childNode = element.getChild(i);
+      if (Element.is(childNode)) {
+        Element child = Element.as(childNode);
+        child.getStyle().clearWidth();
+        child.getStyle().clearHeight();
+        removeSizeOfChildren(child);
+      }
+    }
   }
 
   @Override
   public void displayError(String string) {
     Window.alert(string);
+  }
+
+  @Override
+  public void renderGoogleSignIn() {
+    renderGoogleSignInJSNI();
   }
 
   // This method
@@ -95,5 +120,9 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
             authResult['error']);
       }
     }
+  }-*/;
+
+  public native void renderGoogleSignInJSNI() /*-{
+    $wnd['gapi'] && $wnd.gapi['signin'] && $wnd.gapi.signin['go'] && $wnd.gapi.signin.go();
   }-*/;
 }

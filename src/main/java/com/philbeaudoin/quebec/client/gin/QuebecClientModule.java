@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.client.gin;
 
+import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.inject.Provides;
@@ -72,5 +73,10 @@ public class QuebecClientModule extends AbstractPresenterModule {
   @Provides
   public Scheduler getScheduler() {
     return Scheduler.get();
+  }
+
+  @Provides
+  public AnimationScheduler getAnimationScheduler() {
+    return AnimationScheduler.get();
   }
 }
