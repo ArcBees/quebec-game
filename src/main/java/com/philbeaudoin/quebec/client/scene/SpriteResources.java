@@ -369,6 +369,8 @@ public class SpriteResources {
       // Add the image to an invisible element in the DOM so it gets loaded.
       if (hiddenPanel == null) {
         hiddenPanel = new FlowPanel();
+      }
+      if (!hiddenPanel.isAttached()) {
         RootPanel.get().add(hiddenPanel);
         hiddenPanel.setVisible(false);
       }

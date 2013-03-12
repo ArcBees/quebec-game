@@ -42,8 +42,9 @@ public class MenuPresenter extends
    */
   public interface MyView extends View {
     void setPresenter(MenuPresenter presenter);
-    void hideGoogleButton();
+    void setGoogleButtonVisibile(boolean visibile);
     void displayError(String string);
+    void renderGoogleSignIn();
   }
 
   /**
@@ -61,17 +62,27 @@ public class MenuPresenter extends
   }
 
   @Override
+  public void onReveal() {
+    super.onReveal();
+    // Don't show the google sign-in button at first. It tries to auto-sign and if it succeeds it
+    // flashes which is annoying. Instead, start by hiding it and only show it if sign-in failed.
+    getView().setGoogleButtonVisibile(false);
+    getView().renderGoogleSignIn();
+  }
+
+  @Override
   protected void revealInParent() {
     RevealRootLayoutContentEvent.fire(this, this);
   }
 
   public void googleAuthorize(String code) {
-    getView().hideGoogleButton();
+    // At that point the button may have been made visible again, so hide it.
+    getView().setGoogleButtonVisibile(false);
     getEventBus().fireEventFromSource(new AuthenticateWithGoogleAuthorizationCode.Event(code), this);
   }
 
   public void errorGoogleAuthorize(String error) {
-    // TODO Auto-generated method stub
-    
+    // Sign-in failed, which may mean the user has to click through again. Show the button.
+    getView().setGoogleButtonVisibile(true);
   }
 }
