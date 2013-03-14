@@ -104,8 +104,7 @@ public class AdminPresenter extends Presenter<AdminPresenter.MyView, AdminPresen
       navigateToAdminSignInPage();
     } else {
       // Wait until we become admin somehow.
-      sessionStateChangedRegistration = getEventBus().addHandler(
-          SessionStateChanged.Event.TYPE, this);
+      sessionStateChangedRegistration = addHandler(SessionStateChanged.Event.TYPE, this);
     }
   }
 

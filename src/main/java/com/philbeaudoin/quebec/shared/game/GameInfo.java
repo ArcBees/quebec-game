@@ -14,32 +14,24 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.session;
+package com.philbeaudoin.quebec.shared.game;
 
 import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
- * All the data corresponding to the current session.
+ * All the data corresponding to a game
  * 
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface SessionInfo {
+public interface GameInfo {
   /**
-   * Return true if the session user has authenticated with the admin password. Not that this does
-   * not mean that {@link #isSignedIn()} would return true. A user can be an admin without having
-   * authenticated with an account.
-   * @return {@code true} if the user is an admin.
+   * @return The number of players in the game.
    */
-  boolean isAdmin();
+  int getNbPlayers();
 
   /**
-   * @return {@code true} if the user has signed in. Equivalent to checking that
-   *     {@link #getUserInfo()} returns non-null.
+   * @param index The index of the player to retrieves, must be less than {@link #getNbPlayers()}.
+   * @return Information, filtered to contain only the public data, on the given player.
    */
-  boolean isSignedIn();
-
-  /**
-   * @return The currently signed in user info, or {@code null} if no user is signed in.
-   */
-  UserInfo getUserInfo();
+  UserInfo getPlayerInfo(int index);
 }

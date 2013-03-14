@@ -50,6 +50,11 @@ public class SessionInfoEntity implements SessionInfo {
     return getUserInfoEntity();
   }
 
+  @Override
+  public boolean isSignedIn() {
+    return getUserInfo() != null;
+  }
+
   /**
    * Keeps the id but resets everything else to default values.
    */

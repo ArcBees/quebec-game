@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.server.oauth.OAuthManager;
 import com.philbeaudoin.quebec.server.session.ServerSessionManager;
 import com.philbeaudoin.quebec.shared.serveractions.ChangeAdminSettingsAction;
 import com.philbeaudoin.quebec.shared.serveractions.VoidResult;
+import com.philbeaudoin.quebec.shared.session.SessionInfo;
 
 /**
  * Handles {@link ChangeAdminSettingsAction}.
@@ -48,7 +49,10 @@ public class ChangeAdminSettingsHandler
   @Override
   public VoidResult execute(ChangeAdminSettingsAction action, ExecutionContext context)
       throws ActionException {
-
+    SessionInfo sessionInfo = serverSessionManager.get().getSessionInfo();
+    if (sessionInfo == null || !sessionInfo.isAdmin()) {
+      throw new ActionException("Must be admin to change admin settings.");
+    }
     try {
       if (action.getSalt() != null) {
         serverSessionManager.get().saveAdminPasswordAndSalt(
