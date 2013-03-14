@@ -16,16 +16,28 @@
 
 package com.philbeaudoin.quebec.client.menu;
 
+import java.util.ArrayList;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.dispatch.shared.DispatchAsync;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import com.philbeaudoin.quebec.client.session.ClientSessionManager;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAuthorizationCode;
+import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAuthorizationCode.ErrorEvent;
+import com.philbeaudoin.quebec.client.session.events.SessionStateChanged;
+import com.philbeaudoin.quebec.client.session.events.SessionStateChanged.Event;
 import com.philbeaudoin.quebec.shared.NameTokens;
+import com.philbeaudoin.quebec.shared.game.GameInfo;
+import com.philbeaudoin.quebec.shared.game.GameInfoDto;
+import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
+import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
 
 /**
  * This is the presenter of the menu page.
@@ -33,7 +45,8 @@ import com.philbeaudoin.quebec.shared.NameTokens;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class MenuPresenter extends
-    Presenter<MenuPresenter.MyView, MenuPresenter.MyProxy> {
+    Presenter<MenuPresenter.MyView, MenuPresenter.MyProxy> implements SessionStateChanged.Handler,
+    AuthenticateWithGoogleAuthorizationCode.ErrorHandler {
 
   public static final Object TYPE_RevealNewsContent = new Object();
 
@@ -42,9 +55,12 @@ public class MenuPresenter extends
    */
   public interface MyView extends View {
     void setPresenter(MenuPresenter presenter);
-    void setGoogleButtonVisibile(boolean visibile);
+    void setCreateLinksVisible(boolean visible);
+    void setGoogleButtonVisible(boolean visibile);
     void displayError(String string);
     void renderGoogleSignIn();
+    void clearGames();
+    void addGame(GameInfo gameInfo);
   }
 
   /**
@@ -55,10 +71,21 @@ public class MenuPresenter extends
   public interface MyProxy extends ProxyPlace<MenuPresenter> {
   }
 
+  private final DispatchAsync dispatcher;
+  private final ClientSessionManager sessionManager;
+
   @Inject
-  public MenuPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy) {
+  public MenuPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
+      DispatchAsync dispatcher, ClientSessionManager sessionManager) {
     super(eventBus, view, proxy);
+    this.dispatcher = dispatcher;
+    this.sessionManager = sessionManager;
     view.setPresenter(this);
+  }
+
+  @Override
+  public void onBind() {
+    addRegisteredHandler(SessionStateChanged.Event.TYPE, this);
   }
 
   @Override
@@ -66,7 +93,7 @@ public class MenuPresenter extends
     super.onReveal();
     // Don't show the google sign-in button at first. It tries to auto-sign and if it succeeds it
     // flashes which is annoying. Instead, start by hiding it and only show it if sign-in failed.
-    getView().setGoogleButtonVisibile(false);
+    getView().setGoogleButtonVisible(false);
     getView().renderGoogleSignIn();
   }
 
@@ -77,12 +104,53 @@ public class MenuPresenter extends
 
   public void googleAuthorize(String code) {
     // At that point the button may have been made visible again, so hide it.
-    getView().setGoogleButtonVisibile(false);
+    getView().setGoogleButtonVisible(false);
     getEventBus().fireEventFromSource(new AuthenticateWithGoogleAuthorizationCode.Event(code), this);
   }
 
   public void errorGoogleAuthorize(String error) {
     // Sign-in failed, which may mean the user has to click through again. Show the button.
-    getView().setGoogleButtonVisibile(true);
+    getView().setGoogleButtonVisible(true);
+  }
+
+  @Override
+  public void onAuthenticateWithGoogleAuthorizationCodeError(ErrorEvent event) {
+    // Sign-in failed, which may mean the user has to click through again. Show the button.
+    getView().setGoogleButtonVisible(true);
+  }
+
+  @Override
+  public void onSessionStateChanged(Event event) {
+    getView().setGoogleButtonVisible(event.getSessionInfo().isSignedIn());
+    getView().setCreateLinksVisible(event.getSessionInfo().isSignedIn());
+  }
+
+  public void createNewGame(int nbPlayers) {
+    if (nbPlayers < 3 || nbPlayers > 5) {
+      getView().displayError("Error! Only games with 3, 4 or 5 players allowed.");
+      return;
+    }
+    if (!sessionManager.isSignedIn()) {
+      getView().displayError("Error! Must be signed in to create a game.");
+      return;
+    }
+    dispatcher.execute(new CreateNewGameAction(nbPlayers), new AsyncCallback<GameListResult>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        getView().displayError(caught.getMessage());
+      }
+
+      @Override
+      public void onSuccess(GameListResult result) {
+        updateGameList(result.getGames());
+      }
+    });
+  }
+
+  private void updateGameList(ArrayList<GameInfoDto> games) {
+    getView().clearGames();
+    for (GameInfo gameInfo : games) {
+      getView().addGame(gameInfo);
+    }
   }
 }

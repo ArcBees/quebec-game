@@ -14,38 +14,39 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.session;
+package com.philbeaudoin.quebec.shared.game;
+
+import java.util.ArrayList;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.user.UserInfo;
 import com.philbeaudoin.quebec.shared.user.UserInfoDto;
 
-public class SessionInfoDto implements SessionInfo, IsSerializable {
-  boolean admin;
-  UserInfoDto userInfoDto;
+public class GameInfoDto implements GameInfo, IsSerializable {
 
-  public SessionInfoDto(SessionInfo sessionInfo) {
-    this.admin = sessionInfo.isAdmin();
-    this.userInfoDto = new UserInfoDto(sessionInfo.getUserInfo());
+  ArrayList<UserInfoDto> players;
+
+  public GameInfoDto(GameInfo gameInfo) {
+    this.players = new ArrayList<UserInfoDto>(gameInfo.getNbPlayers());
+    for (int i = 0; i < gameInfo.getNbPlayers(); ++i) {
+      this.players.add(new UserInfoDto(gameInfo.getPlayerInfo(i)));
+    }
   }
 
-  public SessionInfoDto() {
-    this.admin = false;
-    this.userInfoDto = null;
-  }
-
-  @Override
-  public boolean isAdmin() {
-    return admin;
-  }
-
-  @Override
-  public UserInfo getUserInfo() {
-    return userInfoDto;
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameInfoDto() {
   }
 
   @Override
-  public boolean isSignedIn() {
-    return getUserInfo() != null;
+  public int getNbPlayers() {
+    return players.size();
+  }
+
+  @Override
+  public UserInfo getPlayerInfo(int index) {
+    return players.get(index);
   }
 }

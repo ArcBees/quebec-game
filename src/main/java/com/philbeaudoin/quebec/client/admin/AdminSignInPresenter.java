@@ -82,7 +82,7 @@ public class AdminSignInPresenter extends
 
   @Override
   public void onBind() {
-    registerHandler(getEventBus().addHandler(AuthenticateWithAdminPassword.ErrorEvent.TYPE, this));
+    registerHandler(addHandler(AuthenticateWithAdminPassword.ErrorEvent.TYPE, this));
   }
 
   @Override

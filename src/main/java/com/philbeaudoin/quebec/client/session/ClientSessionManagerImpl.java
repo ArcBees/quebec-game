@@ -79,6 +79,11 @@ public class ClientSessionManagerImpl implements ClientSessionManager, SignOutAd
   }
 
   @Override
+  public boolean isSignedIn() {
+    return getUserInfo() != null;
+  }
+
+  @Override
   public void onSignOutAdmin(SignOutAdmin.Event event) {
     dispatcher.execute(new SignOutAdminAction(),
                        new AsyncCallback<SessionInfoResult>() {

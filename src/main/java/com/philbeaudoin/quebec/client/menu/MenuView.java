@@ -19,13 +19,19 @@ package com.philbeaudoin.quebec.client.menu;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
+import com.philbeaudoin.quebec.shared.game.GameInfo;
 
 /**
  * View of the main menu.
@@ -39,8 +45,12 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
 
   private final Widget widget;
 
-  @UiField
-  HTMLPanel googleButton;
+  @UiField FlowPanel createLinks;
+  @UiField Hyperlink new3p;
+  @UiField Hyperlink new4p;
+  @UiField Hyperlink new5p;
+  @UiField FlowPanel gameList;
+  @UiField HTMLPanel googleButton;
 
   private MenuPresenter presenter;
 
@@ -61,13 +71,28 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
   }
 
   @Override
-  public void setGoogleButtonVisibile(boolean visible) {
+  public void setCreateLinksVisible(boolean visible) {
+    createLinks.setVisible(visible);
+  }
+
+  @Override
+  public void setGoogleButtonVisible(boolean visible) {
     googleButton.setVisible(visible);
     if (visible) {
       // If initially rendered invisible, Google+ sets the width and height of sub-elements at 1px.
       // Remove that nonsense.
       removeSizeOfChildren(googleButton.getElement());
     }
+  }
+
+  @Override
+  public void clearGames() {
+    gameList.clear();
+  }
+
+  @Override
+  public void addGame(GameInfo gameInfo) {
+    gameList.add(new Label("A " + gameInfo.getNbPlayers() + " player game."));
   }
 
   /**
@@ -125,4 +150,17 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
   public native void renderGoogleSignInJSNI() /*-{
     $wnd['gapi'] && $wnd.gapi['signin'] && $wnd.gapi.signin['go'] && $wnd.gapi.signin.go();
   }-*/;
+
+  @UiHandler("new3p")
+  void onNew3pPressed(ClickEvent event) {
+    presenter.createNewGame(3);
+  }
+  @UiHandler("new4p")
+  void onNew4pPressed(ClickEvent event) {
+    presenter.createNewGame(4);
+  }
+  @UiHandler("new5p")
+  void onNew5pPressed(ClickEvent event) {
+    presenter.createNewGame(5);
+  }
 }
