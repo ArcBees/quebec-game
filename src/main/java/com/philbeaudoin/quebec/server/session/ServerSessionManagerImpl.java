@@ -38,6 +38,7 @@ import com.philbeaudoin.quebec.server.exceptions.OperationNotAllowedException;
 import com.philbeaudoin.quebec.server.user.UserInfoEntity;
 import com.philbeaudoin.quebec.shared.Constants;
 import com.philbeaudoin.quebec.shared.session.SessionInfo;
+import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
  * Implementation of {@link ClientSessionManager}.
@@ -94,7 +95,7 @@ public class ServerSessionManagerImpl implements ServerSessionManager, Objectify
 
   @Override
   public SessionInfoEntity attachUserInfoToSession(UserInfoEntity userInfoEntity) {
-    assert(userInfoEntity.getId() != null);
+    assert(userInfoEntity.getId() != -1);
 
     SessionInfoEntity entity = retrieveOrCreateSessionInfo();
     entity.setUserInfoEntity(userInfoEntity);
@@ -212,5 +213,23 @@ public class ServerSessionManagerImpl implements ServerSessionManager, Objectify
       }
     }
     return null;
+  }
+
+  @Override
+  public UserInfo anonymizeUserInfo(final UserInfo userInfo) {
+    SessionInfoEntity sessionInfoEntity = getSessionInfo();
+    if (sessionInfoEntity != null && sessionInfoEntity.isAdmin()) {
+      return userInfo;  // Nothing is anonymized for the admin.
+    }
+    UserInfoEntity currentUser = sessionInfoEntity == null ? null : sessionInfoEntity.getUserInfo();
+    if (currentUser != null && currentUser.getId() == userInfo.getId()) {
+      return userInfo;  // Don't anonymize for the user himself.
+    }
+    return new UserInfo() {
+      @Override public long getId() { return userInfo.getId(); }
+      @Override public String getName() { return userInfo.getName(); }
+      @Override public String getGoogleId() { return userInfo.getGoogleId(); }
+      @Override public String getEmail() { return null; }
+    };
   }
 }

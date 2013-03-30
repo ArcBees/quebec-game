@@ -22,9 +22,7 @@ import javax.inject.Provider;
 import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
-import com.philbeaudoin.quebec.server.oauth.OAuthManager;
-import com.philbeaudoin.quebec.server.session.ServerSessionManager;
-import com.philbeaudoin.quebec.server.user.UserInfoEntity;
+import com.philbeaudoin.quebec.server.user.UserManager;
 import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithGoogleAuthorizationCodeAction;
 import com.philbeaudoin.quebec.shared.serveractions.SessionInfoResult;
 import com.philbeaudoin.quebec.shared.session.SessionInfoDto;
@@ -36,22 +34,19 @@ import com.philbeaudoin.quebec.shared.session.SessionInfoDto;
 public class AuthenticateWithGoogleAuthorizationCodeHandler
     implements ActionHandler<AuthenticateWithGoogleAuthorizationCodeAction, SessionInfoResult> {
 
-  private final Provider<OAuthManager> oAuthManager;
-  private final Provider<ServerSessionManager> serverSessionManager;
+  private final Provider<UserManager> userManager;
   
   @Inject
-  AuthenticateWithGoogleAuthorizationCodeHandler(Provider<OAuthManager> oAuthManager,
-      Provider<ServerSessionManager> serverSessionManager) {
-    this.oAuthManager = oAuthManager;
-    this.serverSessionManager = serverSessionManager;
+  AuthenticateWithGoogleAuthorizationCodeHandler(Provider<UserManager> userManager) {
+    this.userManager = userManager;
   }
 
   @Override
   public SessionInfoResult execute(AuthenticateWithGoogleAuthorizationCodeAction action,
       ExecutionContext context) throws ActionException {
-    UserInfoEntity userInfoEntity = oAuthManager.get().authenticate(action.getAuthorizationCode());
-    return new SessionInfoResult(
-        new SessionInfoDto(serverSessionManager.get().attachUserInfoToSession(userInfoEntity)));
+    return new SessionInfoResult(new SessionInfoDto(
+        userManager.get().signIntoSessionWithGoogleAuthenticationCode(
+            action.getAuthorizationCode())));
   }
 
   @Override

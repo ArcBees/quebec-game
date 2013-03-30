@@ -25,8 +25,10 @@ public class SessionInfoDto implements SessionInfo, IsSerializable {
   UserInfoDto userInfoDto;
 
   public SessionInfoDto(SessionInfo sessionInfo) {
+    assert(sessionInfo != null);
     this.admin = sessionInfo.isAdmin();
-    this.userInfoDto = new UserInfoDto(sessionInfo.getUserInfo());
+    UserInfo result = sessionInfo.getUserInfo();
+    this.userInfoDto = result == null ? null : new UserInfoDto(sessionInfo.getUserInfo());
   }
 
   public SessionInfoDto() {

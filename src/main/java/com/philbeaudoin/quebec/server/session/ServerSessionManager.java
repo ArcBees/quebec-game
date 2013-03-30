@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.server.session;
 
 import com.philbeaudoin.quebec.server.exceptions.OperationNotAllowedException;
 import com.philbeaudoin.quebec.server.user.UserInfoEntity;
+import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
  * Manages information relative to the current session on the server.
@@ -79,4 +80,12 @@ public interface ServerSessionManager {
    */
   void saveAdminPasswordAndSalt(String inputPassword, String salt)
       throws OperationNotAllowedException;
+
+  /**
+   * Given some user information to be transmitted back, anonymize it to remove sensitive fields
+   * based on the currently signed-in user.
+   * @param userInfo The user information to anonymize.
+   * @return The anonymized user info.
+   */
+  UserInfo anonymizeUserInfo(UserInfo userInfo);
 }

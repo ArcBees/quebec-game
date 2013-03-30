@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.server.oauth;
+package com.philbeaudoin.quebec.server.user;
 
 import java.io.IOException;
 
@@ -32,15 +32,11 @@ import com.google.api.services.plus.Plus;
 import com.google.api.services.plus.model.Person;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.Work;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.database.GlobalStringEntity;
 import com.philbeaudoin.quebec.server.database.ObjectifyServiceWrapper;
 import com.philbeaudoin.quebec.server.exceptions.OperationNotAllowedException;
 import com.philbeaudoin.quebec.server.session.ServerSessionManager;
-import com.philbeaudoin.quebec.server.session.SessionInfoEntity;
-import com.philbeaudoin.quebec.server.user.GoogleUserEntity;
-import com.philbeaudoin.quebec.server.user.UserInfoEntity;
 import com.philbeaudoin.quebec.shared.session.SessionInfo;
 
 public class OAuthManagerImpl implements OAuthManager, ObjectifyServiceWrapper {
@@ -87,6 +83,7 @@ public class OAuthManagerImpl implements OAuthManager, ObjectifyServiceWrapper {
 
     GoogleTokenResponse tokenResponse;
     GoogleCredential credential;
+    String userEmail;
     try {
       // Upgrade the authorization code into an access and refresh token.
       tokenResponse = new GoogleAuthorizationCodeTokenRequest(transport, jsonFactory, CLIENT_ID,
@@ -111,17 +108,22 @@ public class OAuthManagerImpl implements OAuthManager, ObjectifyServiceWrapper {
       if (!tokenInfo.getIssuedTo().equals(CLIENT_ID)) {
         throw new ActionException("Token's client ID does not match app's.");
       }
+      userEmail = tokenInfo.getEmail();
     } catch (TokenResponseException e) {
       throw new ActionException("Failed to upgrade the authorization code.");
     } catch (IOException e) {
       throw new ActionException("Failed to read token data from Google. " + e.getMessage());
     }
 
+    if (userEmail == null || userEmail.length() == 0) {
+      throw new ActionException("Google account has no email address, unsupported");
+    }
+
     // Query the user ID.
     Plus service = new Plus.Builder(transport, jsonFactory, credential)
         .setApplicationName(APPLICATION_NAME).build();
 
-    // Get a list of people that this user has shared with this app.
+    // Get complete user's details.
     Person person;
     try {
       person = service.people().get("me").execute();
@@ -133,43 +135,24 @@ public class OAuthManagerImpl implements OAuthManager, ObjectifyServiceWrapper {
       throw new ActionException("Google account has null ID, unsupported");
     }
 
-    // Recoup with the session's user.
-    SessionInfoEntity sessionInfo = sessionManager.getSessionInfo();
-    UserInfoEntity userInfo = sessionInfo.getUserInfoEntity();
+    UserInfoEntity authenticatedUser = UserInfoEntity.CreateWithGoogleId(person.getId());
+    authenticatedUser.setEmail(userEmail);
+    authenticatedUser.setName(person.getDisplayName());
+    authenticatedUser.setGoogleTokenResponse(tokenResponse.toString());
 
-    // TODO(beaudoin): Change the logic from that point forward to allow associating a Google+
-    //     account to an already existing user.
-    if (userInfo != null && !person.getId().equals(userInfo.getGoogleId())) {
-      // Sign out current user and sign-in the new one.
-      sessionInfo = sessionManager.signOut();
-      userInfo = sessionInfo.getUserInfoEntity();  // Should be null.
-      assert(userInfo == null);
-    }
-
-    // At that point, either no user is attached to the session or it's attached to the right
-    // GoogleId.
-    if (userInfo == null) {
-      try {
-        userInfo = ofy().transact(new GetOrCreateUserWithGoogleId(person));
-      } catch(Exception e) {
-        throw new ActionException(e.getMessage());
-      }
-      sessionManager.attachUserInfoToSession(userInfo);
-    }
-    assert(userInfo.getId() != null);
-
-    try {
-      // Upgrade user info entity with the best possible Google token response.
-      tokenResponse = mergeTokenResponses(userInfo.getGoogleTokenResponse(), tokenResponse);
-    } catch (IOException e) {
-      throw new ActionException("Failed to merge Google token responses. " + e.getMessage());
-    }
-    userInfo.setGoogleTokenResponse(tokenResponse.toString());
-    ofy().save().entity(userInfo).now();
-
-    return userInfo;
+    return authenticatedUser;
   }
 
+  @Override
+  public String mergeTokenResponses(String oldestString, String newestString)
+      throws IOException {
+    GoogleTokenResponse newest = jsonFactory.fromString(newestString, GoogleTokenResponse.class);
+    if (newest.getRefreshToken() == null && oldestString != null) {
+      GoogleTokenResponse oldest = jsonFactory.fromString(oldestString, GoogleTokenResponse.class);
+      newest.setRefreshToken(oldest.getRefreshToken());
+    }
+    return newest.toString();
+  }
 
   private Key<GlobalStringEntity> getClientSecretKey() {
     return Key.create(GlobalStringEntity.class, GlobalStringEntity.GOOGLE_OAUTH_CLIENT_SECRET);
@@ -177,51 +160,6 @@ public class OAuthManagerImpl implements OAuthManager, ObjectifyServiceWrapper {
 
   private String loadClientSecret() {
     return ofy().load().key(getClientSecretKey()).get().getString();
-  }
-
-  /**
-   * Takes an old and a new Google token response and merge their information. Keeps all the
-   * information from the newest response, save maybe for the refresh token. If the refresh token
-   * is null in the newest response and non-null in the older response, then the one from the older
-   * response is kept.
-   * @param oldestString Older token response, that may have a valid refresh token. Can be null.
-   * @param newest Newer token response, that may have a null refresh token. Will be modified.
-   * @return The best possible Google token response.
-   * @throws IOException If the json cannot be converted.
-   */
-  private GoogleTokenResponse mergeTokenResponses(String oldestString, GoogleTokenResponse newest)
-      throws IOException {
-    if (newest.getRefreshToken() == null && oldestString != null) {
-      GoogleTokenResponse oldest = jsonFactory.fromString(oldestString, GoogleTokenResponse.class);
-      newest.setRefreshToken(oldest.getRefreshToken());
-    }
-    return newest;
-  }
-
-  /**
-   * Class meant to be performed in a transaction. Will either get the {@link UserInfoEntity} given
-   * the provided google id. If no user correspond to the provided user id in the datastore, a new
-   * one will be created.
-   */
-  private class GetOrCreateUserWithGoogleId implements Work<UserInfoEntity> {
-    private final Person person;
-    GetOrCreateUserWithGoogleId(Person person) {
-      this.person = person;
-    }
-
-    @Override
-    public UserInfoEntity run() {
-      GoogleUserEntity googleUserEntity = ofy().load().type(GoogleUserEntity.class)
-          .id(person.getId()).get();
-      if (googleUserEntity != null) {
-        return googleUserEntity.getUserInfoEntity();
-      }
-      UserInfoEntity userInfoEntity = UserInfoEntity.Create(person.getId());
-      ofy().save().entity(userInfoEntity).now();
-      googleUserEntity = GoogleUserEntity.Create(person.getId(), userInfoEntity);
-      ofy().save().entity(googleUserEntity).now();
-      return userInfoEntity;
-    }
   }
 
 }

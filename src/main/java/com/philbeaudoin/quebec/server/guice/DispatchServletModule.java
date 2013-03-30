@@ -29,10 +29,14 @@ import com.gwtplatform.dispatch.shared.ActionImpl;
 import com.gwtplatform.dispatch.shared.SecurityCookie;
 import com.philbeaudoin.quebec.server.database.ObjectifyServiceWrapper;
 import com.philbeaudoin.quebec.server.database.ObjectifyServiceWrapperImpl;
-import com.philbeaudoin.quebec.server.oauth.OAuthManager;
-import com.philbeaudoin.quebec.server.oauth.OAuthManagerImpl;
+import com.philbeaudoin.quebec.server.game.GameManager;
+import com.philbeaudoin.quebec.server.game.GameManagerImpl;
 import com.philbeaudoin.quebec.server.session.ServerSessionManager;
 import com.philbeaudoin.quebec.server.session.ServerSessionManagerImpl;
+import com.philbeaudoin.quebec.server.user.OAuthManager;
+import com.philbeaudoin.quebec.server.user.OAuthManagerImpl;
+import com.philbeaudoin.quebec.server.user.UserManager;
+import com.philbeaudoin.quebec.server.user.UserManagerImpl;
 import com.philbeaudoin.quebec.shared.Constants;
 
 /**
@@ -49,6 +53,8 @@ public class DispatchServletModule extends ServletModule {
     bind(ObjectifyFilter.class).in(Singleton.class);
     bind(ObjectifyServiceWrapper.class).to(ObjectifyServiceWrapperImpl.class);
     bind(ServerSessionManager.class).to(ServerSessionManagerImpl.class);
+    bind(GameManager.class).to(GameManagerImpl.class);
+    bind(UserManager.class).to(UserManagerImpl.class);
     bind(OAuthManager.class).to(OAuthManagerImpl.class);
 
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);

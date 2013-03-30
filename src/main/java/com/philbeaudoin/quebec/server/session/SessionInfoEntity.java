@@ -23,7 +23,6 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Load;
 import com.philbeaudoin.quebec.server.user.UserInfoEntity;
 import com.philbeaudoin.quebec.shared.session.SessionInfo;
-import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 @Entity
 @Cache
@@ -46,7 +45,7 @@ public class SessionInfoEntity implements SessionInfo {
   }
 
   @Override
-  public UserInfo getUserInfo() {
+  public UserInfoEntity getUserInfo() {
     return getUserInfoEntity();
   }
 

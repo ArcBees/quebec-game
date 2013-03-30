@@ -23,11 +23,12 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.dispatch.shared.DispatchAsync;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithAdminPassword;
+import com.philbeaudoin.quebec.client.session.events.AuthenticateWithDummy;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAuthorizationCode;
-import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAuthorizationCode.Event;
 import com.philbeaudoin.quebec.client.session.events.SessionStateChanged;
 import com.philbeaudoin.quebec.client.session.events.SignOutAdmin;
 import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithAdminPasswordAction;
+import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithDummyAction;
 import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithGoogleAuthorizationCodeAction;
 import com.philbeaudoin.quebec.shared.serveractions.GetSessionAction;
 import com.philbeaudoin.quebec.shared.serveractions.SessionInfoResult;
@@ -42,7 +43,8 @@ import com.philbeaudoin.quebec.shared.user.UserInfo;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class ClientSessionManagerImpl implements ClientSessionManager, SignOutAdmin.Handler,
-    AuthenticateWithAdminPassword.Handler, AuthenticateWithGoogleAuthorizationCode.Handler {
+    AuthenticateWithAdminPassword.Handler, AuthenticateWithGoogleAuthorizationCode.Handler,
+    AuthenticateWithDummy.Handler {
 
   private final static int INITIAL_RETRY_DELAY_MS = 2000;
   private final static int RETRY_DELAY_PUSHBACK_MULTIPLIER = 2;
@@ -65,6 +67,8 @@ public class ClientSessionManagerImpl implements ClientSessionManager, SignOutAd
     eventBus.addHandler(SignOutAdmin.Event.TYPE, this);
     eventBus.addHandler(AuthenticateWithAdminPassword.Event.TYPE, this);
     eventBus.addHandler(AuthenticateWithGoogleAuthorizationCode.Event.TYPE, this);
+    // TODO(beaudoin): Remove, for testing only.
+    eventBus.addHandler(AuthenticateWithDummy.Event.TYPE, this);
     getSessionFromServer();
   }
 
@@ -119,7 +123,8 @@ public class ClientSessionManagerImpl implements ClientSessionManager, SignOutAd
   }
 
   @Override
-  public void onAuthenticateWithGoogleAuthorizationCode(Event event) {
+  public void onAuthenticateWithGoogleAuthorizationCode(
+      AuthenticateWithGoogleAuthorizationCode.Event event) {
     dispatcher.execute(new AuthenticateWithGoogleAuthorizationCodeAction(event.getCode()),
                        new AsyncCallback<SessionInfoResult>() {
       @Override
@@ -130,6 +135,23 @@ public class ClientSessionManagerImpl implements ClientSessionManager, SignOutAd
             ClientSessionManagerImpl.this);
         getSessionFromServer();
       }
+      @Override
+      public void onSuccess(SessionInfoResult result) {
+        setSessionInfo(result.getSessionInfoDto());
+      }
+    });
+  }
+
+  @Override
+  public void onAuthenticateWithDummy(AuthenticateWithDummy.Event event) {
+    dispatcher.execute(new AuthenticateWithDummyAction(),
+                       new AsyncCallback<SessionInfoResult>() {
+
+      @Override
+      public void onFailure(Throwable caught) {
+        clearSessionInfo();
+      }
+
       @Override
       public void onSuccess(SessionInfoResult result) {
         setSessionInfo(result.getSessionInfoDto());
