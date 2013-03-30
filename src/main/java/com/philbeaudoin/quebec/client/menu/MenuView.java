@@ -20,6 +20,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -27,11 +28,13 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.InlineHyperlink;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.philbeaudoin.quebec.shared.game.GameInfo;
+import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
  * View of the main menu.
@@ -49,6 +52,7 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
   @UiField Hyperlink new3p;
   @UiField Hyperlink new4p;
   @UiField Hyperlink new5p;
+  @UiField Hyperlink signAsDummy;  // TODO(beaudoin): Remove, only for testing.
   @UiField FlowPanel gameList;
   @UiField HTMLPanel googleButton;
 
@@ -91,8 +95,22 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
   }
 
   @Override
-  public void addGame(GameInfo gameInfo) {
-    gameList.add(new Label("A " + gameInfo.getNbPlayers() + " player game."));
+  public void addGame(GameInfo gameInfo, boolean canJoin) {
+    String gameString = DateTimeFormat.getFormat(
+        DateTimeFormat.PredefinedFormat.DATE_TIME_FULL).format(gameInfo.getCreationDate()) + " : ";
+    for (int i = 0; i < gameInfo.getNbPlayers(); ++i) {
+      if (i != 0)
+        gameString += ", ";
+      UserInfo user = gameInfo.getPlayerInfo(i);
+      gameString += user == null ? "???" : 
+        (user.getName() + (user.getEmail() == null ? "" : " (" + user.getEmail() + ")"));
+    }
+    FlowPanel div = new FlowPanel();
+    div.add(new InlineLabel(gameString));
+    if (canJoin) {
+      div.add(new InlineHyperlink("Join", ""));
+    }
+    gameList.add(div);
   }
 
   /**
@@ -162,5 +180,9 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
   @UiHandler("new5p")
   void onNew5pPressed(ClickEvent event) {
     presenter.createNewGame(5);
+  }
+  @UiHandler("signAsDummy")
+  void onSignAsDummyPressed(ClickEvent event) {
+    presenter.signAsDummy();
   }
 }

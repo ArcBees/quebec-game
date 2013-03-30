@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.server.database;
 
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
+import com.philbeaudoin.quebec.server.game.GameInfoEntity;
 import com.philbeaudoin.quebec.server.session.SessionInfoEntity;
 import com.philbeaudoin.quebec.server.user.GoogleUserEntity;
 import com.philbeaudoin.quebec.server.user.UserInfoEntity;
@@ -28,6 +29,7 @@ public class ObjectifyServiceWrapperImpl implements ObjectifyServiceWrapper {
     ObjectifyService.register(SessionInfoEntity.class);
     ObjectifyService.register(UserInfoEntity.class);
     ObjectifyService.register(GoogleUserEntity.class);
+    ObjectifyService.register(GameInfoEntity.class);
   }
 
   @Override

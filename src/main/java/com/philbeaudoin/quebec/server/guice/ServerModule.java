@@ -17,12 +17,14 @@
 package com.philbeaudoin.quebec.server.guice;
 
 import com.gwtplatform.dispatch.server.guice.HandlerModule;
+import com.philbeaudoin.quebec.server.handlers.AuthenticateWithDummyHandler;
 import com.philbeaudoin.quebec.server.handlers.ChangeAdminSettingsHandler;
 import com.philbeaudoin.quebec.server.handlers.CreateNewGameHandler;
 import com.philbeaudoin.quebec.server.handlers.GetSessionHandler;
 import com.philbeaudoin.quebec.server.handlers.AuthenticateWithAdminPasswordHandler;
 import com.philbeaudoin.quebec.server.handlers.AuthenticateWithGoogleAuthorizationCodeHandler;
 import com.philbeaudoin.quebec.server.handlers.SignOutAdminHandler;
+import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithDummyAction;
 import com.philbeaudoin.quebec.shared.serveractions.ChangeAdminSettingsAction;
 import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
 import com.philbeaudoin.quebec.shared.serveractions.GetSessionAction;
@@ -43,6 +45,7 @@ public class ServerModule extends HandlerModule {
     bindHandler(GetSessionAction.class, GetSessionHandler.class);
     bindHandler(AuthenticateWithAdminPasswordAction.class, AuthenticateWithAdminPasswordHandler.class);
     bindHandler(AuthenticateWithGoogleAuthorizationCodeAction.class, AuthenticateWithGoogleAuthorizationCodeHandler.class);
+    bindHandler(AuthenticateWithDummyAction.class, AuthenticateWithDummyHandler.class);
     bindHandler(SignOutAdminAction.class, SignOutAdminHandler.class);
     bindHandler(CreateNewGameAction.class, CreateNewGameHandler.class);
   }

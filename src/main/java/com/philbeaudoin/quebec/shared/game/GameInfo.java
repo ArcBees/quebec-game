@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.game;
 
+import java.util.Date;
+
 import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
@@ -24,6 +26,11 @@ import com.philbeaudoin.quebec.shared.user.UserInfo;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface GameInfo {
+  /**
+   * @return the unique game ID
+   */
+  long getId();
+
   /**
    * @return The number of players in the game.
    */
@@ -34,4 +41,9 @@ public interface GameInfo {
    * @return Information, filtered to contain only the public data, on the given player.
    */
   UserInfo getPlayerInfo(int index);
+
+  /**
+   * @return The date at which this game was created.
+   */
+  Date getCreationDate();
 }

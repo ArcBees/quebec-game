@@ -25,13 +25,11 @@ import javax.inject.Provider;
 import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
-import com.philbeaudoin.quebec.server.session.ServerSessionManager;
-import com.philbeaudoin.quebec.shared.game.GameInfo;
+import com.philbeaudoin.quebec.server.game.GameInfoEntity;
+import com.philbeaudoin.quebec.server.game.GameManager;
 import com.philbeaudoin.quebec.shared.game.GameInfoDto;
 import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
 import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
-import com.philbeaudoin.quebec.shared.session.SessionInfo;
-import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
  * Handles {@link CreateNewGameAction}.
@@ -40,32 +38,24 @@ import com.philbeaudoin.quebec.shared.user.UserInfo;
 public class CreateNewGameHandler
     implements ActionHandler<CreateNewGameAction, GameListResult> {
 
-  private final Provider<ServerSessionManager> serverSessionManager;
+  private final Provider<GameManager> gameManager;
 
   @Inject
-  CreateNewGameHandler(Provider<ServerSessionManager> serverSessionManager) {
-    this.serverSessionManager = serverSessionManager;
+  CreateNewGameHandler(Provider<GameManager> gameManager) {
+    this.gameManager = gameManager;
   }
 
   @Override
   public GameListResult execute(final CreateNewGameAction action, ExecutionContext context)
       throws ActionException {
-    SessionInfo sessionInfo = serverSessionManager.get().getSessionInfo();
-    if (sessionInfo == null || !sessionInfo.isSignedIn()) {
-      throw new ActionException("Must be signed in to create a game.");
+    GameInfoEntity newGame = gameManager.get().createNewGame(action.getNbPlayers());
+
+    List<GameInfoEntity> gameInfoEntities = gameManager.get().listOpenGames();
+    gameManager.get().ensureListContainsGame(gameInfoEntities, newGame);
+    List<GameInfoDto> games = new ArrayList<GameInfoDto>(gameInfoEntities.size());
+    for (GameInfoEntity gameInfoEntity : gameInfoEntities) {
+      games.add(new GameInfoDto(gameManager.get().anonymizeGameInfo(gameInfoEntity)));
     }
-    // TODO(beaudoin): Fix, hacky, just to test.
-    List<GameInfoDto> games = new ArrayList<GameInfoDto>(1);
-    games.add(new GameInfoDto(new GameInfo() {
-      @Override
-      public UserInfo getPlayerInfo(int index) {
-        return index == 0 ? serverSessionManager.get().getSessionInfo().getUserInfo() : null;
-      }
-      @Override
-      public int getNbPlayers() {
-        return action.getNbPlayers();
-      }
-    }));
     return new GameListResult(games);
   }
 

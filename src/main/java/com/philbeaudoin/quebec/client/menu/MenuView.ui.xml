@@ -23,15 +23,17 @@
               <g:Hyperlink targetHistoryToken="game;n=4">Quick solo 4 player game</g:Hyperlink>
               <g:Hyperlink targetHistoryToken="game;n=5">Quick solo 5 player game</g:Hyperlink>
               <g:FlowPanel ui:field="createLinks">
-                  <g:Hyperlink ui:field="new3p">Create a multiplayer 3 player game</g:Hyperlink>
-                  <g:Hyperlink ui:field="new4p">Create a multiplayer 4 player game</g:Hyperlink>
-                  <g:Hyperlink ui:field="new5p">Create a multiplayer 5 player game</g:Hyperlink>
+                  <g:Hyperlink ui:field="new3p" targetHistoryToken="">Create a multiplayer 3 player game</g:Hyperlink>
+                  <g:Hyperlink ui:field="new4p" targetHistoryToken="">Create a multiplayer 4 player game</g:Hyperlink>
+                  <g:Hyperlink ui:field="new5p" targetHistoryToken="">Create a multiplayer 5 player game</g:Hyperlink>
               </g:FlowPanel>
+              <!-- TODO(beaudoin): Remove, only for testing. -->
+              <g:Hyperlink ui:field="signAsDummy" targetHistoryToken="">Sign in as dummy player</g:Hyperlink>
               <g:FlowPanel ui:field="gameList">
               </g:FlowPanel>
               <g:HTMLPanel ui:field="googleButton">
                   <span class="g-signin"
-                    data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me"
+                    data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email"
                     data-clientid="161973045206.apps.googleusercontent.com"
                     data-redirecturi="postmessage"
                     data-accesstype="offline"

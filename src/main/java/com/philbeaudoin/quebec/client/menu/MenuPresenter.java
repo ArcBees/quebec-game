@@ -29,6 +29,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import com.philbeaudoin.quebec.client.session.ClientSessionManager;
+import com.philbeaudoin.quebec.client.session.events.AuthenticateWithDummy;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAuthorizationCode;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAuthorizationCode.ErrorEvent;
 import com.philbeaudoin.quebec.client.session.events.SessionStateChanged;
@@ -38,6 +39,7 @@ import com.philbeaudoin.quebec.shared.game.GameInfo;
 import com.philbeaudoin.quebec.shared.game.GameInfoDto;
 import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
 import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
+import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
  * This is the presenter of the menu page.
@@ -60,7 +62,7 @@ public class MenuPresenter extends
     void displayError(String string);
     void renderGoogleSignIn();
     void clearGames();
-    void addGame(GameInfo gameInfo);
+    void addGame(GameInfo gameInfo, boolean canJoin);
   }
 
   /**
@@ -113,6 +115,11 @@ public class MenuPresenter extends
     getView().setGoogleButtonVisible(true);
   }
 
+  // TODO(beaudoin): Remove only for testing.
+  public void signAsDummy() {
+    getEventBus().fireEventFromSource(new AuthenticateWithDummy.Event(), this);
+  }
+
   @Override
   public void onAuthenticateWithGoogleAuthorizationCodeError(ErrorEvent event) {
     // Sign-in failed, which may mean the user has to click through again. Show the button.
@@ -121,7 +128,7 @@ public class MenuPresenter extends
 
   @Override
   public void onSessionStateChanged(Event event) {
-    getView().setGoogleButtonVisible(event.getSessionInfo().isSignedIn());
+    getView().setGoogleButtonVisible(!event.getSessionInfo().isSignedIn());
     getView().setCreateLinksVisible(event.getSessionInfo().isSignedIn());
   }
 
@@ -149,8 +156,9 @@ public class MenuPresenter extends
 
   private void updateGameList(ArrayList<GameInfoDto> games) {
     getView().clearGames();
-    for (GameInfo gameInfo : games) {
-      getView().addGame(gameInfo);
+    UserInfo userInfo = sessionManager.getUserInfo();
+    for (GameInfoDto gameInfo : games) {
+      getView().addGame(gameInfo, userInfo == null ? false : gameInfo.canJoin(userInfo.getId()));
     }
   }
 }

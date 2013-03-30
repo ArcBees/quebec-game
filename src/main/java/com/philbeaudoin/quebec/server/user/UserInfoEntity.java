@@ -27,9 +27,12 @@ public class UserInfoEntity implements UserInfo {
   @Id Long id;
   String googleId;
   String googleTokenResponse;
+  String email;
+  String name;
 
-  public Long getId() {
-    return id;
+  @Override
+  public long getId() {
+    return id == null ? -1 : id;
   }
 
   @Override
@@ -37,13 +40,35 @@ public class UserInfoEntity implements UserInfo {
     return googleId;
   }
 
+  @Override
+  public String getEmail() {
+    return email;
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
   private UserInfoEntity() {
   }
 
-  public static UserInfoEntity Create(String googleId) {
+  public static UserInfoEntity CreateWithGoogleId(String googleId) {
     UserInfoEntity result = new UserInfoEntity();
     result.googleId = googleId;
     return result;
+  }
+
+  public static UserInfoEntity Create() {
+    return new UserInfoEntity();
   }
 
   public String getGoogleTokenResponse() {
@@ -53,4 +78,5 @@ public class UserInfoEntity implements UserInfo {
   public void setGoogleTokenResponse(String googleTokenResponse) {
     this.googleTokenResponse = googleTokenResponse;
   }
+
 }

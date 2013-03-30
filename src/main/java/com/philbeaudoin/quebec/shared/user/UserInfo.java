@@ -23,7 +23,22 @@ package com.philbeaudoin.quebec.shared.user;
  */
 public interface UserInfo {
   /**
+   * @return the unique user ID, or -1 if it is not set yet.
+   */
+  long getId();
+
+  /**
    * @return the Google user ID.
    */
   String getGoogleId();
+
+  /**
+   * @return the user's email.
+   */
+  String getEmail();
+
+  /**
+   * @return the user's full name.
+   */
+  String getName();
 }
