@@ -14,16 +14,31 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.session;
+package com.philbeaudoin.quebec.shared.serveractions;
 
-import com.philbeaudoin.quebec.shared.session.SessionInfo;
+import com.gwtplatform.dispatch.shared.ActionImpl;
 
-public interface ClientSessionManager extends SessionInfo {
+/**
+ * An action indicating that the currently signed-in user wants to join a game.
+ *
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
+ */
+public class JoinGameAction extends ActionImpl<GameListResult> {
+
+  long gameId;
+
+  public JoinGameAction(final long gameId) {
+    this.gameId = gameId;
+  }
 
   /**
-   * Checks if the client session has been initialized at least once.
-   * @return True if the session is initialized.
+   * For serialization only.
    */
-  boolean isInitialized();
+  @SuppressWarnings("unused")
+  private JoinGameAction() {
+  }
 
+  public long getGameId() {
+    return gameId;
+  }
 }

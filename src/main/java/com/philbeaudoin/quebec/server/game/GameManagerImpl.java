@@ -16,17 +16,22 @@
 
 package com.philbeaudoin.quebec.server.game;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.servlet.RequestScoped;
 import com.googlecode.objectify.Objectify;
+import com.googlecode.objectify.Work;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.database.ObjectifyServiceWrapper;
 import com.philbeaudoin.quebec.server.session.ServerSessionManager;
 import com.philbeaudoin.quebec.server.session.SessionInfoEntity;
+import com.philbeaudoin.quebec.server.user.UserInfoEntity;
 import com.philbeaudoin.quebec.shared.game.GameInfo;
+import com.philbeaudoin.quebec.shared.game.GameInfoDto;
+import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
 import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
@@ -53,6 +58,12 @@ public class GameManagerImpl implements GameManager, ObjectifyServiceWrapper {
   }
 
   @Override
+  public List<GameInfoEntity> listOpenGames() {
+    // TODO(beaudoin): Fix, now listing all games, including closed ones.
+    return ofy().load().type(GameInfoEntity.class).limit(50).order("creationDate").list();
+  }
+
+  @Override
   public GameInfoEntity createNewGame(int nbPlayers) throws ActionException {
     SessionInfoEntity sessionInfoEntity = serverSessionManager.getSessionInfo();
     if (sessionInfoEntity == null || !sessionInfoEntity.isSignedIn()) {
@@ -68,21 +79,51 @@ public class GameManagerImpl implements GameManager, ObjectifyServiceWrapper {
   }
 
   @Override
-  public List<GameInfoEntity> listOpenGames() {
-    // TODO(beaudoin): Fix, now listing all games, including closed ones.
-    return ofy().load().type(GameInfoEntity.class).limit(50).order("creationDate").list();
+  public GameInfoEntity joinGame(final long gameId) throws ActionException {
+    SessionInfoEntity sessionInfoEntity = serverSessionManager.getSessionInfo();
+    if (sessionInfoEntity == null || !sessionInfoEntity.isSignedIn()) {
+      throw new ActionException("Must be signed in to create a game.");
+    }
+    final UserInfoEntity currentUser = sessionInfoEntity.getUserInfoEntity();
+    try {
+      GameInfoEntity result = ofy().transact(new Work<GameInfoEntity>() {
+        @Override
+        public GameInfoEntity run() {
+          GameInfoEntity game = ofy().load().type(GameInfoEntity.class).id(gameId).get();
+          if (game == null) {
+            throw new RuntimeException("Cannot join game, game Id not found.");
+          }
+          // Find the first available seat. Ensure there is room for that player.
+          if (game.getNbEmptySeats() <= 0) {
+            throw new RuntimeException("Cannot join game, no empty seat.");
+          }
+          for (int i = 0; i < game.getNbPlayers(); ++i) {
+            UserInfo player = game.getPlayerInfo(i);
+            if (player != null && player.getId() == currentUser.getId()) {
+              throw new RuntimeException("Cannot join game, game Id not found.");
+            }
+          }
+          game.addPlayer(currentUser);
+          ofy().save().entity(game).now();
+          return game;
+        }
+      });
+      return result;
+    } catch (RuntimeException e) {
+      throw new ActionException(e.getMessage());
+    }
   }
 
   @Override
   public void ensureListContainsGame(List<GameInfoEntity> games, GameInfoEntity game) {
-    for (GameInfoEntity existingGame : games) {
-      if (existingGame.getId() == game.getId()) {
+    for (int i = 0; i < games.size(); ++i) {
+      if (games.get(i).getId() == game.getId()) {
+        games.set(i, game);
         return;
       }
     }
     games.add(game);
   }
-
 
   @Override
   public GameInfo anonymizeGameInfo(final GameInfo gameInfo) {
@@ -93,8 +134,16 @@ public class GameManagerImpl implements GameManager, ObjectifyServiceWrapper {
         UserInfo result = gameInfo.getPlayerInfo(index);
         return result == null ? null : serverSessionManager.anonymizeUserInfo(result);
       }
-      @Override
-      public Date getCreationDate() { return gameInfo.getCreationDate(); }
+      @Override public Date getCreationDate() { return gameInfo.getCreationDate(); }
     };
+  }
+
+  @Override
+  public GameListResult GameInfoEntitiesToGameListResult(List<GameInfoEntity> gameInfoEntities) {
+    List<GameInfoDto> games = new ArrayList<GameInfoDto>(gameInfoEntities.size());
+    for (GameInfoEntity gameInfoEntity : gameInfoEntities) {
+      games.add(new GameInfoDto(anonymizeGameInfo(gameInfoEntity)));
+    }
+    return new GameListResult(games);
   }
 }

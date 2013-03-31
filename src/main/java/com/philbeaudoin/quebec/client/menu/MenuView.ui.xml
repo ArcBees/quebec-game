@@ -22,13 +22,13 @@
               <g:Hyperlink targetHistoryToken="game;n=3">Quick solo 3 player game</g:Hyperlink>
               <g:Hyperlink targetHistoryToken="game;n=4">Quick solo 4 player game</g:Hyperlink>
               <g:Hyperlink targetHistoryToken="game;n=5">Quick solo 5 player game</g:Hyperlink>
-              <g:FlowPanel ui:field="createLinks">
-                  <g:Hyperlink ui:field="new3p" targetHistoryToken="">Create a multiplayer 3 player game</g:Hyperlink>
-                  <g:Hyperlink ui:field="new4p" targetHistoryToken="">Create a multiplayer 4 player game</g:Hyperlink>
-                  <g:Hyperlink ui:field="new5p" targetHistoryToken="">Create a multiplayer 5 player game</g:Hyperlink>
-              </g:FlowPanel>
+              <g:HTMLPanel ui:field="createLinks">
+                  <g:Anchor ui:field="new3p" href="javascript:;">Create a multiplayer 3 player game</g:Anchor><br />
+                  <g:Anchor ui:field="new4p" href="javascript:;">Create a multiplayer 4 player game</g:Anchor><br />
+                  <g:Anchor ui:field="new5p" href="javascript:;">Create a multiplayer 5 player game</g:Anchor><br />
+              </g:HTMLPanel>
               <!-- TODO(beaudoin): Remove, only for testing. -->
-              <g:Hyperlink ui:field="signAsDummy" targetHistoryToken="">Sign in as dummy player</g:Hyperlink>
+              <g:Anchor ui:field="signAsDummy" href="javascript:;">Sign in as dummy player</g:Anchor>
               <g:FlowPanel ui:field="gameList">
               </g:FlowPanel>
               <g:HTMLPanel ui:field="googleButton">

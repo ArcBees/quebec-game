@@ -26,40 +26,36 @@ import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.game.GameInfoEntity;
 import com.philbeaudoin.quebec.server.game.GameManager;
-import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
 import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
+import com.philbeaudoin.quebec.shared.serveractions.ListGamesAction;
 
 /**
- * Handles {@link CreateNewGameAction}.
+ * Handles {@link ListGamesAction}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class CreateNewGameHandler
-    implements ActionHandler<CreateNewGameAction, GameListResult> {
+public class ListGamesHandler implements ActionHandler<ListGamesAction, GameListResult> {
 
   private final Provider<GameManager> gameManager;
 
   @Inject
-  CreateNewGameHandler(Provider<GameManager> gameManager) {
+  ListGamesHandler(Provider<GameManager> gameManager) {
     this.gameManager = gameManager;
   }
 
   @Override
-  public GameListResult execute(final CreateNewGameAction action, ExecutionContext context)
+  public GameListResult execute(final ListGamesAction action, ExecutionContext context)
       throws ActionException {
-    GameInfoEntity newGame = gameManager.get().createNewGame(action.getNbPlayers());
-
     List<GameInfoEntity> gameInfoEntities = gameManager.get().listOpenGames();
-    gameManager.get().ensureListContainsGame(gameInfoEntities, newGame);
     return gameManager.get().GameInfoEntitiesToGameListResult(gameInfoEntities);
   }
 
   @Override
-  public Class<CreateNewGameAction> getActionType() {
-    return CreateNewGameAction.class;
+  public Class<ListGamesAction> getActionType() {
+    return ListGamesAction.class;
   }
 
   @Override
-  public void undo(CreateNewGameAction action, GameListResult result, ExecutionContext context)
+  public void undo(ListGamesAction action, GameListResult result, ExecutionContext context)
       throws ActionException {
     // Cannot undo.
   }

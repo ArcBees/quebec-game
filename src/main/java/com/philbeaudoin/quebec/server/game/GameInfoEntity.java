@@ -70,6 +70,10 @@ public class GameInfoEntity implements GameInfo {
     return index < players.size() ? players.get(index).get() : null;
   }
 
+  public int getNbEmptySeats() {
+    return nbPlayers - players.size();
+  }
+  
   public void addPlayer(UserInfoEntity userInfoEntity) {
     if (players.size() >= nbPlayers) {
       throw new RuntimeException("");

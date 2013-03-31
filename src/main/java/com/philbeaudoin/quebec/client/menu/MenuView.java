@@ -16,24 +16,28 @@
 
 package com.philbeaudoin.quebec.client.menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.ViewImpl;
-import com.philbeaudoin.quebec.shared.game.GameInfo;
+import com.philbeaudoin.quebec.shared.game.GameInfoForGameList;
 import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
@@ -47,12 +51,13 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
   protected static final Binder binder = GWT.create(Binder.class);
 
   private final Widget widget;
+  private final List<HandlerRegistration> registrations;
 
-  @UiField FlowPanel createLinks;
-  @UiField Hyperlink new3p;
-  @UiField Hyperlink new4p;
-  @UiField Hyperlink new5p;
-  @UiField Hyperlink signAsDummy;  // TODO(beaudoin): Remove, only for testing.
+  @UiField HTMLPanel createLinks;
+  @UiField Anchor new3p;
+  @UiField Anchor new4p;
+  @UiField Anchor new5p;
+  @UiField Anchor signAsDummy;  // TODO(beaudoin): Remove, only for testing.
   @UiField FlowPanel gameList;
   @UiField HTMLPanel googleButton;
 
@@ -61,6 +66,7 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
   @Inject
   public MenuView() {
     widget = binder.createAndBindUi(this);
+    registrations = new ArrayList<HandlerRegistration>();
     setup();
   }
 
@@ -91,26 +97,21 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
 
   @Override
   public void clearGames() {
+    clearRegistrations();
     gameList.clear();
   }
 
   @Override
-  public void addGame(GameInfo gameInfo, boolean canJoin) {
-    String gameString = DateTimeFormat.getFormat(
-        DateTimeFormat.PredefinedFormat.DATE_TIME_FULL).format(gameInfo.getCreationDate()) + " : ";
-    for (int i = 0; i < gameInfo.getNbPlayers(); ++i) {
-      if (i != 0)
-        gameString += ", ";
-      UserInfo user = gameInfo.getPlayerInfo(i);
-      gameString += user == null ? "???" : 
-        (user.getName() + (user.getEmail() == null ? "" : " (" + user.getEmail() + ")"));
-    }
-    FlowPanel div = new FlowPanel();
-    div.add(new InlineLabel(gameString));
-    if (canJoin) {
-      div.add(new InlineHyperlink("Join", ""));
-    }
-    gameList.add(div);
+  public void addGame(final GameInfoForGameList gameInfo) {
+    FlowPanel item = CreateGameItem(gameInfo);
+    gameList.add(item);
+  }
+
+  @Override
+  public void changeGameInfo(GameInfoForGameList gameInfo) {
+    gameList.remove(gameInfo.getIndex());
+    FlowPanel item = CreateGameItem(gameInfo);
+    gameList.insert(item, gameInfo.getIndex());
   }
 
   /**
@@ -139,7 +140,44 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
     renderGoogleSignInJSNI();
   }
 
-  // This method
+  private void clearRegistrations() {
+    for (HandlerRegistration registration : registrations) {
+      registration.removeHandler();
+    }
+    registrations.clear();
+  }
+
+  private FlowPanel CreateGameItem(final GameInfoForGameList gameInfo) {
+    String gameString = DateTimeFormat.getFormat(
+        DateTimeFormat.PredefinedFormat.DATE_TIME_FULL).format(gameInfo.getCreationDate()) + " : ";
+    for (int i = 0; i < gameInfo.getNbPlayers(); ++i) {
+      if (i != 0)
+        gameString += ", ";
+      UserInfo user = gameInfo.getPlayerInfo(i);
+      gameString += user == null ? "???" : 
+        (user.getName() + (user.getEmail() == null ? "" : " (" + user.getEmail() + ")"));
+    }
+    FlowPanel div = new FlowPanel();
+    div.add(new InlineLabel(gameString));
+    switch (gameInfo.getJoinState()) {
+    case CAN_JOIN:
+      Anchor join = new Anchor("Join", "");
+      join.setHref("javascript:;");
+      registrations.add(join.addClickHandler(new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+          presenter.joinGame(gameInfo);
+        }
+      }));
+      div.add(join);
+      break;
+    case JOINING:
+      div.add(new InlineLabel("Joining..."));
+      break;
+    }
+    return div;
+  }
+
   private void authorized(String code) {
     // Successfully authorized.
     // Hide the sign-in button now that the user is authorized, for example:
@@ -150,9 +188,12 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
     presenter.errorGoogleAuthorize(error);
   }
 
-  // Setup the native JS callback method (named "signInCallback") used by the Google+ sign-in
-  // process. This method defers all treatment to the above
-  public native void setup() /*-{
+  /**
+   * Setup the native JS callback method (named "signInCallback") used by the Google+ sign-in
+   * process. This method defers all treatment to the {@link #authorized(String)} and
+   * {@link #notAuthorized(String)} methods.
+   */
+  native void setup() /*-{
     var obj = this;
     $wnd.signInCallback = function(authResult) {
       if (authResult['code']) {

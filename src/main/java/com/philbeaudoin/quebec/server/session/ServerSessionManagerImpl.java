@@ -158,6 +158,24 @@ public class ServerSessionManagerImpl implements ServerSessionManager, Objectify
     });
   }
 
+  @Override
+  public UserInfo anonymizeUserInfo(final UserInfo userInfo) {
+    SessionInfoEntity sessionInfoEntity = getSessionInfo();
+    if (sessionInfoEntity != null && sessionInfoEntity.isAdmin()) {
+      return userInfo;  // Nothing is anonymized for the admin.
+    }
+    UserInfoEntity currentUser = sessionInfoEntity == null ? null : sessionInfoEntity.getUserInfo();
+    if (currentUser != null && currentUser.getId() == userInfo.getId()) {
+      return userInfo;  // Don't anonymize for the user himself.
+    }
+    return new UserInfo() {
+      @Override public long getId() { return userInfo.getId(); }
+      @Override public String getName() { return userInfo.getName(); }
+      @Override public String getGoogleId() { return userInfo.getGoogleId(); }
+      @Override public String getEmail() { return null; }
+    };
+  }
+
   private Key<GlobalStringEntity> getAdminPasswordKey() {
     return Key.create(GlobalStringEntity.class, GlobalStringEntity.ADMIN_PASSWORD_ID);
   }
@@ -213,23 +231,5 @@ public class ServerSessionManagerImpl implements ServerSessionManager, Objectify
       }
     }
     return null;
-  }
-
-  @Override
-  public UserInfo anonymizeUserInfo(final UserInfo userInfo) {
-    SessionInfoEntity sessionInfoEntity = getSessionInfo();
-    if (sessionInfoEntity != null && sessionInfoEntity.isAdmin()) {
-      return userInfo;  // Nothing is anonymized for the admin.
-    }
-    UserInfoEntity currentUser = sessionInfoEntity == null ? null : sessionInfoEntity.getUserInfo();
-    if (currentUser != null && currentUser.getId() == userInfo.getId()) {
-      return userInfo;  // Don't anonymize for the user himself.
-    }
-    return new UserInfo() {
-      @Override public long getId() { return userInfo.getId(); }
-      @Override public String getName() { return userInfo.getName(); }
-      @Override public String getGoogleId() { return userInfo.getGoogleId(); }
-      @Override public String getEmail() { return null; }
-    };
   }
 }

@@ -57,12 +57,14 @@ public class ClientSessionManagerImpl implements ClientSessionManager, SignOutAd
 
   private SessionInfo sessionInfo;
   private int retryDelayMs;
+  private boolean initialized;  // False until at least one call has returned.
 
   @Inject
   public ClientSessionManagerImpl(EventBus eventBus, DispatchAsync dispatcher, Scheduler scheduler) {
     this.eventBus = eventBus;
     this.dispatcher = dispatcher;
     this.scheduler = scheduler;
+    this.initialized = false;
 
     eventBus.addHandler(SignOutAdmin.Event.TYPE, this);
     eventBus.addHandler(AuthenticateWithAdminPassword.Event.TYPE, this);
@@ -159,6 +161,11 @@ public class ClientSessionManagerImpl implements ClientSessionManager, SignOutAd
     });
   }
 
+  @Override
+  public boolean isInitialized() {
+    return initialized;
+  }
+
   private void clearSessionInfo() {
     setSessionInfo(new SessionInfoDto());
   }
@@ -192,6 +199,7 @@ public class ClientSessionManagerImpl implements ClientSessionManager, SignOutAd
       }
       @Override
       public void onSuccess(SessionInfoResult result) {
+        initialized = true;
         setSessionInfo(result.getSessionInfoDto());
         // Clear the retry delay.
         retryDelayMs = INITIAL_RETRY_DELAY_MS;
