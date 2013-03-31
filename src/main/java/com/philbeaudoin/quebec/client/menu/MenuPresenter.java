@@ -35,10 +35,13 @@ import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAutho
 import com.philbeaudoin.quebec.client.session.events.SessionStateChanged;
 import com.philbeaudoin.quebec.client.session.events.SessionStateChanged.Event;
 import com.philbeaudoin.quebec.shared.NameTokens;
-import com.philbeaudoin.quebec.shared.game.GameInfo;
 import com.philbeaudoin.quebec.shared.game.GameInfoDto;
+import com.philbeaudoin.quebec.shared.game.GameInfoForGameList;
+import com.philbeaudoin.quebec.shared.game.GameInfoForGameList.JoinState;
 import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
 import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
+import com.philbeaudoin.quebec.shared.serveractions.JoinGameAction;
+import com.philbeaudoin.quebec.shared.serveractions.ListGamesAction;
 import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**
@@ -62,7 +65,8 @@ public class MenuPresenter extends
     void displayError(String string);
     void renderGoogleSignIn();
     void clearGames();
-    void addGame(GameInfo gameInfo, boolean canJoin);
+    void addGame(GameInfoForGameList gameInfo);
+    void changeGameInfo(GameInfoForGameList gameInfo);
   }
 
   /**
@@ -97,11 +101,19 @@ public class MenuPresenter extends
     // flashes which is annoying. Instead, start by hiding it and only show it if sign-in failed.
     getView().setGoogleButtonVisible(false);
     getView().renderGoogleSignIn();
+    getView().clearGames();
+    refreshGames();
   }
 
   @Override
   protected void revealInParent() {
     RevealRootLayoutContentEvent.fire(this, this);
+  }
+
+  @Override
+  public void onHide() {
+    super.onHide();
+    getView().clearGames();
   }
 
   public void googleAuthorize(String code) {
@@ -130,6 +142,13 @@ public class MenuPresenter extends
   public void onSessionStateChanged(Event event) {
     getView().setGoogleButtonVisible(!event.getSessionInfo().isSignedIn());
     getView().setCreateLinksVisible(event.getSessionInfo().isSignedIn());
+    refreshGames();
+  }
+
+  public void refreshGames() {
+    if (sessionManager.isInitialized()) {
+      dispatcher.execute(new ListGamesAction(), new AsyncGameListCallback());
+    }
   }
 
   public void createNewGame(int nbPlayers) {
@@ -141,24 +160,42 @@ public class MenuPresenter extends
       getView().displayError("Error! Must be signed in to create a game.");
       return;
     }
-    dispatcher.execute(new CreateNewGameAction(nbPlayers), new AsyncCallback<GameListResult>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        getView().displayError(caught.getMessage());
-      }
+    dispatcher.execute(new CreateNewGameAction(nbPlayers), new AsyncGameListCallback());
+  }
 
-      @Override
-      public void onSuccess(GameListResult result) {
-        updateGameList(result.getGames());
-      }
-    });
+  public void joinGame(GameInfoForGameList gameInfo) {
+    if (!sessionManager.isSignedIn()) {
+      getView().displayError("Error! Must be signed in to join a game.");
+      return;
+    }
+    getView().changeGameInfo(
+        new GameInfoForGameList(gameInfo.getGameInfoDto(), gameInfo.getIndex(), JoinState.JOINING));
+    dispatcher.execute(new JoinGameAction(gameInfo.getId()), new AsyncGameListCallback());
   }
 
   private void updateGameList(ArrayList<GameInfoDto> games) {
     getView().clearGames();
     UserInfo userInfo = sessionManager.getUserInfo();
+    int index = 0;
     for (GameInfoDto gameInfo : games) {
-      getView().addGame(gameInfo, userInfo == null ? false : gameInfo.canJoin(userInfo.getId()));
+      boolean canJoin = userInfo == null ? true : gameInfo.canJoin(userInfo.getId());
+      getView().addGame(new GameInfoForGameList(gameInfo, index,
+          canJoin ? JoinState.CAN_JOIN : JoinState.CANNOT_JOIN));
+      index++;
+    }
+  }
+
+  /**
+   * Simple {@link AsyncCallback} that refreshes the game list upon success.
+   */
+  private class AsyncGameListCallback implements AsyncCallback<GameListResult> {
+    @Override
+    public void onFailure(Throwable caught) {
+      getView().displayError(caught.getMessage());
+    }
+    @Override
+    public void onSuccess(GameListResult result) {
+      updateGameList(result.getGames());
     }
   }
 }

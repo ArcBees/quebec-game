@@ -28,38 +28,38 @@ import com.philbeaudoin.quebec.server.game.GameInfoEntity;
 import com.philbeaudoin.quebec.server.game.GameManager;
 import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
 import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
+import com.philbeaudoin.quebec.shared.serveractions.JoinGameAction;
 
 /**
  * Handles {@link CreateNewGameAction}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class CreateNewGameHandler
-    implements ActionHandler<CreateNewGameAction, GameListResult> {
+public class JoinGameHandler  implements ActionHandler<JoinGameAction, GameListResult> {
 
   private final Provider<GameManager> gameManager;
 
   @Inject
-  CreateNewGameHandler(Provider<GameManager> gameManager) {
+  JoinGameHandler(Provider<GameManager> gameManager) {
     this.gameManager = gameManager;
   }
 
   @Override
-  public GameListResult execute(final CreateNewGameAction action, ExecutionContext context)
+  public GameListResult execute(final JoinGameAction action, ExecutionContext context)
       throws ActionException {
-    GameInfoEntity newGame = gameManager.get().createNewGame(action.getNbPlayers());
+    GameInfoEntity updatedGame = gameManager.get().joinGame(action.getGameId());
 
     List<GameInfoEntity> gameInfoEntities = gameManager.get().listOpenGames();
-    gameManager.get().ensureListContainsGame(gameInfoEntities, newGame);
+    gameManager.get().ensureListContainsGame(gameInfoEntities, updatedGame);
     return gameManager.get().GameInfoEntitiesToGameListResult(gameInfoEntities);
   }
 
   @Override
-  public Class<CreateNewGameAction> getActionType() {
-    return CreateNewGameAction.class;
+  public Class<JoinGameAction> getActionType() {
+    return JoinGameAction.class;
   }
 
   @Override
-  public void undo(CreateNewGameAction action, GameListResult result, ExecutionContext context)
+  public void undo(JoinGameAction action, GameListResult result, ExecutionContext context)
       throws ActionException {
     // Cannot undo.
   }

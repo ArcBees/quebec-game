@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.client.session;
+package com.philbeaudoin.quebec.shared.serveractions;
 
-import com.philbeaudoin.quebec.shared.session.SessionInfo;
+import com.gwtplatform.dispatch.shared.ActionImpl;
 
-public interface ClientSessionManager extends SessionInfo {
+/**
+ * An action to obtain the list of games from the server.
+ *
+ * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
+ */
+public class ListGamesAction extends ActionImpl<GameListResult> {
 
-  /**
-   * Checks if the client session has been initialized at least once.
-   * @return True if the session is initialized.
-   */
-  boolean isInitialized();
-
+  public ListGamesAction() {
+  }
 }

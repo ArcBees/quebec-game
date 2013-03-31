@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.shared.game.GameInfo;
+import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
 
 /**
  * Manages information relative to a game on the server.
@@ -27,6 +28,13 @@ import com.philbeaudoin.quebec.shared.game.GameInfo;
  * @author beaudoin
  */
 public interface GameManager {
+
+
+  /**
+   * List all the games for which some slots are open, with a set maximum.
+   * @return List of open games.
+   */
+  List<GameInfoEntity> listOpenGames();
 
   /**
    * Creates a new game and stored it in the database. The current session user is automatically
@@ -38,14 +46,17 @@ public interface GameManager {
   GameInfoEntity createNewGame(int nbPlayers) throws ActionException;
 
   /**
-   * List all the games for which some slots are open, with a set maximum.
-   * @return List of open games.
+   * Have the current session user join an existing game.
+   * @param gameId The Id of the game to join.
+   * @return The game that was joined.
+   * @return ActionException If the game cannot be joined.
    */
-  List<GameInfoEntity> listOpenGames();
+  GameInfoEntity joinGame(long gameId) throws ActionException;
 
   /**
    * Checks that the game passed as second parameter is found in the list of games passed in the
-   * first parameter. If it is not found it is inserted at the top of the list.
+   * first parameter. If it is not found it is inserted at the top of the list. If it is found, its
+   * details are updated to match the passed one.
    * @param games The list of games.
    * @param game The game that must be found, or be inserted, in the list of games.
    */
@@ -58,4 +69,11 @@ public interface GameManager {
    * @return The anonymized game info.
    */
   GameInfo anonymizeGameInfo(GameInfo gameInfo);
+
+  /**
+   * Anonymizes and packages a list of {@link GameInfoEntity} so they can be returned over the wire.
+   * @param gameInfoEntities The entities to anonymize and package.
+   * @return The games anonymized in the right format to be sent over the wire.
+   */
+  GameListResult GameInfoEntitiesToGameListResult(List<GameInfoEntity> gameInfoEntities);
 }
