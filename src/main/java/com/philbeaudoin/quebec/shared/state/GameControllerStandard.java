@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
@@ -37,10 +38,17 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  */
 public class GameControllerStandard implements GameController {
 
+  private final Shuffler shuffler;
+
+  @Inject
+  GameControllerStandard(Shuffler shuffler) {
+    this.shuffler = shuffler;
+  }
+
   @Override
   public void initGame(GameState gameState, List<Player> players) {
     gameState.setCentury(0);
-    GameControllerHelper.resetGameState(gameState, players, true);
+    GameControllerHelper.resetGameState(gameState, players, shuffler);
     configurePossibleActions(gameState);
   }
 

@@ -38,6 +38,8 @@ import com.philbeaudoin.quebec.server.user.OAuthManagerImpl;
 import com.philbeaudoin.quebec.server.user.UserManager;
 import com.philbeaudoin.quebec.server.user.UserManagerImpl;
 import com.philbeaudoin.quebec.shared.Constants;
+import com.philbeaudoin.quebec.shared.state.JavaRandomShuffler;
+import com.philbeaudoin.quebec.shared.state.Shuffler;
 
 /**
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
@@ -56,6 +58,7 @@ public class DispatchServletModule extends ServletModule {
     bind(GameManager.class).to(GameManagerImpl.class);
     bind(UserManager.class).to(UserManagerImpl.class);
     bind(OAuthManager.class).to(OAuthManagerImpl.class);
+    bind(Shuffler.class).to(JavaRandomShuffler.class);
 
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);
 

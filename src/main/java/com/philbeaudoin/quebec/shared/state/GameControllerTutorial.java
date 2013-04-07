@@ -77,7 +77,7 @@ public class GameControllerTutorial implements GameController {
   @Override
   public void initGame(GameState gameState, List<Player> players) {
     assert players.size() == 4;  // The tutorial is designed only for 4 players.
-    GameControllerHelper.resetGameState(gameState, players, false);
+    GameControllerHelper.resetGameState(gameState, players, new CannedShuffler());
     configurePossibleActions(gameState);
   }
 

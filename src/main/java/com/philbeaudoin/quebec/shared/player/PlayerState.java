@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.player;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
@@ -24,7 +25,7 @@ import com.philbeaudoin.quebec.shared.state.LeaderCard;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class PlayerState {
+public class PlayerState implements IsSerializable {
 
   private Player player;
   private int nbPassiveCubes;

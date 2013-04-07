@@ -18,6 +18,8 @@ package com.philbeaudoin.quebec.client.main;
 
 import java.util.ArrayList;
 
+import javax.inject.Provider;
+
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -73,6 +75,7 @@ public class GamePresenter extends
   private final DispatchAsync dispatcher;
   private final ClientSessionManager sessionManager;
   private final RendererFactories rendererFactories;
+  private final Provider<GameControllerStandard> gameControllerStandardProvider;
 
   private boolean isTutorial;
   private long gameId = -1;
@@ -99,13 +102,15 @@ public class GamePresenter extends
   @Inject
   public GamePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
       PlaceManager placeManager, DispatchAsync dispatcher, ClientSessionManager sessionManager,
-      RendererFactories rendererFactories) {
+      RendererFactories rendererFactories,
+      Provider<GameControllerStandard> gameControllerStandardProvider) {
     super(eventBus, view, proxy);
     view.setPresenter(this);
     this.placeManager = placeManager;
     this.dispatcher = dispatcher;
     this.sessionManager = sessionManager;
     this.rendererFactories = rendererFactories;
+    this.gameControllerStandardProvider = gameControllerStandardProvider;
   }
 
   @Override
@@ -130,10 +135,10 @@ public class GamePresenter extends
         placeManager.revealDefaultPlace();
         return;
       }
-      gameController = new GameControllerStandard();
+      gameController = gameControllerStandardProvider.get();
       dispatcher.execute(new LoadGameAction(gameId), new AsyncGameStateCallback());
     } else {
-      gameController = new GameControllerStandard();
+      gameController = gameControllerStandardProvider.get();
       gameState = new GameState();
 
       if (nbPlayers < 3) {

@@ -18,7 +18,6 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.ArrayList;
 
-import com.google.gwt.user.client.Random;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 
 /**
@@ -32,9 +31,9 @@ public class TileDeck {
 
   /**
    * Create a tile deck and initialize it with the standard tiles of the game.
-   * @param shuffle True to shuffle the deck, false to use the pre-canned shuffle.
+   * @param shuffler The shuffler to use, or null if no shuffling is desired.
    */
-  public TileDeck(boolean shuffle) {
+  public TileDeck(Shuffler shuffler) {
     for (int influenceTypeIndex = 0; influenceTypeIndex < 4; ++influenceTypeIndex) {
       InfluenceType influenceType = InfluenceType.values()[influenceTypeIndex];
       ArrayList<Tile> deck = new ArrayList<Tile>();
@@ -45,10 +44,8 @@ public class TileDeck {
           deck.add(new Tile(influenceType, century, i));
         }
       }
-      if (shuffle) {
-        shuffle(deck);
-      } else {
-        cannedShuffle(deck, influenceTypeIndex);
+      if (shuffler != null) {
+        shuffler.shuffle(deck, influenceTypeIndex);
       }
     }
   }
@@ -65,40 +62,5 @@ public class TileDeck {
       return null;
     }
     return deck.remove(deck.size() - 1);
-  }
-
-  /**
-   * A Fisher-Yates shuffle inspired from the Java source code, restricted to small ArrayList.
-   * @param list The list to shuffle
-   */
-  public static void shuffle(ArrayList<?> list) {
-    int size = list.size();
-    for (int i = size; i > 1; i--) {
-      swap(list, i - 1, Random.nextInt(i));
-    }
-  }
-
-  /**
-   * A Fisher-Yates shuffle using a canned random number generator for predictability.
-   * @param list The list to shuffle
-   * @param seed The seed to use.
-   */
-  public static void cannedShuffle(ArrayList<?> list, int seed) {
-    int size = list.size();
-    for (int i = size; i > 1; i--) {
-      swap(list, i - 1, ((i + 7) * (seed + 5) * 119) % i);
-    }
-  }
-
-  /**
-   * Swap two elements from an array list.
-   * @param list The list.
-   * @param a The index of the first element to swap.
-   * @param b The index of the second element to swap.
-   */
-  private static <T> void swap(ArrayList<T> list, int a, int b) {
-    T t = list.get(a);
-    list.set(a, list.get(b));
-    list.set(b, t);
   }
 }

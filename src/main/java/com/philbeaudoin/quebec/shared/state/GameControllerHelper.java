@@ -41,7 +41,7 @@ public class GameControllerHelper {
    * @param shuffle True to perform a real random shuffle of the tiles, false to use a canned
    *     shuffle.
    */
-  static void resetGameState(GameState gameState, List<Player> players, boolean shuffle) {
+  static void resetGameState(GameState gameState, List<Player> players, Shuffler shuffler) {
     gameState.setCentury(0);
 
     int nbPlayers = players.size();
@@ -60,7 +60,7 @@ public class GameControllerHelper {
 
     List<TileState> tileStates = gameState.getTileStates();
     tileStates.clear();
-    TileDeck tileDeck = new TileDeck(shuffle);
+    TileDeck tileDeck = new TileDeck(shuffler);
     for (int column = 0; column < 18; ++column) {
       for (int line = 0; line < 8; ++line) {
         BoardAction boardAction = Board.actionForTileLocation(column, line);
