@@ -31,7 +31,7 @@ public class BoardActionBlueAny extends BoardAction {
     super(3, 0, InfluenceType.CULTURAL, 1, ActionType.BLUE_ANY);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+  public PossibleActions getPossibleActions(GameController gameController, GameState gameState, Tile triggeringTile) {
     PossibleActions result = new PossibleActions(new Message.Text("selectActionToExecute"));
     result.add(new ActionSelectBoardAction(new BoardActionBlueAddStar(), triggeringTile));
     result.add(new ActionSelectBoardAction(new BoardActionBlueScoreForCubesInHand(),

@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.shared.statechange;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -26,8 +27,8 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class GameStateChangeScorePoints implements GameStateChange {
 
-  private final PlayerColor scoringPlayer;
-  private final int nbPoints;
+  private PlayerColor scoringPlayer;
+  private int nbPoints;
 
   public GameStateChangeScorePoints(PlayerColor scoringPlayer, int nbPoints) {
     assert scoringPlayer.isNormalColor();
@@ -35,8 +36,15 @@ public class GameStateChangeScorePoints implements GameStateChange {
     this.nbPoints = nbPoints;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameStateChangeScorePoints() {
+  }
+
   @Override
-  public void apply(GameState gameState) {
+  public void apply(GameController gameController, GameState gameState) {
     PlayerState playerState = gameState.getPlayerState(scoringPlayer);
     playerState.setScore(playerState.getScore() + nbPoints);
   }

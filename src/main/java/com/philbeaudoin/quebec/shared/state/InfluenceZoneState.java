@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 
 /**
@@ -23,9 +24,9 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InfluenceZoneState {
+public class InfluenceZoneState implements IsSerializable {
 
-  private final Integer cubesForPlayer[] = new Integer[5];
+  private Integer cubesForPlayer[] = new Integer[5];
 
   /**
    * Creates an empty influence zone.

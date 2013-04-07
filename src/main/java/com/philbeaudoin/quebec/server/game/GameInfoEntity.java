@@ -37,10 +37,12 @@ public class GameInfoEntity implements GameInfo {
   int nbPlayers;
   @Index Date creationDate;
   @Load List<Ref<UserInfoEntity>> players = new ArrayList<Ref<UserInfoEntity>>();
+  int currentPlayerIndex;
 
   public GameInfoEntity(int nbPlayers, long creationTime) {
     this.nbPlayers = nbPlayers;
     this.creationDate = new Date(creationTime);
+    currentPlayerIndex = -1;
   }
 
   /**
@@ -70,6 +72,11 @@ public class GameInfoEntity implements GameInfo {
     return index < players.size() ? players.get(index).get() : null;
   }
 
+  @Override
+  public int getCurrentPlayerIndex() {
+    return currentPlayerIndex;
+  }
+
   public int getNbEmptySeats() {
     return nbPlayers - players.size();
   }
@@ -79,5 +86,7 @@ public class GameInfoEntity implements GameInfo {
       throw new RuntimeException("");
     }
     players.add(Ref.create(userInfoEntity));
+    if (currentPlayerIndex < 0)
+      currentPlayerIndex = 0;
   }
 }

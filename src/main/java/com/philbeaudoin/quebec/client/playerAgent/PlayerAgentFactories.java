@@ -19,6 +19,7 @@ package com.philbeaudoin.quebec.client.playerAgent;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -28,8 +29,8 @@ import com.philbeaudoin.quebec.shared.state.GameState;
 public interface PlayerAgentFactories {
   PlayerAgentLocalUser createPlayerAgentLocalUser(PlayerLocalUser host);
   PlayerAgentLocalAi createPlayerAgentLocalAi(PlayerLocalAi host);
-  LocalUserInteractionGenerator createLocalUserInteractionGenerator(GameState gameState,
-      GameStateRenderer gameStateRenderer);
-  LocalAiInteractionGenerator createLocalAiInteractionGenerator(
+  LocalUserInteractionGenerator createLocalUserInteractionGenerator(GameController gameController,
+      GameState gameState, GameStateRenderer gameStateRenderer);
+  LocalAiInteractionGenerator createLocalAiInteractionGenerator(GameController gameController,
       GameState gameState, GameStateRenderer gameStateRenderer);
 }

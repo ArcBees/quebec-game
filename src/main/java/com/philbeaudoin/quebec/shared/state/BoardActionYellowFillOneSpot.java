@@ -33,7 +33,7 @@ public class BoardActionYellowFillOneSpot extends BoardAction {
     super(11, 4, InfluenceType.ECONOMIC, 2, ActionType.YELLOW_FILL_ONE_SPOT);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+  public PossibleActions getPossibleActions(GameController gameController, GameState gameState, Tile triggeringTile) {
 
     PossibleActions result = new PossibleActions(new Message.Text("selectSpotToFill"));
     result.add(ActionExplicit.createSkipAction());

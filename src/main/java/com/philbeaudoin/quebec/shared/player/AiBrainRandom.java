@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.shared.player;
 
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
@@ -28,11 +29,11 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 public class AiBrainRandom implements AiBrain {
 
   @Override
-  public GameStateChange getMove(GameState gameState) {
+  public GameStateChange getMove(GameController gameController, GameState gameState) {
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null && possibleActions.getNbActions() > 0) {
       int actionIndex = (int) (Math.random() * possibleActions.getNbActions());
-      return possibleActions.execute(actionIndex, gameState);
+      return possibleActions.execute(gameController, actionIndex, gameState);
     }
     return null;
   }

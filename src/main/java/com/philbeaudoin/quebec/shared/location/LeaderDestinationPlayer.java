@@ -27,12 +27,19 @@ import com.philbeaudoin.quebec.shared.state.LeaderCard;
  */
 public class LeaderDestinationPlayer implements LeaderDestination {
 
-  private final LeaderCard leaderCard;
-  private final PlayerColor playerColor;
+  private LeaderCard leaderCard;
+  private PlayerColor playerColor;
 
   public LeaderDestinationPlayer(LeaderCard leaderCard, PlayerColor playerColor) {
     this.leaderCard = leaderCard;
     this.playerColor = playerColor;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private LeaderDestinationPlayer() {
   }
 
   @Override

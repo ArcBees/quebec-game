@@ -31,7 +31,7 @@ public class BoardActionPurpleAny extends BoardAction {
     super(1, 6, InfluenceType.RELIGIOUS, 1, ActionType.PURPLE_ANY);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+  public PossibleActions getPossibleActions(GameController gameController, GameState gameState, Tile triggeringTile) {
     PossibleActions result = new PossibleActions(new Message.Text("selectActionToExecute"));
     result.add(new ActionSelectBoardAction(new BoardActionPurpleOnePointOneToAnyActivateOne(),
         triggeringTile));

@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.shared.statechange;
 
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 
@@ -28,20 +29,30 @@ import com.philbeaudoin.quebec.shared.state.Tile;
  */
 public class GameStateChangePrepareAction implements GameStateChange {
 
-  private final BoardAction boardAction;
-  private final Tile triggeringTile;
+  private BoardAction boardAction;
+  private Tile triggeringTile;
 
   public GameStateChangePrepareAction(BoardAction boardAction, Tile triggeringTile) {
     this.boardAction = boardAction;
     this.triggeringTile = triggeringTile;
   }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameStateChangePrepareAction() {
+  }
+
   @Override
-  public void apply(GameState gameState) {
-    PossibleActions possibleActions = boardAction.getPossibleActions(gameState, triggeringTile);
+  public void apply(GameController gameController, GameState gameState) {
+    PossibleActions possibleActions = boardAction.getPossibleActions(gameController, gameState,
+        triggeringTile);
     if (possibleActions != null && possibleActions.getNbActions() > 0) {
       gameState.setPossibleActions(possibleActions);
     } else {
-      gameState.nextPlayer(true);
+      gameState.nextPlayer();
+      gameController.configurePossibleActions(gameState);
     }
   }
 

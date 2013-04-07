@@ -30,6 +30,7 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
@@ -152,6 +153,11 @@ public class GameView extends ViewImpl implements GamePresenter.MyView {
   @Override
   public void setPresenter(GamePresenter presenter) {
     this.presenter = presenter;
+  }
+
+  @Override
+  public void displayError(String string) {
+    Window.alert(string);
   }
 
   void doRenderStaticLayer() {

@@ -28,6 +28,7 @@ public class GameInfoDto implements GameInfo, IsSerializable {
   private long id;
   ArrayList<UserInfoDto> players;
   Date creationDate;
+  int currentPlayerIndex;
 
   public GameInfoDto(GameInfo gameInfo) {
     assert(gameInfo != null);
@@ -67,6 +68,11 @@ public class GameInfoDto implements GameInfo, IsSerializable {
     return creationDate;
   }
 
+  @Override
+  public int getCurrentPlayerIndex() {
+    return currentPlayerIndex;
+  }
+
   public UserInfoDto getPlayerInfoDto(int index) {
     return players.get(index);
   }
@@ -90,14 +96,37 @@ public class GameInfoDto implements GameInfo, IsSerializable {
    * @return True if the player with the specified id can join.
    */
   public boolean canJoin(long playerId) {
-    boolean isOpen = false;
+    boolean isOpenForPlayer = false;
     for (int i = 0; i < getNbPlayers(); ++i) {
       if (getPlayerInfo(i) == null) {
-        isOpen = true;
+        isOpenForPlayer = true;
       } else if (getPlayerInfo(i).getId() == playerId) {
         return false;
       }
     }
-    return isOpen;
+    return isOpenForPlayer;
+  }
+
+  /**
+   * Returns true if it's currently the move of the player with the specified id.
+   * @param playerId The id of the player for whom we want to check.
+   * @return True if it's currently the move of the player with the specified id.
+   */
+  public boolean isMoveOfPlayer(long playerId) {
+    if (isOpen() || getCurrentPlayerIndex() == -1)
+      return false;
+    UserInfoDto userInfo = getPlayerInfoDto(getCurrentPlayerIndex());
+    assert (userInfo != null);
+    return userInfo.getId() == playerId;
+  }
+
+  /**
+   * Returns true if the specified player can view the game. Any player can view any closed game
+   * at the moment.
+   * @param playerId The id of the player for whom we want to check.
+   * @return True if the player with the specified id can view the game.
+   */
+  public boolean canView(long playerId) {
+    return !isOpen();
   }
 }

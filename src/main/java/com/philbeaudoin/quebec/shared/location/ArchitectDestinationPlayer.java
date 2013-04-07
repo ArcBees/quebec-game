@@ -26,12 +26,19 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class ArchitectDestinationPlayer implements ArchitectDestination {
 
-  private final PlayerColor playerColor;
-  private final boolean neutralArchitect;
+  private PlayerColor playerColor;
+  private boolean neutralArchitect;
 
   public ArchitectDestinationPlayer(PlayerColor playerColor, boolean neutralArchitect) {
     this.playerColor = playerColor;
     this.neutralArchitect = neutralArchitect;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ArchitectDestinationPlayer() {
   }
 
   @Override

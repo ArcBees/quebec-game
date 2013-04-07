@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
@@ -26,11 +27,11 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public abstract class BoardAction {
-  private final Vector2d location;
-  private final InfluenceType influenceType;
-  private final int cubesPerSpot;
-  private final ActionType actionType;
+public abstract class BoardAction implements IsSerializable {
+  private Vector2d location;
+  private InfluenceType influenceType;
+  private int cubesPerSpot;
+  private ActionType actionType;
 
   /**
    * Create information for one of the actions in the game.
@@ -48,6 +49,13 @@ public abstract class BoardAction {
     this.influenceType = influenceType;
     this.cubesPerSpot = cubesPerSpot;
     this.actionType = actionType;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private BoardAction() {
   }
 
   /**
@@ -81,11 +89,13 @@ public abstract class BoardAction {
   /**
    * Return the list of all possible game actions that can be executed as a result of performing
    * this board action, or null if no action can be executed.
+   * @param gameController current game controller.
    * @param gameState The current game state.
    * @param triggeringTile The tile that was used to trigger this board action.
    * @return The list of possible actions, or null.
    */
-  public abstract PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile);
+  public abstract PossibleActions getPossibleActions(GameController gameController,
+      GameState gameState, Tile triggeringTile);
 
   /**
    * Returns a text describing this board action.

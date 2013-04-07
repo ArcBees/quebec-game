@@ -832,11 +832,18 @@ public class GameControllerTutorial implements GameController {
       super(new Message.Text("continueMsg"), action);
     }
 
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private ActionCustomTakeLeader() {
+    }
+
     @Override
-    public GameStateChange execute(GameState gameState) {
+    public GameStateChange execute(GameController gameController, GameState gameState) {
       GameStateChangeComposite result = new GameStateChangeComposite();
       ArrayList<LeaderCard> leaders = gameState.getAvailableLeaderCards();
-      PlayerColor color = gameState.getCurrentPlayer().getPlayer().getColor();
+      PlayerColor color = gameState.getCurrentPlayer().getColor();
       if (leaders.contains(LeaderCard.RELIGIOUS)) {
         result.add(new GameStateChangeMoveLeader(
             new LeaderDestinationBoard(LeaderCard.RELIGIOUS),
@@ -849,7 +856,7 @@ public class GameControllerTutorial implements GameController {
       }
       result.add(new GameStateChangeMoveCubes(1,
           new CubeDestinationPlayer(color, false), new CubeDestinationPlayer(color, true)));
-      result.add(super.execute(gameState));
+      result.add(super.execute(gameController, gameState));
       return result;
     }
   }
@@ -860,8 +867,15 @@ public class GameControllerTutorial implements GameController {
       super(new Message.Text("continueMsg"), action);
     }
 
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private ActionCustomReturnLeaderCards() {
+    }
+
     @Override
-    public GameStateChange execute(GameState gameState) {
+    public GameStateChange execute(GameController gameController, GameState gameState) {
       GameStateChangeComposite result = new GameStateChangeComposite();
       PlayerState playerState = gameState.getPlayerState(PlayerColor.BLACK);
       LeaderCard leaderCard = playerState.getLeaderCard();
@@ -877,7 +891,7 @@ public class GameControllerTutorial implements GameController {
       result.add(new GameStateChangeMoveLeader(
           new LeaderDestinationPlayer(leaderCard, PlayerColor.PINK),
           new LeaderDestinationBoard(leaderCard)));
-      result.add(super.execute(gameState));
+      result.add(super.execute(gameController, gameState));
       return result;
     }
   }
@@ -888,8 +902,15 @@ public class GameControllerTutorial implements GameController {
       super(new Message.Text("continueMsg"), action);
     }
 
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private ActionJumpToEndOfCentury() {
+    }
+
     @Override
-    public GameStateChange execute(GameState gameState) {
+    public GameStateChange execute(GameController gameController, GameState gameState) {
       GameStateChangeComposite result = new GameStateChangeComposite();
 
       // Black 11/5 or 8/5
@@ -1048,7 +1069,7 @@ public class GameControllerTutorial implements GameController {
 
       result.add(new GameStateChangeNextPlayer(false));
       result.add(new GameStateChangeNextPlayer(false));
-      result.add(super.execute(gameState));
+      result.add(super.execute(gameController, gameState));
       return result;
     }
   }

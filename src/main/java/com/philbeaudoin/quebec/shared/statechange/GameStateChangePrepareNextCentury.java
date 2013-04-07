@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.statechange;
 
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -26,8 +27,8 @@ import com.philbeaudoin.quebec.shared.state.GameState;
 public class GameStateChangePrepareNextCentury implements GameStateChange {
 
   @Override
-  public void apply(GameState gameState) {
-    gameState.prepareNextCentury();
+  public void apply(GameController gameController, GameState gameState) {
+    gameController.prepareNextCentury(gameState);
   }
 
   @Override

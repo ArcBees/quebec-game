@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
@@ -33,9 +34,9 @@ public class ActionExplicit implements GameAction {
     return new ActionExplicit(new Message.Text("skip"), new GameStateChangeNextPlayer());
   }
 
-  private final Message message;
-  private final GameStateChange action;
-  private final boolean automatic;
+  private Message message;
+  private GameStateChange action;
+  private boolean automatic;
 
   public ActionExplicit(Message message, GameStateChange action) {
     this(message, action, false);
@@ -48,8 +49,14 @@ public class ActionExplicit implements GameAction {
     this.automatic = automatic;
   }
 
+  /**
+   * For serialization only.
+   */
+  protected ActionExplicit() {
+  }
+
   @Override
-  public GameStateChange execute(GameState gameState) {
+  public GameStateChange execute(GameController gameController, GameState gameState) {
     GameStateChangeComposite result = new GameStateChangeComposite();
     result.add(action);
     return result;

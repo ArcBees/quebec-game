@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
@@ -28,8 +29,8 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
  */
 public class ActionScorePoints implements GameAction {
 
-  private final int nbPoints;
-  private final GameStateChange followup;
+  private int nbPoints;
+  private GameStateChange followup;
 
   public ActionScorePoints(int nbPoints) {
     this(nbPoints, new GameStateChangeNextPlayer());
@@ -40,11 +41,18 @@ public class ActionScorePoints implements GameAction {
     this.followup = followup;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ActionScorePoints() {
+  }
+
   @Override
-  public GameStateChange execute(GameState gameState) {
+  public GameStateChange execute(GameController gameController, GameState gameState) {
     GameStateChangeComposite result = new GameStateChangeComposite();
     result.add(new GameStateChangeScorePoints(
-        gameState.getCurrentPlayer().getPlayer().getColor(), nbPoints));
+        gameState.getCurrentPlayer().getColor(), nbPoints));
     result.add(followup);
     return result;
   }

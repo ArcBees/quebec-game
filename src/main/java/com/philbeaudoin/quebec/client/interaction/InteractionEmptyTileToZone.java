@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -36,10 +37,10 @@ public class InteractionEmptyTileToZone extends InteractionWithAction {
   private final SceneNodeList arrows;
 
   public InteractionEmptyTileToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      GameState gameState, GameStateRenderer gameStateRenderer,
+      GameController gameController, GameState gameState, GameStateRenderer gameStateRenderer,
       InteractionTargetInfluenceZone target, ActionEmptyTileToZone action) {
     super(scheduler, gameState, gameStateRenderer, target,
-        action.execute(gameState));
+        action.execute(gameController, gameState));
 
     arrows = new SceneNodeList();
     // Arrow to move cubes.
@@ -49,9 +50,9 @@ public class InteractionEmptyTileToZone extends InteractionWithAction {
 
   @Inject
   public InteractionEmptyTileToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionEmptyTileToZone action) {
-    this(scheduler, interactionFactories, gameState, gameStateRenderer,
+      @Assisted GameController gameController, @Assisted GameState gameState,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionEmptyTileToZone action) {
+    this(scheduler, interactionFactories, gameController, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetInfluenceZone(gameStateRenderer, action),
         action);
   }

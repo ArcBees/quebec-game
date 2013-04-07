@@ -27,12 +27,19 @@ import com.philbeaudoin.quebec.shared.state.TileState;
  */
 public class ArchitectDestinationTile implements ArchitectDestination {
 
-  private final Tile tile;
-  private final PlayerColor architectColor;
+  private Tile tile;
+  private PlayerColor architectColor;
 
   public ArchitectDestinationTile(Tile tile, PlayerColor architectColor) {
     this.tile = tile;
     this.architectColor = architectColor;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ArchitectDestinationTile() {
   }
 
   @Override

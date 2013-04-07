@@ -18,8 +18,10 @@ package com.philbeaudoin.quebec.shared.action;
 
 import java.util.ArrayList;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
@@ -27,11 +29,11 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
  * A set of possible actions that can be taken in the current state of the game.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class PossibleActions {
+public class PossibleActions implements IsSerializable {
 
-  private final TextBoxInfo textBoxInfo;
-  private final ArrayList<GameAction> gameActions = new ArrayList<GameAction>();
-  private final boolean canSelectBoardAction;
+  private TextBoxInfo textBoxInfo;
+  private ArrayList<GameAction> gameActions = new ArrayList<GameAction>();
+  private boolean canSelectBoardAction;
 
   /**
    * Creates a list of possible actions without an information message. Assumes the user can select
@@ -81,14 +83,16 @@ public class PossibleActions {
   /**
    * Apply a given action to a given game state and return the game state change resulting from it.
    * The game state itself is not modified.
+   * @param gameController The game controller to use.
    * @param actionIndex The index of the action to execute, must be lower than the value returned by
    *     {@link #getNbActions()}.
    * @param gameState The state of the game to which to apply the action, it is not modified.
    * @return The change to the game state resulting from the application of that action.
    */
-  public GameStateChange execute(int actionIndex, GameState gameState) {
+  public GameStateChange execute(GameController gameController, int actionIndex,
+      GameState gameState) {
     assert actionIndex >= 0 && actionIndex < gameActions.size();
-    return gameActions.get(actionIndex).execute(gameState);
+    return gameActions.get(actionIndex).execute(gameController, gameState);
   }
 
   /**

@@ -33,6 +33,7 @@ import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
 import com.philbeaudoin.quebec.shared.location.LeaderDestinationPlayer;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.TileState;
@@ -51,8 +52,8 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
  */
 public class ActionPerformScoringPhase implements GameAction {
 
-  private final ScoringPhase scoringPhase;
-  private final GameStateChange followup;
+  private ScoringPhase scoringPhase;
+  private GameStateChange followup;
 
   public ActionPerformScoringPhase() {
     this(ScoringPhase.INIT_SCORING);
@@ -72,7 +73,7 @@ public class ActionPerformScoringPhase implements GameAction {
   }
 
   @Override
-  public GameStateChange execute(GameState gameState) {
+  public GameStateChange execute(GameController gameController, GameState gameState) {
     int century = gameState.getCentury();
     GameStateChangeComposite result = new GameStateChangeComposite();
     GameStateChange finalResult = result;
@@ -107,7 +108,7 @@ public class ActionPerformScoringPhase implements GameAction {
       ActionPerformScoringPhase nextAction = new ActionPerformScoringPhase(
           scoringPhase.nextScoringPhase(century));
       GameState nextGameState = new GameState(gameState);
-      result.apply(nextGameState);
+      result.apply(gameController, nextGameState);
       PossibleActions possibleActions = new PossibleActions(nextAction.getMessage(nextGameState));
       possibleActions.add(nextAction);
       result.add(new GameStateChangeQueuePossibleActions(possibleActions));
@@ -135,8 +136,7 @@ public class ActionPerformScoringPhase implements GameAction {
               PlayerColor.NEUTRAL);
         } else if (playerState.isHoldingNeutralArchitect()) {
           // The neutral architect is still in the player's hand.
-          architectOrigin = new ArchitectDestinationPlayer(playerState.getPlayer().getColor(),
-              true);
+          architectOrigin = new ArchitectDestinationPlayer(playerState.getColor(), true);
         }
         if (architectOrigin != null) {
           // Move the neutral architect entirely out of the board.
@@ -151,7 +151,7 @@ public class ActionPerformScoringPhase implements GameAction {
       LeaderCard leaderCard = playerState.getLeaderCard();
       if (leaderCard != null) {
         result.add(new GameStateChangeMoveLeader(new LeaderDestinationPlayer(leaderCard,
-            playerState.getPlayer().getColor()), new LeaderDestinationBoard(leaderCard)));
+            playerState.getColor()), new LeaderDestinationBoard(leaderCard)));
       }
     }
     return finalResult;

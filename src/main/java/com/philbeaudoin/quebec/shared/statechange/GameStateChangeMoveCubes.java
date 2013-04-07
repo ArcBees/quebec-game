@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.shared.statechange;
 
 import com.philbeaudoin.quebec.shared.location.CubeDestination;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -25,9 +26,9 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class GameStateChangeMoveCubes implements GameStateChange {
 
-  private final int nbCubes;
-  private final CubeDestination from;
-  private final CubeDestination to;
+  private int nbCubes;
+  private CubeDestination from;
+  private CubeDestination to;
 
   public GameStateChangeMoveCubes(int nbCubes, CubeDestination from, CubeDestination to) {
     assert from.getPlayerColor() == to.getPlayerColor();
@@ -36,8 +37,15 @@ public class GameStateChangeMoveCubes implements GameStateChange {
     this.to = to;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameStateChangeMoveCubes() {
+  }
+
   @Override
-  public void apply(GameState gameState) {
+  public void apply(GameController gameController, GameState gameState) {
     assert from.getNbCubes(gameState) >= nbCubes;
     from.removeFrom(nbCubes, gameState);
     to.addTo(nbCubes, gameState);

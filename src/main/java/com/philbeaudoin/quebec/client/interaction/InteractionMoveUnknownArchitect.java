@@ -57,7 +57,7 @@ public class InteractionMoveUnknownArchitect extends InteractionWithAction {
 
     this.gameStateRenderer = gameStateRenderer;
     assert actionArchitectA.getDestinationTile() == actionArchitectB.getDestinationTile();
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     extras = new SceneNodeList();
 
     // Text at the top

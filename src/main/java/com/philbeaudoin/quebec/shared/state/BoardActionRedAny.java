@@ -31,7 +31,7 @@ public class BoardActionRedAny extends BoardAction {
     super(14, 7, InfluenceType.POLITIC, 1, ActionType.RED_ANY);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+  public PossibleActions getPossibleActions(GameController gameController, GameState gameState, Tile triggeringTile) {
     PossibleActions result = new PossibleActions(new Message.Text("selectActionToExecute"));
     result.add(new ActionSelectBoardAction(new BoardActionRedTwoToCitadel(), triggeringTile));
     result.add(new ActionSelectBoardAction(new BoardActionRedTwoToPurpleOrYellow(),

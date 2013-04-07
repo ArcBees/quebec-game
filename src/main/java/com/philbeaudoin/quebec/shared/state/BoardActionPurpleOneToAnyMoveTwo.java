@@ -42,9 +42,9 @@ public class BoardActionPurpleOneToAnyMoveTwo extends BoardAction {
     super(10, 7, InfluenceType.RELIGIOUS, 3, ActionType.PURPLE_ONE_TO_ANY_MOVE_TWO);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+  public PossibleActions getPossibleActions(GameController gameController, GameState gameState, Tile triggeringTile) {
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor playerColor = playerState.getPlayer().getColor();
+    PlayerColor playerColor = playerState.getColor();
 
     if (playerState.getNbTotalCubes() > 0) {
       PossibleActions sendAnywhere = new PossibleActions(
@@ -90,7 +90,7 @@ public class BoardActionPurpleOneToAnyMoveTwo extends BoardAction {
    */
   private PossibleActions computeMoveActions(GameState gameState,
       InfluenceType zoneIntoWhichToAddACube) {
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
 
     ArrayList<InfluenceType> origins = new ArrayList<InfluenceType>();
     for (InfluenceType origin : InfluenceType.values()) {

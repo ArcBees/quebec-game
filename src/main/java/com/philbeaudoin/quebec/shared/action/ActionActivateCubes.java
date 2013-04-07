@@ -19,6 +19,7 @@ package com.philbeaudoin.quebec.shared.action;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
@@ -31,8 +32,8 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
  */
 public class ActionActivateCubes implements GameAction {
 
-  private final int nbCubes;
-  private final GameStateChange followup;
+  private int nbCubes;
+  private GameStateChange followup;
 
   public ActionActivateCubes(int nbCubes) {
     this(nbCubes, new GameStateChangeNextPlayer());
@@ -44,10 +45,17 @@ public class ActionActivateCubes implements GameAction {
     this.followup = followup;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ActionActivateCubes() {
+  }
+
   @Override
-  public GameStateChange execute(GameState gameState) {
+  public GameStateChange execute(GameController gameController, GameState gameState) {
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor activePlayer = playerState.getPlayer().getColor();
+    PlayerColor activePlayer = playerState.getColor();
     assert playerState.getNbPassiveCubes() >= nbCubes;
 
     GameStateChangeComposite result = new GameStateChangeComposite();

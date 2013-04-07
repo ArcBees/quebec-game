@@ -30,6 +30,13 @@ public class LocationBoardAction implements Location {
     this.boardAction = boardAction;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private LocationBoardAction() {
+  }
+
   @Override
   public <T> T accept(LocationVisitor<T> visitor) {
     return visitor.visit(this);

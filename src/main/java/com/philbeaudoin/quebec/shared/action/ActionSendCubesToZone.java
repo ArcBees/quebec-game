@@ -21,6 +21,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.location.CubeDestinationInfluenceZone;
 import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
@@ -33,13 +34,20 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
  */
 public class ActionSendCubesToZone implements GameActionOnInfluenceZone {
 
-  private final int nbCubes;
-  private final boolean fromActive;
-  private final InfluenceType to;
-  private final GameStateChange followup;
+  private int nbCubes;
+  private boolean fromActive;
+  private InfluenceType to;
+  private GameStateChange followup;
 
   public ActionSendCubesToZone(int nbCubes, boolean fromActive, InfluenceType to) {
     this(nbCubes, fromActive, to, new GameStateChangeNextPlayer());
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ActionSendCubesToZone() {
   }
 
   public ActionSendCubesToZone(int nbCubes, boolean fromActive, InfluenceType to,
@@ -52,9 +60,9 @@ public class ActionSendCubesToZone implements GameActionOnInfluenceZone {
   }
 
   @Override
-  public GameStateChange execute(GameState gameState) {
+  public GameStateChange execute(GameController gameController, GameState gameState) {
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor activePlayer = playerState.getPlayer().getColor();
+    PlayerColor activePlayer = playerState.getColor();
 
     GameStateChangeComposite result = new GameStateChangeComposite();
 

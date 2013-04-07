@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.statechange;
 
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -24,7 +25,7 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class GameStateChangeNextPlayer implements GameStateChange {
 
-  private final boolean prepareActions;
+  private boolean prepareActions;
 
   /**
    * Switch to the next player and prepare the possible actions.
@@ -43,8 +44,11 @@ public class GameStateChangeNextPlayer implements GameStateChange {
   }
 
   @Override
-  public void apply(GameState gameState) {
-    gameState.nextPlayer(prepareActions);
+  public void apply(GameController gameController, GameState gameState) {
+    gameState.nextPlayer();
+    if (prepareActions) {
+      gameController.configurePossibleActions(gameState);
+    }
   }
 
   @Override

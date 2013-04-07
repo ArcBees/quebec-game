@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.player;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
@@ -24,13 +26,14 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface AiBrain {
+public interface AiBrain extends IsSerializable {
   /**
    * Returns the move to make, for the current player, given a game state.
+   * @param gameController The game controller.
    * @param gameState The game state.
    * @return The move to make.
    */
-  GameStateChange getMove(GameState gameState);
+  GameStateChange getMove(GameController gameController, GameState gameState);
 
   /**
    * Gets a short name that can be used to identify that type of brain.

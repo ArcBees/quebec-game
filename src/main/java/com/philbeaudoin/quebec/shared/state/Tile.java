@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.state;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 
 /**
@@ -24,15 +25,22 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class Tile {
-  private final InfluenceType influenceType;
-  private final int century;
-  private final int buildingIndex;
+public class Tile implements IsSerializable {
+  private InfluenceType influenceType;
+  private int century;
+  private int buildingIndex;
 
   Tile(InfluenceType influenceType, int century, int buildingIndex) {
     this.influenceType = influenceType;
     this.century = century;
     this.buildingIndex = buildingIndex;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private Tile() {
   }
 
   /**
@@ -54,5 +62,23 @@ public class Tile {
    */
   public int getBuildingIndex() {
     return buildingIndex;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Tile other = (Tile) obj;
+    if (buildingIndex != other.buildingIndex)
+      return false;
+    if (century != other.century)
+      return false;
+    if (influenceType != other.influenceType)
+      return false;
+    return true;
   }
 }

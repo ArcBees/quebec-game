@@ -19,47 +19,48 @@ package com.philbeaudoin.quebec.shared.game;
 import java.util.Date;
 
 import com.philbeaudoin.quebec.shared.user.UserInfo;
-import com.philbeaudoin.quebec.shared.user.UserInfoDto;
 
 /**
  * A {@link GameInfoDto} with some extra information used in the the game list, for example in
  * the main view.
- * @author beaudoin
- *
  */
 public class GameInfoForGameList implements GameInfo {
 
-  public enum JoinState {
-    CANNOT_JOIN,
-    CAN_JOIN,
-    JOINING
+  /**
+   * The state of the game in the game list that indicate which action the currently signed-in user
+   * can perform on it. Computed by the presenter and used to exchange information with the view.
+   */
+  public enum State {
+    NO_ACTION,  // The user can't perform any action on the game.
+    CAN_JOIN,   // The user can join the game.
+    JOINING,    // The game is currently being joined by the user.
+    CAN_PLAY,   // The user can play a move in this game.
+    CAN_VIEW    // The user can view the current state of the game.
   }
 
   private final GameInfoDto gameInfoDto;
   private final int index;
-  private JoinState joinState;
+  private State state;
 
   /**
    * Create a {@link GameInfo} structure specifically to be used in a game list.
    * @param gameInfoDto The game info attached to this object.
    * @param index The index in the game list.
-   * @param joinState Indicates whether the currently signed-in user can join, can't join, or is
-   *     currently joining the game.
+   * @param state Indicates the state of the game, which can be used to infer which action the
+   *     currently signed-in user can perform on this game.
    */
-  public GameInfoForGameList(GameInfoDto gameInfoDto, int index, JoinState joinState) {
+  public GameInfoForGameList(GameInfoDto gameInfoDto, int index, State state) {
     assert(gameInfoDto != null);
     this.gameInfoDto = gameInfoDto;
     this.index = index;
-    this.joinState = joinState;
+    this.state = state;
   }
 
   @Override public long getId() { return gameInfoDto.getId(); }
   @Override public int getNbPlayers() { return gameInfoDto.getNbPlayers(); }
   @Override public UserInfo getPlayerInfo(int index) { return gameInfoDto.getPlayerInfo(index); }
   @Override public Date getCreationDate() { return gameInfoDto.getCreationDate(); }
-  public UserInfoDto getPlayerInfoDto(int index) { return gameInfoDto.getPlayerInfoDto(index); }
-  public boolean isOpen() { return gameInfoDto.isOpen(); }
-  public boolean canJoin(long playerId) { return gameInfoDto.canJoin(playerId); }
+  @Override public int getCurrentPlayerIndex() { return gameInfoDto.getCurrentPlayerIndex(); }
 
   /**
    * @return The attached game info.
@@ -76,10 +77,10 @@ public class GameInfoForGameList implements GameInfo {
   }
 
   /**
-   * @return The joing state, indicating whether the currently signed-in user can join, can't join,
-   *     or is currently joining the game.
+   * @return The state of the game, which can be used to infer which action the currently signed-in
+   *     user can perform on this game.
    */
-  public JoinState getJoinState() {
-    return joinState;
+  public State getState() {
+    return state;
   }
 }

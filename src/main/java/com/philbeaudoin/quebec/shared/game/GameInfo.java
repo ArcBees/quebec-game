@@ -46,4 +46,14 @@ public interface GameInfo {
    * @return The date at which this game was created.
    */
   Date getCreationDate();
+
+  /**
+   * Access the index of the currently active player. Returns -1 if there are no currently active
+   * player, for example if no players have registered for the game or if the game has ended. If the
+   * game is under way this returns the index of the player who should play his move now. The game
+   * is only under way if getPlayerInfo() returns non-null for every player and this returns
+   * something else than -1.
+   * @return The index of the currently active player or -1 if there are no active player.
+   */
+  int getCurrentPlayerIndex();
 }

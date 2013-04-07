@@ -38,6 +38,7 @@ import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.action.GameActionVisitor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -51,6 +52,7 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
 
   private final InteractionFactories factories;
   private final TextBoxRenderer textBoxRenderer;
+  private final GameController gameController;
   private final GameState gameState;
   private final GameStateRenderer gameStateRenderer;
 
@@ -60,10 +62,12 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
   @Inject
   LocalAiInteractionGenerator(InteractionFactories factories,
       TextBoxRenderer textBoxRenderer,
+      @Assisted GameController gameController,
       @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer) {
     this.factories = factories;
     this.textBoxRenderer = textBoxRenderer;
+    this.gameController = gameController;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
   }
@@ -73,8 +77,8 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
    * called exactly once after the possible actions have been visited.
    */
   public void generateInteractions() {
-    gameStateRenderer.addInteraction(factories.createInteractionPerformScoringPhase(gameState,
-        gameStateRenderer, manualAction));
+    gameStateRenderer.addInteraction(factories.createInteractionPerformScoringPhase(gameController,
+        gameState, gameStateRenderer, manualAction));
 
     assert generatingActions != null;
     gameStateRenderer.addToAnimationGraph(

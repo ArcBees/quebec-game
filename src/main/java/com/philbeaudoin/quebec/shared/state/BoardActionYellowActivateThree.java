@@ -32,7 +32,7 @@ public class BoardActionYellowActivateThree extends BoardAction {
     super(7, 0, InfluenceType.ECONOMIC, 3, ActionType.YELLOW_ACTIVATE_THREE);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+  public PossibleActions getPossibleActions(GameController gameController, GameState gameState, Tile triggeringTile) {
     PlayerState playerState = gameState.getCurrentPlayer();
     int nbCubes = Math.min(3, playerState.getNbPassiveCubes());
     PossibleActions result = new PossibleActions();

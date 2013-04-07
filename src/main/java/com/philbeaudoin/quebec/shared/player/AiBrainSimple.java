@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringHelper;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.TileState;
@@ -39,11 +40,11 @@ public class AiBrainSimple implements AiBrain {
   private static final double LEVEL = 1.0;  // Level of the AI player. 1.0 for the best player.
 
   @Override
-  public GameStateChange getMove(GameState gameState) {
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+  public GameStateChange getMove(GameController gameController, GameState gameState) {
+    PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     // TODO(beaudoin): AIs with a level < 1 play too much architect moves.
     double percentile = 1.0 - Random.nextDouble() * (0.1 * (1.0 - LEVEL));
-    ScoreAndMove result = scoreForBestMove(gameState, playerColor, percentile);
+    ScoreAndMove result = scoreForBestMove(gameController, gameState, playerColor, percentile);
     if (result == null) {
       return null;
     }
@@ -59,14 +60,15 @@ public class AiBrainSimple implements AiBrain {
    * Calculate the score for the best possible move for the player of a given color. If the game
    * state does not mark that player as active, we return null. That is, we don't perform
    * any mini-max here.
+   * @param gameController The game controller.
    * @param gameState The current game state.
    * @param playerState The player for which to find the best possible move.
    * @param percent The percentile of the move to take, 1.0 is going to take the best move.
    * @return The best possible move and its score, or null.
    */
-  private ScoreAndMove scoreForBestMove(GameState gameState, PlayerColor playerColor,
-      double percent) {
-    if (playerColor != gameState.getCurrentPlayer().getPlayer().getColor()) {
+  private ScoreAndMove scoreForBestMove(GameController gameController, GameState gameState,
+      PlayerColor playerColor, double percent) {
+    if (playerColor != gameState.getCurrentPlayer().getColor()) {
       return null;
     }
 
@@ -79,9 +81,10 @@ public class AiBrainSimple implements AiBrain {
     ArrayList<ScoreAndMove> moves = new ArrayList<ScoreAndMove>(possibleActions.getNbActions());
     for (int actionIndex = 0; actionIndex < possibleActions.getNbActions(); ++actionIndex) {
       GameState gameStateCopy = new GameState(gameState);
-      GameStateChange gameStateChange = possibleActions.execute(actionIndex, gameStateCopy);
-      gameStateChange.apply(gameStateCopy);
-      ScoreAndMove scoreAndMove = scoreForBestMove(gameStateCopy, playerColor, 1.0);
+      GameStateChange gameStateChange = possibleActions.execute(gameController, actionIndex,
+          gameStateCopy);
+      gameStateChange.apply(gameController, gameStateCopy);
+      ScoreAndMove scoreAndMove = scoreForBestMove(gameController, gameStateCopy, playerColor, 1.0);
       double score = -10000;
       if (scoreAndMove == null) {
         score = evaluate(gameStateCopy, playerColor);
@@ -144,7 +147,7 @@ public class AiBrainSimple implements AiBrain {
       // Can send cubes to any zone, cubes on tiles and active cubes are worth an extra 0.4 points
       // provided there are enough architect moves left.
       double scale = movesUntilScoring.architectMoves / 10.0;
-      int cubesOnTiles = calculateCubesOnTiles(gameState, playerState.getPlayer().getColor());
+      int cubesOnTiles = calculateCubesOnTiles(gameState, playerState.getColor());
       return (cubesOnTiles * 1.0 + playerState.getNbActiveCubes() * 0.25) * scale;
     case ECONOMIC:
       // Can grab more tiles, each architect move is worth extra point, it's worth more in
@@ -204,9 +207,9 @@ public class AiBrainSimple implements AiBrain {
           nbFilledSpots = Math.min(3, tileState.countNbFilledSpots() + nbExtraFilledSpots);
         }
         if (nbFilledSpots > 0) {
-          // TODO(beaudoin): Slightly hacky: we leave the architect on and set a star token. It works
-          //     because this is supported by computeBuildingsScoringInformation and it makes it
-          //     easy to revert the change later, but we may want to clean this up.
+          // TODO(beaudoin): Slightly hacky: we leave the architect on and set a star token. It
+          //     work because this is supported by computeBuildingsScoringInformation and it makes
+          //     it easy to revert the change later, but we may want to clean this up.
           tileState.setStarToken(playerColor, nbFilledSpots);
         }
         if (nbModifiedTiles == 2) {
@@ -260,7 +263,7 @@ public class AiBrainSimple implements AiBrain {
       PlayerState playerState = playerStates.get(i);
       nbActives[i] = playerState.getNbActiveCubes();
       nbPassives[i] = playerState.getNbPassiveCubes();
-      if (playerState.getPlayer().getColor() == playerColor) {
+      if (playerState.getColor() == playerColor) {
         scoringPlayerIndex = i;
       }
     }

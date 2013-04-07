@@ -30,6 +30,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
 import com.philbeaudoin.quebec.shared.action.ActionPerformScoringPhase;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -43,13 +44,13 @@ public class InteractionPerformScoringPhase extends InteractionWithAction {
   @Inject
   public InteractionPerformScoringPhase(Scheduler scheduler,
       InteractionFactories interactionFactories, Provider<MessageRenderer> messageRendererProvider,
-      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionPerformScoringPhase action) {
+      @Assisted GameController gameController, @Assisted GameState gameState,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionPerformScoringPhase action) {
     super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetText(gameStateRenderer,
             createContinueMessageRenderer(messageRendererProvider),
             new Vector2d(GameStateRenderer.TEXT_CENTER, GameStateRenderer.TEXT_LINE_2)),
-        action.execute(gameState));
+        action.execute(gameController, gameState));
 
     this.arrows = new SceneNodeList();
 

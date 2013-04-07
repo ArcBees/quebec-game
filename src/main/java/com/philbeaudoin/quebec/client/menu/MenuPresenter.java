@@ -26,8 +26,11 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import com.philbeaudoin.quebec.client.main.GamePresenter;
 import com.philbeaudoin.quebec.client.session.ClientSessionManager;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithDummy;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAuthorizationCode;
@@ -37,7 +40,6 @@ import com.philbeaudoin.quebec.client.session.events.SessionStateChanged.Event;
 import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.game.GameInfoDto;
 import com.philbeaudoin.quebec.shared.game.GameInfoForGameList;
-import com.philbeaudoin.quebec.shared.game.GameInfoForGameList.JoinState;
 import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
 import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
 import com.philbeaudoin.quebec.shared.serveractions.JoinGameAction;
@@ -77,13 +79,15 @@ public class MenuPresenter extends
   public interface MyProxy extends ProxyPlace<MenuPresenter> {
   }
 
+  private final PlaceManager placeManager;
   private final DispatchAsync dispatcher;
   private final ClientSessionManager sessionManager;
 
   @Inject
   public MenuPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-      DispatchAsync dispatcher, ClientSessionManager sessionManager) {
+      PlaceManager placeManager, DispatchAsync dispatcher, ClientSessionManager sessionManager) {
     super(eventBus, view, proxy);
+    this.placeManager = placeManager;
     this.dispatcher = dispatcher;
     this.sessionManager = sessionManager;
     view.setPresenter(this);
@@ -164,13 +168,35 @@ public class MenuPresenter extends
   }
 
   public void joinGame(GameInfoForGameList gameInfo) {
+    if (checkSignedIn()) {
+      getView().changeGameInfo(new GameInfoForGameList(gameInfo.getGameInfoDto(),
+          gameInfo.getIndex(), GameInfoForGameList.State.JOINING));
+      dispatcher.execute(new JoinGameAction(gameInfo.getId()), new AsyncGameListCallback());
+    }
+  }
+
+  public void playGame(GameInfoForGameList gameInfo) {
+    if (checkSignedIn()) {
+      PlaceRequest myRequest = new PlaceRequest(NameTokens.gamePage);
+      myRequest = myRequest.with(GamePresenter.TUTORIAL_KEY, "1");
+      placeManager.revealPlace( myRequest );
+    }
+  }
+
+  public void viewGame(GameInfoForGameList gameInfo) {
+    if (checkSignedIn()) {
+      PlaceRequest myRequest = new PlaceRequest(NameTokens.gamePage);
+      myRequest = myRequest.with(GamePresenter.TUTORIAL_KEY, "1");
+      placeManager.revealPlace( myRequest );
+    }
+  }
+
+  private boolean checkSignedIn() {
     if (!sessionManager.isSignedIn()) {
       getView().displayError("Error! Must be signed in to join a game.");
-      return;
+      return false;
     }
-    getView().changeGameInfo(
-        new GameInfoForGameList(gameInfo.getGameInfoDto(), gameInfo.getIndex(), JoinState.JOINING));
-    dispatcher.execute(new JoinGameAction(gameInfo.getId()), new AsyncGameListCallback());
+    return true;
   }
 
   private void updateGameList(ArrayList<GameInfoDto> games) {
@@ -178,9 +204,17 @@ public class MenuPresenter extends
     UserInfo userInfo = sessionManager.getUserInfo();
     int index = 0;
     for (GameInfoDto gameInfo : games) {
-      boolean canJoin = userInfo == null ? true : gameInfo.canJoin(userInfo.getId());
-      getView().addGame(new GameInfoForGameList(gameInfo, index,
-          canJoin ? JoinState.CAN_JOIN : JoinState.CANNOT_JOIN));
+      GameInfoForGameList.State state = GameInfoForGameList.State.NO_ACTION;
+      if (userInfo != null) {
+        if (gameInfo.isMoveOfPlayer(userInfo.getId())) {
+          state = GameInfoForGameList.State.CAN_PLAY;
+        } else if (gameInfo.canView(userInfo.getId())) {
+          state = GameInfoForGameList.State.CAN_VIEW;
+        } else if (gameInfo.canJoin(userInfo.getId())) {
+          state = GameInfoForGameList.State.CAN_JOIN;
+        }
+      }
+      getView().addGame(new GameInfoForGameList(gameInfo, index, state));
       index++;
     }
   }

@@ -111,7 +111,7 @@ public class PlayerStateRenderer {
    */
   public void render(PlayerState playerState, SceneNodeList root,
       SceneNodeList boardRoot) {
-    playerColor = playerState.getPlayer().getColor();
+    playerColor = playerState.getColor();
     int paletteIndex = playerColor.normalColorIndex();
 
     playerZone.clear();

@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.shared.statechange;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -24,14 +25,21 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class GameStateChangeSetPlayer implements GameStateChange {
-  private final PlayerColor playerColor;
+  private PlayerColor playerColor;
 
   public GameStateChangeSetPlayer(PlayerColor playerColor) {
     this.playerColor = playerColor;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameStateChangeSetPlayer() {
+  }
+
   @Override
-  public void apply(GameState gameState) {
+  public void apply(GameController gameController, GameState gameState) {
     gameState.setCurrentPlayer(playerColor);
   }
 

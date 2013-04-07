@@ -31,7 +31,7 @@ public class BoardActionYellowAny extends BoardAction {
     super(16, 1, InfluenceType.ECONOMIC, 1, ActionType.YELLOW_ANY);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+  public PossibleActions getPossibleActions(GameController gameController, GameState gameState, Tile triggeringTile) {
     PossibleActions result = new PossibleActions(new Message.Text("selectActionToExecute"));
     result.add(new ActionSelectBoardAction(new BoardActionYellowActivateThree(), triggeringTile));
     result.add(new ActionSelectBoardAction(new BoardActionYellowFillOneSpot(), triggeringTile));

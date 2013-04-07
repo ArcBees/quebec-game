@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.message;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringInformation;
@@ -32,7 +33,7 @@ import com.philbeaudoin.quebec.shared.state.ActionType;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  *
  */
-public interface Message {
+public interface Message extends IsSerializable {
 
   <T> T accept(Visitor<T> visitor);
 
@@ -72,9 +73,15 @@ public interface Message {
    * Generic message containing only text, no extra parameters, no graphics.
    */
   public class Text implements Message {
-    private final String methodName;
+    private String methodName;
     public Text(String methodName) {
       this.methodName = methodName;
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private Text() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -91,8 +98,8 @@ public interface Message {
    * {@link com.philbeaudoin.quebec.client.resources.text.GraphicConstantsWithLookup}.
    */
   public class MultilineText implements Message {
-    private final String methodName;
-    private final double maxWidth;
+    private String methodName;
+    private double maxWidth;
     public MultilineText(String methodName) {
       this.methodName = methodName;
       this.maxWidth = 0.45;
@@ -100,6 +107,12 @@ public interface Message {
     public MultilineText(String methodName, double maxWidth) {
       this.methodName = methodName;
       this.maxWidth = maxWidth;
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private MultilineText() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -120,6 +133,12 @@ public interface Message {
     public TakeThisLeaderCard(int nbCubesToActivate, PlayerColor playerColor) {
       super(nbCubesToActivate, playerColor);
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private TakeThisLeaderCard() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -134,6 +153,12 @@ public interface Message {
     public MoveEitherArchitect(PlayerColor architectA, PlayerColor architectB) {
       super(architectA, architectB);
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private MoveEitherArchitect() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -147,6 +172,12 @@ public interface Message {
   public class MoveArchitect extends BaseMessage implements Message {
     public MoveArchitect(PlayerColor architect) {
       super(architect);
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private MoveArchitect() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -163,6 +194,12 @@ public interface Message {
         InfluenceType zone1, InfluenceType zone2) {
       super(nbCubes, array(playerColor), array(zone1, zone2));
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SendPassiveCubesToOneOfTwoZones() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -178,6 +215,12 @@ public interface Message {
         InfluenceType zone2) {
       super(nbCubes, array(playerColor), array(zone1, zone2));
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SendActiveCubesToOneOfTwoZones() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -191,6 +234,12 @@ public interface Message {
   public class SendPassiveCubesToZone extends BaseMessageWithCount implements Message {
     public SendPassiveCubesToZone(int nbCubes, PlayerColor playerColor, InfluenceType zone) {
       super(nbCubes, array(playerColor), array(zone));
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SendPassiveCubesToZone() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -206,6 +255,12 @@ public interface Message {
     public SendActiveCubesToZone(int nbCubes, PlayerColor playerColor, InfluenceType zone) {
       super(nbCubes, array(playerColor), array(zone));
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SendActiveCubesToZone() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -219,6 +274,12 @@ public interface Message {
     public SendPassiveCubesToAnyZone(int nbCubes, PlayerColor playerColor) {
       super(nbCubes, playerColor);
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SendPassiveCubesToAnyZone() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -231,6 +292,12 @@ public interface Message {
   public class SendPassiveCubesToAnyZoneOrCitadel extends BaseMessageWithCount implements Message {
     public SendPassiveCubesToAnyZoneOrCitadel(int nbCubes, PlayerColor playerColor) {
       super(nbCubes, playerColor);
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SendPassiveCubesToAnyZoneOrCitadel() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -246,6 +313,12 @@ public interface Message {
     public SendPassiveCubesToThisTile(int nbCubes, PlayerColor playerColor) {
       super(nbCubes, playerColor);
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SendPassiveCubesToThisTile() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -260,6 +333,12 @@ public interface Message {
     public SendActiveCubesToThisTile(int nbCubes, PlayerColor playerColor) {
       super(nbCubes, playerColor);
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SendActiveCubesToThisTile() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -272,11 +351,17 @@ public interface Message {
    */
   public class SendActiveCubesToThisTileAndExecuteAction extends BaseMessageWithCount
       implements Message {
-    private final ActionType actionType;
+    private ActionType actionType;
     public SendActiveCubesToThisTileAndExecuteAction(int nbCubes, PlayerColor playerColor,
         ActionType actionType) {
       super(nbCubes, playerColor);
       this.actionType = actionType;
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SendActiveCubesToThisTileAndExecuteAction() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -295,6 +380,12 @@ public interface Message {
     public ActivateCubes(int nbCubes, PlayerColor playerColor) {
       super(nbCubes, playerColor);
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private ActivateCubes() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -307,6 +398,12 @@ public interface Message {
   public class ScorePoints extends BaseMessageWithCount implements Message {
     public ScorePoints(int nbPoints) {
       super(nbPoints);
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private ScorePoints() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -322,6 +419,12 @@ public interface Message {
     public MoveOneOrTwoCubesSelectOrigin(PlayerColor playerColor) {
       super(playerColor);
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private MoveOneOrTwoCubesSelectOrigin() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -335,6 +438,12 @@ public interface Message {
   public class MoveCubesSelectDestination extends BaseMessageWithCount implements Message {
     public MoveCubesSelectDestination(int nbCubes, PlayerColor playerColor, InfluenceType origin) {
       super(nbCubes, array(playerColor), array(origin));
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private MoveCubesSelectDestination() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -350,6 +459,12 @@ public interface Message {
     public SelectWhereToEmptyTile(PlayerColor playerColor) {
       super(playerColor);
     }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private SelectWhereToEmptyTile() {
+    }
     @Override
     public <T> T accept(Visitor<T> visitor) {
       return visitor.visit(this);
@@ -362,6 +477,12 @@ public interface Message {
   public class MoveArchitectOut extends BaseMessage implements Message {
     public MoveArchitectOut(PlayerColor playerColor) {
       super(playerColor);
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private MoveArchitectOut() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -391,9 +512,15 @@ public interface Message {
    * Cascades 3{white cube}{green cube}.
    */
   public class InformationOnZoneScore implements Message {
-    private final ZoneScoringInformation scoringInformation;
+    private ZoneScoringInformation scoringInformation;
     public InformationOnZoneScore(ZoneScoringInformation scoringInformation) {
       this.scoringInformation = scoringInformation;
+    }
+    /**
+     * For serialization only.
+     */
+    @SuppressWarnings("unused")
+    private InformationOnZoneScore() {
     }
     @Override
     public <T> T accept(Visitor<T> visitor) {

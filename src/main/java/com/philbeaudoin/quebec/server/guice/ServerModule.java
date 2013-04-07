@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.server.handlers.AuthenticateWithAdminPasswordHand
 import com.philbeaudoin.quebec.server.handlers.AuthenticateWithGoogleAuthorizationCodeHandler;
 import com.philbeaudoin.quebec.server.handlers.JoinGameHandler;
 import com.philbeaudoin.quebec.server.handlers.ListGamesHandler;
+import com.philbeaudoin.quebec.server.handlers.LoadGameHandler;
 import com.philbeaudoin.quebec.server.handlers.SignOutAdminHandler;
 import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithDummyAction;
 import com.philbeaudoin.quebec.shared.serveractions.ChangeAdminSettingsAction;
@@ -34,6 +35,7 @@ import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithAdminPasswor
 import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithGoogleAuthorizationCodeAction;
 import com.philbeaudoin.quebec.shared.serveractions.JoinGameAction;
 import com.philbeaudoin.quebec.shared.serveractions.ListGamesAction;
+import com.philbeaudoin.quebec.shared.serveractions.LoadGameAction;
 import com.philbeaudoin.quebec.shared.serveractions.SignOutAdminAction;
 
 /**
@@ -54,5 +56,6 @@ public class ServerModule extends HandlerModule {
     bindHandler(ListGamesAction.class, ListGamesHandler.class);
     bindHandler(CreateNewGameAction.class, CreateNewGameHandler.class);
     bindHandler(JoinGameAction.class, JoinGameHandler.class);
+    bindHandler(LoadGameAction.class, LoadGameHandler.class);
   }
 }
