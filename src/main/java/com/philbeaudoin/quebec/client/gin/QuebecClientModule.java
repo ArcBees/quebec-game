@@ -38,7 +38,9 @@ import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
 import com.philbeaudoin.quebec.client.session.ClientSessionManager;
 import com.philbeaudoin.quebec.client.session.ClientSessionManagerImpl;
+import com.philbeaudoin.quebec.client.utils.GwtRandomShuffler;
 import com.philbeaudoin.quebec.shared.Constants;
+import com.philbeaudoin.quebec.shared.state.Shuffler;
 
 /**
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
@@ -52,6 +54,8 @@ public class QuebecClientModule extends AbstractPresenterModule {
     install(new GinFactoryModuleBuilder().build(InteractionFactories.class));
     install(new GinFactoryModuleBuilder().build(PlayerAgentFactories.class));
     install(new GinFactoryModuleBuilder().build(SceneNodeAnimation.Factory.class));
+
+    bind(Shuffler.class).to(GwtRandomShuffler.class);
 
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);
 

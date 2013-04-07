@@ -19,6 +19,7 @@ package com.philbeaudoin.quebec.server.handlers;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
@@ -39,8 +40,11 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class LoadGameHandler implements ActionHandler<LoadGameAction, GameStateResult> {
 
+  private final Provider<GameControllerStandard> gameControllerStandardProvider;
+
   @Inject
-  LoadGameHandler() {
+  LoadGameHandler(Provider<GameControllerStandard> gameControllerStandardProvider) {
+    this.gameControllerStandardProvider = gameControllerStandardProvider;
   }
 
   @Override
@@ -54,7 +58,7 @@ public class LoadGameHandler implements ActionHandler<LoadGameAction, GameStateR
     players.add(new PlayerLocalAi(PlayerColor.WHITE, "HAL Server", new AiBrainSimple()));
     players.add(new PlayerLocalAi(PlayerColor.ORANGE, "Skynet Server", new AiBrainSimple()));
     // Client-only game. We can start it right away.
-    new GameControllerStandard().initGame(gameState, players);
+    gameControllerStandardProvider.get().initGame(gameState, players);
     return new GameStateResult(gameState);
   }
 
