@@ -26,7 +26,7 @@ import com.philbeaudoin.quebec.shared.state.LeaderCard;
  */
 public class PlayerState {
 
-  private final Player player;
+  private Player player;
   private int nbPassiveCubes;
   private int nbActiveCubes;
   private boolean currentPlayer;
@@ -41,6 +41,13 @@ public class PlayerState {
    */
   public PlayerState(Player player) {
     this.player = player;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private PlayerState() {
   }
 
   /**
@@ -63,6 +70,13 @@ public class PlayerState {
    */
   public Player getPlayer() {
     return player;
+  }
+
+  /**
+   * @return The player color.
+   */
+  public PlayerColor getColor() {
+    return player.getColor();
   }
 
   /**

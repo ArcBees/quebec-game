@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.shared.statechange;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.state.TileState;
@@ -27,9 +28,9 @@ import com.philbeaudoin.quebec.shared.state.TileState;
  */
 public class GameStateChangeFlipTile implements GameStateChange {
 
-  private final Tile tile;
-  private final PlayerColor starTokenColor;
-  private final int nbStars;
+  private Tile tile;
+  private PlayerColor starTokenColor;
+  private int nbStars;
 
   public GameStateChangeFlipTile(Tile tile, PlayerColor starTokenColor, int nbStars) {
     this.tile = tile;
@@ -39,8 +40,15 @@ public class GameStateChangeFlipTile implements GameStateChange {
     assert nbStars != 0 || starTokenColor == PlayerColor.NONE;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameStateChangeFlipTile() {
+  }
+
   @Override
-  public void apply(GameState gameState) {
+  public void apply(GameController gameController, GameState gameState) {
     TileState tileState = gameState.findTileState(tile);
     tileState.setBuildingFacing(true);
     tileState.setStarToken(this.starTokenColor, nbStars);

@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.shared.statechange;
 
 import com.philbeaudoin.quebec.shared.location.LeaderDestination;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -25,16 +26,23 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class GameStateChangeMoveLeader implements GameStateChange {
 
-  private final LeaderDestination from;
-  private final LeaderDestination to;
+  private LeaderDestination from;
+  private LeaderDestination to;
 
   public GameStateChangeMoveLeader(LeaderDestination from, LeaderDestination to) {
     this.from = from;
     this.to = to;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameStateChangeMoveLeader() {
+  }
+
   @Override
-  public void apply(GameState gameState) {
+  public void apply(GameController gameController, GameState gameState) {
     from.removeFrom(gameState);
     to.addTo(gameState);
   }

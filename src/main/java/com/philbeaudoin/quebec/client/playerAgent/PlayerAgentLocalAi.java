@@ -22,6 +22,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
@@ -42,17 +43,19 @@ public class PlayerAgentLocalAi implements PlayerAgent {
   }
 
   @Override
-  public void renderInteractions(GameState gameState, GameStateRenderer gameStateRenderer) {
+  public void renderInteractions(GameController gameController, GameState gameState,
+      GameStateRenderer gameStateRenderer) {
     // Render the possible actions.
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
       LocalAiInteractionGenerator generator =
-          playerAgentFactories.createLocalAiInteractionGenerator(gameState, gameStateRenderer);
+          playerAgentFactories.createLocalAiInteractionGenerator(gameController, gameState,
+              gameStateRenderer);
       possibleActions.accept(generator);
       gameStateRenderer.setShowActionDescriptionOnHover(false);
       if (!generator.isManualMove()) {
         // Move automatically.
-        final GameStateChange gameStateChange = player.getMove(gameState);
+        final GameStateChange gameStateChange = player.getMove(gameController, gameState);
         if (gameStateChange != null) {
           gameStateRenderer.generateAnimFor(gameState, gameStateChange);
         }

@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.shared.action.GameAction;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -37,12 +38,13 @@ public class InteractionText extends InteractionWithAction {
 
   @Inject
   public InteractionText(Scheduler scheduler, InteractionFactories interactionFactories,
-      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted MessageRenderer messageRenderer, @Assisted Highlighter highlighter,
-      @Assisted SceneNode extras, @Assisted Vector2d pos, @Assisted GameAction action) {
+      @Assisted GameController gameController, @Assisted GameState gameState,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted MessageRenderer messageRenderer,
+      @Assisted Highlighter highlighter, @Assisted SceneNode extras, @Assisted Vector2d pos,
+      @Assisted GameAction action) {
     super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetText(gameStateRenderer, messageRenderer, pos),
-        action.execute(gameState));
+        action.execute(gameController, gameState));
     this.highlighter = highlighter;
     this.extras = extras;
   }

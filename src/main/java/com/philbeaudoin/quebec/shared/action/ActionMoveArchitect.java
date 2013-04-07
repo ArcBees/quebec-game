@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.location.ArchitectDestinationTile;
 import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.state.TileState;
@@ -40,11 +41,11 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleAc
  */
 public class ActionMoveArchitect implements GameActionOnTile {
 
-  private final Tile destinationTile;
-  private final boolean neutralArchitect;
-  private final int cubesToActivate;
-  private final GameStateChange followup;
-  private final boolean automatic;
+  private Tile destinationTile;
+  private boolean neutralArchitect;
+  private int cubesToActivate;
+  private GameStateChange followup;
+  private boolean automatic;
 
   /**
    * Create an action to move the architect.
@@ -87,11 +88,18 @@ public class ActionMoveArchitect implements GameActionOnTile {
     this.automatic = automatic;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ActionMoveArchitect() {
+  }
+
   @Override
-  public GameStateChange execute(GameState gameState) {
+  public GameStateChange execute(GameController gameController, GameState gameState) {
     GameStateChangeComposite result = new GameStateChangeComposite();
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor activePlayer = playerState.getPlayer().getColor();
+    PlayerColor activePlayer = playerState.getColor();
     PlayerColor architectColor = neutralArchitect ? PlayerColor.NEUTRAL : activePlayer;
 
     ArchitectDestination architectOrigin;

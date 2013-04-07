@@ -22,7 +22,7 @@ package com.philbeaudoin.quebec.shared.location;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class LocationScore implements Location {
-  private final int score;
+  private int score;
 
   /**
    * Creates a location pointing at a given spot on the scoring track.
@@ -30,6 +30,13 @@ public class LocationScore implements Location {
    */
   public LocationScore(int score) {
     this.score = score;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private LocationScore() {
   }
 
   @Override

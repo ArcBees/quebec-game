@@ -30,12 +30,19 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
  */
 public class ActionExplicitHighlightTiles extends ActionExplicit {
 
-  private final ArrayList<Tile> tiles;
+  private ArrayList<Tile> tiles;
 
   public ActionExplicitHighlightTiles(Message message, ArrayList<Tile> tiles,
       GameStateChange action) {
     super(message, action);
     this.tiles = tiles;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ActionExplicitHighlightTiles() {
   }
 
   @Override

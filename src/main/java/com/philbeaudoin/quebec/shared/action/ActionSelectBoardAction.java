@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.shared.action;
 
 import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
@@ -28,16 +29,23 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
  */
 public class ActionSelectBoardAction implements GameActionOnBoardAction {
 
-  private final BoardAction boardAction;
-  private final Tile triggeringTile;
+  private BoardAction boardAction;
+  private Tile triggeringTile;
 
   public ActionSelectBoardAction(BoardAction boardAction, Tile triggeringTile) {
     this.boardAction = boardAction;
     this.triggeringTile = triggeringTile;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ActionSelectBoardAction() {
+  }
+
   @Override
-  public GameStateChange execute(GameState gameState) {
+  public GameStateChange execute(GameController gameController, GameState gameState) {
     return new GameStateChangePrepareAction(boardAction, triggeringTile);
   }
 

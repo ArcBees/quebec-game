@@ -27,10 +27,17 @@ import com.philbeaudoin.quebec.shared.state.LeaderCard;
  */
 public class LeaderDestinationBoard implements LeaderDestination {
 
-  private final LeaderCard leaderCard;
+  private LeaderCard leaderCard;
 
   public LeaderDestinationBoard(LeaderCard leaderCard) {
     this.leaderCard = leaderCard;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private LeaderDestinationBoard() {
   }
 
   @Override

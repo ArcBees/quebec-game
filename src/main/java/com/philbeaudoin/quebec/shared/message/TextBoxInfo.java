@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.message;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.location.Location;
 import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
 
@@ -25,10 +26,10 @@ import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class TextBoxInfo {
-  private final Message message;
-  private final Location anchor;
-  private final Location pointTo;
+public class TextBoxInfo implements IsSerializable {
+  private Message message;
+  private Location anchor;
+  private Location pointTo;
   public TextBoxInfo(Message message, Location anchor, Location pointTo) {
     assert message != null && anchor != null;
     this.message = message;
@@ -46,6 +47,12 @@ public class TextBoxInfo {
     this.message = message;
     this.anchor = new LocationTopCenter();
     this.pointTo = null;
+  }
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private TextBoxInfo() {
   }
   public Message getMessage() {
     return message;

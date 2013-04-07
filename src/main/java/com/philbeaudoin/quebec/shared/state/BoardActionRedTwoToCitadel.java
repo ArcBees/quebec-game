@@ -32,11 +32,11 @@ public class BoardActionRedTwoToCitadel extends BoardAction {
     super(1, 2, InfluenceType.POLITIC, 3, ActionType.RED_TWO_TO_CITADEL);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+  public PossibleActions getPossibleActions(GameController gameController, GameState gameState, Tile triggeringTile) {
     PlayerState playerState = gameState.getCurrentPlayer();
     int nbCubes = Math.min(2, playerState.getNbTotalCubes());
     PossibleActions result = new PossibleActions(
-        new Message.SendPassiveCubesToZone(2, playerState.getPlayer().getColor(),
+        new Message.SendPassiveCubesToZone(2, playerState.getColor(),
         InfluenceType.CITADEL));
     result.add(new ActionSendCubesToZone(nbCubes, false, InfluenceType.CITADEL));
     result.add(ActionExplicit.createSkipAction());

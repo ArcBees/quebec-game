@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.shared.statechange;
 
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -26,15 +27,22 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class GameStateChangeQueuePossibleActions implements GameStateChange {
 
-  private final PossibleActions possibleActions;
+  private PossibleActions possibleActions;
 
   public GameStateChangeQueuePossibleActions(PossibleActions possibleActions) {
     assert possibleActions != null;
     this.possibleActions = possibleActions;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameStateChangeQueuePossibleActions() {
+  }
+
   @Override
-  public void apply(GameState gameState) {
+  public void apply(GameController gameController, GameState gameState) {
     gameState.setPossibleActions(possibleActions);
   }
 

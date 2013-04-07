@@ -30,6 +30,7 @@ import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
 import com.philbeaudoin.quebec.shared.location.LocationRelative;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -44,13 +45,14 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
 
   @Inject
   public InteractionTakeLeaderCard(Scheduler scheduler, InteractionFactories interactionFactories,
-      TextBoxRenderer textBoxRenderer, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionTakeLeaderCard action) {
+      TextBoxRenderer textBoxRenderer, @Assisted GameController gameController,
+      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted ActionTakeLeaderCard action) {
     super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetLeaderCard(gameStateRenderer, action),
-        createActionMessage(gameState), action.execute(gameState));
+        createActionMessage(gameState), action.execute(gameController, gameState));
 
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     extras = new SceneNodeList();
 
     // Arrow to move card.
@@ -109,7 +111,7 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
   }
 
   private static Message createActionMessage(GameState gameState) {
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     return new Message.TakeThisLeaderCard(gameState.nbPlayerWithLeaders(),
         playerColor);
   }

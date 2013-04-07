@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.location;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * Identifies a class representing a location on the board. Locations can be visited by
  * {@link LocationVisitor}. This is used, for example, by the rendering engine to
@@ -23,7 +25,7 @@ package com.philbeaudoin.quebec.shared.location;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface Location {
+public interface Location extends IsSerializable {
   /**
    * Accepts a location visitor.
    * @param visitor The visitor.

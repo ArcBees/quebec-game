@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.message;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 
@@ -23,9 +24,9 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
  * The base class for messages that can contain an arbitrary number of colors or influence zones.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-class BaseMessage {
-  private final PlayerColor[] colors;
-  private final InfluenceType[] zones;
+class BaseMessage implements IsSerializable {
+  private PlayerColor[] colors;
+  private InfluenceType[] zones;
   BaseMessage(PlayerColor[] colors, InfluenceType[] zones) {
     this.colors = colors;
     this.zones = zones;
@@ -35,6 +36,11 @@ class BaseMessage {
   }
   BaseMessage(InfluenceType... zones) {
     this(null, zones);
+  }
+  /**
+   * For serialization only.
+   */
+  protected BaseMessage() {
   }
   public PlayerColor getColor(int i) {
     assert colors != null && i < colors.length;

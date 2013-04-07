@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
 import com.philbeaudoin.quebec.shared.location.LeaderDestinationPlayer;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
@@ -40,11 +41,18 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
  */
 public class ActionTakeLeaderCard implements GameAction, HasLeaderCard {
 
-  private final LeaderCard leaderCard;
-  private final GameStateChange followup;
+  private LeaderCard leaderCard;
+  private GameStateChange followup;
 
   public ActionTakeLeaderCard(LeaderCard leaderCard) {
     this(leaderCard, null);
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ActionTakeLeaderCard() {
   }
 
   public ActionTakeLeaderCard(LeaderCard leaderCard, GameStateChange followup) {
@@ -57,10 +65,10 @@ public class ActionTakeLeaderCard implements GameAction, HasLeaderCard {
   }
 
   @Override
-  public GameStateChange execute(GameState gameState) {
+  public GameStateChange execute(GameController gameController, GameState gameState) {
     GameStateChangeComposite result = new GameStateChangeComposite();
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor activePlayer = playerState.getPlayer().getColor();
+    PlayerColor activePlayer = playerState.getColor();
 
     assert playerState.getLeaderCard() == null;
 

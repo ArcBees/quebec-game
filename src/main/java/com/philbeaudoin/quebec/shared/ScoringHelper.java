@@ -180,7 +180,7 @@ public class ScoringHelper {
   public static ScoringInformation computeActiveCubesScoringInformation(GameState gameState) {
     ScoringInformation scoringInformation = new ScoringInformation();
     for (PlayerState playerState : gameState.getPlayerStates()) {
-      PlayerColor playerColor = playerState.getPlayer().getColor();
+      PlayerColor playerColor = playerState.getColor();
       scoringInformation.addToScore(playerColor, playerState.getNbActiveCubes() / 2);
     }
     return scoringInformation;

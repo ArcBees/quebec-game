@@ -22,6 +22,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringHelper;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.TileState;
@@ -35,9 +36,9 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 public class AiBrainSimple2 implements AiBrain {
 
   @Override
-  public GameStateChange getMove(GameState gameState) {
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
-    ScoreAndMove result = scoreForBestMove(gameState, playerColor);
+  public GameStateChange getMove(GameController gameController, GameState gameState) {
+    PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
+    ScoreAndMove result = scoreForBestMove(gameController, gameState, playerColor);
     if (result == null) {
       return null;
     }
@@ -53,12 +54,14 @@ public class AiBrainSimple2 implements AiBrain {
    * Calculate the score for the best possible move for the player of a given color. If the game
    * state does not mark that player as active, we return null. That is, we don't perform
    * any mini-max here.
+   * @param gameController The game controller.
    * @param gameState The current game state.
    * @param playerState The player for which to find the best possible move.
    * @return The best possible move and its score, or null.
    */
-  private ScoreAndMove scoreForBestMove(GameState gameState, PlayerColor playerColor) {
-    if (playerColor != gameState.getCurrentPlayer().getPlayer().getColor()) {
+  private ScoreAndMove scoreForBestMove(GameController gameController, GameState gameState,
+      PlayerColor playerColor) {
+    if (playerColor != gameState.getCurrentPlayer().getColor()) {
       return null;
     }
 
@@ -71,9 +74,10 @@ public class AiBrainSimple2 implements AiBrain {
     GameStateChange bestMove = null;
     for (int actionIndex = 0; actionIndex < possibleActions.getNbActions(); ++actionIndex) {
       GameState gameStateCopy = new GameState(gameState);
-      GameStateChange gameStateChange = possibleActions.execute(actionIndex, gameStateCopy);
-      gameStateChange.apply(gameStateCopy);
-      ScoreAndMove scoreAndMove = scoreForBestMove(gameStateCopy, playerColor);
+      GameStateChange gameStateChange = possibleActions.execute(gameController, actionIndex,
+          gameStateCopy);
+      gameStateChange.apply(gameController, gameStateCopy);
+      ScoreAndMove scoreAndMove = scoreForBestMove(gameController, gameStateCopy, playerColor);
       double score = -10000;
       if (scoreAndMove == null) {
         score = evaluate(gameStateCopy, playerColor);
@@ -128,7 +132,7 @@ public class AiBrainSimple2 implements AiBrain {
       if (movesUntilScoring.architectMoves < 4) {
         return 0;
       }
-      int cubesOnTiles = calculateCubesOnTiles(gameState, playerState.getPlayer().getColor());
+      int cubesOnTiles = calculateCubesOnTiles(gameState, playerState.getColor());
       return cubesOnTiles * 0.6 + playerState.getNbActiveCubes() * 0.2;
     case ECONOMIC:
       // Can grab more tiles, each architect move is worth extra point, it's worth more in
@@ -239,7 +243,7 @@ public class AiBrainSimple2 implements AiBrain {
       PlayerState playerState = playerStates.get(i);
       nbActives[i] = playerState.getNbActiveCubes();
       nbPassives[i] = playerState.getNbPassiveCubes();
-      if (playerState.getPlayer().getColor() == playerColor) {
+      if (playerState.getColor() == playerColor) {
         scoringPlayerIndex = i;
       }
     }
@@ -249,7 +253,7 @@ public class AiBrainSimple2 implements AiBrain {
     while (true) {
       PlayerState playerState = playerStates.get(i);
       result.moves++;
-      if (playerState.getPlayer().getColor() == playerColor) {
+      if (playerState.getColor() == playerColor) {
         result.playerMoves++;
       }
       if (nbActives[i] == 0 && nbPassives[i] == 0) {
@@ -258,7 +262,7 @@ public class AiBrainSimple2 implements AiBrain {
       if (nbActives[i] <= 1) {
         // Move architect.
         result.architectMoves++;
-        if (playerState.getPlayer().getColor() == playerColor) {
+        if (playerState.getColor() == playerColor) {
           result.playerArchitectMoves++;
         }
         if (nbUnusedTiles == 0) {

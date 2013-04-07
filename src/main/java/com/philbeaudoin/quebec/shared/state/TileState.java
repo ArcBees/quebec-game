@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.ArrayList;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -26,17 +27,17 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class TileState {
+public class TileState implements IsSerializable {
 
-  private final Tile tile;
-  private final Vector2d location;
+  private Tile tile;
+  private Vector2d location;
   private PlayerColor architect = PlayerColor.NONE;
   private boolean buildingFacing;
   private PlayerColor starTokenColor;
   private int nbStars;
 
   /* The color of the cubes at each of the three building spots. */
-  private final ArrayList<PlayerColor> colorInSpot = new ArrayList<PlayerColor>(3);
+  private ArrayList<PlayerColor> colorInSpot = new ArrayList<PlayerColor>(3);
 
   TileState(Tile tile, Vector2d location) {
     this.tile = tile;
@@ -45,6 +46,13 @@ public class TileState {
     starTokenColor = PlayerColor.NONE;
     nbStars = 0;
     clearCubes();
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private TileState() {
   }
 
   /**

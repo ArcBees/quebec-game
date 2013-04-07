@@ -34,6 +34,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.ActionType;
 import com.philbeaudoin.quebec.shared.state.Board;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
@@ -53,13 +54,13 @@ public class InteractionSendWorkers extends InteractionWithAction {
   public InteractionSendWorkers(Scheduler scheduler, SpriteResources spriteResources,
       InteractionFactories interactionFactories,
       SceneNodeAnimation.Factory sceneNodeAnimationFactory, TextBoxRenderer textBoxRenderer,
-      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionSendWorkers action) {
+      @Assisted GameController gameController, @Assisted GameState gameState,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionSendWorkers action) {
     super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
-        createActionMessage(gameState, action), action.execute(gameState));
+        createActionMessage(gameState, action), action.execute(gameController, gameState));
     PlayerState currentPlayer = gameState.getCurrentPlayer();
-    PlayerColor playerColor = currentPlayer.getPlayer().getColor();
+    PlayerColor playerColor = currentPlayer.getColor();
 
     arrows = new SceneNodeList();
     Transform cubesFrom = gameStateRenderer.getPlayerCubeZoneTransform(playerColor,
@@ -108,7 +109,7 @@ public class InteractionSendWorkers extends InteractionWithAction {
   }
 
   private static Message createActionMessage(GameState gameState, ActionSendWorkers action) {
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     TileState tileState = gameState.findTileState(action.getDestinationTile());
     if (action.canExecuteBoardAction(gameState)) {
       ActionType actionType = Board.actionForTileLocation(tileState.getLocation().getColumn(),

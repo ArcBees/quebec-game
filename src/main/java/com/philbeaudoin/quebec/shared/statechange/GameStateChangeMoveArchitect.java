@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.shared.statechange;
 
 import com.philbeaudoin.quebec.shared.location.ArchitectDestination;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -25,8 +26,8 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class GameStateChangeMoveArchitect implements GameStateChange {
 
-  private final ArchitectDestination from;
-  private final ArchitectDestination to;
+  private ArchitectDestination from;
+  private ArchitectDestination to;
 
   public GameStateChangeMoveArchitect(ArchitectDestination from, ArchitectDestination to) {
     assert from.getArchitectColor() == to.getArchitectColor();
@@ -34,8 +35,15 @@ public class GameStateChangeMoveArchitect implements GameStateChange {
     this.to = to;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameStateChangeMoveArchitect() {
+  }
+
   @Override
-  public void apply(GameState gameState) {
+  public void apply(GameController gameController, GameState gameState) {
     from.removeFrom(gameState);
     to.addTo(gameState);
   }

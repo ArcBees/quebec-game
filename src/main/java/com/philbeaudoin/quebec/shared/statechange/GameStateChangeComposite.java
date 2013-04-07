@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.shared.statechange;
 
 import java.util.ArrayList;
 
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -25,12 +26,12 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class GameStateChangeComposite implements GameStateChange {
-  private final ArrayList<GameStateChange> changes = new ArrayList<GameStateChange>();
+  private ArrayList<GameStateChange> changes = new ArrayList<GameStateChange>();
 
   @Override
-  public void apply(GameState gameState) {
+  public void apply(GameController gameController, GameState gameState) {
     for (GameStateChange change : changes) {
-      change.apply(gameState);
+      change.apply(gameController, gameState);
     }
   }
 

@@ -135,6 +135,7 @@ public class GameManagerImpl implements GameManager, ObjectifyServiceWrapper {
         return result == null ? null : serverSessionManager.anonymizeUserInfo(result);
       }
       @Override public Date getCreationDate() { return gameInfo.getCreationDate(); }
+      @Override public int getCurrentPlayerIndex() { return gameInfo.getCurrentPlayerIndex(); }
     };
   }
 

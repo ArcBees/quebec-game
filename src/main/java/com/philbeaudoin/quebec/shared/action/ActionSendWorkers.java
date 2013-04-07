@@ -22,6 +22,7 @@ import com.philbeaudoin.quebec.shared.location.CubeDestinationTile;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.Board;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.Tile;
@@ -41,9 +42,9 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  */
 public class ActionSendWorkers implements GameActionOnTile {
 
-  private final boolean fromActive;
-  private final Tile destinationTile;
-  private final GameStateChange followup;
+  private boolean fromActive;
+  private Tile destinationTile;
+  private GameStateChange followup;
 
   public ActionSendWorkers(boolean fromActive, Tile destinationTile) {
     this(fromActive, destinationTile, null);
@@ -56,11 +57,18 @@ public class ActionSendWorkers implements GameActionOnTile {
     this.followup = followup;
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ActionSendWorkers() {
+  }
+
   @Override
-  public GameStateChange execute(GameState gameState) {
+  public GameStateChange execute(GameController gameController, GameState gameState) {
     GameStateChangeComposite result = new GameStateChangeComposite();
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor activePlayer = playerState.getPlayer().getColor();
+    PlayerColor activePlayer = playerState.getColor();
 
     TileState tileState = gameState.findTileState(destinationTile);
     int destinationSpot = -1;

@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.message.Message;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
@@ -41,13 +42,14 @@ public class InteractionMoveArchitect extends
 
   @Inject
   public InteractionMoveArchitect(Scheduler scheduler, InteractionFactories interactionFactories,
-      TextBoxRenderer textBoxRenderer, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionMoveArchitect action) {
+      TextBoxRenderer textBoxRenderer, @Assisted GameController gameController,
+      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted ActionMoveArchitect action) {
     super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
-        new Message.Text("moveYourArchitectToThisTile"), action.execute(gameState));
+        new Message.Text("moveYourArchitectToThisTile"), action.execute(gameController, gameState));
 
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
 
     arrows = new SceneNodeList();
     arrows.add(Helpers.createArchitectArrow(gameState, gameStateRenderer, action));

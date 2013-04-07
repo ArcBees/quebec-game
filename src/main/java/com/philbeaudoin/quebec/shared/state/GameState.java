@@ -18,10 +18,10 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.ArrayList;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -29,21 +29,19 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * The state of the entire game.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameState {
+public class GameState implements IsSerializable {
 
-  private final GameController gameController;
-  private final ArrayList<PlayerState> playerStates;
-  private final ArrayList<TileState> tileStates;
-  private final ArrayList<LeaderCard> availableLeaderCards;
+  private ArrayList<PlayerState> playerStates;
+  private ArrayList<TileState> tileStates;
+  private ArrayList<LeaderCard> availableLeaderCards;
 
-  private final InfluenceZoneState influenceZoneState[] = new InfluenceZoneState[5];
+  private InfluenceZoneState influenceZoneState[] = new InfluenceZoneState[5];
 
   private int century;
 
   private PossibleActions possibleActions;
 
-  public GameState(GameController gameController) {
-    this.gameController = gameController;
+  public GameState() {
     playerStates = new ArrayList<PlayerState>();
     tileStates = new ArrayList<TileState>();
     availableLeaderCards = new ArrayList<LeaderCard>();
@@ -58,7 +56,6 @@ public class GameState {
    * @param other The game state to copy.
    */
   public GameState(GameState other) {
-    gameController = other.gameController;
     century = other.century;
     playerStates = new ArrayList<PlayerState>(other.playerStates.size());
     for (PlayerState playerState : other.playerStates) {
@@ -113,7 +110,7 @@ public class GameState {
   public PlayerState getPlayerState(PlayerColor playerColor) {
     assert playerColor.isNormalColor();
     for (PlayerState playerState : playerStates) {
-      if (playerState.getPlayer().getColor() == playerColor) {
+      if (playerState.getColor() == playerColor) {
         return playerState;
       }
     }
@@ -233,25 +230,9 @@ public class GameState {
   }
 
   /**
-   * Setup the initial game state for a given list of player.
-   * @param players The list of players.
-   */
-  public void initGame(ArrayList<Player> players) {
-    gameController.initGame(this, players);
-  }
-
-  /**
-   * Prepare the beginning of the next century.
-   */
-  public void prepareNextCentury() {
-    gameController.prepareNextCentury(this);
-  }
-
-  /**
    * Switch to the next player and setup the board for it.
-   * @param prepareActions True to prepare the possible actions, false to not prepare them.
    */
-  public void nextPlayer(boolean prepareActions) {
+  public void nextPlayer() {
     boolean lastWasActive = false;
     for (PlayerState playerState : playerStates) {
       if (lastWasActive) {
@@ -265,9 +246,6 @@ public class GameState {
     if (lastWasActive) {
       playerStates.get(0).setCurrentPlayer(true);
     }
-    if (prepareActions) {
-      gameController.configurePossibleActions(this);
-    }
   }
 
   /**
@@ -276,7 +254,7 @@ public class GameState {
    */
   public void setCurrentPlayer(PlayerColor playerColor) {
     for (PlayerState playerState : playerStates) {
-      playerState.setCurrentPlayer(playerState.getPlayer().getColor() == playerColor);
+      playerState.setCurrentPlayer(playerState.getColor() == playerColor);
     }
   }
 
@@ -292,14 +270,6 @@ public class GameState {
       }
     }
     return result;
-  }
-
-  /**
-   * Access the controller of this game state.
-   * @return The controller.
-   */
-  public GameController getController() {
-    return gameController;
   }
 
   /**

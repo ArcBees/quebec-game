@@ -16,6 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.statechange;
 
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -25,10 +26,17 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class GameStateChangeInstantaneousDecorator implements GameStateChange {
 
-  private final GameStateChange decorated;
+  private GameStateChange decorated;
 
   public GameStateChangeInstantaneousDecorator(GameStateChange decorated) {
     this.decorated = decorated;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private GameStateChangeInstantaneousDecorator() {
   }
 
   /**
@@ -40,8 +48,8 @@ public class GameStateChangeInstantaneousDecorator implements GameStateChange {
   }
 
   @Override
-  public void apply(GameState gameState) {
-    decorated.apply(gameState);
+  public void apply(GameController gameController, GameState gameState) {
+    decorated.apply(gameController, gameState);
   }
 
   @Override

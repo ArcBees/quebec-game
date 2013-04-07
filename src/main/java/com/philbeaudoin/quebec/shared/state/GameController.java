@@ -31,6 +31,7 @@ public interface GameController {
   /**
    * Clears the game state and resets the entire game to the initial state.
    * @param gameState The state to reset and initialize.
+   * @param players The list of players in that game.
    */
   void initGame(GameState gameState, List<Player> players);
 

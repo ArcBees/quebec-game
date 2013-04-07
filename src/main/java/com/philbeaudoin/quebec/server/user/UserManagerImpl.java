@@ -126,7 +126,7 @@ public class UserManagerImpl implements UserManager, ObjectifyServiceWrapper {
       } else {
         userInfoEntitymodified = true;
         userInfoEntity = UserInfoEntity.CreateWithGoogleId(userToSignIn.getGoogleId());
-        ofy().save().entity(googleUserEntity).now();
+        ofy().save().entity(userInfoEntity).now();
       }
       String email = userToSignIn.getEmail();
       if (!email.equals(userInfoEntity.getEmail())) {
@@ -140,6 +140,10 @@ public class UserManagerImpl implements UserManager, ObjectifyServiceWrapper {
       }
       if (userInfoEntitymodified) {
         ofy().save().entity(userInfoEntity).now();
+      }
+      if (googleUserEntity == null) {
+        googleUserEntity = GoogleUserEntity.Create(userToSignIn.getGoogleId(), userInfoEntity);
+        ofy().save().entity(googleUserEntity).now();
       }
       return userInfoEntity;
     }

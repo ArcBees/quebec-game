@@ -55,7 +55,7 @@ public class MoveArchitectHelper {
    */
   static GameStateChange completeBuilding(GameState gameState, PlayerState playerState,
       TileState originState, GameStateChangeComposite result) {
-    PlayerColor playerColor = playerState.getPlayer().getColor();
+    PlayerColor playerColor = playerState.getColor();
     Tile origin = originState.getTile();
     InfluenceType tileInfluence = origin.getInfluenceType();
 

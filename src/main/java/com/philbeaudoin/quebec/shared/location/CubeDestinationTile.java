@@ -27,14 +27,21 @@ import com.philbeaudoin.quebec.shared.state.TileState;
  */
 public class CubeDestinationTile implements CubeDestination {
 
-  private final Tile tile;
-  private final PlayerColor playerColor;
-  private final int spot;
+  private Tile tile;
+  private PlayerColor playerColor;
+  private int spot;
 
   public CubeDestinationTile(Tile tile, PlayerColor playerColor, int spot) {
     this.tile = tile;
     this.playerColor = playerColor;
     this.spot = spot;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private CubeDestinationTile() {
   }
 
   @Override

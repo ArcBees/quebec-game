@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -29,12 +30,12 @@ import com.philbeaudoin.quebec.shared.state.GameState;
 public class GameStateChangeReinit implements GameStateChange {
 
   @Override
-  public void apply(GameState gameState) {
+  public void apply(GameController gameController, GameState gameState) {
     ArrayList<Player> players = new ArrayList<Player>();
     for (PlayerState playerState : gameState.getPlayerStates()) {
       players.add(playerState.getPlayer());
     }
-    gameState.initGame(players);
+    gameController.initGame(gameState, players);
   }
 
   @Override

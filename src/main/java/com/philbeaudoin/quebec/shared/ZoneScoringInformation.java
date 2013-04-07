@@ -16,23 +16,31 @@
 
 package com.philbeaudoin.quebec.shared;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.location.CubeDestination;
 
 /**
  * Information on a specific zone scoring and cascade for a given zone, for each player.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class ZoneScoringInformation {
-  private final int scoringZoneIndex;
-  private final InfluenceType zoneToScore;
-  private final int scorePerPlayer[] = new int[5];
-  private final int cascadePerPlayer[] = new int[5];
-  private final CubeDestination[] origin = new CubeDestination[5];
-  private final CubeDestination[] destination = new CubeDestination[5];
+public class ZoneScoringInformation implements IsSerializable {
+  private int scoringZoneIndex;
+  private InfluenceType zoneToScore;
+  private int scorePerPlayer[] = new int[5];
+  private int cascadePerPlayer[] = new int[5];
+  private CubeDestination[] origin = new CubeDestination[5];
+  private CubeDestination[] destination = new CubeDestination[5];
 
   public ZoneScoringInformation(int scoringZoneIndex, InfluenceType zoneToScore) {
     this.scoringZoneIndex = scoringZoneIndex;
     this.zoneToScore = zoneToScore;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ZoneScoringInformation() {
   }
 
   public void setScore(PlayerColor playerColor, int score) {

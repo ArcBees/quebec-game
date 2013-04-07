@@ -613,7 +613,7 @@ public class BoardRenderer {
   private TileInfo findTileInfo(Tile tile) {
     for (int i = 0; i < 18; ++i) {
       for (int j = 0; j < 8; ++j) {
-        if (tileGrid[i][j] != null && tileGrid[i][j].tile == tile) {
+        if (tileGrid[i][j] != null && tileGrid[i][j].tile.equals(tile)) {
           return tileGrid[i][j];
         }
       }

@@ -23,6 +23,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -35,11 +36,11 @@ public class InteractionIncreaseStar extends InteractionWithAction {
   @Inject
   public InteractionIncreaseStar(Scheduler scheduler,
       InteractionFactories interactionFactories, MessageRenderer messageRenderer,
-      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionIncreaseStar action) {
+      @Assisted GameController gameController, @Assisted GameState gameState,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionIncreaseStar action) {
     super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
-        action.execute(gameState));
+        action.execute(gameController, gameState));
   }
 
 }

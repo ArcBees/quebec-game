@@ -25,13 +25,19 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
  */
 public abstract class PlayerBase implements Player {
 
-  private final String name;
-  private final PlayerColor color;
+  private String name;
+  private PlayerColor color;
 
   public PlayerBase(PlayerColor color, String name) {
     assert color.isNormalColor();
     this.name = name;
     this.color = color;
+  }
+
+  /**
+   * For serialization only.
+   */
+  protected PlayerBase() {
   }
 
   @Override

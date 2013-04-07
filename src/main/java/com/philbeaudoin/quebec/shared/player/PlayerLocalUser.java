@@ -28,8 +28,16 @@ public class PlayerLocalUser extends PlayerBase {
     super(color, name);
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private PlayerLocalUser() {
+  }
+
   @Override
   public <T> T accept(PlayerVisitor<T> visitor) {
     return visitor.visit(this);
   }
+
 }

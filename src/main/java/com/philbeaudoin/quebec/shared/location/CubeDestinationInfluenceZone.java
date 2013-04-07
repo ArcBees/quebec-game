@@ -26,13 +26,20 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class CubeDestinationInfluenceZone implements CubeDestination {
 
-  private final InfluenceType influenceType;
-  private final PlayerColor playerColor;
+  private InfluenceType influenceType;
+  private PlayerColor playerColor;
 
   public CubeDestinationInfluenceZone(InfluenceType influenceType,
       PlayerColor playerColor) {
     this.influenceType = influenceType;
     this.playerColor = playerColor;
+  }
+
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private CubeDestinationInfluenceZone() {
   }
 
   @Override

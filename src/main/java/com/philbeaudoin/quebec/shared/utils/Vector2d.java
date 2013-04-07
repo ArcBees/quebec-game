@@ -16,12 +16,14 @@
 
 package com.philbeaudoin.quebec.shared.utils;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * An immutable 2-dimensional vector.
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class Vector2d {
+public class Vector2d implements IsSerializable {
   protected double x, y;
 
   public Vector2d() {

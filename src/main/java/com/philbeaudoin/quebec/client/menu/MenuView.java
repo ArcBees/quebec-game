@@ -22,6 +22,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
@@ -148,34 +149,66 @@ public class MenuView extends ViewImpl implements MenuPresenter.MyView {
   }
 
   private FlowPanel CreateGameItem(final GameInfoForGameList gameInfo) {
-    String gameString = DateTimeFormat.getFormat(
-        DateTimeFormat.PredefinedFormat.DATE_TIME_FULL).format(gameInfo.getCreationDate()) + " : ";
+    FlowPanel div = new FlowPanel();
+    div.add(new InlineLabel(DateTimeFormat.getFormat(
+        DateTimeFormat.PredefinedFormat.DATE_TIME_FULL).format(gameInfo.getCreationDate()) + 
+            " : "));
     for (int i = 0; i < gameInfo.getNbPlayers(); ++i) {
       if (i != 0)
-        gameString += ", ";
+        div.add(new InlineLabel(","));
       UserInfo user = gameInfo.getPlayerInfo(i);
-      gameString += user == null ? "???" : 
-        (user.getName() + (user.getEmail() == null ? "" : " (" + user.getEmail() + ")"));
+      InlineLabel userName;
+      if (user == null) {
+        userName = new InlineLabel("???");
+        div.add(userName);
+      } else {
+        userName = new InlineLabel(user.getName());
+        div.add(userName);
+        if (user.getEmail() != null) {
+          div.add(new InlineLabel("(" + user.getEmail() + ")"));
+        }
+      }
+      if (gameInfo.getCurrentPlayerIndex() == i) {
+        userName.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+      }
     }
-    FlowPanel div = new FlowPanel();
-    div.add(new InlineLabel(gameString));
-    switch (gameInfo.getJoinState()) {
+    switch (gameInfo.getState()) {
     case CAN_JOIN:
-      Anchor join = new Anchor("Join", "");
-      join.setHref("javascript:;");
-      registrations.add(join.addClickHandler(new ClickHandler() {
+      addActionAnchor("Join", div, new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
           presenter.joinGame(gameInfo);
         }
-      }));
-      div.add(join);
+      });
+      break;
+    case CAN_PLAY:
+      addActionAnchor("Play", div, new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+          presenter.playGame(gameInfo);
+        }
+      });
+      break;
+    case CAN_VIEW:
+      addActionAnchor("View", div, new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+          presenter.viewGame(gameInfo);
+        }
+      });
       break;
     case JOINING:
       div.add(new InlineLabel("Joining..."));
       break;
     }
     return div;
+  }
+
+  private void addActionAnchor(String label, FlowPanel div, ClickHandler clickHandler) {
+    Anchor anchor = new Anchor(label, "");
+    anchor.setHref("javascript:;");
+    registrations.add(anchor.addClickHandler(clickHandler));
+    div.add(anchor);
   }
 
   private void authorized(String code) {

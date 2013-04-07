@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 Philippe Beaudoin
+ * Copyright 2013 Philippe Beaudoin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,32 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.player;
+package com.philbeaudoin.quebec.shared.serveractions;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.gwtplatform.dispatch.shared.Result;
+import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
- * Information on a player taking part in a game.
+ * Returns the complete state of a given game.
+ *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface Player extends IsSerializable {
+public class GameStateResult implements Result {
+
+  private GameState gameState;
+
+  public GameStateResult(final GameState gameState) {
+    this.gameState = gameState;
+  }
 
   /**
-   * Access the name of this player.
-   * @return The player name.
+   * For serialization only.
    */
-  String getName();
+  @SuppressWarnings("unused")
+  private GameStateResult() {
+  }
 
-  /**
-   * Access the color of this player.
-   * @return The player color.
-   */
-  PlayerColor getColor();
-
-  /**
-   * Accepts a visitor.
-   * @param visitor The visitor to accept.
-   * @return A visitor-dependent object.
-   */
-  <T> T accept(PlayerVisitor<T> visitor);
+  public GameState getGameState() {
+    return gameState;
+  }
 }

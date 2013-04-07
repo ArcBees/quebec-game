@@ -43,7 +43,7 @@ public class Helpers {
    */
   public static SceneNode createArchitectArrow(GameState gameState,
       GameStateRenderer gameStateRenderer, ActionMoveArchitect action) {
-    PlayerColor playerColor = gameState.getCurrentPlayer().getPlayer().getColor();
+    PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     PlayerColor architectColor = action.isNeutralArchitect() ? PlayerColor.NEUTRAL : playerColor;
     TileState origin = gameState.findTileUnderArchitect(architectColor);
     Vector2d architectFrom;

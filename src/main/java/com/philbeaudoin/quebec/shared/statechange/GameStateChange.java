@@ -16,18 +16,21 @@
 
 package com.philbeaudoin.quebec.shared.statechange;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * A class can can track a single change of the game state.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameStateChange {
+public interface GameStateChange extends IsSerializable {
   /**
    * Apply this change to the specified game change.
+   * @param gameController The game controller.
    * @param gameState The game state to apply this change to.
    */
-  void apply(GameState gameState);
+  void apply(GameController gameController, GameState gameState);
 
   /**
    * Accepts a visitor.

@@ -25,7 +25,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class BaseMessageWithCount extends BaseMessage {
-  private final int count;
+  private int count;
   BaseMessageWithCount(int count, PlayerColor[] colors, InfluenceType[] zones) {
     super(colors, zones);
     this.count = count;
@@ -38,6 +38,11 @@ public class BaseMessageWithCount extends BaseMessage {
   }
   BaseMessageWithCount(int count) {
     this(count, null, null);
+  }
+  /**
+   * For serialization only.
+   */
+  protected BaseMessageWithCount() {
   }
   public int getCount() {
     return count;

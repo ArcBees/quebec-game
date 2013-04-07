@@ -38,9 +38,9 @@ public class BoardActionPurpleOnePointOneToAnyActivateOne extends BoardAction {
     super(14, 3, InfluenceType.RELIGIOUS, 2, ActionType.PURPLE_ONE_POINT_ONE_TO_ANY_ACTIVATE_ONE);
   }
 
-  public PossibleActions getPossibleActions(GameState gameState, Tile triggeringTile) {
+  public PossibleActions getPossibleActions(GameController gameController, GameState gameState, Tile triggeringTile) {
     PlayerState playerState = gameState.getCurrentPlayer();
-    PlayerColor playerColor = playerState.getPlayer().getColor();
+    PlayerColor playerColor = playerState.getColor();
     int totalCubes = playerState.getNbTotalCubes();
 
     PossibleActions sendAnywhere = new PossibleActions(

@@ -31,6 +31,13 @@ public class ActionExplicitHighlightBoardActions extends ActionExplicit {
     super(message, action);
   }
 
+  /**
+   * For serialization only.
+   */
+  @SuppressWarnings("unused")
+  private ActionExplicitHighlightBoardActions() {
+  }
+
   @Override
   public void accept(GameActionVisitor visitor) {
     visitor.visit(this);

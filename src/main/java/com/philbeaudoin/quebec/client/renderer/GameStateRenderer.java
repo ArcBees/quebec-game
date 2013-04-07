@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.interaction.ActionDescriptionInteraction;
 import com.philbeaudoin.quebec.client.interaction.Interaction;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
@@ -39,6 +40,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.Tile;
@@ -78,6 +80,7 @@ public class GameStateRenderer {
   private final InteractionFactories interactionFactories;
   private final ChangeRendererGenerator changeRendererGenerator;
   private final PlayerAgentGenerator playerAgentGenerator;
+  private final GameController gameController;
   private final ScoreRenderer scoreRenderer;
   private final BoardRenderer boardRenderer;
   private final ArrayList<PlayerStateRenderer> playerStateRenderers =
@@ -91,16 +94,19 @@ public class GameStateRenderer {
   private CallbackRegistration animationCompletedRegistration;
 
   @Inject
-  public GameStateRenderer(Scheduler scheduler, RendererFactories factories,
+  GameStateRenderer(Scheduler scheduler,
+      RendererFactories factories,
       InteractionFactories interactionFactories,
       SpriteResources spriteResources,
       ChangeRendererGenerator changeRendererGenerator,
-      PlayerAgentGenerator playerAgentGenerator) {
+      PlayerAgentGenerator playerAgentGenerator,
+      @Assisted GameController gameController) {
     this.scheduler = scheduler;
     this.factories = factories;
     this.interactionFactories = interactionFactories;
     this.changeRendererGenerator = changeRendererGenerator;
     this.playerAgentGenerator = playerAgentGenerator;
+    this.gameController = gameController;
     scoreRenderer = factories.createScoreRenderer();
     boardRenderer = factories.createBoardRenderer(LEFT_COLUMN_WIDTH);
     staticRoot.add(backgroundRoot);
@@ -139,7 +145,7 @@ public class GameStateRenderer {
 
     PlayerAgent playerAgent = gameState.getCurrentPlayer().getPlayer()
         .accept(playerAgentGenerator);
-    playerAgent.renderInteractions(gameState, this);
+    playerAgent.renderInteractions(gameController, gameState, this);
     for (Interaction interaction : interactions) {
       interaction.highlight();
     }
@@ -775,7 +781,8 @@ public class GameStateRenderer {
     // TODO(beaudoin): Hack to get statistics.
     LeaderCard leaderCard = gameState.getCurrentPlayer().getLeaderCard();
     if (leaderCard != null) {
-      cardsUsed[gameState.getCurrentPlayer().getPlayer().getColor().normalColorIndex()][gameState.getCentury()] = leaderCard;
+      cardsUsed[gameState.getCurrentPlayer().getColor().normalColorIndex()]
+          [gameState.getCentury()] = leaderCard;
     }
 
     // TODO(beaudoin): Hack to get statistics.
@@ -827,7 +834,7 @@ public class GameStateRenderer {
       });
     }
     clearAnimationGraph();
-    change.apply(gameState);
+    change.apply(gameController, gameState);
     render(gameState);
   }
 
