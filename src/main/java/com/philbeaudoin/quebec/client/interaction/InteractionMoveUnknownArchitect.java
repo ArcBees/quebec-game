@@ -16,9 +16,13 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
@@ -27,10 +31,8 @@ import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -39,21 +41,22 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * This is an interaction with the game board for the action of moving one's architect.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionMoveUnknownArchitect extends InteractionWithAction {
+public class InteractionMoveUnknownArchitect extends InteractionWithSubinteraction {
 
   private final GameStateRenderer gameStateRenderer;
   private final SceneNodeList extras;
 
   @Inject
   public InteractionMoveUnknownArchitect(Scheduler scheduler,
-      InteractionFactories interactionFactories, MessageRenderer messageRenderer,
+      InteractionFactories interactionFactories, Provider<MessageRenderer> messageRendererProvider,
       @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer,
       @Assisted("a") ActionMoveArchitect actionArchitectA,
       @Assisted("b") ActionMoveArchitect actionArchitectB) {
     super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, actionArchitectA),
-        createGameStateChange(gameState, actionArchitectA, actionArchitectB));
+        createSubinteactions(messageRendererProvider, interactionFactories, gameState,
+            gameStateRenderer, actionArchitectA, actionArchitectB));
 
     this.gameStateRenderer = gameStateRenderer;
     assert actionArchitectA.getDestinationTile() == actionArchitectB.getDestinationTile();
@@ -61,6 +64,7 @@ public class InteractionMoveUnknownArchitect extends InteractionWithAction {
     extras = new SceneNodeList();
 
     // Text at the top
+    MessageRenderer messageRenderer = messageRendererProvider.get();
     new Message.MoveEitherArchitect(playerColor, PlayerColor.NEUTRAL).accept(messageRenderer);
     extras.add(new ComplexText(messageRenderer.getComponents(),
         new ConstantTransform(new Vector2d(0.8, 0.18))));
@@ -81,14 +85,34 @@ public class InteractionMoveUnknownArchitect extends InteractionWithAction {
     }
   }
 
-  private static GameStateChangeQueuePossibleActions createGameStateChange(
-      GameState gameState, ActionMoveArchitect actionArchitectA,
+  private static List<Interaction> createSubinteactions(
+      Provider<MessageRenderer> messageRendererProvider,
+      InteractionFactories factories,
+      GameState gameState,
+      GameStateRenderer gameStateRenderer,
+      ActionMoveArchitect actionArchitectA,
       ActionMoveArchitect actionArchitectB) {
 
-    PossibleActions possibleActions = new PossibleActions();
-    possibleActions.add(actionArchitectA);
-    possibleActions.add(actionArchitectB);
-    return new GameStateChangeQueuePossibleActions(possibleActions);
+    List<MessageRenderer> messageRenderers = new ArrayList<MessageRenderer>(2);
+    messageRenderers.add(messageRendererProvider.get());
+    messageRenderers.add(messageRendererProvider.get());
+
+    generateSelectArchitectMessageRenderers(actionArchitectA, actionArchitectB,
+        messageRenderers.get(0), messageRenderers.get(1), gameState.getCurrentPlayer().getColor());
+
+    List<Vector2d> positions = Helpers.calculateTextInteractionLocations(messageRenderers);
+    assert positions.size() == 2;
+    List<Interaction> subinteractions = new ArrayList<Interaction>(2);
+    subinteractions.add(factories.createInteractionText(gameState, gameStateRenderer,
+        messageRenderers.get(0), null,
+        Helpers.createArchitectArrow(gameState, gameStateRenderer, actionArchitectA),
+        positions.get(0), actionArchitectA));
+    subinteractions.add(factories.createInteractionText(gameState, gameStateRenderer,
+        messageRenderers.get(1), null,
+        Helpers.createArchitectArrow(gameState, gameStateRenderer, actionArchitectB),
+        positions.get(1), actionArchitectB));
+
+    return subinteractions;
   }
 
   @Override
@@ -101,5 +125,31 @@ public class InteractionMoveUnknownArchitect extends InteractionWithAction {
   protected void doMouseLeave(double x, double y, double time) {
     super.doMouseLeave(x, y, time);
     extras.setParent(null);
+  }
+
+
+  /**
+   * Generates two {@link TextIn
+   */
+  public static void generateSelectArchitectMessageRenderers(
+      ActionMoveArchitect actionArchitectA,
+      ActionMoveArchitect actionArchitectB,
+      MessageRenderer messageRendererA,
+      MessageRenderer messageRendererB,
+      PlayerColor currentPlayer) {
+    // Case where we have only one pair, let the user select which architect to move.
+    PlayerColor colorA = actionArchitectA.isNeutralArchitect() ? PlayerColor.NEUTRAL : currentPlayer;
+    PlayerColor colorB = actionArchitectB.isNeutralArchitect() ? PlayerColor.NEUTRAL : currentPlayer;
+    if (actionArchitectA.getDestinationTile() != null) {
+      // Destination is another tile.
+      new Message.MoveArchitect(colorA).accept(messageRendererA);
+      new Message.MoveArchitect(colorB).accept(messageRendererB);
+    } else {
+      // Destination is outside the board.
+      new Message.RemoveNeutralArchitect().accept(actionArchitectA.isNeutralArchitect() ?
+          messageRendererA : messageRendererA);
+      new Message.MoveArchitectOut(currentPlayer).accept(actionArchitectA.isNeutralArchitect() ?
+          messageRendererB : messageRendererB);
+    }
   }
 }

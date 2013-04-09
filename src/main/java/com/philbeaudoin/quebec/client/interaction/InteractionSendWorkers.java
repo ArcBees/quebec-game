@@ -34,7 +34,6 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.ActionType;
 import com.philbeaudoin.quebec.shared.state.Board;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
-import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.TileState;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
@@ -54,11 +53,11 @@ public class InteractionSendWorkers extends InteractionWithAction {
   public InteractionSendWorkers(Scheduler scheduler, SpriteResources spriteResources,
       InteractionFactories interactionFactories,
       SceneNodeAnimation.Factory sceneNodeAnimationFactory, TextBoxRenderer textBoxRenderer,
-      @Assisted GameController gameController, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionSendWorkers action) {
+      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted ActionSendWorkers action) {
     super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
-        createActionMessage(gameState, action), action.execute(gameController, gameState));
+        createActionMessage(gameState, action), action);
     PlayerState currentPlayer = gameState.getCurrentPlayer();
     PlayerColor playerColor = currentPlayer.getColor();
 

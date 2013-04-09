@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
+import java.util.List;
+
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
@@ -35,8 +37,7 @@ import com.philbeaudoin.quebec.shared.action.HasBoardAction;
 import com.philbeaudoin.quebec.shared.action.HasDestinationTile;
 import com.philbeaudoin.quebec.shared.action.HasInfluenceZone;
 import com.philbeaudoin.quebec.shared.action.HasLeaderCard;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.state.GameController;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -45,33 +46,33 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface InteractionFactories {
-  InteractionMoveArchitect createInteractionMoveArchitect(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
+  InteractionMoveArchitect createInteractionMoveArchitect(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
   InteractionMoveUnknownArchitect createInteractionMoveUnknownArchitect(
-      GameController gameController, GameState gameState,
+      GameState gameState,
       GameStateRenderer gameStateRenderer,
       @Assisted("a") ActionMoveArchitect actionArchitectA,
       @Assisted("b") ActionMoveArchitect actionArchitectB);
-  InteractionSendWorkers createInteractionSendWorkers(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, ActionSendWorkers action);
-  InteractionSendCubesToZone createInteractionSendCubesToZone(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, ActionSendCubesToZone action);
-  InteractionTakeLeaderCard createInteractionTakeLeaderCard(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, ActionTakeLeaderCard host);
-  InteractionSelectBoardAction createInteractionSelectBoardAction(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, GameActionOnBoardAction action);
-  InteractionIncreaseStar createInteractionIncreaseStar(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, ActionIncreaseStar action);
-  InteractionMoveCubesFromZone createInteractionMoveCubesFromZone(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, InfluenceType origin,
-      PossibleActions possibleDestinations);
-  InteractionMoveCubesToZone createInteractionMoveCubesToZone(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, ActionMoveCubes action);
-  InteractionEmptyTileToZone createInteractionEmptyTileToZone(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, ActionEmptyTileToZone action);
-  InteractionPerformScoringPhase createInteractionPerformScoringPhase(GameController gameController,
-      GameState gameState, GameStateRenderer gameStateRenderer, ActionPerformScoringPhase action);
-  InteractionText createInteractionText(GameController gameController, GameState gameState,
+  InteractionSendWorkers createInteractionSendWorkers(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionSendWorkers action);
+  InteractionSendCubesToZone createInteractionSendCubesToZone(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionSendCubesToZone action);
+  InteractionTakeLeaderCard createInteractionTakeLeaderCard(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionTakeLeaderCard host);
+  InteractionSelectBoardAction createInteractionSelectBoardAction(GameState gameState,
+      GameStateRenderer gameStateRenderer, GameActionOnBoardAction action);
+  InteractionIncreaseStar createInteractionIncreaseStar(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionIncreaseStar action);
+  InteractionMoveCubesFromZone createInteractionMoveCubesFromZone(GameState gameState,
+      GameStateRenderer gameStateRenderer, InfluenceType origin, Message message,
+      List<Interaction> subinteractions);
+  InteractionMoveCubesToZone createInteractionMoveCubesToZone(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionMoveCubes action);
+  InteractionEmptyTileToZone createInteractionEmptyTileToZone(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionEmptyTileToZone action);
+  InteractionPerformScoringPhase createInteractionPerformScoringPhase(GameState gameState,
+      GameStateRenderer gameStateRenderer, ActionPerformScoringPhase action);
+  InteractionText createInteractionText(GameState gameState,
       GameStateRenderer gameStateRenderer, MessageRenderer messageRenderer, Highlighter highlighter,
       SceneNode extras, Vector2d pos, GameAction action);
   InteractionTargetTile createInteractionTargetTile(

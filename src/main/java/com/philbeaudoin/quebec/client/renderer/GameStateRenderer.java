@@ -18,7 +18,6 @@ package com.philbeaudoin.quebec.client.renderer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -35,7 +34,6 @@ import com.philbeaudoin.quebec.client.scene.Rectangle;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
-import com.philbeaudoin.quebec.client.utils.LoggerFactory;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
@@ -44,10 +42,7 @@ import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.state.Tile;
-import com.philbeaudoin.quebec.shared.statechange.AcceptGameStateChange;
 import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeReinit;
 import com.philbeaudoin.quebec.shared.utils.Callback;
 import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
@@ -613,7 +608,7 @@ public class GameStateRenderer {
    */
   public void onMouseClick(double x, double y, double time) {
     for (Interaction interaction : interactions) {
-      interaction.onMouseClick(x, y, time);
+      interaction.onMouseClick(gameController, x, y, time);
     }
   }
 
@@ -763,12 +758,6 @@ public class GameStateRenderer {
     });
   }
 
-  // TODO(beaudoin): Hack to get statistics.
-  static int[] victories = new int[5];
-  static int[] timesLeaderUsed = new int[5];
-  static int[] timesLeaderUsedByWinner = new int[5];
-  static LeaderCard[][] cardsUsed = new LeaderCard[5][4];
-
   /**
    * Modify the game state and render the game state again after.
    * @param gameState
@@ -778,61 +767,6 @@ public class GameStateRenderer {
    */
   private void applyGameStateChangeAndRender(final GameState gameState,
       GameStateChange change) {
-    // TODO(beaudoin): Hack to get statistics.
-    LeaderCard leaderCard = gameState.getCurrentPlayer().getLeaderCard();
-    if (leaderCard != null) {
-      cardsUsed[gameState.getCurrentPlayer().getColor().normalColorIndex()]
-          [gameState.getCentury()] = leaderCard;
-    }
-
-    // TODO(beaudoin): Hack to get statistics.
-    if (change.getClass() == GameStateChangeComposite.class) {
-        ((GameStateChangeComposite) change).callOnEach(new AcceptGameStateChange() {
-          @Override
-          public void execute(GameStateChange gameStateChange) {
-            if (gameStateChange.getClass() == GameStateChangeReinit.class) {
-              int maxScore = 0;
-              int winningIndex = 0;
-              int i = 0;
-              for (PlayerState playerState : gameState.getPlayerStates()) {
-                if (playerState.getScore() > maxScore) {
-                  winningIndex = i;
-                  maxScore = playerState.getScore();
-                }
-                i++;
-              }
-              victories[winningIndex]++;
-              Logger logger = LoggerFactory.get(GameStateRenderer.class);
-              String str = "\n";
-              for (i = 0; i < 5; ++i) {
-                str += "Victories for " + i + ": " + victories[i] + " Cards: ";
-                for (int j = 0; j < 4; ++j) {
-                  if (cardsUsed[i][j] == null) {
-                    str += "none, ";
-                  } else {
-                    str += cardsUsed[i][j].toString() + ", ";
-                    if (i == winningIndex) {
-                      timesLeaderUsedByWinner[cardsUsed[i][j].ordinal()]++;
-                    }
-                    timesLeaderUsed[cardsUsed[i][j].ordinal()]++;
-                  }
-                }
-                str += "\n";
-              }
-              str += "Nb times cards used by winner: ";
-              for (i = 0; i < 5; ++i) {
-                str += timesLeaderUsedByWinner[i] + ", ";
-              }
-              str += "Nb times cards used: ";
-              for (i = 0; i < 5; ++i) {
-                str += timesLeaderUsed[i] + ", ";
-              }
-              logger.info(str);
-              cardsUsed = new LeaderCard[5][4];
-            }
-        }
-      });
-    }
     clearAnimationGraph();
     change.apply(gameController, gameState);
     render(gameState);

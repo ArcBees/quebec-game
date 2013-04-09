@@ -49,7 +49,7 @@ public class PlayerAgentLocalAi implements PlayerAgent {
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
       LocalAiInteractionGenerator generator =
-          playerAgentFactories.createLocalAiInteractionGenerator(gameController, gameState,
+          playerAgentFactories.createLocalAiInteractionGenerator(gameState,
               gameStateRenderer);
       possibleActions.accept(generator);
       gameStateRenderer.setShowActionDescriptionOnHover(false);

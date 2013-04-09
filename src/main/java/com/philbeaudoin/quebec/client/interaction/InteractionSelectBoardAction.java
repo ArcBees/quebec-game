@@ -22,7 +22,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.action.GameActionOnBoardAction;
-import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -33,11 +32,9 @@ public class InteractionSelectBoardAction extends InteractionWithAction {
 
   @Inject
   public InteractionSelectBoardAction(Scheduler scheduler,
-      InteractionFactories interactionFactories, @Assisted GameController gameController,
-      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted GameActionOnBoardAction action) {
+      InteractionFactories interactionFactories, @Assisted GameState gameState,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted GameActionOnBoardAction action) {
     super(scheduler, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetBoardAction(gameStateRenderer, action),
-        action.execute(gameController, gameState));
+        interactionFactories.createInteractionTargetBoardAction(gameStateRenderer, action), action);
   }
 }

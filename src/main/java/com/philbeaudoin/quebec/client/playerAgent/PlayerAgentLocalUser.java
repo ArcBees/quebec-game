@@ -49,8 +49,7 @@ public class PlayerAgentLocalUser implements PlayerAgent {
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
       LocalUserInteractionGenerator generator =
-          playerAgentFactories.createLocalUserInteractionGenerator(gameController, gameState,
-              gameStateRenderer);
+          playerAgentFactories.createLocalUserInteractionGenerator(gameState, gameStateRenderer);
       possibleActions.accept(generator);
       gameStateRenderer.setShowActionDescriptionOnHover(possibleActions.getCanSelectBoardAction());
       GameAction automaticAction = generator.getAutomaticAction();
