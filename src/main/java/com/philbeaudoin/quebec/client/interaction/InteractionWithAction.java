@@ -88,7 +88,7 @@ public abstract class InteractionWithAction implements Interaction {
         }
       });
       GameStateChange gameStateChange = gameAction.execute(gameController, gameState);
-      gameStateRenderer.generateAnimFor(gameState, gameStateChange);
+      gameStateRenderer.generateAnimFor(gameState, gameStateChange, gameAction);
     }
   }
 

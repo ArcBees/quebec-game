@@ -57,7 +57,7 @@ public class PlayerAgentLocalUser implements PlayerAgent {
         // Move automatically.
         final GameStateChange gameStateChange = automaticAction.execute(gameController, gameState);
         if (gameStateChange != null) {
-          gameStateRenderer.generateAnimFor(gameState, gameStateChange);
+          gameStateRenderer.generateAnimFor(gameState, gameStateChange, automaticAction);
         }
       } else {
         generator.generateInteractions();

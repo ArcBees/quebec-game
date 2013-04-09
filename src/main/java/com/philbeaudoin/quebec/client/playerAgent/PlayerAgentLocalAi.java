@@ -57,7 +57,8 @@ public class PlayerAgentLocalAi implements PlayerAgent {
         // Move automatically.
         final GameStateChange gameStateChange = player.getMove(gameController, gameState);
         if (gameStateChange != null) {
-          gameStateRenderer.generateAnimFor(gameState, gameStateChange);
+          // TODO(beaudoin): We could probably retrieve the action instead of the GameStateChange.
+          gameStateRenderer.generateAnimFor(gameState, gameStateChange, null);
         }
       } else {
         generator.generateInteractions();
