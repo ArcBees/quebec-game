@@ -16,32 +16,34 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.action.HasInfluenceZone;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
 
 /**
  * This is an interaction with the game board for the action of selecting an influence zone from
  * which to move a number of cubes.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionMoveCubesFromZone extends InteractionWithAction {
+public class InteractionMoveCubesFromZone extends InteractionWithSubinteraction {
   @Inject
   public InteractionMoveCubesFromZone(Scheduler scheduler,
-      InteractionFactories interactionFactories,
+      InteractionFactories interactionFactories, TextBoxRenderer textBoxRenderer,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted InfluenceType origin, @Assisted PossibleActions possibleDestinations) {
-    super(scheduler, gameState, gameStateRenderer,
+      @Assisted InfluenceType origin, @Assisted Message message,
+      @Assisted List<Interaction> subinteractions) {
+    super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetInfluenceZone(gameStateRenderer,
-            toHasInfluenceType(origin)),
-        new GameStateChangeQueuePossibleActions(possibleDestinations));
+            toHasInfluenceType(origin)), message, subinteractions);
   }
 
   /**

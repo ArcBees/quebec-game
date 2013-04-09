@@ -16,7 +16,11 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.HasApproximateSize;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.shared.PlayerColor;
@@ -32,6 +36,11 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public class Helpers {
+
+  // Constants to specify text interaction location
+  private static final double TEXT_PADDING = 0.03;
+  private static final double TEXT_CENTER_X = GameStateRenderer.TEXT_CENTER;
+  private static final double TEXT_CENTER_Y = GameStateRenderer.TEXT_LINE_2;
 
   /**
    * Create an arrow to indicate moving an architect from its current location to another.
@@ -77,4 +86,25 @@ public class Helpers {
     }
     return new Arrow(architectFrom, architectTo);
   }
+
+  public static List<Vector2d> calculateTextInteractionLocations(
+      List<? extends HasApproximateSize> messages) {
+    List<Vector2d> result = new ArrayList<Vector2d>(messages.size());
+
+    // We only want padding between components, so remove one to compensate from the fact that we
+    // add one to many in the loop.
+    double totalWidth = -TEXT_PADDING;
+    for (HasApproximateSize message : messages) {
+      totalWidth += message.calculateApproximateSize().getX() + TEXT_PADDING;
+    }
+
+    double x = TEXT_CENTER_X - totalWidth / 2.0;
+    for (HasApproximateSize message : messages) {
+      double width = message.calculateApproximateSize().getX();
+      result.add(new Vector2d(x + width / 2.0, TEXT_CENTER_Y));
+      x += width + TEXT_PADDING;
+    }
+    return result;
+  }
+
 }

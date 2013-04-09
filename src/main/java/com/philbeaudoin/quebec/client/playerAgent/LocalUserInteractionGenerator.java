@@ -17,6 +17,7 @@
 package com.philbeaudoin.quebec.client.playerAgent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -25,9 +26,12 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.interaction.BoardActionsHighlighter;
 import com.philbeaudoin.quebec.client.interaction.Helpers;
 import com.philbeaudoin.quebec.client.interaction.Highlighter;
+import com.philbeaudoin.quebec.client.interaction.Interaction;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
+import com.philbeaudoin.quebec.client.interaction.InteractionMoveUnknownArchitect;
 import com.philbeaudoin.quebec.client.interaction.TilesHighlighter;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.client.renderer.HasApproximateSize;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
@@ -52,7 +56,6 @@ import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.GameActionVisitor;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
-import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.state.Tile;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
@@ -66,15 +69,9 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  */
 public class LocalUserInteractionGenerator implements GameActionVisitor {
 
-  // Constants to specify text interaction location
-  private static final double TEXT_PADDING = 0.03;
-  private static final double TEXT_CENTER_X = GameStateRenderer.TEXT_CENTER;
-  private static final double TEXT_CENTER_Y = GameStateRenderer.TEXT_LINE_2;
-
   private final InteractionFactories factories;
   private final TextBoxRenderer textBoxRenderer;
   private final Provider<MessageRenderer> messageRendererProvider;
-  private final GameController gameController;
   private final GameState gameState;
   private final GameStateRenderer gameStateRenderer;
 
@@ -104,13 +101,11 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
   LocalUserInteractionGenerator(InteractionFactories factories,
       TextBoxRenderer textBoxRenderer,
       Provider<MessageRenderer> messageRendererProvider,
-      @Assisted GameController gameController,
       @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer) {
     this.factories = factories;
     this.textBoxRenderer = textBoxRenderer;
     this.messageRendererProvider = messageRendererProvider;
-    this.gameController = gameController;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
   }
@@ -124,38 +119,38 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
     generateMoveArchitectInteractions();
 
     for (ActionSendWorkers action : sendWorkersActions) {
-      gameStateRenderer.addInteraction(factories.createInteractionSendWorkers(gameController,
-          gameState, gameStateRenderer, action));
+      gameStateRenderer.addInteraction(factories.createInteractionSendWorkers(gameState,
+          gameStateRenderer, action));
     }
     sendWorkersActions.clear();
     for (ActionTakeLeaderCard action : takeLeaderCardActions) {
-      gameStateRenderer.addInteraction(factories.createInteractionTakeLeaderCard(gameController,
-          gameState, gameStateRenderer, action));
+      gameStateRenderer.addInteraction(factories.createInteractionTakeLeaderCard(gameState,
+          gameStateRenderer, action));
     }
     takeLeaderCardActions.clear();
     for (ActionSendCubesToZone action : sendCubesToZoneActions) {
-      gameStateRenderer.addInteraction(factories.createInteractionSendCubesToZone(gameController,
-          gameState, gameStateRenderer, action));
+      gameStateRenderer.addInteraction(factories.createInteractionSendCubesToZone(gameState,
+          gameStateRenderer, action));
     }
     sendCubesToZoneActions.clear();
     for (ActionSelectBoardAction action : selectBoardActionActions) {
-      gameStateRenderer.addInteraction(factories.createInteractionSelectBoardAction(gameController,
-          gameState, gameStateRenderer, action));
+      gameStateRenderer.addInteraction(factories.createInteractionSelectBoardAction(gameState,
+          gameStateRenderer, action));
     }
     selectBoardActionActions.clear();
     for (ActionIncreaseStar action : increaseStarActions) {
-      gameStateRenderer.addInteraction(factories.createInteractionIncreaseStar(gameController,
-          gameState, gameStateRenderer, action));
+      gameStateRenderer.addInteraction(factories.createInteractionIncreaseStar(gameState,
+          gameStateRenderer, action));
     }
     increaseStarActions.clear();
     for (ActionEmptyTileToZone action : emptyTileToZoneActions) {
-      gameStateRenderer.addInteraction(factories.createInteractionEmptyTileToZone(gameController,
-          gameState, gameStateRenderer, action));
+      gameStateRenderer.addInteraction(factories.createInteractionEmptyTileToZone(gameState,
+          gameStateRenderer, action));
     }
     emptyTileToZoneActions.clear();
     for (ActionPerformScoringPhase action : performScoringPhaseActions) {
-      gameStateRenderer.addInteraction(factories.createInteractionPerformScoringPhase(
-          gameController, gameState, gameStateRenderer, action));
+      gameStateRenderer.addInteraction(factories.createInteractionPerformScoringPhase(gameState,
+          gameStateRenderer, action));
     }
     performScoringPhaseActions.clear();
     generateMoveCubeInteractions();
@@ -192,21 +187,10 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
     if (pairedMoveArchitects.size() == 1 && pairedMoveArchitects.get(0).isPair()) {
       // Case where we have only one pair, let the user select which architect to move.
       PairedMoveArchitect pair = pairedMoveArchitects.get(0);
-      PlayerColor a1Color = pair.a1.isNeutralArchitect() ? PlayerColor.NEUTRAL : currentPlayer;
-      PlayerColor a2Color = pair.a2.isNeutralArchitect() ? PlayerColor.NEUTRAL : currentPlayer;
       MessageRenderer messageRendererA1 = messageRendererProvider.get();
       MessageRenderer messageRendererA2 = messageRendererProvider.get();
-      if (pair.destinationTile != null) {
-        // Destination is another tile.
-        new Message.MoveArchitect(a1Color).accept(messageRendererA1);
-        new Message.MoveArchitect(a2Color).accept(messageRendererA2);
-      } else {
-        // Destination is outside the board.
-        new Message.RemoveNeutralArchitect().accept(pair.a1.isNeutralArchitect() ?
-            messageRendererA1 : messageRendererA2);
-        new Message.MoveArchitectOut(currentPlayer).accept(pair.a1.isNeutralArchitect() ?
-            messageRendererA2 : messageRendererA1);
-      }
+      InteractionMoveUnknownArchitect.generateSelectArchitectMessageRenderers(pair.a1, pair.a2,
+          messageRendererA1, messageRendererA2, currentPlayer);
       textInteractions.add(new TextInteraction(messageRendererA1, null,
           Helpers.createArchitectArrow(gameState, gameStateRenderer, pair.a1),
           pair.a1));
@@ -220,13 +204,13 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
           assert pair.destinationTile != null;  // Move outside the board are only possible alone.
           // Not sure which architect to move.
           gameStateRenderer.addInteraction(factories.createInteractionMoveUnknownArchitect(
-              gameController, gameState, gameStateRenderer, pair.a1, pair.a2));
+              gameState, gameStateRenderer, pair.a1, pair.a2));
         } else {
           // Only one architect to move.
           if (pair.destinationTile != null) {
             // Destination is another tile.
-            gameStateRenderer.addInteraction(factories.createInteractionMoveArchitect(
-                gameController, gameState,gameStateRenderer, pair.a1));
+            gameStateRenderer.addInteraction(factories.createInteractionMoveArchitect(gameState,
+                gameStateRenderer, pair.a1));
           } else {
             // Destination is outside the board.
             MessageRenderer messageRenderer = messageRendererProvider.get();
@@ -265,40 +249,34 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
       GroupedMoveCubes group = groupedMoveCubes.get(0);
       for (ActionMoveCubes action : group.actions) {
         gameStateRenderer.addInteraction(factories.createInteractionMoveCubesToZone(
-            gameController, gameState, gameStateRenderer, action));
+            gameState, gameStateRenderer, action));
       }
     } else {
       PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
       // Many groups, let the user select the origin zone.
       for (GroupedMoveCubes group : groupedMoveCubes) {
-        PossibleActions possibleActions = new PossibleActions(
-            new Message.MoveCubesSelectDestination(group.nbCubes, playerColor, group.originZone));
+        List<Interaction> subinteractions = new ArrayList<Interaction>(group.actions.size());
         for (ActionMoveCubes action : group.actions) {
-          possibleActions.add(action);
+          subinteractions.add(factories.createInteractionMoveCubesToZone(gameState,
+              gameStateRenderer, action));
         }
         gameStateRenderer.addInteraction(factories.createInteractionMoveCubesFromZone(
-            gameController, gameState, gameStateRenderer, group.originZone, possibleActions));
+            gameState, gameStateRenderer, group.originZone,
+            new Message.MoveCubesSelectDestination(group.nbCubes, playerColor, group.originZone),
+            subinteractions));
       }
     }
   }
 
   private void generateTextInteractions() {
-    // We only want padding between components, so remove one to compensate from the fact that we
-    // add one to many in the loop.
-    double totalWidth = -TEXT_PADDING;
+    List<Vector2d> positions = Helpers.calculateTextInteractionLocations(textInteractions);
+    assert positions.size() == textInteractions.size();
+    int i = 0;
     for (TextInteraction textInteraction : textInteractions) {
-      totalWidth += textInteraction.messageRenderer.calculateApproximateSize().getX() +
-          TEXT_PADDING;
-    }
-
-    double x = TEXT_CENTER_X - totalWidth / 2.0;
-    for (TextInteraction textInteraction : textInteractions) {
-      double width = textInteraction.messageRenderer.calculateApproximateSize().getX();
-      Vector2d pos = new Vector2d(x + width / 2.0, TEXT_CENTER_Y);
-      gameStateRenderer.addInteraction(factories.createInteractionText(gameController, 
-          gameState, gameStateRenderer, textInteraction.messageRenderer,
-          textInteraction.highlighter, textInteraction.extras, pos, textInteraction.action));
-      x += width + TEXT_PADDING;
+      gameStateRenderer.addInteraction(factories.createInteractionText(gameState, gameStateRenderer,
+          textInteraction.messageRenderer, textInteraction.highlighter, textInteraction.extras,
+          positions.get(i), textInteraction.action));
+      i++;
     }
 
     textInteractions.clear();
@@ -443,7 +421,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
     }
   }
 
-  private static class TextInteraction {
+  private static class TextInteraction implements HasApproximateSize {
     final MessageRenderer messageRenderer;
     final Highlighter highlighter;
     final SceneNode extras;
@@ -454,6 +432,10 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
       this.highlighter = highlighter;
       this.extras = extras;
       this.action = action;
+    }
+    @Override
+    public Vector2d calculateApproximateSize() {
+      return messageRenderer.calculateApproximateSize();
     }
   }
 

@@ -24,7 +24,6 @@ import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
-import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
@@ -37,10 +36,9 @@ public class InteractionMoveCubesToZone extends InteractionWithAction {
   private final SceneNodeList arrows;
 
   public InteractionMoveCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      GameController gameController, GameState gameState, GameStateRenderer gameStateRenderer,
+      GameState gameState, GameStateRenderer gameStateRenderer,
       InteractionTargetInfluenceZone target, ActionMoveCubes action) {
-    super(scheduler, gameState, gameStateRenderer, target,
-        action.execute(gameController, gameState));
+    super(scheduler, gameState, gameStateRenderer, target, action);
 
     arrows = new SceneNodeList();
     // Arrow to move cubes.
@@ -51,10 +49,11 @@ public class InteractionMoveCubesToZone extends InteractionWithAction {
 
   @Inject
   public InteractionMoveCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      @Assisted GameController gameController, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionMoveCubes action) {
-    this(scheduler, interactionFactories, gameController, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetInfluenceZone(gameStateRenderer, action), action);
+      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted ActionMoveCubes action) {
+    this(scheduler, interactionFactories, gameState, gameStateRenderer,
+        interactionFactories.createInteractionTargetInfluenceZone(gameStateRenderer, action),
+        action);
   }
 
   @Override

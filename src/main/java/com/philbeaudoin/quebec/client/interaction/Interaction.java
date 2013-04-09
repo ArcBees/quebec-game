@@ -16,6 +16,8 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
+import com.philbeaudoin.quebec.shared.state.GameController;
+
 /**
  * This interface indicates a possible interaction the user can have with the game board. It allows
  * for effects when the mouse moves over an object or when a click is detected.
@@ -39,9 +41,10 @@ public interface Interaction {
   /**
    * Indicates that the mouse has been clicked and that the interaction should be executed if it is
    * triggered. The game state will be modified.
+   * @param gameController The current game controller.
    * @param x The x location of the mouse.
    * @param y The y location of the mouse.
    * @param time The current time.
    */
-  void onMouseClick(double x, double y, double time);
+  void onMouseClick(GameController gameController, double x, double y, double time);
 }

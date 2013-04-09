@@ -16,58 +16,59 @@
 
 package com.philbeaudoin.quebec.client.interaction;
 
+import java.util.List;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
-import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 
 /**
- * This is the basic implementation of an interaction for which a click results in executing an
- * action.
+ * This is the basic implementation of an interaction for which a click results in triggering
+ * another interaction.
+ * TODO(beaudoin): Extract common content between this and InteractionWithAction.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public abstract class InteractionWithAction implements Interaction {
+public abstract class InteractionWithSubinteraction implements Interaction {
 
   protected final Scheduler scheduler;
   protected final GameState gameState;
   protected final GameStateRenderer gameStateRenderer;
-  private final SceneNodeList actionText;
-  private final GameAction gameAction;
+  private final SceneNodeList subinteractionText;
+  private final List<Interaction> subinteractions;
   private final InteractionTarget target;
 
   private CallbackRegistration animationCompletedRegistration;
   private boolean inside;
 
-  protected InteractionWithAction(Scheduler scheduler, GameState gameState,
+  protected InteractionWithSubinteraction(Scheduler scheduler, GameState gameState,
       GameStateRenderer gameStateRenderer, InteractionTarget target,
-      GameAction gameAction) {
-    this(scheduler, null, gameState, gameStateRenderer, target, null, gameAction);
+      List<Interaction> subinteractions) {
+    this(scheduler, null, gameState, gameStateRenderer, target, null, subinteractions);
   }
 
-  protected InteractionWithAction(Scheduler scheduler, TextBoxRenderer textBoxRenderer,
+  protected InteractionWithSubinteraction(Scheduler scheduler, TextBoxRenderer textBoxRenderer,
       GameState gameState, GameStateRenderer gameStateRenderer,
-      InteractionTarget target, Message message, GameAction gameAction) {
-    assert (message == null) || (textBoxRenderer != null);
+      InteractionTarget target, Message subinteractionsMessage, List<Interaction> subinteractions) {
+    assert (subinteractionsMessage == null) || (textBoxRenderer != null);
     this.scheduler = scheduler;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
-    this.gameAction = gameAction;
+    this.subinteractions = subinteractions;
     this.target = target;
 
-    if (message != null && !gameState.hasPossibleActionMessage()) {
-      actionText = textBoxRenderer.render(
-          new TextBoxInfo(message, new LocationTopCenter()), gameStateRenderer);
+    if (subinteractionsMessage != null) {
+      subinteractionText = textBoxRenderer.render(
+          new TextBoxInfo(subinteractionsMessage, new LocationTopCenter()), gameStateRenderer);
     } else {
-      this.actionText = null;
+      this.subinteractionText = null;
     }
   }
 
@@ -85,10 +86,15 @@ public abstract class InteractionWithAction implements Interaction {
         public void execute() {
           gameStateRenderer.clearInteractions();
           gameStateRenderer.removeAllHighlights();
+          for(Interaction subinteraction : subinteractions) {
+            gameStateRenderer.addInteraction(subinteraction);
+            subinteraction.highlight();
+            if (subinteractionText != null) {
+              gameStateRenderer.addToAnimationGraph(subinteractionText);
+            }
+          }
         }
       });
-      GameStateChange gameStateChange = gameAction.execute(gameController, gameState);
-      gameStateRenderer.generateAnimFor(gameState, gameStateChange);
     }
   }
 
@@ -98,17 +104,11 @@ public abstract class InteractionWithAction implements Interaction {
       doMouseMove(x, y, time);
       if (!inside) {
         doMouseEnter(x, y, time);
-        if (actionText != null) {
-          gameStateRenderer.addToAnimationGraph(actionText);
-        }
         inside = true;
       }
     } else if (inside) {
       inside = false;
       doMouseLeave(x, y, time);
-      if (actionText != null) {
-        actionText.setParent(null);
-      }
     }
   }
 

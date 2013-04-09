@@ -36,7 +36,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * A message visitor used to render messages into complex text components.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class MessageRenderer implements Message.Visitor<Void> {
+public class MessageRenderer implements Message.Visitor<Void>, HasApproximateSize {
 
   private final GraphicConstants constants;
   private final GraphicConstantsWithLookup constantsWithLookup;
@@ -69,10 +69,7 @@ public class MessageRenderer implements Message.Visitor<Void> {
     return !components.isEmpty();
   }
 
-  /**
-   * Calculates the approximate size of the series of components generated.
-   * @return The approximate size.
-   */
+  @Override
   public Vector2d calculateApproximateSize() {
     return components.calculateApproximateSize();
   }

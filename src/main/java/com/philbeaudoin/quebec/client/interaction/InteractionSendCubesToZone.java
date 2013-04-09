@@ -27,7 +27,6 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.message.Message;
-import com.philbeaudoin.quebec.shared.state.GameController;
 import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
@@ -41,11 +40,10 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
   private final SceneNodeList arrows;
 
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      TextBoxRenderer textBoxRenderer, GameController gameController, GameState gameState,
-      GameStateRenderer gameStateRenderer, InteractionTargetInfluenceZone target,
-      ActionSendCubesToZone action) {
+      TextBoxRenderer textBoxRenderer, GameState gameState, GameStateRenderer gameStateRenderer,
+      InteractionTargetInfluenceZone target, ActionSendCubesToZone action) {
     super(scheduler, textBoxRenderer, gameState, gameStateRenderer, target,
-        createActionMessage(gameState, action), action.execute(gameController, gameState));
+        createActionMessage(gameState, action), action);
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     arrows = new SceneNodeList();
@@ -59,12 +57,11 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
 
   @Inject
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
-      TextBoxRenderer textBoxRenderer, @Assisted GameController gameController,
-      @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionSendCubesToZone action) {
-    this(scheduler, interactionFactories, textBoxRenderer, gameController, gameState,
-        gameStateRenderer, interactionFactories.createInteractionTargetInfluenceZone(
-            gameStateRenderer, action), action);
+      TextBoxRenderer textBoxRenderer, @Assisted GameState gameState,
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionSendCubesToZone action) {
+    this(scheduler, interactionFactories, textBoxRenderer, gameState, gameStateRenderer,
+        interactionFactories.createInteractionTargetInfluenceZone(gameStateRenderer, action),
+        action);
   }
 
   @Override
