@@ -20,15 +20,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.philbeaudoin.quebec.shared.game.state.Board;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.TileState;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeComposite;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeMoveCubes;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeScorePoints;
 import com.philbeaudoin.quebec.shared.location.CubeDestinationInfluenceZone;
 import com.philbeaudoin.quebec.shared.location.CubeDestinationPlayer;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
-import com.philbeaudoin.quebec.shared.state.Board;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.TileState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**

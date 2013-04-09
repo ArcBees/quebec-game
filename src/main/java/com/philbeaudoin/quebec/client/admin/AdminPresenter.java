@@ -35,8 +35,8 @@ import com.philbeaudoin.quebec.client.session.ClientSessionManager;
 import com.philbeaudoin.quebec.client.session.events.SessionStateChanged;
 import com.philbeaudoin.quebec.client.session.events.SignOutAdmin;
 import com.philbeaudoin.quebec.shared.NameTokens;
-import com.philbeaudoin.quebec.shared.serveractions.ChangeAdminSettingsAction;
-import com.philbeaudoin.quebec.shared.serveractions.VoidResult;
+import com.philbeaudoin.quebec.shared.action.ChangeAdminSettingsAction;
+import com.philbeaudoin.quebec.shared.action.VoidResult;
 
 /**
  * This is the presenter of the menu page.

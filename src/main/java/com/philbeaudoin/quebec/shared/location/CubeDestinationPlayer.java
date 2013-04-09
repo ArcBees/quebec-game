@@ -17,8 +17,8 @@
 package com.philbeaudoin.quebec.shared.location;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
-import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * A cube destination corresponding to the personal reserve of a given player, either active or

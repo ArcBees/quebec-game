@@ -22,7 +22,7 @@ import javax.inject.Inject;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite
+ * {@link com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeComposite
  * GameStateChangeComposite} to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */

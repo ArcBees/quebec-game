@@ -21,8 +21,8 @@ import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
-import com.philbeaudoin.quebec.shared.action.HasLeaderCard;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
+import com.philbeaudoin.quebec.shared.game.action.HasLeaderCard;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 

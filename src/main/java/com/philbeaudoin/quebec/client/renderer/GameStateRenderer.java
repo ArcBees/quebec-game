@@ -29,6 +29,7 @@ import com.philbeaudoin.quebec.client.interaction.ActionDescriptionInteraction;
 import com.philbeaudoin.quebec.client.interaction.Interaction;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.playerAgent.PlayerAgent;
+import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentFactories;
 import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentGenerator;
 import com.philbeaudoin.quebec.client.scene.Rectangle;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
@@ -36,14 +37,15 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.action.ActionExecution;
+import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.state.BoardAction;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
+import com.philbeaudoin.quebec.shared.game.state.Tile;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
-import com.philbeaudoin.quebec.shared.state.BoardAction;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
-import com.philbeaudoin.quebec.shared.state.Tile;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.utils.Callback;
 import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
@@ -87,7 +89,7 @@ public class GameStateRenderer {
   private boolean refreshNeeded = true;
   private boolean showActionDescriptionOnHover;
 
-  private CallbackRegistration animationCompletedRegistration;
+  private ActionExecution actionExecutionOfCurrentAnimation;
 
   @Inject
   GameStateRenderer(Scheduler scheduler,
@@ -95,13 +97,13 @@ public class GameStateRenderer {
       InteractionFactories interactionFactories,
       SpriteResources spriteResources,
       ChangeRendererGenerator changeRendererGenerator,
-      PlayerAgentGenerator playerAgentGenerator,
+      PlayerAgentFactories playerAgentFactories,
       @Assisted GameController gameController) {
     this.scheduler = scheduler;
     this.factories = factories;
     this.interactionFactories = interactionFactories;
     this.changeRendererGenerator = changeRendererGenerator;
-    this.playerAgentGenerator = playerAgentGenerator;
+    this.playerAgentGenerator = playerAgentFactories.createPlayerAgentGenerator(gameController);
     this.gameController = gameController;
     scoreRenderer = factories.createScoreRenderer();
     boardRenderer = factories.createBoardRenderer(LEFT_COLUMN_WIDTH);
@@ -141,7 +143,7 @@ public class GameStateRenderer {
 
     PlayerAgent playerAgent = gameState.getCurrentPlayer().getPlayer()
         .accept(playerAgentGenerator);
-    playerAgent.renderInteractions(gameController, gameState, this);
+    playerAgent.renderInteractions(gameState, this);
     for (Interaction interaction : interactions) {
       interaction.highlight();
     }
@@ -609,7 +611,7 @@ public class GameStateRenderer {
    */
   public void onMouseClick(double x, double y, double time) {
     for (Interaction interaction : interactions) {
-      interaction.onMouseClick(gameController, x, y, time);
+      interaction.onMouseClick(x, y, time);
     }
   }
 
@@ -642,10 +644,7 @@ public class GameStateRenderer {
    * Clears the entire animation graph.
    */
   public void clearAnimationGraph() {
-    if (animationCompletedRegistration != null) {
-      animationCompletedRegistration.unregister();
-      animationCompletedRegistration = null;
-    }
+    actionExecutionOfCurrentAnimation = null;
     animationRoot.clear();
   }
 
@@ -734,47 +733,55 @@ public class GameStateRenderer {
    * @param gameAction The game action corresponding to this animation. If non-null it should be
    *     possible to find it in {@link GameState#getPossibleActions} of the gameState parameter.
    */
-  public void generateAnimFor(final GameState gameState,
-      final GameStateChange gameStateChange,
-      GameAction gameAction) {
-    ChangeRenderer changeRenderer = gameStateChange
-        .accept(changeRendererGenerator);
-    changeRenderer.generateAnim(this, 0.0);
-    changeRenderer.undoAdditions(this);
-    gameController.beforePerformAction(gameAction, gameState);
+  public void generateAnimFor(final GameState gameState, final GameAction gameAction) {
 
-    scheduler.scheduleDeferred(new ScheduledCommand() {
+    ActionExecution actionExecution = new ActionExecution() {
+      Callback readyToFinalizeCallback;
+
       @Override
-      public void execute() {
-        if (!isAnimationCompleted(0.0)) {
-          if (animationCompletedRegistration != null) {
-            animationCompletedRegistration.unregister();
-          }
-          animationCompletedRegistration = addAnimationCompletedCallback(new Callback() {
-            @Override
-            public void execute() {
-              applyGameStateChangeAndRender(gameState, gameStateChange);
+      public void prepareExecution(GameState gameState, GameAction gameAction,
+          GameStateChange gameStateChange) {
+        actionExecutionOfCurrentAnimation = this;
+        ChangeRenderer changeRenderer = gameStateChange.accept(changeRendererGenerator);
+        changeRenderer.generateAnim(GameStateRenderer.this, 0.0);
+        changeRenderer.undoAdditions(GameStateRenderer.this);
+      }
+
+      @Override
+      public void execute(GameState gameState, GameAction gameAction,
+          GameStateChange gameStateChange) {
+        scheduler.scheduleDeferred(new ScheduledCommand() {
+          @Override
+          public void execute() {
+            if (isAnimationCompleted(0.0)) {
+              readyToFinalizeCallback.execute();
             }
-          });
-        } else {
-          applyGameStateChangeAndRender(gameState, gameStateChange);
+            else {
+              addAnimationCompletedCallback(readyToFinalizeCallback);
+            }
+          }
+        });
+      }
+
+      @Override
+      public void finalizeExecution(GameState newGameState) {
+        if (actionExecutionOfCurrentAnimation == this) {
+          clearAnimationGraph();
+          render(newGameState);
         }
       }
-    });
-  }
 
-  /**
-   * Modify the game state and render the game state again after.
-   * @param gameState
-   *          The current game state.
-   * @param change
-   *          The change to apply.
-   */
-  private void applyGameStateChangeAndRender(final GameState gameState,
-      GameStateChange change) {
-    clearAnimationGraph();
-    change.apply(gameController, gameState);
-    render(gameState);
+      @Override
+      public void error() {
+      }
+
+      @Override
+      public void setReadyToFinalizeCallback(Callback callback) {
+        this.readyToFinalizeCallback = callback;
+      }
+    };
+
+    gameController.performAction(actionExecution, gameAction, gameState);
   }
 
   public boolean getShowActionDescriptionOnHover() {

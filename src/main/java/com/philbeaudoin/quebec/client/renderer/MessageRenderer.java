@@ -28,8 +28,8 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringInformation;
 import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
+import com.philbeaudoin.quebec.shared.game.state.ActionType;
 import com.philbeaudoin.quebec.shared.message.Message;
-import com.philbeaudoin.quebec.shared.state.ActionType;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**

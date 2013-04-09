@@ -38,12 +38,12 @@ import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAutho
 import com.philbeaudoin.quebec.client.session.events.SessionStateChanged;
 import com.philbeaudoin.quebec.client.session.events.SessionStateChanged.Event;
 import com.philbeaudoin.quebec.shared.NameTokens;
+import com.philbeaudoin.quebec.shared.action.CreateNewGameAction;
+import com.philbeaudoin.quebec.shared.action.GameListResult;
+import com.philbeaudoin.quebec.shared.action.JoinGameAction;
+import com.philbeaudoin.quebec.shared.action.ListGamesAction;
 import com.philbeaudoin.quebec.shared.game.GameInfoDto;
 import com.philbeaudoin.quebec.shared.game.GameInfoForGameList;
-import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
-import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
-import com.philbeaudoin.quebec.shared.serveractions.JoinGameAction;
-import com.philbeaudoin.quebec.shared.serveractions.ListGamesAction;
 import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**

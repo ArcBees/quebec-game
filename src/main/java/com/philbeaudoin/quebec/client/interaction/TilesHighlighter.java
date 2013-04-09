@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.client.interaction;
 import java.util.ArrayList;
 
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.shared.state.Tile;
+import com.philbeaudoin.quebec.shared.game.state.Tile;
 
 /**
  * Highlights all the active tiles in a game state.

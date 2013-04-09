@@ -27,16 +27,16 @@ import com.philbeaudoin.quebec.server.handlers.JoinGameHandler;
 import com.philbeaudoin.quebec.server.handlers.ListGamesHandler;
 import com.philbeaudoin.quebec.server.handlers.LoadGameHandler;
 import com.philbeaudoin.quebec.server.handlers.SignOutAdminHandler;
-import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithDummyAction;
-import com.philbeaudoin.quebec.shared.serveractions.ChangeAdminSettingsAction;
-import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
-import com.philbeaudoin.quebec.shared.serveractions.GetSessionAction;
-import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithAdminPasswordAction;
-import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithGoogleAuthorizationCodeAction;
-import com.philbeaudoin.quebec.shared.serveractions.JoinGameAction;
-import com.philbeaudoin.quebec.shared.serveractions.ListGamesAction;
-import com.philbeaudoin.quebec.shared.serveractions.LoadGameAction;
-import com.philbeaudoin.quebec.shared.serveractions.SignOutAdminAction;
+import com.philbeaudoin.quebec.shared.action.AuthenticateWithAdminPasswordAction;
+import com.philbeaudoin.quebec.shared.action.AuthenticateWithDummyAction;
+import com.philbeaudoin.quebec.shared.action.AuthenticateWithGoogleAuthorizationCodeAction;
+import com.philbeaudoin.quebec.shared.action.ChangeAdminSettingsAction;
+import com.philbeaudoin.quebec.shared.action.CreateNewGameAction;
+import com.philbeaudoin.quebec.shared.action.GetSessionAction;
+import com.philbeaudoin.quebec.shared.action.JoinGameAction;
+import com.philbeaudoin.quebec.shared.action.ListGamesAction;
+import com.philbeaudoin.quebec.shared.action.LoadGameAction;
+import com.philbeaudoin.quebec.shared.action.SignOutAdminAction;
 
 /**
  * Module which binds the handlers and configurations.

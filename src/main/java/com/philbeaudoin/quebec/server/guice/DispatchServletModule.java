@@ -38,8 +38,8 @@ import com.philbeaudoin.quebec.server.user.OAuthManagerImpl;
 import com.philbeaudoin.quebec.server.user.UserManager;
 import com.philbeaudoin.quebec.server.user.UserManagerImpl;
 import com.philbeaudoin.quebec.shared.Constants;
-import com.philbeaudoin.quebec.shared.state.JavaRandomShuffler;
-import com.philbeaudoin.quebec.shared.state.Shuffler;
+import com.philbeaudoin.quebec.shared.game.state.JavaRandomShuffler;
+import com.philbeaudoin.quebec.shared.game.state.Shuffler;
 
 /**
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>

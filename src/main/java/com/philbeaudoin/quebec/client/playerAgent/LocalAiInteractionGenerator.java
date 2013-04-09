@@ -22,28 +22,28 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
-import com.philbeaudoin.quebec.shared.action.ActionActivateCubes;
-import com.philbeaudoin.quebec.shared.action.ActionEmptyTileToZone;
-import com.philbeaudoin.quebec.shared.action.ActionExplicit;
-import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightBoardActions;
-import com.philbeaudoin.quebec.shared.action.ActionExplicitHighlightTiles;
-import com.philbeaudoin.quebec.shared.action.ActionIncreaseStar;
-import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
-import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
-import com.philbeaudoin.quebec.shared.action.ActionPerformScoringPhase;
-import com.philbeaudoin.quebec.shared.action.ActionScorePoints;
-import com.philbeaudoin.quebec.shared.action.ActionSelectBoardAction;
-import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
-import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
-import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
-import com.philbeaudoin.quebec.shared.action.GameActionVisitor;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.game.action.ActionActivateCubes;
+import com.philbeaudoin.quebec.shared.game.action.ActionEmptyTileToZone;
+import com.philbeaudoin.quebec.shared.game.action.ActionExplicit;
+import com.philbeaudoin.quebec.shared.game.action.ActionExplicitHighlightBoardActions;
+import com.philbeaudoin.quebec.shared.game.action.ActionExplicitHighlightTiles;
+import com.philbeaudoin.quebec.shared.game.action.ActionIncreaseStar;
+import com.philbeaudoin.quebec.shared.game.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.game.action.ActionMoveCubes;
+import com.philbeaudoin.quebec.shared.game.action.ActionPerformScoringPhase;
+import com.philbeaudoin.quebec.shared.game.action.ActionScorePoints;
+import com.philbeaudoin.quebec.shared.game.action.ActionSelectBoardAction;
+import com.philbeaudoin.quebec.shared.game.action.ActionSendCubesToZone;
+import com.philbeaudoin.quebec.shared.game.action.ActionSendWorkers;
+import com.philbeaudoin.quebec.shared.game.action.ActionTakeLeaderCard;
+import com.philbeaudoin.quebec.shared.game.action.GameActionVisitor;
+import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**
  * Use this class to generate the list of
  * {@link com.philbeaudoin.quebec.client.interaction.Interaction Interaction} corresponding to a
- * given {@link com.philbeaudoin.quebec.shared.action.GameAction GameAction} for a local AI. All the
+ * given {@link com.philbeaudoin.quebec.shared.game.action.GameAction GameAction} for a local AI. All the
  * generated interactions will be added to the provided {@link GameStateRenderer}.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */

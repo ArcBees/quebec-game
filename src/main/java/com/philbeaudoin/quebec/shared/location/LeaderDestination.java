@@ -16,8 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.location;
 
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
 
 /**
  * A valid place to take or send leader cards. A destination implies a leader card.

@@ -21,12 +21,13 @@ import java.util.List;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringHelper;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
-import com.philbeaudoin.quebec.shared.state.TileState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
+import com.philbeaudoin.quebec.shared.game.state.TileState;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 
 /**
  * The brain of an artificial intelligence that evaluates only his own move.
@@ -36,7 +37,7 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 public class AiBrainSimple2 implements AiBrain {
 
   @Override
-  public GameStateChange getMove(GameController gameController, GameState gameState) {
+  public GameAction getMove(GameController gameController, GameState gameState) {
     PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     ScoreAndMove result = scoreForBestMove(gameController, gameState, playerColor);
     if (result == null) {
@@ -71,11 +72,11 @@ public class AiBrainSimple2 implements AiBrain {
     }
 
     double bestScore = -1;
-    GameStateChange bestMove = null;
+    GameAction bestMove = null;
     for (int actionIndex = 0; actionIndex < possibleActions.getNbActions(); ++actionIndex) {
       GameState gameStateCopy = new GameState(gameState);
-      GameStateChange gameStateChange = possibleActions.execute(gameController, actionIndex,
-          gameStateCopy);
+      GameAction gameAction = possibleActions.getAction(actionIndex);
+      GameStateChange gameStateChange = gameAction.execute(gameController, gameStateCopy);
       gameStateChange.apply(gameController, gameStateCopy);
       ScoreAndMove scoreAndMove = scoreForBestMove(gameController, gameStateCopy, playerColor);
       double score = -10000;
@@ -86,7 +87,7 @@ public class AiBrainSimple2 implements AiBrain {
       }
       if (score > bestScore) {
         bestScore = score;
-        bestMove = gameStateChange;
+        bestMove = gameAction;
       }
     }
     return new ScoreAndMove(bestScore, bestMove);
@@ -283,10 +284,10 @@ public class AiBrainSimple2 implements AiBrain {
 
   private static class ScoreAndMove {
     final double score;
-    final GameStateChange move;
-    public ScoreAndMove(double score, GameStateChange move) {
+    final GameAction move;
+    public ScoreAndMove(double score, GameAction bestMove) {
       this.score = score;
-      this.move = move;
+      this.move = bestMove;
     }
   }
 

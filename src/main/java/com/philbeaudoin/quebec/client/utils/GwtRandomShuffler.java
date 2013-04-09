@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.client.utils;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.Random;
-import com.philbeaudoin.quebec.shared.state.Shuffler;
+import com.philbeaudoin.quebec.shared.game.state.Shuffler;
 
 /**
  * A Shuffler that uses the standard Java random. Not compatible with GWT.

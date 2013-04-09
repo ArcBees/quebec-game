@@ -26,8 +26,8 @@ import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.game.GameInfoEntity;
 import com.philbeaudoin.quebec.server.game.GameManager;
-import com.philbeaudoin.quebec.shared.serveractions.CreateNewGameAction;
-import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
+import com.philbeaudoin.quebec.shared.action.CreateNewGameAction;
+import com.philbeaudoin.quebec.shared.action.GameListResult;
 
 /**
  * Handles {@link CreateNewGameAction}.

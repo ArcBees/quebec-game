@@ -18,7 +18,7 @@ package com.philbeaudoin.quebec.shared.location;
 
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**
  * A cube destination corresponding to an given player color within an influence zone.

@@ -18,6 +18,8 @@ package com.philbeaudoin.quebec.client.playerAgent;
 
 import javax.inject.Inject;
 
+import com.google.inject.assistedinject.Assisted;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
 import com.philbeaudoin.quebec.shared.player.PlayerVisitor;
@@ -30,10 +32,12 @@ import com.philbeaudoin.quebec.shared.player.PlayerVisitor;
 public class PlayerAgentGenerator implements PlayerVisitor<PlayerAgent> {
 
   private final PlayerAgentFactories factories;
+  private final GameController gameController;
 
   @Inject
-  PlayerAgentGenerator(PlayerAgentFactories factories) {
+  PlayerAgentGenerator(PlayerAgentFactories factories, @Assisted GameController gameController) {
     this.factories = factories;
+    this.gameController = gameController;
   }
 
   @Override
@@ -43,7 +47,6 @@ public class PlayerAgentGenerator implements PlayerVisitor<PlayerAgent> {
 
   @Override
   public PlayerAgent visit(PlayerLocalAi host) {
-    // TODO Auto-generated method stub
-    return factories.createPlayerAgentLocalAi(host);
+    return factories.createPlayerAgentLocalAi(host, gameController);
   }
 }

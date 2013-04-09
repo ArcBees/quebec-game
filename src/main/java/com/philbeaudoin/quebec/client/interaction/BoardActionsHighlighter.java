@@ -17,8 +17,8 @@
 package com.philbeaudoin.quebec.client.interaction;
 
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.shared.state.Board;
-import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.game.state.Board;
+import com.philbeaudoin.quebec.shared.game.state.BoardAction;
 
 /**
  * Highlights all the board actions.

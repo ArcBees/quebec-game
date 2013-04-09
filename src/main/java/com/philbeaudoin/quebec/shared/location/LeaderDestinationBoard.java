@@ -18,8 +18,8 @@ package com.philbeaudoin.quebec.shared.location;
 
 import java.util.List;
 
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
 
 /**
  * A leader card destination corresponding to the game board.

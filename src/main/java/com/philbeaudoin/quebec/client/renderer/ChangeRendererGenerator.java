@@ -18,23 +18,23 @@ package com.philbeaudoin.quebec.client.renderer;
 
 import javax.inject.Inject;
 
-import com.philbeaudoin.quebec.shared.statechange.AcceptGameStateChange;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeComposite;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeInstantaneousDecorator;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveArchitect;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveCubes;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveLeader;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeNextPlayer;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareAction;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangePrepareNextCentury;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeQueuePossibleActions;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeReinit;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeScorePoints;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeSetPlayer;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeVisitor;
+import com.philbeaudoin.quebec.shared.game.statechange.AcceptGameStateChange;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeComposite;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeFlipTile;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeIncreaseStarToken;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeInstantaneousDecorator;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeMoveArchitect;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeMoveCubes;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeMoveLeader;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeNextPlayer;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangePrepareAction;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangePrepareNextCentury;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeQueuePossibleActions;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeReinit;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeScorePoints;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeSetPlayer;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeVisitor;
 
 /**
  * Use this class to generate the {@link ChangeRenderer} corresponding to a given

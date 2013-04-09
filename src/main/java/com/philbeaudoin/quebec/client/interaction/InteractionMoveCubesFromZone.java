@@ -25,9 +25,9 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.shared.InfluenceType;
-import com.philbeaudoin.quebec.shared.action.HasInfluenceZone;
+import com.philbeaudoin.quebec.shared.game.action.HasInfluenceZone;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.message.Message;
-import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * This is an interaction with the game board for the action of selecting an influence zone from

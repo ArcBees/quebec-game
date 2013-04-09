@@ -16,7 +16,7 @@
 
 package com.philbeaudoin.quebec.client.renderer;
 
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**

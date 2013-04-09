@@ -36,8 +36,8 @@ import com.google.inject.Inject;
 import com.philbeaudoin.quebec.client.resources.Resources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.state.ActionType;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
+import com.philbeaudoin.quebec.shared.game.state.ActionType;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
 
 /**
  * This class makes it possible to obtain the image element for any type of sprite. Images are

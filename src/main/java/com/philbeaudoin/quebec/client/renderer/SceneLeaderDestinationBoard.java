@@ -19,8 +19,8 @@ package com.philbeaudoin.quebec.client.renderer;
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**

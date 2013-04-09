@@ -17,7 +17,7 @@
 package com.philbeaudoin.quebec.client.renderer;
 
 /**
- * Renders a {@link com.philbeaudoin.quebec.shared.statechange.GameStateChange GameStateChange} into
+ * Renders a {@link com.philbeaudoin.quebec.shared.game.statechange.GameStateChange GameStateChange} into
  * a scene graph. Classes implementing this interface are usually generated using
  * {@link ChangeRendererGenerator}.
  *

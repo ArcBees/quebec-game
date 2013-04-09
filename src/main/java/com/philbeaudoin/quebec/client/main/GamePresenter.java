@@ -33,21 +33,21 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import com.philbeaudoin.quebec.client.game.GameControllerClient;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.session.ClientSessionManager;
 import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.GameStateResult;
+import com.philbeaudoin.quebec.shared.action.LoadGameAction;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.GameControllerTutorial;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.player.AiBrainSimple;
 import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
-import com.philbeaudoin.quebec.shared.serveractions.GameStateResult;
-import com.philbeaudoin.quebec.shared.serveractions.LoadGameAction;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameControllerStandard;
-import com.philbeaudoin.quebec.shared.state.GameControllerTutorial;
-import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * This is the presenter of the game itself.
@@ -75,7 +75,8 @@ public class GamePresenter extends
   private final DispatchAsync dispatcher;
   private final ClientSessionManager sessionManager;
   private final RendererFactories rendererFactories;
-  private final Provider<GameControllerStandard> gameControllerStandardProvider;
+  private final Provider<GameControllerClient> gameControllerClientProvider;
+  private final Provider<GameControllerTutorial> gameControllerTutorialProvider;
 
   private boolean isTutorial;
   private long gameId = -1;
@@ -103,14 +104,16 @@ public class GamePresenter extends
   public GamePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
       PlaceManager placeManager, DispatchAsync dispatcher, ClientSessionManager sessionManager,
       RendererFactories rendererFactories,
-      Provider<GameControllerStandard> gameControllerStandardProvider) {
+      Provider<GameControllerClient> gameControllerClientProvider,
+      Provider<GameControllerTutorial> gameControllerTutorialProvider) {
     super(eventBus, view, proxy);
     view.setPresenter(this);
     this.placeManager = placeManager;
     this.dispatcher = dispatcher;
     this.sessionManager = sessionManager;
     this.rendererFactories = rendererFactories;
-    this.gameControllerStandardProvider = gameControllerStandardProvider;
+    this.gameControllerClientProvider = gameControllerClientProvider;
+    this.gameControllerTutorialProvider = gameControllerTutorialProvider;
   }
 
   @Override
@@ -121,7 +124,7 @@ public class GamePresenter extends
     if (isTutorial) {
       assert nbPlayers == 4;
       gameId = -1;
-      gameController = new GameControllerTutorial();
+      gameController = gameControllerTutorialProvider.get();
       gameState = new GameState();
       players = new ArrayList<Player>(nbPlayers);
 
@@ -135,10 +138,10 @@ public class GamePresenter extends
         placeManager.revealDefaultPlace();
         return;
       }
-      gameController = gameControllerStandardProvider.get();
+      gameController = gameControllerClientProvider.get();
       dispatcher.execute(new LoadGameAction(gameId), new AsyncGameStateCallback());
     } else {
-      gameController = gameControllerStandardProvider.get();
+      gameController = gameControllerClientProvider.get();
       gameState = new GameState();
 
       if (nbPlayers < 3) {

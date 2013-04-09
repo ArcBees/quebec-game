@@ -17,8 +17,7 @@
 package com.philbeaudoin.quebec.client.playerAgent;
 
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**
  * The agent of a {@link com.philbeaudoin.quebec.shared.player.Player Player} class, can be used to
@@ -29,10 +28,8 @@ public interface PlayerAgent {
   /**
    * Render the interactions that this player agent needs to setup given the current game state.
    * This method can trigger a move right away if desired.
-   * @param gameController The game controller.
    * @param gameState The game state.
    * @param gameStateRenderer The game state renderer into which to render the interactions.
    */
-  void renderInteractions(GameController gameController, GameState gameState,
-      GameStateRenderer gameStateRenderer);
+  void renderInteractions(GameState gameState, GameStateRenderer gameStateRenderer);
 }

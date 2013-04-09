@@ -17,9 +17,9 @@
 package com.philbeaudoin.quebec.shared.player;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**
  * The brain of an artificial intelligence.
@@ -33,7 +33,7 @@ public interface AiBrain extends IsSerializable {
    * @param gameState The game state.
    * @return The move to make.
    */
-  GameStateChange getMove(GameController gameController, GameState gameState);
+  GameAction getMove(GameController gameController, GameState gameState);
 
   /**
    * Gets a short name that can be used to identify that type of brain.

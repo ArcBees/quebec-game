@@ -23,7 +23,7 @@ import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.UserPreferences;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeFlipTile;
 import com.philbeaudoin.quebec.shared.utils.ArcTransform;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -31,7 +31,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile
+ * {@link com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeFlipTile
  * GameStateChangeFlipTile} to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
