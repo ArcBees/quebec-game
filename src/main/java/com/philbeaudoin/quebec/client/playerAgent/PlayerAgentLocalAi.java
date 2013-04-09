@@ -20,11 +20,11 @@ import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
 /**
  * The player agent of an Artificial Intelligence playing locally.
@@ -35,30 +35,31 @@ public class PlayerAgentLocalAi implements PlayerAgent {
 
   private final PlayerAgentFactories playerAgentFactories;
   private final PlayerLocalAi player;
+  private final GameController gameController;
 
   @Inject
-  PlayerAgentLocalAi(PlayerAgentFactories playerAgentFactories, @Assisted PlayerLocalAi player) {
+  PlayerAgentLocalAi(PlayerAgentFactories playerAgentFactories, @Assisted PlayerLocalAi player,
+      @Assisted GameController gameController) {
     this.playerAgentFactories = playerAgentFactories;
     this.player = player;
+    this.gameController = gameController;
   }
 
   @Override
-  public void renderInteractions(GameController gameController, GameState gameState,
+  public void renderInteractions(GameState gameState,
       GameStateRenderer gameStateRenderer) {
     // Render the possible actions.
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
       LocalAiInteractionGenerator generator =
-          playerAgentFactories.createLocalAiInteractionGenerator(gameState,
-              gameStateRenderer);
+          playerAgentFactories.createLocalAiInteractionGenerator(gameState, gameStateRenderer);
       possibleActions.accept(generator);
       gameStateRenderer.setShowActionDescriptionOnHover(false);
       if (!generator.isManualMove()) {
         // Move automatically.
-        final GameStateChange gameStateChange = player.getMove(gameController, gameState);
-        if (gameStateChange != null) {
-          // TODO(beaudoin): We could probably retrieve the action instead of the GameStateChange.
-          gameStateRenderer.generateAnimFor(gameState, gameStateChange, null);
+        final GameAction gameAction = player.getMove(gameController, gameState);
+        if (gameAction != null) {
+          gameStateRenderer.generateAnimFor(gameState, gameAction);
         }
       } else {
         generator.generateInteractions();

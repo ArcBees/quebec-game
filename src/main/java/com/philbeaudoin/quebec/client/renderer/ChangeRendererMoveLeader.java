@@ -27,7 +27,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
 
 /**
  * A change renderer that can apply a
- * {@link com.philbeaudoin.quebec.shared.statechange.GameStateChangeMoveLeader
+ * {@link com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeMoveLeader
  * GameStateChangeMoveLeader} to a scene graph.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */

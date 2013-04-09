@@ -23,8 +23,8 @@ import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNodeAnimation;
 import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
-import com.philbeaudoin.quebec.shared.action.HasBoardAction;
-import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.game.action.HasBoardAction;
+import com.philbeaudoin.quebec.shared.game.state.BoardAction;
 import com.philbeaudoin.quebec.shared.utils.ConstantTransform;
 
 /**

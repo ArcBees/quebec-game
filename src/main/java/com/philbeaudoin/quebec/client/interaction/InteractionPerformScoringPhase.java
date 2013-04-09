@@ -28,9 +28,9 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
-import com.philbeaudoin.quebec.shared.action.ActionPerformScoringPhase;
+import com.philbeaudoin.quebec.shared.game.action.ActionPerformScoringPhase;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.message.Message;
-import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**

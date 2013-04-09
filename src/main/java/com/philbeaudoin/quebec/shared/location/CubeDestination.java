@@ -17,7 +17,7 @@
 package com.philbeaudoin.quebec.shared.location;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**
  * A valid place to take or send cubes. The destination implies a color of cubes.

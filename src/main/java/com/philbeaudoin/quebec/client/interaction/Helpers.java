@@ -24,10 +24,10 @@ import com.philbeaudoin.quebec.client.renderer.HasApproximateSize;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.action.ActionMoveArchitect;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.Tile;
-import com.philbeaudoin.quebec.shared.state.TileState;
+import com.philbeaudoin.quebec.shared.game.action.ActionMoveArchitect;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.Tile;
+import com.philbeaudoin.quebec.shared.game.state.TileState;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**

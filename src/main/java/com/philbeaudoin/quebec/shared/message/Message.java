@@ -21,7 +21,7 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringInformation;
 import com.philbeaudoin.quebec.shared.ZoneScoringInformation;
-import com.philbeaudoin.quebec.shared.state.ActionType;
+import com.philbeaudoin.quebec.shared.game.state.ActionType;
 
 /**
  * Interface for messages. These messages can be rendered in various ways by a custom

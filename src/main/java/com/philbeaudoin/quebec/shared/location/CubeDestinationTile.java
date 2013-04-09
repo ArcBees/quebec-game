@@ -17,9 +17,9 @@
 package com.philbeaudoin.quebec.shared.location;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.Tile;
-import com.philbeaudoin.quebec.shared.state.TileState;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.Tile;
+import com.philbeaudoin.quebec.shared.game.state.TileState;
 
 /**
  * A cube destination corresponding to a spot on a tile.

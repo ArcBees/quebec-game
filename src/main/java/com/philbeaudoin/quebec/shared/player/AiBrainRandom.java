@@ -16,10 +16,10 @@
 
 package com.philbeaudoin.quebec.shared.player;
 
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**
  * The brain of an artificial intelligence that plays randomly.
@@ -29,11 +29,11 @@ import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 public class AiBrainRandom implements AiBrain {
 
   @Override
-  public GameStateChange getMove(GameController gameController, GameState gameState) {
+  public GameAction getMove(GameController gameController, GameState gameState) {
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null && possibleActions.getNbActions() > 0) {
       int actionIndex = (int) (Math.random() * possibleActions.getNbActions());
-      return possibleActions.execute(gameController, actionIndex, gameState);
+      return possibleActions.getAction(actionIndex);
     }
     return null;
   }

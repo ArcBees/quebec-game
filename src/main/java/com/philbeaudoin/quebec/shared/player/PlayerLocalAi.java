@@ -17,9 +17,9 @@
 package com.philbeaudoin.quebec.shared.player;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**
  * A artificial intelligence player playing locally.
@@ -54,7 +54,7 @@ public class PlayerLocalAi extends PlayerBase {
    * @param gameState The game state.
    * @return The move to execute or null if there are no moves available in that state.
    */
-  public GameStateChange getMove(GameController gameController, GameState gameState) {
+  public GameAction getMove(GameController gameController, GameState gameState) {
     assert gameState.getCurrentPlayer().getColor() == getColor();
     return aiBrain.getMove(gameController, gameState);
   }

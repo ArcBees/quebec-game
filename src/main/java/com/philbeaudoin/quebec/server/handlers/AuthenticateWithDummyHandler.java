@@ -7,8 +7,8 @@ import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.user.UserManager;
-import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithDummyAction;
-import com.philbeaudoin.quebec.shared.serveractions.SessionInfoResult;
+import com.philbeaudoin.quebec.shared.action.AuthenticateWithDummyAction;
+import com.philbeaudoin.quebec.shared.action.SessionInfoResult;
 import com.philbeaudoin.quebec.shared.session.SessionInfoDto;
 
 //TODO(beaudoin): Remove, only for testing.

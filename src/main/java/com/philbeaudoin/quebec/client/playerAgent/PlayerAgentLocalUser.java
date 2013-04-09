@@ -20,12 +20,10 @@ import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.shared.action.GameAction;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
 
 /**
  * The player agent of a user playing locally.
@@ -43,8 +41,7 @@ public class PlayerAgentLocalUser implements PlayerAgent {
   }
 
   @Override
-  public void renderInteractions(GameController gameController, GameState gameState,
-      GameStateRenderer gameStateRenderer) {
+  public void renderInteractions(GameState gameState, GameStateRenderer gameStateRenderer) {
     // Render the possible actions.
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
@@ -55,10 +52,7 @@ public class PlayerAgentLocalUser implements PlayerAgent {
       GameAction automaticAction = generator.getAutomaticAction();
       if (automaticAction != null) {
         // Move automatically.
-        final GameStateChange gameStateChange = automaticAction.execute(gameController, gameState);
-        if (gameStateChange != null) {
-          gameStateRenderer.generateAnimFor(gameState, gameStateChange, automaticAction);
-        }
+        gameStateRenderer.generateAnimFor(gameState, automaticAction);
       } else {
         generator.generateInteractions();
       }

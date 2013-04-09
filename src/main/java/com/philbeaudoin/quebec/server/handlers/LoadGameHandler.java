@@ -19,20 +19,19 @@ package com.philbeaudoin.quebec.server.handlers;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
+import com.philbeaudoin.quebec.server.game.GameControllerServer;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.GameStateResult;
+import com.philbeaudoin.quebec.shared.action.LoadGameAction;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.player.AiBrainSimple;
 import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
-import com.philbeaudoin.quebec.shared.serveractions.GameStateResult;
-import com.philbeaudoin.quebec.shared.serveractions.LoadGameAction;
-import com.philbeaudoin.quebec.shared.state.GameControllerStandard;
-import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * Handles {@link LoadGameAction}.
@@ -40,11 +39,11 @@ import com.philbeaudoin.quebec.shared.state.GameState;
  */
 public class LoadGameHandler implements ActionHandler<LoadGameAction, GameStateResult> {
 
-  private final Provider<GameControllerStandard> gameControllerStandardProvider;
+  private final GameControllerServer gameControllerServer;
 
   @Inject
-  LoadGameHandler(Provider<GameControllerStandard> gameControllerStandardProvider) {
-    this.gameControllerStandardProvider = gameControllerStandardProvider;
+  LoadGameHandler(GameControllerServer gameControllerServer) {
+    this.gameControllerServer = gameControllerServer;
   }
 
   @Override
@@ -58,7 +57,7 @@ public class LoadGameHandler implements ActionHandler<LoadGameAction, GameStateR
     players.add(new PlayerLocalAi(PlayerColor.WHITE, "HAL Server", new AiBrainSimple()));
     players.add(new PlayerLocalAi(PlayerColor.ORANGE, "Skynet Server", new AiBrainSimple()));
     // Client-only game. We can start it right away.
-    gameControllerStandardProvider.get().initGame(gameState, players);
+    gameControllerServer.initGame(gameState, players);
     return new GameStateResult(gameState);
   }
 

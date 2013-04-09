@@ -29,9 +29,9 @@ import com.philbeaudoin.quebec.server.database.ObjectifyServiceWrapper;
 import com.philbeaudoin.quebec.server.session.ServerSessionManager;
 import com.philbeaudoin.quebec.server.session.SessionInfoEntity;
 import com.philbeaudoin.quebec.server.user.UserInfoEntity;
+import com.philbeaudoin.quebec.shared.action.GameListResult;
 import com.philbeaudoin.quebec.shared.game.GameInfo;
 import com.philbeaudoin.quebec.shared.game.GameInfoDto;
-import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
 import com.philbeaudoin.quebec.shared.user.UserInfo;
 
 /**

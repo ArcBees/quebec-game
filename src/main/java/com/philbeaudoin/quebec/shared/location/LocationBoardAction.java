@@ -16,7 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.location;
 
-import com.philbeaudoin.quebec.shared.state.BoardAction;
+import com.philbeaudoin.quebec.shared.game.state.BoardAction;
 
 /**
  * Identifies a location corresponding to an action on the board.

@@ -26,12 +26,12 @@ import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
+import com.philbeaudoin.quebec.shared.game.state.Board;
+import com.philbeaudoin.quebec.shared.game.state.BoardAction;
 import com.philbeaudoin.quebec.shared.location.Location;
 import com.philbeaudoin.quebec.shared.location.LocationBoardAction;
 import com.philbeaudoin.quebec.shared.location.LocationRelative;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
-import com.philbeaudoin.quebec.shared.state.Board;
-import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**

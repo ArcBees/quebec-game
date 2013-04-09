@@ -24,8 +24,8 @@ import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.session.ServerSessionManager;
 import com.philbeaudoin.quebec.server.session.SessionInfoEntity;
-import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithAdminPasswordAction;
-import com.philbeaudoin.quebec.shared.serveractions.SessionInfoResult;
+import com.philbeaudoin.quebec.shared.action.AuthenticateWithAdminPasswordAction;
+import com.philbeaudoin.quebec.shared.action.SessionInfoResult;
 import com.philbeaudoin.quebec.shared.session.SessionInfoDto;
 
 /**

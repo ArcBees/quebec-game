@@ -40,7 +40,7 @@ import com.philbeaudoin.quebec.client.session.ClientSessionManager;
 import com.philbeaudoin.quebec.client.session.ClientSessionManagerImpl;
 import com.philbeaudoin.quebec.client.utils.GwtRandomShuffler;
 import com.philbeaudoin.quebec.shared.Constants;
-import com.philbeaudoin.quebec.shared.state.Shuffler;
+import com.philbeaudoin.quebec.shared.game.state.Shuffler;
 
 /**
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>

@@ -23,8 +23,8 @@ import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.user.UserManager;
-import com.philbeaudoin.quebec.shared.serveractions.AuthenticateWithGoogleAuthorizationCodeAction;
-import com.philbeaudoin.quebec.shared.serveractions.SessionInfoResult;
+import com.philbeaudoin.quebec.shared.action.AuthenticateWithGoogleAuthorizationCodeAction;
+import com.philbeaudoin.quebec.shared.action.SessionInfoResult;
 import com.philbeaudoin.quebec.shared.session.SessionInfoDto;
 
 /**

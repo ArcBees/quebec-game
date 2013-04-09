@@ -19,8 +19,8 @@ package com.philbeaudoin.quebec.server.game;
 import java.util.List;
 
 import com.gwtplatform.dispatch.shared.ActionException;
+import com.philbeaudoin.quebec.shared.action.GameListResult;
 import com.philbeaudoin.quebec.shared.game.GameInfo;
-import com.philbeaudoin.quebec.shared.serveractions.GameListResult;
 
 /**
  * Manages information relative to a game on the server.

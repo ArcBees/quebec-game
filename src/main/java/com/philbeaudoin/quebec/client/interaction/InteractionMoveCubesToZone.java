@@ -23,8 +23,8 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
-import com.philbeaudoin.quebec.shared.action.ActionMoveCubes;
-import com.philbeaudoin.quebec.shared.state.GameState;
+import com.philbeaudoin.quebec.shared.game.action.ActionMoveCubes;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**
  * This is an interaction with the game board for the action of selecting an influence zone to

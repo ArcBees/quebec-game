@@ -17,17 +17,19 @@
 package com.philbeaudoin.quebec.client.playerAgent;
 
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
 import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
-import com.philbeaudoin.quebec.shared.state.GameState;
 
 /**
  * Factory methods of the various player agent classes, used in assisted injection.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface PlayerAgentFactories {
+  PlayerAgentGenerator createPlayerAgentGenerator(GameController gameController);
   PlayerAgentLocalUser createPlayerAgentLocalUser(PlayerLocalUser host);
-  PlayerAgentLocalAi createPlayerAgentLocalAi(PlayerLocalAi host);
+  PlayerAgentLocalAi createPlayerAgentLocalAi(PlayerLocalAi host, GameController gameController);
   LocalUserInteractionGenerator createLocalUserInteractionGenerator(GameState gameState,
       GameStateRenderer gameStateRenderer);
   LocalAiInteractionGenerator createLocalAiInteractionGenerator(GameState gameState,

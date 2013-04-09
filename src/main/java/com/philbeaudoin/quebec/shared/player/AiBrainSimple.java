@@ -23,12 +23,13 @@ import com.google.gwt.user.client.Random;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringHelper;
-import com.philbeaudoin.quebec.shared.action.PossibleActions;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
-import com.philbeaudoin.quebec.shared.state.TileState;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChange;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
+import com.philbeaudoin.quebec.shared.game.state.TileState;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 
 /**
  * The brain of an artificial intelligence that evaluates only his own move.
@@ -40,7 +41,7 @@ public class AiBrainSimple implements AiBrain {
   private static final double LEVEL = 1.0;  // Level of the AI player. 1.0 for the best player.
 
   @Override
-  public GameStateChange getMove(GameController gameController, GameState gameState) {
+  public GameAction getMove(GameController gameController, GameState gameState) {
     PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     // TODO(beaudoin): AIs with a level < 1 play too much architect moves.
     double percentile = 1.0 - Random.nextDouble() * (0.1 * (1.0 - LEVEL));
@@ -81,8 +82,8 @@ public class AiBrainSimple implements AiBrain {
     ArrayList<ScoreAndMove> moves = new ArrayList<ScoreAndMove>(possibleActions.getNbActions());
     for (int actionIndex = 0; actionIndex < possibleActions.getNbActions(); ++actionIndex) {
       GameState gameStateCopy = new GameState(gameState);
-      GameStateChange gameStateChange = possibleActions.execute(gameController, actionIndex,
-          gameStateCopy);
+      GameAction gameAction = possibleActions.getAction(actionIndex);
+      GameStateChange gameStateChange = gameAction.execute(gameController, gameStateCopy);
       gameStateChange.apply(gameController, gameStateCopy);
       ScoreAndMove scoreAndMove = scoreForBestMove(gameController, gameStateCopy, playerColor, 1.0);
       double score = -10000;
@@ -93,7 +94,7 @@ public class AiBrainSimple implements AiBrain {
       }
       if (score > bestScore) {
         bestScore = score;
-        moves.add(new ScoreAndMove(score, gameStateChange));
+        moves.add(new ScoreAndMove(score, gameAction));
       }
     }
 
@@ -300,8 +301,8 @@ public class AiBrainSimple implements AiBrain {
 
   private static class ScoreAndMove {
     final double score;
-    final GameStateChange move;
-    public ScoreAndMove(double score, GameStateChange move) {
+    final GameAction move;
+    public ScoreAndMove(double score, GameAction move) {
       this.score = score;
       this.move = move;
     }

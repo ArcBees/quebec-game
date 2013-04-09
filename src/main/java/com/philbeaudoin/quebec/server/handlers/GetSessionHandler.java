@@ -23,8 +23,8 @@ import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.session.ServerSessionManager;
-import com.philbeaudoin.quebec.shared.serveractions.GetSessionAction;
-import com.philbeaudoin.quebec.shared.serveractions.SessionInfoResult;
+import com.philbeaudoin.quebec.shared.action.GetSessionAction;
+import com.philbeaudoin.quebec.shared.action.SessionInfoResult;
 import com.philbeaudoin.quebec.shared.session.SessionInfoDto;
 
 /**

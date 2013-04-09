@@ -25,8 +25,8 @@ import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.exceptions.OperationNotAllowedException;
 import com.philbeaudoin.quebec.server.session.ServerSessionManager;
 import com.philbeaudoin.quebec.server.user.OAuthManager;
-import com.philbeaudoin.quebec.shared.serveractions.ChangeAdminSettingsAction;
-import com.philbeaudoin.quebec.shared.serveractions.VoidResult;
+import com.philbeaudoin.quebec.shared.action.ChangeAdminSettingsAction;
+import com.philbeaudoin.quebec.shared.action.VoidResult;
 import com.philbeaudoin.quebec.shared.session.SessionInfo;
 
 /**

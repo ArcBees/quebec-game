@@ -17,9 +17,9 @@
 package com.philbeaudoin.quebec.client.renderer;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeFlipTile;
-import com.philbeaudoin.quebec.shared.statechange.GameStateChangeIncreaseStarToken;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeFlipTile;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeIncreaseStarToken;
 import com.philbeaudoin.quebec.shared.utils.Transform;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 

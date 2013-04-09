@@ -17,9 +17,9 @@
 package com.philbeaudoin.quebec.shared.location;
 
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
-import com.philbeaudoin.quebec.shared.state.GameState;
-import com.philbeaudoin.quebec.shared.state.LeaderCard;
 
 /**
  * A leader card destination corresponding to a player zone.

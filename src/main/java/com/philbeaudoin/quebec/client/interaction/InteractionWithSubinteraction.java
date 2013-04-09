@@ -23,11 +23,10 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
-import com.philbeaudoin.quebec.shared.state.GameController;
-import com.philbeaudoin.quebec.shared.state.GameState;
 import com.philbeaudoin.quebec.shared.utils.CallbackRegistration;
 
 /**
@@ -73,7 +72,7 @@ public abstract class InteractionWithSubinteraction implements Interaction {
   }
 
   @Override
-  public void onMouseClick(GameController gameController, double x, double y, double time) {
+  public void onMouseClick(double x, double y, double time) {
     if (getTrigger().triggerAt(x, y)) {
       gameStateRenderer.clearAnimationGraph();
       if (animationCompletedRegistration != null) {
