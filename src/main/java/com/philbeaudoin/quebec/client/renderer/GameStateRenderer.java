@@ -36,6 +36,7 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
 import com.philbeaudoin.quebec.shared.state.BoardAction;
 import com.philbeaudoin.quebec.shared.state.GameController;
@@ -730,13 +731,17 @@ public class GameStateRenderer {
    * rendered anew.
    * @param gameState The game state to apply change to.
    * @param gameStateChange The game state change to animate and then apply.
+   * @param gameAction The game action corresponding to this animation. If non-null it should be
+   *     possible to find it in {@link GameState#getPossibleActions} of the gameState parameter.
    */
   public void generateAnimFor(final GameState gameState,
-      final GameStateChange gameStateChange) {
+      final GameStateChange gameStateChange,
+      GameAction gameAction) {
     ChangeRenderer changeRenderer = gameStateChange
         .accept(changeRendererGenerator);
     changeRenderer.generateAnim(this, 0.0);
     changeRenderer.undoAdditions(this);
+    gameController.beforePerformAction(gameAction, gameState);
 
     scheduler.scheduleDeferred(new ScheduledCommand() {
       @Override

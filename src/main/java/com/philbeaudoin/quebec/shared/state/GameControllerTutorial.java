@@ -228,6 +228,10 @@ public class GameControllerTutorial implements GameController {
     gameState.setPossibleActions(startingActions);
   }
 
+  @Override
+  public void beforePerformAction(GameAction gameAction, GameState gameState) {
+  }
+
   private Location relativeToTarget(Location target, double x, double y) {
     return new LocationRelative(target, new Vector2d(x, y));
   }

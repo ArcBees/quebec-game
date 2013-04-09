@@ -18,6 +18,7 @@ package com.philbeaudoin.quebec.shared.state;
 
 import java.util.List;
 
+import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.player.Player;
 
@@ -54,5 +55,13 @@ public interface GameController {
    * @param gameState The current game state.
    */
   void prepareNextCentury(GameState gameState);
+
+  /**
+   * Let the controller know that the current user is performing a given action.
+   * @param gameAction The action performed, should be an element of
+   *     {@link GameState#getPossibleActions()} of gameState.
+   * @param gameState The game state on which the user is performing this action.
+   */
+  void beforePerformAction(GameAction gameAction, GameState gameState);
 
 }

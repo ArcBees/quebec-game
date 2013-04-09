@@ -26,6 +26,7 @@ import com.philbeaudoin.quebec.shared.action.ActionPerformScoringPhase;
 import com.philbeaudoin.quebec.shared.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.action.ActionTakeLeaderCard;
+import com.philbeaudoin.quebec.shared.action.GameAction;
 import com.philbeaudoin.quebec.shared.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.Player;
@@ -159,5 +160,10 @@ public class GameControllerStandard implements GameController {
       }
     }
     configurePossibleActions(gameState);
+  }
+
+  @Override
+  public void beforePerformAction(GameAction gameAction, GameState gameState) {
+    int x = 3;
   }
 }

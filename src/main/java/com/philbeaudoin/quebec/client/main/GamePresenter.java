@@ -150,9 +150,7 @@ public class GamePresenter extends
 
       players.add(new PlayerLocalUser(PlayerColor.BLACK, "You"));
       for (int i = 1; i < nbPlayers; i++) {
-        // TODO(beaudoin): Temp, remove.
-        players.add(new PlayerLocalUser(AI_INFOS[i].color, AI_INFOS[i].name));
-//        players.add(new PlayerLocalAi(AI_INFOS[i].color, AI_INFOS[i].name, new AiBrainSimple()));
+        players.add(new PlayerLocalAi(AI_INFOS[i].color, AI_INFOS[i].name, new AiBrainSimple()));
       }
     }
     if (gameState != null) {
