@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.location.CubeDestination;
  * A change of the game state obtained by moving cubes from one location to another.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeMoveCubes implements GameStateChange {
 
   private int nbCubes;

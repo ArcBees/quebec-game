@@ -36,6 +36,7 @@ import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class AiBrainSimple implements AiBrain {
 
   private static final double LEVEL = 1.0;  // Level of the AI player. 1.0 for the best player.

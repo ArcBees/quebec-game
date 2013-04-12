@@ -50,6 +50,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * The action of performing a given scoring phase.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionPerformScoringPhase implements GameAction {
 
   private ScoringPhase scoringPhase;

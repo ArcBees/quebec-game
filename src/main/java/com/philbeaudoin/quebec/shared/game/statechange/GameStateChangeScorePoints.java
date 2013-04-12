@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * A change of the game state where a given player score points.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeScorePoints implements GameStateChange {
 
   private PlayerColor scoringPlayer;

@@ -31,6 +31,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * The action of moving cubes from one influence zone to another.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionMoveCubes implements GameActionOnInfluenceZone {
 
   private int nbCubes;

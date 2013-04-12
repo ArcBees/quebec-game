@@ -21,6 +21,7 @@ package com.philbeaudoin.quebec.shared.location;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class LocationTopCenter implements Location {
   @Override
   public <T> T accept(LocationVisitor<T> visitor) {

@@ -16,7 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.game.state;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
+
 import com.philbeaudoin.quebec.shared.PlayerColor;
 
 /**
@@ -24,7 +25,8 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InfluenceZoneState implements IsSerializable {
+@SuppressWarnings("serial")
+public class InfluenceZoneState implements Serializable {
 
   private Integer cubesForPlayer[] = new Integer[5];
 

@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeScorePoint
  * A game action where the current player score points.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionScorePoints implements GameAction {
 
   private int nbPoints;

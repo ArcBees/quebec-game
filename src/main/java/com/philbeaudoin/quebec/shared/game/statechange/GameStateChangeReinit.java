@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * A change of the game state obtained by entirely reinitializing the game state.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeReinit implements GameStateChange {
 
   @Override

@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.location.LeaderDestination;
  * A change of the game state obtained by moving a leader card from one location to another.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeMoveLeader implements GameStateChange {
 
   private LeaderDestination from;

@@ -21,6 +21,7 @@ import java.util.List;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.shared.action.GameListResult;
 import com.philbeaudoin.quebec.shared.game.GameInfo;
+import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**
  * Manages information relative to a game on the server.
@@ -76,4 +77,11 @@ public interface GameManager {
    * @return The games anonymized in the right format to be sent over the wire.
    */
   GameListResult GameInfoEntitiesToGameListResult(List<GameInfoEntity> gameInfoEntities);
+
+  /**
+   * Load the game with the specified id or creates it if it doesn't exist.
+   * @param gameId The gameId of the game info entity for which to load the game.
+   * @return The state of the game info corresponding to the game entity.
+   */
+  GameState loadGame(long gameId);
 }

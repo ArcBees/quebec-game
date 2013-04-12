@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.message.Message;
  * specific action should highlight all the board actions.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionExplicitHighlightBoardActions extends ActionExplicit {
 
   public ActionExplicitHighlightBoardActions(Message message, GameStateChange action) {

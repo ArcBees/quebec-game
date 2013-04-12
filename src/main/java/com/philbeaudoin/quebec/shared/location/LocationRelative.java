@@ -23,6 +23,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class LocationRelative implements Location {
 
   private final Location target;

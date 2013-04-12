@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  * should not generate an animation.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeInstantaneousDecorator implements GameStateChange {
 
   private GameStateChange decorated;

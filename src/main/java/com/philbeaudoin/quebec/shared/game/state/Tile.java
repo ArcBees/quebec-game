@@ -16,7 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.game.state;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
+
 import com.philbeaudoin.quebec.shared.InfluenceType;
 
 /**
@@ -25,7 +26,8 @@ import com.philbeaudoin.quebec.shared.InfluenceType;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class Tile implements IsSerializable {
+@SuppressWarnings("serial")
+public class Tile implements Serializable {
   private InfluenceType influenceType;
   private int century;
   private int buildingIndex;

@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  * A change of game state obtained by combining multiple different game state changes.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeComposite implements GameStateChange {
   private ArrayList<GameStateChange> changes = new ArrayList<GameStateChange>();
 

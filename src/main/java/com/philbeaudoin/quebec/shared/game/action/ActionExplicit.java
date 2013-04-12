@@ -28,6 +28,7 @@ import com.philbeaudoin.quebec.shared.message.Message;
  * generally triggers that action by clicking a button displaying the message.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionExplicit implements GameAction {
 
   public static ActionExplicit createSkipAction() {

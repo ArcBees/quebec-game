@@ -16,14 +16,15 @@
 
 package com.philbeaudoin.quebec.shared.player;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
+
 import com.philbeaudoin.quebec.shared.PlayerColor;
 
 /**
  * Information on a player taking part in a game.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface Player extends IsSerializable {
+public interface Player extends Serializable {
 
   /**
    * Access the name of this player.

@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  * A cube destination corresponding to an given player color within an influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class CubeDestinationInfluenceZone implements CubeDestination {
 
   private InfluenceType influenceType;

@@ -29,16 +29,6 @@ import com.philbeaudoin.quebec.shared.utils.Callback;
 public interface ActionExecution {
 
   /**
-   * Called before the action is executed. This can only be called once per
-   * {@link ActionExecution}.
-   * @param gameState The game state before the execution.
-   * @param gameAction The game action to execute.
-   * @param gameStateChange The game state change resulting from applying the action to the state.
-   */
-  public void prepareExecution(GameState gameState, GameAction gameAction,
-      GameStateChange gameStateChange);
-
-  /**
    * Called to execute the action and change the game state itself. This can only be called once
    * per {@link ActionExecution}.
    * @param gameState The game state before the execution.

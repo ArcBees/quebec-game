@@ -39,6 +39,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * The action of moving a specific architect to a given tile or out of the board.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionMoveArchitect implements GameActionOnTile {
 
   private Tile destinationTile;

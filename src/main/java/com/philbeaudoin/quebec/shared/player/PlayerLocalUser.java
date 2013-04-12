@@ -23,6 +23,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class PlayerLocalUser extends PlayerBase {
   public PlayerLocalUser(PlayerColor color, String name) {
     super(color, name);

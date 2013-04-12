@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  * A change of the game state obtained by setting the current player to some specific color.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeSetPlayer implements GameStateChange {
   private PlayerColor playerColor;
 

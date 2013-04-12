@@ -70,5 +70,6 @@ public class GameControllerClient implements GameController {
   public void performAction(ActionExecution actionExecution, GameAction gameAction,
       GameState gameState) {
     gameControllerBasic.performAction(actionExecution, gameAction, gameState);
+    
   }
 }

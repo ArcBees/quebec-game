@@ -21,6 +21,7 @@ package com.philbeaudoin.quebec.shared.location;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class LocationScore implements Location {
   private int score;
 

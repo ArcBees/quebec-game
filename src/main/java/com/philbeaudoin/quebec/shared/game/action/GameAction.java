@@ -16,7 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.game.action;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
+
 import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
@@ -25,7 +26,7 @@ import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
  * A possible action in the game.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface GameAction extends IsSerializable {
+public interface GameAction extends Serializable {
   /**
    * Apply the action to a given game state and return the game state change resulting from it.
    * The game state itself is not modified.

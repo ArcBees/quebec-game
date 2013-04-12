@@ -38,6 +38,7 @@ public class GameInfoEntity implements GameInfo {
   @Index Date creationDate;
   @Load List<Ref<UserInfoEntity>> players = new ArrayList<Ref<UserInfoEntity>>();
   int currentPlayerIndex;
+  Ref<GameEntity> game;
 
   public GameInfoEntity(int nbPlayers, long creationTime) {
     this.nbPlayers = nbPlayers;
@@ -88,5 +89,13 @@ public class GameInfoEntity implements GameInfo {
     players.add(Ref.create(userInfoEntity));
     if (currentPlayerIndex < 0)
       currentPlayerIndex = 0;
+  }
+
+  public Ref<GameEntity> getGameRef() {
+    return game;
+  }
+
+  public void setGame(GameEntity gameEntity) {
+    game = Ref.create(gameEntity);
   }
 }

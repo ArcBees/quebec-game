@@ -33,6 +33,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * The action of emptying the cubes on a given tile to a given influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionEmptyTileToZone implements GameActionOnInfluenceZone {
 
   private Tile origin;

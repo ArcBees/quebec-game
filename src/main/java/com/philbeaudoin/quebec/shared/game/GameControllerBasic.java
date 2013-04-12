@@ -167,7 +167,6 @@ public class GameControllerBasic implements GameController {
         actionExecution.finalizeExecution(newGameState);
       }
     });
-    actionExecution.prepareExecution(gameState, gameAction, gameStateChange);
     actionExecution.execute(gameState, gameAction, gameStateChange);
   }
   /**

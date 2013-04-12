@@ -16,7 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.message;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
+
 import com.philbeaudoin.quebec.shared.location.Location;
 import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
 
@@ -26,7 +27,8 @@ import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class TextBoxInfo implements IsSerializable {
+@SuppressWarnings("serial")
+public class TextBoxInfo implements Serializable {
   private Message message;
   private Location anchor;
   private Location pointTo;

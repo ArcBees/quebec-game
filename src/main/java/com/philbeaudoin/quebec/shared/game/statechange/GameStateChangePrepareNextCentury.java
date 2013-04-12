@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  * preparing the possible game moves.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangePrepareNextCentury implements GameStateChange {
 
   @Override

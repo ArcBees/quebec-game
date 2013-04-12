@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.game.state.TileState;
  * An architect destination corresponding to a tile.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ArchitectDestinationTile implements ArchitectDestination {
 
   private Tile tile;

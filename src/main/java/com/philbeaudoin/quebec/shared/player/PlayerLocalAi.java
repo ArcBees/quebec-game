@@ -26,6 +26,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class PlayerLocalAi extends PlayerBase {
 
   private AiBrain aiBrain;

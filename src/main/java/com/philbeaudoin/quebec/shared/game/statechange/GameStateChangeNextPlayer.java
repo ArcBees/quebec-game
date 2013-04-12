@@ -23,6 +23,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  * A change of the game state obtained by switching to the next player.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeNextPlayer implements GameStateChange {
 
   private boolean prepareActions;

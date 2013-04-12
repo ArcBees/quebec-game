@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangePrepareAct
  * The action of selecting a board action to execute.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionSelectBoardAction implements GameActionOnBoardAction {
 
   private BoardAction boardAction;
