@@ -26,6 +26,7 @@ import com.philbeaudoin.quebec.shared.game.state.TileState;
  * A change of the game state obtained by increasing the star token on a tile.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeIncreaseStarToken implements GameStateChange {
 
   private Tile tile;

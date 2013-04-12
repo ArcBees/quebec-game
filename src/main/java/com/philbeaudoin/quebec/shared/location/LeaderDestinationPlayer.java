@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * A leader card destination corresponding to a player zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class LeaderDestinationPlayer implements LeaderDestination {
 
   private LeaderCard leaderCard;

@@ -16,9 +16,9 @@
 
 package com.philbeaudoin.quebec.shared.game.state;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
@@ -27,7 +27,8 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class TileState implements IsSerializable {
+@SuppressWarnings("serial")
+public class TileState implements Serializable {
 
   private Tile tile;
   private Vector2d location;

@@ -16,22 +16,14 @@
 
 package com.philbeaudoin.quebec.server.handlers;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
 import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
-import com.philbeaudoin.quebec.server.game.GameControllerServer;
-import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.server.game.GameManager;
 import com.philbeaudoin.quebec.shared.action.GameStateResult;
 import com.philbeaudoin.quebec.shared.action.LoadGameAction;
-import com.philbeaudoin.quebec.shared.game.state.GameState;
-import com.philbeaudoin.quebec.shared.player.AiBrainSimple;
-import com.philbeaudoin.quebec.shared.player.Player;
-import com.philbeaudoin.quebec.shared.player.PlayerLocalAi;
-import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
 
 /**
  * Handles {@link LoadGameAction}.
@@ -39,26 +31,17 @@ import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
  */
 public class LoadGameHandler implements ActionHandler<LoadGameAction, GameStateResult> {
 
-  private final GameControllerServer gameControllerServer;
+  private final GameManager gameManager;
 
   @Inject
-  LoadGameHandler(GameControllerServer gameControllerServer) {
-    this.gameControllerServer = gameControllerServer;
+  LoadGameHandler(GameManager gameManager) {
+    this.gameManager = gameManager;
   }
 
   @Override
   public GameStateResult execute(final LoadGameAction action, ExecutionContext context)
       throws ActionException {
-    // TODO(beaudoin): Just creating a dummy 4 player game here.
-    GameState gameState = new GameState();
-    ArrayList<Player> players = new ArrayList<Player>(4);
-    players.add(new PlayerLocalUser(PlayerColor.BLACK, "You"));
-    players.add(new PlayerLocalAi(PlayerColor.PINK, "Johnny 5 Server", new AiBrainSimple()));
-    players.add(new PlayerLocalAi(PlayerColor.WHITE, "HAL Server", new AiBrainSimple()));
-    players.add(new PlayerLocalAi(PlayerColor.ORANGE, "Skynet Server", new AiBrainSimple()));
-    // Client-only game. We can start it right away.
-    gameControllerServer.initGame(gameState, players);
-    return new GameStateResult(gameState);
+    return new GameStateResult(gameManager.loadGame(action.getGameId()));
   }
 
   @Override

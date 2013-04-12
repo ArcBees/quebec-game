@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.game.state.TileState;
  * A cube destination corresponding to a spot on a tile.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class CubeDestinationTile implements CubeDestination {
 
   private Tile tile;

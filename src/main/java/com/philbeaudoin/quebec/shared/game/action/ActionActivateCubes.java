@@ -30,6 +30,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * The action of sending passive worker cubes to a given influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionActivateCubes implements GameAction {
 
   private int nbCubes;

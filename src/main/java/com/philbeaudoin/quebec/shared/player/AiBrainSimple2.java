@@ -34,6 +34,7 @@ import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class AiBrainSimple2 implements AiBrain {
 
   @Override

@@ -39,6 +39,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * The action of taking a leader card from an influence zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionTakeLeaderCard implements GameAction, HasLeaderCard {
 
   private LeaderCard leaderCard;

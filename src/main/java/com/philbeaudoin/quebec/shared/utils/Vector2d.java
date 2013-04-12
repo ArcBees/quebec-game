@@ -16,14 +16,15 @@
 
 package com.philbeaudoin.quebec.shared.utils;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
 
 /**
  * An immutable 2-dimensional vector.
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class Vector2d implements IsSerializable {
+@SuppressWarnings("serial")
+public class Vector2d implements Serializable {
   protected double x, y;
 
   public Vector2d() {

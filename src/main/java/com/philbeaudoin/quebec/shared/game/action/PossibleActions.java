@@ -16,9 +16,9 @@
 
 package com.philbeaudoin.quebec.shared.game.action;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 
@@ -26,7 +26,8 @@ import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
  * A set of possible actions that can be taken in the current state of the game.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class PossibleActions implements IsSerializable {
+@SuppressWarnings("serial")
+public class PossibleActions implements Serializable {
 
   private TextBoxInfo textBoxInfo;
   private ArrayList<GameAction> gameActions = new ArrayList<GameAction>();

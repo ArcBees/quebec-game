@@ -178,7 +178,7 @@ public class MenuPresenter extends
   public void playGame(GameInfoForGameList gameInfo) {
     if (checkSignedIn()) {
       PlaceRequest myRequest = new PlaceRequest(NameTokens.gamePage);
-      myRequest = myRequest.with(GamePresenter.GAME_ID_KEY, "1");
+      myRequest = myRequest.with(GamePresenter.GAME_ID_KEY, Long.toString(gameInfo.getId()));
       placeManager.revealPlace( myRequest );
     }
   }
@@ -186,7 +186,7 @@ public class MenuPresenter extends
   public void viewGame(GameInfoForGameList gameInfo) {
     if (checkSignedIn()) {
       PlaceRequest myRequest = new PlaceRequest(NameTokens.gamePage);
-      myRequest = myRequest.with(GamePresenter.GAME_ID_KEY, "1");
+      myRequest = myRequest.with(GamePresenter.GAME_ID_KEY, Long.toString(gameInfo.getId()));
       placeManager.revealPlace( myRequest );
     }
   }

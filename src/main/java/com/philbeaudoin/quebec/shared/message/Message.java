@@ -16,7 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.message;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
+
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.ScoringInformation;
@@ -33,7 +34,8 @@ import com.philbeaudoin.quebec.shared.game.state.ActionType;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  *
  */
-public interface Message extends IsSerializable {
+@SuppressWarnings("serial")
+public interface Message extends Serializable {
 
   <T> T accept(Visitor<T> visitor);
 

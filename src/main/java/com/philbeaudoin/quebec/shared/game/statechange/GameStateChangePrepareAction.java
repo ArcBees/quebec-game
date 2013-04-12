@@ -27,6 +27,7 @@ import com.philbeaudoin.quebec.shared.game.state.Tile;
  * action.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangePrepareAction implements GameStateChange {
 
   private BoardAction boardAction;

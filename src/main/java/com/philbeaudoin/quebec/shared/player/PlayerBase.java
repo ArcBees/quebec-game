@@ -23,6 +23,7 @@ import com.philbeaudoin.quebec.shared.PlayerColor;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public abstract class PlayerBase implements Player {
 
   private String name;

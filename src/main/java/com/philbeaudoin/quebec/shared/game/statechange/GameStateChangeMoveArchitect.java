@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.location.ArchitectDestination;
  * A change of the game state obtained by moving an architect from one location to another.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeMoveArchitect implements GameStateChange {
 
   private ArchitectDestination from;

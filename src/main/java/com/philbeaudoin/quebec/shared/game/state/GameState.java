@@ -16,9 +16,9 @@
 
 package com.philbeaudoin.quebec.shared.game.state;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
@@ -29,7 +29,8 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * The state of the entire game.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class GameState implements IsSerializable {
+@SuppressWarnings("serial")
+public class GameState implements Serializable {
 
   // If the game is stored server-side, this contains its id.
   private long gameId;

@@ -26,6 +26,7 @@ import com.philbeaudoin.quebec.shared.game.state.TileState;
  * A change of the game state obtained by flipping a tile an placing a star token on it.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeFlipTile implements GameStateChange {
 
   private Tile tile;

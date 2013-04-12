@@ -28,6 +28,7 @@ import com.philbeaudoin.quebec.shared.message.Message;
  * version should highlight a number of tiles in the standard renderer.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionExplicitHighlightTiles extends ActionExplicit {
 
   private ArrayList<Tile> tiles;

@@ -24,6 +24,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * An architect destination corresponding to a player zone.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ArchitectDestinationPlayer implements ArchitectDestination {
 
   private PlayerColor playerColor;

@@ -23,6 +23,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  * An architect destination corresponding to the neutral leader when it's offboard.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ArchitectDestinationOffboardNeutral implements ArchitectDestination {
 
   public ArchitectDestinationOffboardNeutral() {

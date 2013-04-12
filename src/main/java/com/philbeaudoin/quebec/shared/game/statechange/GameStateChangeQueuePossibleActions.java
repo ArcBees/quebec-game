@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  * action.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class GameStateChangeQueuePossibleActions implements GameStateChange {
 
   private PossibleActions possibleActions;

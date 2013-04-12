@@ -21,6 +21,7 @@ package com.philbeaudoin.quebec.shared.utils;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class MutableVector2d extends Vector2d {
 
   public MutableVector2d() {

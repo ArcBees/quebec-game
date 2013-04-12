@@ -23,6 +23,7 @@ import com.philbeaudoin.quebec.shared.game.state.BoardAction;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class LocationBoardAction implements Location {
   private BoardAction boardAction;
 

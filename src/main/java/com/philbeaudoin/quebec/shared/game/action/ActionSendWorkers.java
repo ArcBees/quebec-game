@@ -40,6 +40,7 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * the associated board action is never executed.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class ActionSendWorkers implements GameActionOnTile {
 
   private boolean fromActive;

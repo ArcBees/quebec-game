@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
  * A leader card destination corresponding to the game board.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class LeaderDestinationBoard implements LeaderDestination {
 
   private LeaderCard leaderCard;

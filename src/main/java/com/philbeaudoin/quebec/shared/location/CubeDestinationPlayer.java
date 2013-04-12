@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.shared.player.PlayerState;
  * passive.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
+@SuppressWarnings("serial")
 public class CubeDestinationPlayer implements CubeDestination {
 
   private PlayerColor playerColor;

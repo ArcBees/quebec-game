@@ -16,7 +16,8 @@
 
 package com.philbeaudoin.quebec.shared.player;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
+
 import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
@@ -26,7 +27,7 @@ import com.philbeaudoin.quebec.shared.game.state.GameState;
  *
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public interface AiBrain extends IsSerializable {
+public interface AiBrain extends Serializable {
   /**
    * Returns the move to make, for the current player, given a game state.
    * @param gameController The game controller.

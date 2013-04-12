@@ -739,17 +739,12 @@ public class GameStateRenderer {
       Callback readyToFinalizeCallback;
 
       @Override
-      public void prepareExecution(GameState gameState, GameAction gameAction,
+      public void execute(GameState gameState, GameAction gameAction,
           GameStateChange gameStateChange) {
         actionExecutionOfCurrentAnimation = this;
         ChangeRenderer changeRenderer = gameStateChange.accept(changeRendererGenerator);
         changeRenderer.generateAnim(GameStateRenderer.this, 0.0);
         changeRenderer.undoAdditions(GameStateRenderer.this);
-      }
-
-      @Override
-      public void execute(GameState gameState, GameAction gameAction,
-          GameStateChange gameStateChange) {
         scheduler.scheduleDeferred(new ScheduledCommand() {
           @Override
           public void execute() {
