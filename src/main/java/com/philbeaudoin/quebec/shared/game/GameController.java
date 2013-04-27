@@ -18,10 +18,11 @@ package com.philbeaudoin.quebec.shared.game;
 
 import java.util.List;
 
-import com.philbeaudoin.quebec.shared.game.action.ActionExecution;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.player.Player;
 
 /**
@@ -59,11 +60,16 @@ public interface GameController {
   void prepareNextCentury(GameState gameState);
 
   /**
-   * Execute the given action.
-   * @param actionExecution The action execution to invoke at the various stages.
+   * Creates a {@link GameActionLifecycleActor} for this controller given a {@link GameAction}.
+   * This can return null if the controller is not interested in hooking up on the action's
+   * lifecycle.
+   * @param stateBefore The game state before the action is applied.
+   * @param stateAfter The game state after the action has been applied.
+   * @param gameStateChange The game state change between {@code stateBefore} and
+   *     {@code stateAfter}.
    * @param gameAction The action to execute.
-   * @param gameState The game state on which the user is performing this action.
    */
-  void performAction(ActionExecution actionExecution, GameAction gameAction, GameState gameState);
+  GameActionLifecycleActor createActor(GameState stateBefore, GameState stateAfter,
+      GameStateChange gameStateChange, GameAction gameAction);
 
 }
