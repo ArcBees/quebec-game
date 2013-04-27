@@ -34,8 +34,7 @@ import com.philbeaudoin.quebec.shared.utils.Transform;
  * This is the base class for interactions involving move architect actions.
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-public class InteractionMoveArchitect extends
-    InteractionWithAction {
+public class InteractionMoveArchitect extends InteractionWithAction {
 
   private final SceneNodeList arrows;
 

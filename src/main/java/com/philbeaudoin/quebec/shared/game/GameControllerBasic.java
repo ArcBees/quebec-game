@@ -21,13 +21,13 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.game.action.ActionExecution;
 import com.philbeaudoin.quebec.shared.game.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.game.action.ActionPerformScoringPhase;
 import com.philbeaudoin.quebec.shared.game.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.game.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.game.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.Board;
 import com.philbeaudoin.quebec.shared.game.state.BoardAction;
@@ -41,7 +41,6 @@ import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
-import com.philbeaudoin.quebec.shared.utils.Callback;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -156,19 +155,11 @@ public class GameControllerBasic implements GameController {
   }
 
   @Override
-  public void performAction(final ActionExecution actionExecution, final GameAction gameAction,
-      final GameState gameState) {
-    final GameStateChange gameStateChange = gameAction.execute(this, gameState);
-    actionExecution.setReadyToFinalizeCallback(new Callback() {
-      @Override
-      public void execute() {
-        GameState newGameState = new GameState(gameState);
-        gameStateChange.apply(GameControllerBasic.this, newGameState);
-        actionExecution.finalizeExecution(newGameState);
-      }
-    });
-    actionExecution.execute(gameState, gameAction, gameStateChange);
+  public GameActionLifecycleActor createActor(GameState stateBefore, GameState stateAfter,
+      GameStateChange gameStateChange, GameAction gameAction) {
+    return null;
   }
+
   /**
    * A utility method that can be used
    * @param gameState

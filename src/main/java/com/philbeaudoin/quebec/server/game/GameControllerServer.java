@@ -21,10 +21,11 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.GameControllerBasic;
-import com.philbeaudoin.quebec.shared.game.action.ActionExecution;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
+import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.player.Player;
 
 /**
@@ -63,8 +64,8 @@ public class GameControllerServer implements GameController {
   }
 
   @Override
-  public void performAction(ActionExecution actionExecution, GameAction gameAction,
-      GameState gameState) {
-    gameControllerBasic.performAction(actionExecution, gameAction, gameState);
+  public GameActionLifecycleActor createActor(GameState stateBefore, GameState stateAfter,
+      GameStateChange gameStateChange, GameAction gameAction) {
+    return gameControllerBasic.createActor(stateBefore, stateAfter, gameStateChange, gameAction);
   }
 }

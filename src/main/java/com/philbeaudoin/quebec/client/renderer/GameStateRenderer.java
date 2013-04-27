@@ -38,8 +38,9 @@ import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.game.GameController;
-import com.philbeaudoin.quebec.shared.game.action.ActionExecution;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycle;
+import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.state.BoardAction;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.game.state.LeaderCard;
@@ -89,7 +90,7 @@ public class GameStateRenderer {
   private boolean refreshNeeded = true;
   private boolean showActionDescriptionOnHover;
 
-  private ActionExecution actionExecutionOfCurrentAnimation;
+  private GameActionLifecycleAnimationActor actorForCurrentAnimation;
 
   @Inject
   GameStateRenderer(Scheduler scheduler,
@@ -644,7 +645,7 @@ public class GameStateRenderer {
    * Clears the entire animation graph.
    */
   public void clearAnimationGraph() {
-    actionExecutionOfCurrentAnimation = null;
+    actorForCurrentAnimation = null;
     animationRoot.clear();
   }
 
@@ -735,48 +736,17 @@ public class GameStateRenderer {
    */
   public void generateAnimFor(final GameState gameState, final GameAction gameAction) {
 
-    ActionExecution actionExecution = new ActionExecution() {
-      Callback readyToFinalizeCallback;
+    final GameActionLifecycle gameActionLifecycle = new GameActionLifecycle();
+    final GameStateChange gameStateChange = gameAction.execute(gameController, gameState);
+    final GameState stateAfter = new GameState(gameState);
+    gameStateChange.apply(gameController, stateAfter);
 
-      @Override
-      public void execute(GameState gameState, GameAction gameAction,
-          GameStateChange gameStateChange) {
-        actionExecutionOfCurrentAnimation = this;
-        ChangeRenderer changeRenderer = gameStateChange.accept(changeRendererGenerator);
-        changeRenderer.generateAnim(GameStateRenderer.this, 0.0);
-        changeRenderer.undoAdditions(GameStateRenderer.this);
-        scheduler.scheduleDeferred(new ScheduledCommand() {
-          @Override
-          public void execute() {
-            if (isAnimationCompleted(0.0)) {
-              readyToFinalizeCallback.execute();
-            }
-            else {
-              addAnimationCompletedCallback(readyToFinalizeCallback);
-            }
-          }
-        });
-      }
+    gameActionLifecycle.addActor(new GameActionLifecycleAnimationActor(stateAfter,
+        gameStateChange));
+    gameActionLifecycle.addActor(gameController.createActor(gameState, stateAfter,
+        gameStateChange, gameAction));
 
-      @Override
-      public void finalizeExecution(GameState newGameState) {
-        if (actionExecutionOfCurrentAnimation == this) {
-          clearAnimationGraph();
-          render(newGameState);
-        }
-      }
-
-      @Override
-      public void error() {
-      }
-
-      @Override
-      public void setReadyToFinalizeCallback(Callback callback) {
-        this.readyToFinalizeCallback = callback;
-      }
-    };
-
-    gameController.performAction(actionExecution, gameAction, gameState);
+    gameActionLifecycle.start();
   }
 
   public boolean getShowActionDescriptionOnHover() {
@@ -785,5 +755,58 @@ public class GameStateRenderer {
 
   public void setShowActionDescriptionOnHover(boolean showActionDescriptionOnHover) {
     this.showActionDescriptionOnHover = showActionDescriptionOnHover;
+  }
+
+  /**
+   * A {@link GameActionLifecycleActor} that is responsible of rendering an animation and finalizing
+   * the render.
+   * @author beaudoin
+   */
+  private class GameActionLifecycleAnimationActor implements GameActionLifecycleActor {
+    final GameState stateAfter;
+    final GameStateChange gameStateChange;
+
+    private CallbackRegistration registration;
+
+    GameActionLifecycleAnimationActor(GameState stateAfter, GameStateChange gameStateChange) {
+      this.stateAfter = stateAfter;
+      this.gameStateChange = gameStateChange;
+      this.registration = null;
+    }
+
+    @Override
+    public void onStart(final Callback completedCallback) {
+      actorForCurrentAnimation = this;
+      ChangeRenderer changeRenderer = gameStateChange.accept(changeRendererGenerator);
+      changeRenderer.generateAnim(GameStateRenderer.this, 0.0);
+      changeRenderer.undoAdditions(GameStateRenderer.this);
+      scheduler.scheduleDeferred(new ScheduledCommand() {
+        @Override
+        public void execute() {
+          if (isAnimationCompleted(0.0)) {
+            completedCallback.execute();
+          }
+          else {
+            registration = addAnimationCompletedCallback(completedCallback);
+          }
+        }
+      });
+    }
+
+    @Override
+    public void onFinalize(Callback completedCallback) {
+      if (registration != null) {
+        registration.unregister();
+      }
+      if (actorForCurrentAnimation == this) {
+        clearAnimationGraph();
+        render(stateAfter);
+      }
+      completedCallback.execute();
+    }
+
+    @Override
+    public void onComplete() {
+    }
   }
 }

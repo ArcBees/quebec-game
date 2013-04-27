@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.game.action.ActionActivateCubes;
-import com.philbeaudoin.quebec.shared.game.action.ActionExecution;
 import com.philbeaudoin.quebec.shared.game.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.game.action.ActionExplicitHighlightBoardActions;
 import com.philbeaudoin.quebec.shared.game.action.ActionExplicitHighlightTiles;
@@ -34,6 +33,7 @@ import com.philbeaudoin.quebec.shared.game.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.game.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.game.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.Board;
 import com.philbeaudoin.quebec.shared.game.state.CannedShuffler;
@@ -246,9 +246,9 @@ public class GameControllerTutorial implements GameController {
   }
 
   @Override
-  public void performAction(ActionExecution actionExecution, GameAction gameAction,
-      GameState gameState) {
-    gameControllerBasic.performAction(actionExecution, gameAction, gameState);
+  public GameActionLifecycleActor createActor(GameState stateBefore, GameState stateAfter,
+      GameStateChange gameStateChange, GameAction gameAction) {
+    return gameControllerBasic.createActor(stateBefore, stateAfter, gameStateChange, gameAction);
   }
 
   private Location relativeToTarget(Location target, double x, double y) {
@@ -849,6 +849,7 @@ public class GameControllerTutorial implements GameController {
     return result;
   }
 
+  @SuppressWarnings("serial")
   private class ActionCustomTakeLeader extends ActionExplicit {
 
     public ActionCustomTakeLeader(GameStateChange action) {
@@ -884,6 +885,7 @@ public class GameControllerTutorial implements GameController {
     }
   }
 
+  @SuppressWarnings("serial")
   private class ActionCustomReturnLeaderCards extends ActionExplicit {
 
     public ActionCustomReturnLeaderCards(GameStateChange action) {
@@ -919,6 +921,7 @@ public class GameControllerTutorial implements GameController {
     }
   }
 
+  @SuppressWarnings("serial")
   private class ActionJumpToEndOfCentury extends ActionExplicit {
 
     public ActionJumpToEndOfCentury(GameStateChange action) {
