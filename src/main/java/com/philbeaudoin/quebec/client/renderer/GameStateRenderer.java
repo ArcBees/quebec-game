@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.interaction.ActionDescriptionInteraction;
 import com.philbeaudoin.quebec.client.interaction.Interaction;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
@@ -37,9 +36,6 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
-import com.philbeaudoin.quebec.shared.game.GameController;
-import com.philbeaudoin.quebec.shared.game.action.GameAction;
-import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycle;
 import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.state.BoardAction;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
@@ -78,8 +74,6 @@ public class GameStateRenderer {
   private final RendererFactories factories;
   private final InteractionFactories interactionFactories;
   private final ChangeRendererGenerator changeRendererGenerator;
-  private final PlayerAgentGenerator playerAgentGenerator;
-  private final GameController gameController;
   private final ScoreRenderer scoreRenderer;
   private final BoardRenderer boardRenderer;
   private final ArrayList<PlayerStateRenderer> playerStateRenderers =
@@ -98,14 +92,11 @@ public class GameStateRenderer {
       InteractionFactories interactionFactories,
       SpriteResources spriteResources,
       ChangeRendererGenerator changeRendererGenerator,
-      PlayerAgentFactories playerAgentFactories,
-      @Assisted GameController gameController) {
+      PlayerAgentFactories playerAgentFactoriesr) {
     this.scheduler = scheduler;
     this.factories = factories;
     this.interactionFactories = interactionFactories;
     this.changeRendererGenerator = changeRendererGenerator;
-    this.playerAgentGenerator = playerAgentFactories.createPlayerAgentGenerator(gameController);
-    this.gameController = gameController;
     scoreRenderer = factories.createScoreRenderer();
     boardRenderer = factories.createBoardRenderer(LEFT_COLUMN_WIDTH);
     staticRoot.add(backgroundRoot);
@@ -116,8 +107,7 @@ public class GameStateRenderer {
 
   /**
    * Renders the game state.
-   * @param gameState
-   *          The desired game state.
+   * @param gameState The desired game state.
    */
   public void render(final GameState gameState) {
     refreshNeeded = true;
@@ -141,7 +131,17 @@ public class GameStateRenderer {
           boardRenderer.getBackgroundBoardRoot());
       index++;
     }
+  }
 
+  /**
+   * Renders the interactions for the game state. Must be called after {@link #render}.
+   * @param gameState
+   *          The desired game state.
+   * @param playerAgentGenerator
+   *          The generator for the player agents.
+   */
+  public void renderInteractions(final GameState gameState,
+      PlayerAgentGenerator playerAgentGenerator) {
     PlayerAgent playerAgent = gameState.getCurrentPlayer().getPlayer()
         .accept(playerAgentGenerator);
     playerAgent.renderInteractions(gameState, this);
@@ -729,24 +729,14 @@ public class GameStateRenderer {
    * Generates the animation corresponding to a given game state change, after
    * the animation the game state itself is updated and the board is completely
    * rendered anew.
-   * @param gameState The game state to apply change to.
+   * @param stateAfter The state after the action has been applied.
    * @param gameStateChange The game state change to animate and then apply.
    * @param gameAction The game action corresponding to this animation. If non-null it should be
    *     possible to find it in {@link GameState#getPossibleActions} of the gameState parameter.
    */
-  public void generateAnimFor(final GameState gameState, final GameAction gameAction) {
-
-    final GameActionLifecycle gameActionLifecycle = new GameActionLifecycle();
-    final GameStateChange gameStateChange = gameAction.execute(gameController, gameState);
-    final GameState stateAfter = new GameState(gameState);
-    gameStateChange.apply(gameController, stateAfter);
-
-    gameActionLifecycle.addActor(new GameActionLifecycleAnimationActor(stateAfter,
-        gameStateChange));
-    gameActionLifecycle.addActor(gameController.createActor(gameState, stateAfter,
-        gameStateChange, gameAction));
-
-    gameActionLifecycle.start();
+  public GameActionLifecycleActor createAnimationActor(final GameState stateAfter,
+      final GameStateChange gameStateChange) {
+    return new GameActionLifecycleAnimationActor(stateAfter, gameStateChange);
   }
 
   public boolean getShowActionDescriptionOnHover() {

@@ -17,7 +17,6 @@
 package com.philbeaudoin.quebec.client.renderer;
 
 import com.google.inject.assistedinject.Assisted;
-import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeFlipTile;
 import com.philbeaudoin.quebec.shared.game.statechange.GameStateChangeIncreaseStarToken;
 import com.philbeaudoin.quebec.shared.utils.Transform;
@@ -28,7 +27,6 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
 public interface RendererFactories {
-  GameStateRenderer createGameStateRenderer(GameController gameController);
   BoardRenderer createBoardRenderer(double leftPosition);
   ScoreRenderer createScoreRenderer();
   PlayerStateRenderer createPlayerStateRenderer(Vector2d size, Transform transform,

@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.GameActionOnBoardAction;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 
@@ -33,8 +34,10 @@ public class InteractionSelectBoardAction extends InteractionWithAction {
   @Inject
   public InteractionSelectBoardAction(Scheduler scheduler,
       InteractionFactories interactionFactories, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted GameActionOnBoardAction action) {
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted GameActionOnBoardAction action,
+      @Assisted GameController gameController) {
     super(scheduler, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetBoardAction(gameStateRenderer, action), action);
+        interactionFactories.createInteractionTargetBoardAction(gameStateRenderer, action), action,
+        gameController);
   }
 }

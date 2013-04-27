@@ -22,10 +22,8 @@ import com.google.inject.Inject;
 import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.GameControllerBasic;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
-import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
-import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.player.Player;
 
 /**
@@ -64,8 +62,12 @@ public class GameControllerServer implements GameController {
   }
 
   @Override
-  public GameActionLifecycleActor createActor(GameState stateBefore, GameState stateAfter,
-      GameStateChange gameStateChange, GameAction gameAction) {
-    return gameControllerBasic.createActor(stateBefore, stateAfter, gameStateChange, gameAction);
+  public void performAction(GameState gameState, GameAction gameAction) {
+    // TODO(beaudoin): We should probably do something here.
+  }
+
+  @Override
+  public void setGameState(GameState gameState) {
+    // TODO(beaudoin): We should probably do something here.
   }
 }

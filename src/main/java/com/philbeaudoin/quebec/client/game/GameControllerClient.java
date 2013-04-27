@@ -19,15 +19,21 @@ package com.philbeaudoin.quebec.client.game;
 import java.util.List;
 
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.gwtplatform.dispatch.shared.DispatchAsync;
+import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentFactories;
+import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentGenerator;
+import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.GameControllerBasic;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycle;
 import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.player.Player;
+import com.philbeaudoin.quebec.shared.utils.Callback;
 
 /**
  * A controller to manipulate the state of a game client-side. It sends actions to the server.
@@ -38,12 +44,18 @@ public class GameControllerClient implements GameController {
 
   private final GameControllerBasic gameControllerBasic;
   private final DispatchAsync dispatcher;
+  private final PlayerAgentGenerator playerAgentGenerator;
+  private final GameStateRenderer gameStateRenderer;
 
   @Inject
   GameControllerClient(GameControllerBasic gameControllerBasic,
-      DispatchAsync dispatcher) {
+      DispatchAsync dispatcher,
+      PlayerAgentFactories playerAgentFactories,
+      @Assisted GameStateRenderer gameStateRenderer) {
     this.gameControllerBasic = gameControllerBasic;
     this.dispatcher = dispatcher;
+    this.playerAgentGenerator = playerAgentFactories.createPlayerAgentGenerator(this);
+    this.gameStateRenderer = gameStateRenderer;
   }
 
   @Override
@@ -68,8 +80,39 @@ public class GameControllerClient implements GameController {
   }
 
   @Override
-  public GameActionLifecycleActor createActor(GameState stateBefore, GameState stateAfter,
-      GameStateChange gameStateChange, GameAction gameAction) {
-    return gameControllerBasic.createActor(stateBefore, stateAfter, gameStateChange, gameAction);
+  public void performAction(GameState gameState, GameAction gameAction) {
+    // TODO(beaudoin): Remove code duplication between this and the GameControllerTutorial.
+    final GameActionLifecycle gameActionLifecycle = new GameActionLifecycle();
+    final GameStateChange gameStateChange = gameAction.execute(this, gameState);
+    final GameState stateAfter = new GameState(gameState);
+    gameStateChange.apply(this, stateAfter);
+
+    gameActionLifecycle.addActor(gameStateRenderer.createAnimationActor(stateAfter,
+        gameStateChange));
+    gameActionLifecycle.addActor(new GameActionLifecycleActor() {
+      @Override
+      public void onStart(Callback completedCallback) {
+        completedCallback.execute();
+      }
+
+      @Override
+      public void onFinalize(Callback completedCallback) {
+        completedCallback.execute();
+      }
+
+      @Override
+      public void onComplete() {
+        gameStateRenderer.renderInteractions(stateAfter, playerAgentGenerator);
+      }
+    });
+
+    gameActionLifecycle.start();
+  }
+
+  @Override
+  public void setGameState(GameState gameState) {
+    // TODO(beaudoin): Remove code duplication between this and the GameControllerTutorial.
+    gameStateRenderer.render(gameState);
+    gameStateRenderer.renderInteractions(gameState, playerAgentGenerator);
   }
 }

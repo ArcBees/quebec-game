@@ -22,6 +22,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.game.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.game.action.ActionExplicit;
@@ -53,6 +54,7 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
   private final TextBoxRenderer textBoxRenderer;
   private final GameState gameState;
   private final GameStateRenderer gameStateRenderer;
+  private final GameController gameController;
 
   private PossibleActions generatingActions;
   private ActionPerformScoringPhase manualAction;
@@ -61,11 +63,13 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
   LocalAiInteractionGenerator(InteractionFactories factories,
       TextBoxRenderer textBoxRenderer,
       @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer) {
+      @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted GameController gameController) {
     this.factories = factories;
     this.textBoxRenderer = textBoxRenderer;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
+    this.gameController = gameController;
   }
 
   /**
@@ -74,7 +78,7 @@ public class LocalAiInteractionGenerator implements GameActionVisitor {
    */
   public void generateInteractions() {
     gameStateRenderer.addInteraction(factories.createInteractionPerformScoringPhase(
-        gameState, gameStateRenderer, manualAction));
+        gameState, gameStateRenderer, manualAction, gameController));
 
     assert generatingActions != null;
     gameStateRenderer.addToAnimationGraph(

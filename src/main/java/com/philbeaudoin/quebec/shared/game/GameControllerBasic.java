@@ -27,7 +27,6 @@ import com.philbeaudoin.quebec.shared.game.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.game.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.game.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
-import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.Board;
 import com.philbeaudoin.quebec.shared.game.state.BoardAction;
@@ -37,7 +36,6 @@ import com.philbeaudoin.quebec.shared.game.state.Shuffler;
 import com.philbeaudoin.quebec.shared.game.state.Tile;
 import com.philbeaudoin.quebec.shared.game.state.TileDeck;
 import com.philbeaudoin.quebec.shared.game.state.TileState;
-import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
@@ -155,9 +153,15 @@ public class GameControllerBasic implements GameController {
   }
 
   @Override
-  public GameActionLifecycleActor createActor(GameState stateBefore, GameState stateAfter,
-      GameStateChange gameStateChange, GameAction gameAction) {
-    return null;
+  public void performAction(GameState gameState, GameAction gameAction) {
+    // GameControllerBasic does not generate animation and does not persist the state
+    // in any way so there is nothing to do here.
+  }
+
+  @Override
+  public void setGameState(GameState gameState) {
+    // GameControllerBasic does not generate animation and does not persist the state
+    // in any way so there is nothing to do here.
   }
 
   /**
@@ -166,7 +170,7 @@ public class GameControllerBasic implements GameController {
    * @param players
    * @param shuffler
    */
-  static void resetGameState(GameState gameState, List<Player> players, Shuffler shuffler) {
+  public static void resetGameState(GameState gameState, List<Player> players, Shuffler shuffler) {
     gameState.setCentury(0);
 
     int nbPlayers = players.size();

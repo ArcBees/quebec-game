@@ -22,6 +22,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 
@@ -36,9 +37,10 @@ public class InteractionIncreaseStar extends InteractionWithAction {
   public InteractionIncreaseStar(Scheduler scheduler,
       InteractionFactories interactionFactories, MessageRenderer messageRenderer,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionIncreaseStar action) {
+      @Assisted ActionIncreaseStar action, @Assisted GameController gameController) {
     super(scheduler, gameState, gameStateRenderer,
-        interactionFactories.createInteractionTargetTile(gameStateRenderer, action), action);
+        interactionFactories.createInteractionTargetTile(gameStateRenderer, action), action,
+        gameController);
   }
 
 }

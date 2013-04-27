@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.location.LeaderDestinationBoard;
@@ -45,10 +46,11 @@ public class InteractionTakeLeaderCard extends InteractionWithAction {
   @Inject
   public InteractionTakeLeaderCard(Scheduler scheduler, InteractionFactories interactionFactories,
       TextBoxRenderer textBoxRenderer, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionTakeLeaderCard action) {
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionTakeLeaderCard action,
+      @Assisted GameController gameController) {
     super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetLeaderCard(gameStateRenderer, action),
-        createActionMessage(gameState), action);
+        createActionMessage(gameState), action, gameController);
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     extras = new SceneNodeList();

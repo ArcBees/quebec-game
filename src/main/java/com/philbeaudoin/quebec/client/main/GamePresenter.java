@@ -18,8 +18,6 @@ package com.philbeaudoin.quebec.client.main;
 
 import java.util.ArrayList;
 
-import javax.inject.Provider;
-
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -33,16 +31,14 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
-import com.philbeaudoin.quebec.client.game.GameControllerClient;
+import com.philbeaudoin.quebec.client.game.GameControllerFactories;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
-import com.philbeaudoin.quebec.client.renderer.RendererFactories;
 import com.philbeaudoin.quebec.client.session.ClientSessionManager;
 import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.PlayerColor;
 import com.philbeaudoin.quebec.shared.action.GameStateResult;
 import com.philbeaudoin.quebec.shared.action.LoadGameAction;
 import com.philbeaudoin.quebec.shared.game.GameController;
-import com.philbeaudoin.quebec.shared.game.GameControllerTutorial;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.player.AiBrainSimple;
 import com.philbeaudoin.quebec.shared.player.Player;
@@ -74,15 +70,13 @@ public class GamePresenter extends
   private final PlaceManager placeManager;
   private final DispatchAsync dispatcher;
   private final ClientSessionManager sessionManager;
-  private final RendererFactories rendererFactories;
-  private final Provider<GameControllerClient> gameControllerClientProvider;
-  private final Provider<GameControllerTutorial> gameControllerTutorialProvider;
+  private final GameStateRenderer gameStateRenderer;
+  private final GameControllerFactories gameControllerFactories;
 
   private boolean isTutorial;
   private long gameId = -1;
   private int nbPlayers = 4;
   private GameController gameController;
-  private GameStateRenderer gameStateRenderer;
 
   /**
    * The presenter's view.
@@ -103,17 +97,15 @@ public class GamePresenter extends
   @Inject
   public GamePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
       PlaceManager placeManager, DispatchAsync dispatcher, ClientSessionManager sessionManager,
-      RendererFactories rendererFactories,
-      Provider<GameControllerClient> gameControllerClientProvider,
-      Provider<GameControllerTutorial> gameControllerTutorialProvider) {
+      GameStateRenderer gameStateRenderer,
+      GameControllerFactories gameControllerFactories) {
     super(eventBus, view, proxy);
     view.setPresenter(this);
     this.placeManager = placeManager;
     this.dispatcher = dispatcher;
     this.sessionManager = sessionManager;
-    this.rendererFactories = rendererFactories;
-    this.gameControllerClientProvider = gameControllerClientProvider;
-    this.gameControllerTutorialProvider = gameControllerTutorialProvider;
+    this.gameStateRenderer = gameStateRenderer;
+    this.gameControllerFactories = gameControllerFactories;
   }
 
   @Override
@@ -124,7 +116,7 @@ public class GamePresenter extends
     if (isTutorial) {
       assert nbPlayers == 4;
       gameId = -1;
-      gameController = gameControllerTutorialProvider.get();
+      gameController = gameControllerFactories.createGameControllerTutorial(gameStateRenderer);
       gameState = new GameState();
       players = new ArrayList<Player>(nbPlayers);
 
@@ -138,10 +130,10 @@ public class GamePresenter extends
         placeManager.revealDefaultPlace();
         return;
       }
-      gameController = gameControllerClientProvider.get();
+      gameController = gameControllerFactories.createGameControllerClient(gameStateRenderer);
       dispatcher.execute(new LoadGameAction(gameId), new AsyncGameStateCallback());
     } else {
-      gameController = gameControllerClientProvider.get();
+      gameController = gameControllerFactories.createGameControllerClient(gameStateRenderer);
       gameState = new GameState();
 
       if (nbPlayers < 3) {
@@ -158,10 +150,9 @@ public class GamePresenter extends
     }
     if (gameState != null) {
       assert(gameController != null);
-      gameStateRenderer = rendererFactories.createGameStateRenderer(gameController);
       // Client-only game. We can start it right away.
       gameController.initGame(gameState, players);
-      gameStateRenderer.render(gameState);
+      gameController.setGameState(gameState);
     }
   }
 
@@ -268,8 +259,7 @@ public class GamePresenter extends
 
       if (gameState != null) {
         assert(gameController != null);
-        gameStateRenderer = rendererFactories.createGameStateRenderer(gameController);
-        gameStateRenderer.render(gameState);
+        gameController.setGameState(gameState);
       }
     }
   }

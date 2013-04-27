@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
@@ -33,11 +34,14 @@ import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
 public class PlayerAgentLocalUser implements PlayerAgent {
 
   private final PlayerAgentFactories playerAgentFactories;
+  private final GameController gameController;
 
   @Inject
   PlayerAgentLocalUser(PlayerAgentFactories playerAgentFactories,
-      @Assisted PlayerLocalUser playerLocalUser) {
+      @Assisted PlayerLocalUser playerLocalUser,
+      @Assisted GameController gameController) {
     this.playerAgentFactories = playerAgentFactories;
+    this.gameController = gameController;
   }
 
   @Override
@@ -46,13 +50,15 @@ public class PlayerAgentLocalUser implements PlayerAgent {
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
       LocalUserInteractionGenerator generator =
-          playerAgentFactories.createLocalUserInteractionGenerator(gameState, gameStateRenderer);
+          playerAgentFactories.createLocalUserInteractionGenerator(gameState, gameStateRenderer,
+              gameController);
       possibleActions.accept(generator);
       gameStateRenderer.setShowActionDescriptionOnHover(possibleActions.getCanSelectBoardAction());
       GameAction automaticAction = generator.getAutomaticAction();
       if (automaticAction != null) {
         // Move automatically.
-        gameStateRenderer.generateAnimFor(gameState, automaticAction);
+        // TODO(beaudoin): This should probably be done by the GameController.
+        gameController.performAction(gameState, automaticAction);
       } else {
         generator.generateInteractions();
       }

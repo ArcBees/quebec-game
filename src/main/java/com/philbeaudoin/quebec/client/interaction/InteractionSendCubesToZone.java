@@ -25,6 +25,7 @@ import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.message.Message;
@@ -41,9 +42,10 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
 
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
       TextBoxRenderer textBoxRenderer, GameState gameState, GameStateRenderer gameStateRenderer,
-      InteractionTargetInfluenceZone target, ActionSendCubesToZone action) {
+      InteractionTargetInfluenceZone target, ActionSendCubesToZone action,
+      GameController gameController) {
     super(scheduler, textBoxRenderer, gameState, gameStateRenderer, target,
-        createActionMessage(gameState, action), action);
+        createActionMessage(gameState, action), action, gameController);
 
     PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
     arrows = new SceneNodeList();
@@ -58,10 +60,11 @@ public class InteractionSendCubesToZone extends InteractionWithAction {
   @Inject
   public InteractionSendCubesToZone(Scheduler scheduler, InteractionFactories interactionFactories,
       TextBoxRenderer textBoxRenderer, @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionSendCubesToZone action) {
+      @Assisted GameStateRenderer gameStateRenderer, @Assisted ActionSendCubesToZone action,
+      @Assisted GameController gameController) {
     this(scheduler, interactionFactories, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetInfluenceZone(gameStateRenderer, action),
-        action);
+        action, gameController);
   }
 
   @Override

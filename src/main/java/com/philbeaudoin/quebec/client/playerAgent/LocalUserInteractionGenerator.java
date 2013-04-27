@@ -38,6 +38,7 @@ import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.game.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.game.action.ActionExplicit;
@@ -74,6 +75,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
   private final Provider<MessageRenderer> messageRendererProvider;
   private final GameState gameState;
   private final GameStateRenderer gameStateRenderer;
+  private final GameController gameController;
 
   private final ArrayList<ActionMoveArchitect> moveArchitectActions =
       new ArrayList<ActionMoveArchitect>();
@@ -102,12 +104,14 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
       TextBoxRenderer textBoxRenderer,
       Provider<MessageRenderer> messageRendererProvider,
       @Assisted GameState gameState,
-      @Assisted GameStateRenderer gameStateRenderer) {
+      @Assisted GameStateRenderer gameStateRenderer,
+      @Assisted GameController gameController) {
     this.factories = factories;
     this.textBoxRenderer = textBoxRenderer;
     this.messageRendererProvider = messageRendererProvider;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
+    this.gameController = gameController;
   }
 
   /**
@@ -120,37 +124,37 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
 
     for (ActionSendWorkers action : sendWorkersActions) {
       gameStateRenderer.addInteraction(factories.createInteractionSendWorkers(gameState,
-          gameStateRenderer, action));
+          gameStateRenderer, action, gameController));
     }
     sendWorkersActions.clear();
     for (ActionTakeLeaderCard action : takeLeaderCardActions) {
       gameStateRenderer.addInteraction(factories.createInteractionTakeLeaderCard(gameState,
-          gameStateRenderer, action));
+          gameStateRenderer, action, gameController));
     }
     takeLeaderCardActions.clear();
     for (ActionSendCubesToZone action : sendCubesToZoneActions) {
       gameStateRenderer.addInteraction(factories.createInteractionSendCubesToZone(gameState,
-          gameStateRenderer, action));
+          gameStateRenderer, action, gameController));
     }
     sendCubesToZoneActions.clear();
     for (ActionSelectBoardAction action : selectBoardActionActions) {
       gameStateRenderer.addInteraction(factories.createInteractionSelectBoardAction(gameState,
-          gameStateRenderer, action));
+          gameStateRenderer, action, gameController));
     }
     selectBoardActionActions.clear();
     for (ActionIncreaseStar action : increaseStarActions) {
       gameStateRenderer.addInteraction(factories.createInteractionIncreaseStar(gameState,
-          gameStateRenderer, action));
+          gameStateRenderer, action, gameController));
     }
     increaseStarActions.clear();
     for (ActionEmptyTileToZone action : emptyTileToZoneActions) {
       gameStateRenderer.addInteraction(factories.createInteractionEmptyTileToZone(gameState,
-          gameStateRenderer, action));
+          gameStateRenderer, action, gameController));
     }
     emptyTileToZoneActions.clear();
     for (ActionPerformScoringPhase action : performScoringPhaseActions) {
       gameStateRenderer.addInteraction(factories.createInteractionPerformScoringPhase(gameState,
-          gameStateRenderer, action));
+          gameStateRenderer, action, gameController));
     }
     performScoringPhaseActions.clear();
     generateMoveCubeInteractions();
@@ -204,13 +208,13 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
           assert pair.destinationTile != null;  // Move outside the board are only possible alone.
           // Not sure which architect to move.
           gameStateRenderer.addInteraction(factories.createInteractionMoveUnknownArchitect(
-              gameState, gameStateRenderer, pair.a1, pair.a2));
+              gameState, gameStateRenderer, pair.a1, pair.a2, gameController));
         } else {
           // Only one architect to move.
           if (pair.destinationTile != null) {
             // Destination is another tile.
             gameStateRenderer.addInteraction(factories.createInteractionMoveArchitect(gameState,
-                gameStateRenderer, pair.a1));
+                gameStateRenderer, pair.a1, gameController));
           } else {
             // Destination is outside the board.
             MessageRenderer messageRenderer = messageRendererProvider.get();
@@ -249,7 +253,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
       GroupedMoveCubes group = groupedMoveCubes.get(0);
       for (ActionMoveCubes action : group.actions) {
         gameStateRenderer.addInteraction(factories.createInteractionMoveCubesToZone(
-            gameState, gameStateRenderer, action));
+            gameState, gameStateRenderer, action, gameController));
       }
     } else {
       PlayerColor playerColor = gameState.getCurrentPlayer().getColor();
@@ -258,7 +262,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
         List<Interaction> subinteractions = new ArrayList<Interaction>(group.actions.size());
         for (ActionMoveCubes action : group.actions) {
           subinteractions.add(factories.createInteractionMoveCubesToZone(gameState,
-              gameStateRenderer, action));
+              gameStateRenderer, action, gameController));
         }
         gameStateRenderer.addInteraction(factories.createInteractionMoveCubesFromZone(
             gameState, gameStateRenderer, group.originZone,
@@ -275,7 +279,7 @@ public class LocalUserInteractionGenerator implements GameActionVisitor {
     for (TextInteraction textInteraction : textInteractions) {
       gameStateRenderer.addInteraction(factories.createInteractionText(gameState, gameStateRenderer,
           textInteraction.messageRenderer, textInteraction.highlighter, textInteraction.extras,
-          positions.get(i), textInteraction.action));
+          positions.get(i), textInteraction.action, gameController));
       i++;
     }
 

@@ -52,14 +52,16 @@ public class PlayerAgentLocalAi implements PlayerAgent {
     PossibleActions possibleActions = gameState.getPossibleActions();
     if (possibleActions != null) {
       LocalAiInteractionGenerator generator =
-          playerAgentFactories.createLocalAiInteractionGenerator(gameState, gameStateRenderer);
+          playerAgentFactories.createLocalAiInteractionGenerator(gameState, gameStateRenderer,
+              gameController);
       possibleActions.accept(generator);
       gameStateRenderer.setShowActionDescriptionOnHover(false);
       if (!generator.isManualMove()) {
         // Move automatically.
+        // TODO(beaudoin): This should probably be done by the GameController.
         final GameAction gameAction = player.getMove(gameController, gameState);
         if (gameAction != null) {
-          gameStateRenderer.generateAnimFor(gameState, gameAction);
+          gameController.performAction(gameState, gameAction);
         }
       } else {
         generator.generateInteractions();
