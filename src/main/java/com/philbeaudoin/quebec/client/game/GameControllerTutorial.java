@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package com.philbeaudoin.quebec.shared.game;
+package com.philbeaudoin.quebec.client.game;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import com.google.inject.assistedinject.Assisted;
+import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentFactories;
+import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentGenerator;
+import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.shared.InfluenceType;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.game.GameController;
+import com.philbeaudoin.quebec.shared.game.GameControllerBasic;
 import com.philbeaudoin.quebec.shared.game.action.ActionActivateCubes;
 import com.philbeaudoin.quebec.shared.game.action.ActionExplicit;
 import com.philbeaudoin.quebec.shared.game.action.ActionExplicitHighlightBoardActions;
@@ -33,6 +39,7 @@ import com.philbeaudoin.quebec.shared.game.action.ActionSendCubesToZone;
 import com.philbeaudoin.quebec.shared.game.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.game.action.ActionTakeLeaderCard;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
+import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycle;
 import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.Board;
@@ -70,6 +77,7 @@ import com.philbeaudoin.quebec.shared.message.Message;
 import com.philbeaudoin.quebec.shared.message.TextBoxInfo;
 import com.philbeaudoin.quebec.shared.player.Player;
 import com.philbeaudoin.quebec.shared.player.PlayerState;
+import com.philbeaudoin.quebec.shared.utils.Callback;
 import com.philbeaudoin.quebec.shared.utils.Vector2d;
 
 /**
@@ -82,13 +90,16 @@ public class GameControllerTutorial implements GameController {
   private static final Location CENTER = new LocationCenter();
   private static final Location BOTTOM_CENTER = new LocationBottomCenter();
 
-  private final GameControllerBasic gameControllerBasic;
+  private final PlayerAgentGenerator playerAgentGenerator;
+  private final GameStateRenderer gameStateRenderer;
 
   private PossibleActions startingActions;
 
   @Inject
-  GameControllerTutorial(GameControllerBasic gameControllerBasic) {
-    this.gameControllerBasic = gameControllerBasic;
+  GameControllerTutorial(PlayerAgentFactories playerAgentFactories,
+      @Assisted GameStateRenderer gameStateRenderer) {
+    this.playerAgentGenerator = playerAgentFactories.createPlayerAgentGenerator(this);
+    this.gameStateRenderer = gameStateRenderer;
   }
 
   @Override
@@ -246,9 +257,40 @@ public class GameControllerTutorial implements GameController {
   }
 
   @Override
-  public GameActionLifecycleActor createActor(GameState stateBefore, GameState stateAfter,
-      GameStateChange gameStateChange, GameAction gameAction) {
-    return gameControllerBasic.createActor(stateBefore, stateAfter, gameStateChange, gameAction);
+  public void performAction(GameState gameState, GameAction gameAction) {
+    // TODO(beaudoin): Remove code duplication between this and the GameControllerClient.
+    final GameActionLifecycle gameActionLifecycle = new GameActionLifecycle();
+    final GameStateChange gameStateChange = gameAction.execute(this, gameState);
+    final GameState stateAfter = new GameState(gameState);
+    gameStateChange.apply(this, stateAfter);
+
+    gameActionLifecycle.addActor(gameStateRenderer.createAnimationActor(stateAfter,
+        gameStateChange));
+    gameActionLifecycle.addActor(new GameActionLifecycleActor() {
+      @Override
+      public void onStart(Callback completedCallback) {
+        completedCallback.execute();
+      }
+
+      @Override
+      public void onFinalize(Callback completedCallback) {
+        completedCallback.execute();
+      }
+
+      @Override
+      public void onComplete() {
+        gameStateRenderer.renderInteractions(stateAfter, playerAgentGenerator);
+      }
+    });
+
+    gameActionLifecycle.start();
+  }
+
+  @Override
+  public void setGameState(GameState gameState) {
+    // TODO(beaudoin): Remove code duplication between this and the GameControllerClient.
+    gameStateRenderer.render(gameState);
+    gameStateRenderer.renderInteractions(gameState, playerAgentGenerator);
   }
 
   private Location relativeToTarget(Location target, double x, double y) {

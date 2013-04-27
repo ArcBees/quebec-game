@@ -28,10 +28,11 @@ import com.philbeaudoin.quebec.shared.player.PlayerLocalUser;
  */
 public interface PlayerAgentFactories {
   PlayerAgentGenerator createPlayerAgentGenerator(GameController gameController);
-  PlayerAgentLocalUser createPlayerAgentLocalUser(PlayerLocalUser host);
+  PlayerAgentLocalUser createPlayerAgentLocalUser(PlayerLocalUser host,
+      GameController gameController);
   PlayerAgentLocalAi createPlayerAgentLocalAi(PlayerLocalAi host, GameController gameController);
   LocalUserInteractionGenerator createLocalUserInteractionGenerator(GameState gameState,
-      GameStateRenderer gameStateRenderer);
+      GameStateRenderer gameStateRenderer, GameController gameController);
   LocalAiInteractionGenerator createLocalAiInteractionGenerator(GameState gameState,
-      GameStateRenderer gameStateRenderer);
+      GameStateRenderer gameStateRenderer, GameController gameController);
 }

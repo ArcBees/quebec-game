@@ -19,10 +19,8 @@ package com.philbeaudoin.quebec.shared.game;
 import java.util.List;
 
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
-import com.philbeaudoin.quebec.shared.game.action.GameActionLifecycleActor;
 import com.philbeaudoin.quebec.shared.game.action.PossibleActions;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
-import com.philbeaudoin.quebec.shared.game.statechange.GameStateChange;
 import com.philbeaudoin.quebec.shared.player.Player;
 
 /**
@@ -60,16 +58,19 @@ public interface GameController {
   void prepareNextCentury(GameState gameState);
 
   /**
-   * Creates a {@link GameActionLifecycleActor} for this controller given a {@link GameAction}.
-   * This can return null if the controller is not interested in hooking up on the action's
-   * lifecycle.
-   * @param stateBefore The game state before the action is applied.
-   * @param stateAfter The game state after the action has been applied.
-   * @param gameStateChange The game state change between {@code stateBefore} and
-   *     {@code stateAfter}.
-   * @param gameAction The action to execute.
+   * Performs the action and perform any behavior that is expected of this controller. For example,
+   * it may render the animation for the action or persist the resulting state.
+   * @param gameState The game state before the action is performed.
+   * @param gameAction The game state after the action has been performed.
    */
-  GameActionLifecycleActor createActor(GameState stateBefore, GameState stateAfter,
-      GameStateChange gameStateChange, GameAction gameAction);
+  void performAction(GameState gameState, GameAction gameAction);
+
+  /**
+   * Set the instantaneous and perform any behavior that is expected of this controller. For
+   * example, it may render the state and any interaction.
+   * @param gameState The game state before the action is performed.
+   * @param gameAction The game state after the action has been performed.
+   */
+  void setGameState(GameState gameState);
 
 }

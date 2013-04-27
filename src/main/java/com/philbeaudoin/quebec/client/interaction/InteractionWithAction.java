@@ -21,6 +21,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.TextBoxRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.GameAction;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.location.LocationTopCenter;
@@ -41,25 +42,28 @@ public abstract class InteractionWithAction implements Interaction {
   private final SceneNodeList actionText;
   private final GameAction gameAction;
   private final InteractionTarget target;
+  private final GameController gameController;
 
   private CallbackRegistration animationCompletedRegistration;
   private boolean inside;
 
   protected InteractionWithAction(Scheduler scheduler, GameState gameState,
       GameStateRenderer gameStateRenderer, InteractionTarget target,
-      GameAction gameAction) {
-    this(scheduler, null, gameState, gameStateRenderer, target, null, gameAction);
+      GameAction gameAction, GameController gameController) {
+    this(scheduler, null, gameState, gameStateRenderer, target, null, gameAction, gameController);
   }
 
   protected InteractionWithAction(Scheduler scheduler, TextBoxRenderer textBoxRenderer,
       GameState gameState, GameStateRenderer gameStateRenderer,
-      InteractionTarget target, Message message, GameAction gameAction) {
+      InteractionTarget target, Message message, GameAction gameAction,
+      GameController gameController) {
     assert (message == null) || (textBoxRenderer != null);
     this.scheduler = scheduler;
     this.gameState = gameState;
     this.gameStateRenderer = gameStateRenderer;
     this.gameAction = gameAction;
     this.target = target;
+    this.gameController = gameController;
 
     if (message != null && !gameState.hasPossibleActionMessage()) {
       actionText = textBoxRenderer.render(
@@ -85,7 +89,7 @@ public abstract class InteractionWithAction implements Interaction {
           gameStateRenderer.removeAllHighlights();
         }
       });
-      gameStateRenderer.generateAnimFor(gameState, gameAction);
+      gameController.performAction(gameState, gameAction);
     }
   }
 

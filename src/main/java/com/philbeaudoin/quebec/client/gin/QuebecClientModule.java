@@ -28,6 +28,7 @@ import com.philbeaudoin.quebec.client.admin.AdminPresenter;
 import com.philbeaudoin.quebec.client.admin.AdminSignInPresenter;
 import com.philbeaudoin.quebec.client.admin.AdminSignInView;
 import com.philbeaudoin.quebec.client.admin.AdminView;
+import com.philbeaudoin.quebec.client.game.GameControllerFactories;
 import com.philbeaudoin.quebec.client.interaction.InteractionFactories;
 import com.philbeaudoin.quebec.client.main.GamePresenter;
 import com.philbeaudoin.quebec.client.main.GameView;
@@ -54,6 +55,7 @@ public class QuebecClientModule extends AbstractPresenterModule {
     install(new GinFactoryModuleBuilder().build(InteractionFactories.class));
     install(new GinFactoryModuleBuilder().build(PlayerAgentFactories.class));
     install(new GinFactoryModuleBuilder().build(SceneNodeAnimation.Factory.class));
+    install(new GinFactoryModuleBuilder().build(GameControllerFactories.class));
 
     bind(Shuffler.class).to(GwtRandomShuffler.class);
 

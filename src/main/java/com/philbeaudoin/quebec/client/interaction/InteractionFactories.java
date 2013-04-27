@@ -23,6 +23,7 @@ import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;
 import com.philbeaudoin.quebec.client.renderer.MessageRenderer;
 import com.philbeaudoin.quebec.client.scene.SceneNode;
 import com.philbeaudoin.quebec.shared.InfluenceType;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.ActionEmptyTileToZone;
 import com.philbeaudoin.quebec.shared.game.action.ActionIncreaseStar;
 import com.philbeaudoin.quebec.shared.game.action.ActionMoveArchitect;
@@ -47,34 +48,45 @@ import com.philbeaudoin.quebec.shared.utils.Vector2d;
  */
 public interface InteractionFactories {
   InteractionMoveArchitect createInteractionMoveArchitect(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionMoveArchitect action);
+      GameStateRenderer gameStateRenderer, ActionMoveArchitect action,
+      GameController gameController);
   InteractionMoveUnknownArchitect createInteractionMoveUnknownArchitect(
       GameState gameState,
       GameStateRenderer gameStateRenderer,
       @Assisted("a") ActionMoveArchitect actionArchitectA,
-      @Assisted("b") ActionMoveArchitect actionArchitectB);
+      @Assisted("b") ActionMoveArchitect actionArchitectB,
+      GameController gameController);
   InteractionSendWorkers createInteractionSendWorkers(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionSendWorkers action);
+      GameStateRenderer gameStateRenderer, ActionSendWorkers action,
+      GameController gameController);
   InteractionSendCubesToZone createInteractionSendCubesToZone(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionSendCubesToZone action);
+      GameStateRenderer gameStateRenderer, ActionSendCubesToZone action,
+      GameController gameController);
   InteractionTakeLeaderCard createInteractionTakeLeaderCard(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionTakeLeaderCard host);
+      GameStateRenderer gameStateRenderer, ActionTakeLeaderCard host,
+      GameController gameController);
   InteractionSelectBoardAction createInteractionSelectBoardAction(GameState gameState,
-      GameStateRenderer gameStateRenderer, GameActionOnBoardAction action);
+      GameStateRenderer gameStateRenderer, GameActionOnBoardAction action,
+      GameController gameController);
   InteractionIncreaseStar createInteractionIncreaseStar(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionIncreaseStar action);
+      GameStateRenderer gameStateRenderer, ActionIncreaseStar action,
+      GameController gameController);
   InteractionMoveCubesFromZone createInteractionMoveCubesFromZone(GameState gameState,
       GameStateRenderer gameStateRenderer, InfluenceType origin, Message message,
       List<Interaction> subinteractions);
   InteractionMoveCubesToZone createInteractionMoveCubesToZone(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionMoveCubes action);
+      GameStateRenderer gameStateRenderer, ActionMoveCubes action,
+      GameController gameController);
   InteractionEmptyTileToZone createInteractionEmptyTileToZone(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionEmptyTileToZone action);
+      GameStateRenderer gameStateRenderer, ActionEmptyTileToZone action,
+      GameController gameController);
   InteractionPerformScoringPhase createInteractionPerformScoringPhase(GameState gameState,
-      GameStateRenderer gameStateRenderer, ActionPerformScoringPhase action);
+      GameStateRenderer gameStateRenderer, ActionPerformScoringPhase action,
+      GameController gameController);
   InteractionText createInteractionText(GameState gameState,
       GameStateRenderer gameStateRenderer, MessageRenderer messageRenderer, Highlighter highlighter,
-      SceneNode extras, Vector2d pos, GameAction action);
+      SceneNode extras, Vector2d pos, GameAction action,
+      GameController gameController);
   InteractionTargetTile createInteractionTargetTile(
       GameStateRenderer gameStateRenderer, HasDestinationTile target);
   InteractionTargetInfluenceZone createInteractionTargetInfluenceZone(

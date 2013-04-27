@@ -30,6 +30,7 @@ import com.philbeaudoin.quebec.client.scene.Arrow;
 import com.philbeaudoin.quebec.client.scene.ComplexText;
 import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.ActionMoveArchitect;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 import com.philbeaudoin.quebec.shared.message.Message;
@@ -52,11 +53,12 @@ public class InteractionMoveUnknownArchitect extends InteractionWithSubinteracti
       @Assisted GameState gameState,
       @Assisted GameStateRenderer gameStateRenderer,
       @Assisted("a") ActionMoveArchitect actionArchitectA,
-      @Assisted("b") ActionMoveArchitect actionArchitectB) {
+      @Assisted("b") ActionMoveArchitect actionArchitectB,
+      @Assisted GameController gameController) {
     super(scheduler, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, actionArchitectA),
         createSubinteactions(messageRendererProvider, interactionFactories, gameState,
-            gameStateRenderer, actionArchitectA, actionArchitectB));
+            gameStateRenderer, actionArchitectA, actionArchitectB, gameController));
 
     this.gameStateRenderer = gameStateRenderer;
     assert actionArchitectA.getDestinationTile() == actionArchitectB.getDestinationTile();
@@ -91,7 +93,8 @@ public class InteractionMoveUnknownArchitect extends InteractionWithSubinteracti
       GameState gameState,
       GameStateRenderer gameStateRenderer,
       ActionMoveArchitect actionArchitectA,
-      ActionMoveArchitect actionArchitectB) {
+      ActionMoveArchitect actionArchitectB,
+      GameController gameController) {
 
     List<MessageRenderer> messageRenderers = new ArrayList<MessageRenderer>(2);
     messageRenderers.add(messageRendererProvider.get());
@@ -106,11 +109,11 @@ public class InteractionMoveUnknownArchitect extends InteractionWithSubinteracti
     subinteractions.add(factories.createInteractionText(gameState, gameStateRenderer,
         messageRenderers.get(0), null,
         Helpers.createArchitectArrow(gameState, gameStateRenderer, actionArchitectA),
-        positions.get(0), actionArchitectA));
+        positions.get(0), actionArchitectA, gameController));
     subinteractions.add(factories.createInteractionText(gameState, gameStateRenderer,
         messageRenderers.get(1), null,
         Helpers.createArchitectArrow(gameState, gameStateRenderer, actionArchitectB),
-        positions.get(1), actionArchitectB));
+        positions.get(1), actionArchitectB, gameController));
 
     return subinteractions;
   }

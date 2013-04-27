@@ -28,6 +28,7 @@ import com.philbeaudoin.quebec.client.scene.SceneNodeList;
 import com.philbeaudoin.quebec.client.scene.Sprite;
 import com.philbeaudoin.quebec.client.scene.SpriteResources;
 import com.philbeaudoin.quebec.shared.PlayerColor;
+import com.philbeaudoin.quebec.shared.game.GameController;
 import com.philbeaudoin.quebec.shared.game.action.ActionSendWorkers;
 import com.philbeaudoin.quebec.shared.game.state.ActionType;
 import com.philbeaudoin.quebec.shared.game.state.Board;
@@ -54,10 +55,10 @@ public class InteractionSendWorkers extends InteractionWithAction {
       InteractionFactories interactionFactories,
       SceneNodeAnimation.Factory sceneNodeAnimationFactory, TextBoxRenderer textBoxRenderer,
       @Assisted GameState gameState, @Assisted GameStateRenderer gameStateRenderer,
-      @Assisted ActionSendWorkers action) {
+      @Assisted ActionSendWorkers action, @Assisted GameController gameController) {
     super(scheduler, textBoxRenderer, gameState, gameStateRenderer,
         interactionFactories.createInteractionTargetTile(gameStateRenderer, action),
-        createActionMessage(gameState, action), action);
+        createActionMessage(gameState, action), action, gameController);
     PlayerState currentPlayer = gameState.getCurrentPlayer();
     PlayerColor playerColor = currentPlayer.getColor();
 

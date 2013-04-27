@@ -42,7 +42,7 @@ public class PlayerAgentGenerator implements PlayerVisitor<PlayerAgent> {
 
   @Override
   public PlayerAgent visit(PlayerLocalUser host) {
-    return factories.createPlayerAgentLocalUser(host);
+    return factories.createPlayerAgentLocalUser(host, gameController);
   }
 
   @Override
