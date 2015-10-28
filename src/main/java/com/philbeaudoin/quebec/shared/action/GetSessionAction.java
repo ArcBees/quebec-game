@@ -16,7 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
-import com.gwtplatform.dispatch.shared.UnsecuredActionImpl;
+import com.gwtplatform.dispatch.rpc.shared.UnsecuredActionImpl;
 
 /**
  * An unsecured action that should be executed at app start time and that is responsible of setting

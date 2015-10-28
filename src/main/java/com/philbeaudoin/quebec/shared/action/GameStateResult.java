@@ -16,7 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
-import com.gwtplatform.dispatch.shared.Result;
+import com.gwtplatform.dispatch.rpc.shared.Result;
 import com.philbeaudoin.quebec.shared.game.state.GameState;
 
 /**

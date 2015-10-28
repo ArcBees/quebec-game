@@ -19,8 +19,8 @@ package com.philbeaudoin.quebec.server.handlers;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.gwtplatform.dispatch.server.ExecutionContext;
-import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
+import com.gwtplatform.dispatch.rpc.server.ExecutionContext;
+import com.gwtplatform.dispatch.rpc.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.philbeaudoin.quebec.server.session.ServerSessionManager;
 import com.philbeaudoin.quebec.server.session.SessionInfoEntity;

@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.gwtplatform.dispatch.shared.DispatchAsync;
+import com.gwtplatform.dispatch.rpc.shared.DispatchAsync;
 import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentFactories;
 import com.philbeaudoin.quebec.client.playerAgent.PlayerAgentGenerator;
 import com.philbeaudoin.quebec.client.renderer.GameStateRenderer;

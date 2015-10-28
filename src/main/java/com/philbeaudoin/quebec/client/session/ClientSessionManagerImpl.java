@@ -21,7 +21,7 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.dispatch.shared.DispatchAsync;
+import com.gwtplatform.dispatch.rpc.shared.DispatchAsync;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithAdminPassword;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithDummy;
 import com.philbeaudoin.quebec.client.session.events.AuthenticateWithGoogleAuthorizationCode;

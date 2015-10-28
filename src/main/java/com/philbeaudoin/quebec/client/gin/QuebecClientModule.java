@@ -20,10 +20,10 @@ import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.inject.Provides;
+import com.gwtplatform.dispatch.rpc.client.gin.RpcDispatchAsyncModule;
 import com.gwtplatform.dispatch.shared.SecurityCookie;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
-import com.philbeaudoin.quebec.client.PlaceManager;
 import com.philbeaudoin.quebec.client.admin.AdminPresenter;
 import com.philbeaudoin.quebec.client.admin.AdminSignInPresenter;
 import com.philbeaudoin.quebec.client.admin.AdminSignInView;
@@ -41,6 +41,7 @@ import com.philbeaudoin.quebec.client.session.ClientSessionManager;
 import com.philbeaudoin.quebec.client.session.ClientSessionManagerImpl;
 import com.philbeaudoin.quebec.client.utils.GwtRandomShuffler;
 import com.philbeaudoin.quebec.shared.Constants;
+import com.philbeaudoin.quebec.shared.NameTokens;
 import com.philbeaudoin.quebec.shared.game.state.Shuffler;
 
 /**
@@ -61,7 +62,12 @@ public class QuebecClientModule extends AbstractPresenterModule {
 
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);
 
-    install(new DefaultModule(PlaceManager.class));
+    install(new RpcDispatchAsyncModule());
+
+    install(new DefaultModule.Builder()
+            .defaultPlace(NameTokens.menuPage)
+            .errorPlace(NameTokens.menuPage)
+            .unauthorizedPlace(NameTokens.adminSignInPage).build());
 
     bindPresenter(GamePresenter.class, GamePresenter.MyView.class, GameView.class,
         GamePresenter.MyProxy.class);

@@ -28,12 +28,9 @@ the specific language governing permissions and limitations under the License.
     <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 
     <!-- Other module inherits -->
-    <inherits name='com.gwtplatform.dispatch.Dispatch' />
-    <inherits name='com.gwtplatform.mvp.Mvp' />
+    <inherits name="com.gwtplatform.dispatch.rpc.DispatchRpc"/>
+    <inherits name='com.gwtplatform.mvp.MvpWithEntryPoint' />
     <inherits name="com.googlecode.objectify.Objectify" />
-
-    <!-- Specify the app entry point class. -->
-    <entry-point class='com.philbeaudoin.quebec.client.Quebec' />
 
     <!-- French language, independent of country -->
     <extend-property name="locale" values="fr" />
@@ -45,9 +42,9 @@ the specific language governing permissions and limitations under the License.
     <source path='client' />
     <source path='shared' />
 
-    <define-configuration-property name="gin.ginjector"
-        is-multi-valued="false" />
-    <set-configuration-property name="gin.ginjector"
-        value="com.philbeaudoin.quebec.client.gin.QuebecGinjector" />
+    <set-configuration-property name="gin.ginjector.module.desktop"
+                                value="com.philbeaudoin.quebec.client.gin.QuebecClientModule"/>
+    <set-configuration-property name="gin.ginjector.modules"
+        value="com.philbeaudoin.quebec.client.gin.QuebecClientModule" />
 
 </module>
