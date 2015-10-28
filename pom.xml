@@ -42,7 +42,7 @@
 
     <properties>
         <!-- Project properties -->
-        <target.jdk>1.6</target.jdk>
+        <target.jdk>1.7</target.jdk>
         <project.encoding>UTF-8</project.encoding>
         <webapp.directory>${project.build.directory}/${project.build.finalName}</webapp.directory>
         <!-- TODO The `gae.application.version` property has no impact? -->
@@ -51,7 +51,7 @@
         <!-- Dependencies versions -->
         <aopalliance.version>1.0</aopalliance.version>
         <gae.version>1.7.5</gae.version>
-        <gin.version>1.5.0</gin.version>
+        <gin.version>2.1.2</gin.version>
         <google-api.version>1.13.2-beta</google-api.version>
         <google-api-services-oauth2.version>v2-rev29-1.13.2-beta</google-api-services-oauth2.version>
         <google-api-services-plus.version>v1-rev54-1.13.2-beta</google-api-services-plus.version>
@@ -59,24 +59,24 @@
         <gwt.version>2.7.0</gwt.version>
         <gwtp.version>1.5.1</gwtp.version>
         <jsr107cache.version>1.1</jsr107cache.version>
-        <junit.version>4.9</junit.version>
+        <junit.version>4.12</junit.version>
         <jukito.version>1.1</jukito.version>
         <objectify.version>4.0b1</objectify.version>
         <persistence-api.version>1.0</persistence-api.version>
 
         <!-- Plugin properties -->
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
-        <gwt-maven-plugin.version>2.4.0</gwt-maven-plugin.version>
+        <gwt-maven-plugin.version>2.7.0</gwt-maven-plugin.version>
         <maven-assembly-plugin.version>2.2.1</maven-assembly-plugin.version>
         <maven-checkstyle-plugin.version>2.8</maven-checkstyle-plugin.version>
         <maven-clean-plugin.version>2.3</maven-clean-plugin.version>
-        <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <maven-deploy-plugin.version>2.5</maven-deploy-plugin.version>
         <maven-eclipse-plugin.version>2.8</maven-eclipse-plugin.version>
         <maven-gae-plugin.version>0.9.1</maven-gae-plugin.version>
         <maven-javadoc-plugin.version>2.5</maven-javadoc-plugin.version> <!-- More recent versions fail? -->
         <maven-processor-plugin.version>2.0.5</maven-processor-plugin.version>
-        <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
+        <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
         <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
         <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
         <maven-surefire-plugin.version>2.6</maven-surefire-plugin.version>

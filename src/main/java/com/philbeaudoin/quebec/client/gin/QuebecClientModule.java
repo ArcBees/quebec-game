@@ -20,6 +20,7 @@ import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.inject.Provides;
+import com.gwtplatform.dispatch.rpc.client.gin.RpcDispatchAsyncModule;
 import com.gwtplatform.dispatch.shared.SecurityCookie;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
@@ -60,6 +61,8 @@ public class QuebecClientModule extends AbstractPresenterModule {
     bind(Shuffler.class).to(GwtRandomShuffler.class);
 
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);
+
+    install(new RpcDispatchAsyncModule());
 
     install(new DefaultModule.Builder()
             .defaultPlace(NameTokens.menuPage)
