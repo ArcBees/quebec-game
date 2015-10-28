@@ -19,7 +19,7 @@ package com.philbeaudoin.quebec.shared.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gwtplatform.dispatch.shared.Result;
+import com.gwtplatform.dispatch.rpc.shared.Result;
 import com.philbeaudoin.quebec.shared.game.GameInfoDto;
 
 /**

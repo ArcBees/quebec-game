@@ -20,8 +20,8 @@ import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
 import com.google.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.dispatch.client.gin.DispatchAsyncModule;
-import com.gwtplatform.dispatch.shared.DispatchAsync;
+import com.gwtplatform.dispatch.rpc.client.gin.RpcDispatchAsyncModule;
+import com.gwtplatform.dispatch.rpc.shared.DispatchAsync;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.philbeaudoin.quebec.client.admin.AdminPresenter;
 import com.philbeaudoin.quebec.client.admin.AdminSignInPresenter;
@@ -32,7 +32,7 @@ import com.philbeaudoin.quebec.client.resources.Resources;
 /**
  * @author Philippe Beaudoin <philippe.beaudoin@gmail.com>
  */
-@GinModules({ DispatchAsyncModule.class, QuebecClientModule.class })
+@GinModules({ RpcDispatchAsyncModule.class, QuebecClientModule.class })
 public interface QuebecGinjector extends Ginjector {
   PlaceManager getPlaceManager();
   EventBus getEventBus();

@@ -16,7 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
-import com.gwtplatform.dispatch.shared.ActionImpl;
+import com.gwtplatform.dispatch.rpc.shared.ActionImpl;
 
 /**
  * Sends the authorization code obtained following the Google sign-in oauth dance.

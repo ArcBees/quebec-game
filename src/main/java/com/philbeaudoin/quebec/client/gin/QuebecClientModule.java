@@ -61,7 +61,7 @@ public class QuebecClientModule extends AbstractPresenterModule {
 
     bindConstant().annotatedWith(SecurityCookie.class).to(Constants.securityCookieName);
 
-    install(new DefaultModule(PlaceManager.class));
+    install(new DefaultModule());
 
     bindPresenter(GamePresenter.class, GamePresenter.MyView.class, GameView.class,
         GamePresenter.MyProxy.class);

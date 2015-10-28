@@ -16,7 +16,7 @@
 
 package com.philbeaudoin.quebec.server.guice;
 
-import com.gwtplatform.dispatch.server.guice.HandlerModule;
+import com.gwtplatform.dispatch.rpc.server.guice.HandlerModule;
 import com.philbeaudoin.quebec.server.handlers.AuthenticateWithDummyHandler;
 import com.philbeaudoin.quebec.server.handlers.ChangeAdminSettingsHandler;
 import com.philbeaudoin.quebec.server.handlers.CreateNewGameHandler;

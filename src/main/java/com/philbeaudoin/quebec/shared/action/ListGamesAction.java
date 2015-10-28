@@ -16,7 +16,7 @@
 
 package com.philbeaudoin.quebec.shared.action;
 
-import com.gwtplatform.dispatch.shared.ActionImpl;
+import com.gwtplatform.dispatch.rpc.shared.ActionImpl;
 
 /**
  * An action to obtain the list of games from the server.

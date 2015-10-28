@@ -30,7 +30,7 @@ import com.google.inject.servlet.RequestScoped;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.VoidWork;
-import com.gwtplatform.dispatch.server.guice.SecureRandomSingleton;
+import com.gwtplatform.dispatch.rpc.server.guice.SecureRandomSingleton;
 import com.philbeaudoin.quebec.client.session.ClientSessionManager;
 import com.philbeaudoin.quebec.server.database.GlobalStringEntity;
 import com.philbeaudoin.quebec.server.database.ObjectifyServiceWrapper;
